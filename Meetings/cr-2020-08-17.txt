@@ -1,0 +1,49 @@
+# Meeting 2020/08/17
+
+Present:
+* Raja BOUJBEL
+* Guillaume BURY
+* Pierre CHAMBART
+* Steven DE OLIVEIRA
+* David DECLERCK
+* Fabrice LE FESSANT
+
+Cargo is a useful tool in the Rust universe, with no equivalent in the
+OCaml world in one tool. We have no news of `bob`, the tool supposed
+to be developed by OCamllabs.
+
+We need first to check existing tools that could be competitors,
+partners or sources of inspiration:
+* cargo
+* opam-publish
+* dune-release: à voir
+* topkg
+* duniverse
+
+Some names for the tool:
+* caravan
+* ograc
+* drom (that we chose for now)
+* ocar
+* check the Saga "Les Hordes du Outrevent"
+
+Discussions:
+* Is drom just a wrapper on top of opam and dune ? probably more than that
+* What would the user start with ? Cargo comes pre-installed and working with
+  the Rust compiler, but OCaml is not installed with `drom`. So, with `drom`,
+  we need:
+  * to have `opam` and `dune` already present (we could do a single binary with
+    the three of them)
+  * to have an OCaml switch: this could be done by `drom init`. Building
+    OCaml in every project is just too expensive. Maybe we could use binary
+    packages. It won't work on all archs. Maybe we could share a global switch,
+    to build OCaml only once, and then share it with local switches as
+    what is currently done for the system switch. This could be done by
+    sharing the paths, and then using `opam install --fake` dor all shared
+    packages. By default, `drom init` would try to use binary packages,
+    unless the user use `--no-binary`.
+* It would be nice for `drom` to become the single entry point to multiple
+   tools to work with a project: `opam`, `dune`, `merlin`, `ocamlformat`,
+   management of headers, scafolding, etc.
+
+
