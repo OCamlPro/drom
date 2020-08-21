@@ -1,0 +1,22 @@
+[package]
+authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
+copyright = "OCamlPro SAS & Origin Labs SAS"
+description = "The drom OCaml project"
+edition = "4.10.0"
+github-organization = "ocamlpro"
+library = false
+name = "drom"
+synopsis = "The drom project"
+version = "0.1.0"
+
+# keys that you could also define:
+# license = "...license..."
+# dev-repo = "...dev-repo..."
+# bug-reports = "...bug-reports..."
+# documentation = "...documentation..."
+# homepage = "...homepage..."
+
+[dependencies]
+
+[tools]
+dune = "2.6.0"

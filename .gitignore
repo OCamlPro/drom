@@ -1,3 +1,8 @@
+
+/drom
 *~
 _build
-_opam
+.merlin
+/_drom
+/_opam
+/_build
