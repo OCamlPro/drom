@@ -8,59 +8,29 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open DromTypes
+open Types
 open Ezcmd.TYPES
 
 let cmd_name = "new"
 
-(*
-`opam-new create project` will generate the tree:
-* project/
-    drom.toml
-    .git/
-    .gitignore
-    dune-workspace
-    dune-project     [do not edit]
-    project.opam     [do not edit]
-    src/
-       dune          [do not edit]
-       main.ml
-
-drom.toml looks like:
-```
-[package]
-authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
-edition = "4.10.0"
-library = false
-name = "project"
-version = "0.1.0"
-
-[dependencies]
-
-[tools]
-dune = "2.6.0"
-```
-
-*)
-
 (* lookup for "drom.toml" and update it *)
-let action ~project_name ~library =
-  let config = Lazy.force DromConfig.config in
+let action ~project_name ~kind =
+  let config = Lazy.force Config.config in
   let project, create = match !project_name with
     | None ->
-      DromToml.project_of_toml "drom.toml", false
+      Project.project_of_toml "drom.toml", false
     | Some name ->
       let p =
         {
           name ;
           version = "0.1.0" ;
-          edition = DromGlobals.current_ocaml_edition ;
-          library = !library ;
-          authors = [ DromToml.find_author config ] ;
-          synopsis = DromGlobals.default_synopsis ~name ;
-          description = DromGlobals.default_description ~name ;
+          edition = Globals.current_ocaml_edition ;
+          kind = !kind ;
+          authors = [ Project.find_author config ] ;
+          synopsis = Globals.default_synopsis ~name ;
+          description = Globals.default_description ~name ;
           dependencies = [];
-          tools = [ "dune", DromGlobals.current_dune_version ];
+          tools = [ "dune", Globals.current_dune_version ];
           github_organization = config.config_github_organization ;
           homepage = None ;
           documentation = None ;
@@ -68,6 +38,7 @@ let action ~project_name ~library =
           license = config.config_license ;
           dev_repo = None ;
           copyright = config.config_copyright ;
+          ignore = [];
         } in
       let create = not ( Sys.file_exists name ) in
       if create then
@@ -76,17 +47,20 @@ let action ~project_name ~library =
       p, create
   in
   let build = false in
-  DromUpdate.update_files ~create ~build project
+  Update.update_files ~create ~build project
 
 let cmd =
   let project_name = ref None in
-  let library = ref false in
+  let kind = ref Program in
   {
     cmd_name ;
-    cmd_action = (fun () -> action ~project_name ~library);
+    cmd_action = (fun () -> action ~project_name ~kind);
     cmd_args = [
-      [ "lib" ], Arg.Set library,
-      Ezcmd.info "Project is a library" ;
+      [ "both" ], Arg.Unit (fun () -> kind := Both ),
+      Ezcmd.info "Project contains both a library and a program" ;
+
+      [ "library" ], Arg.Unit (fun () -> kind := Library ),
+      Ezcmd.info "Project contains only a library" ;
 
       [], Arg.Anon (0, fun name -> project_name := Some name),
       Ezcmd.info "Name of the project" ;

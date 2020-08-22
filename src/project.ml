@@ -8,63 +8,16 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open DromTypes
-
-(*
-`opam-new create project` will generate the tree:
-* project/
-    drom.toml
-    .git/
-    .gitignore
-    dune-workspace
-    dune-project     [do not edit]
-    project.opam     [do not edit]
-    src/
-       dune          [do not edit]
-       main.ml
-
-drom.toml looks like:
-```
-[package]
-authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
-edition = "4.10.0"
-library = false
-name = "project"
-version = "0.1.0"
-
-[dependencies]
-
-[tools]
-dune = "2.6.0"
-```
-
-*)
-
+open Types
 
 open EzFile.OP
-
-(* Most used licenses in the opam repository:
-    117 license: "GPL-3.0-only"
-    122 license: "LGPL-2.1"
-    122 license: "LGPL-2.1-only"
-    130 license:      "MIT"
-    180 license: "BSD-2-Clause"
-    199 license: "LGPL-2.1-or-later with OCaml-LGPL-linking-exception"
-    241 license: "LGPL-3.0-only with OCaml-LGPL-linking-exception"
-    418 license: "LGPL-2.1-only with OCaml-LGPL-linking-exception"
-    625 license:      "ISC"
-    860 license: "BSD-3-Clause"
-   1228 license: "Apache-2.0"
-   1555 license: "ISC"
-   2785 license: "MIT"
-*)
 
 let git_config =
   lazy
     (
       Configparser.parse_string
         ( EzFile.read_file
-            ( DromGlobals.home_dir // ".gitconfig" ) )
+            ( Globals.home_dir // ".gitconfig" ) )
     )
 
 let user_of_git_config () =
@@ -124,12 +77,14 @@ let toml_of_project p =
     |> EzToml.put_string [ "package" ; "name" ] p.name
     |> EzToml.put_string [ "package" ; "version" ] p.version
     |> EzToml.put_string [ "package" ; "edition" ] p.edition
-    |> EzToml.put [ "package" ; "library" ]
-      ( TomlTypes.TBool p.library )
+    |> EzToml.put_string [ "package" ; "kind" ]
+      (match p.kind with
+       | Library -> "library"
+       | Program -> "program"
+       | Both -> "both" )
     |> EzToml.put_string [ "package" ; "synopsis" ] p.synopsis
-    |> EzToml.put_string [ "package" ; "description" ] p.description
     |> EzToml.put [ "package"; "authors" ]
-      ( TomlTypes.TArray
+      ( TArray
           ( TomlTypes.NodeString p.authors ) )
   in
   let maybe_package_key key v (table, optionals) =
@@ -147,6 +102,17 @@ let toml_of_project p =
     |> maybe_package_key "dev-repo" p.dev_repo
     |> maybe_package_key "license" p.license
     |> maybe_package_key "copyright" p.copyright
+  in
+  let package2 =
+    EzToml.empty
+    |> EzToml.put_string [ "package" ; "description" ] p.description
+    |> EzToml.to_string
+  in
+  let drom =
+    EzToml.empty
+    |> EzToml.put_string [ "drom" ; "skip" ]
+      ( String.concat " " p.ignore )
+    |> EzToml.to_string
   in
   let package = EzToml.to_string package in
   let optionals =
@@ -178,8 +144,8 @@ let toml_of_project p =
         EzToml.empty p.tools
       |> EzToml.to_string
   in
-  Printf.sprintf "%s\n%s\n%s\n%s"
-    package optionals dependencies tools
+  Printf.sprintf "%s\n%s\n%s\n%s\n%s\n%s"
+    package optionals package2 drom dependencies tools
 
 let project_of_toml filename =
   Printf.eprintf "Loading %s\n%!" filename ;
@@ -194,8 +160,15 @@ let project_of_toml filename =
   let version = EzToml.get_string_default table [ "package" ; "version" ]
       "0.1.0" in
   let edition = EzToml.get_string_default table [ "package" ; "edition" ]
-      DromGlobals.current_ocaml_edition in
-  let library = EzToml.get_bool_default table [ "package" ; "library" ] false in
+      Globals.current_ocaml_edition in
+  let kind = EzToml.get_string_default table [ "package" ; "kind" ]
+      "program" in
+  let kind = match kind with
+    | "lib" | "library" -> Library
+    | "both" -> Both
+    | "program" | "executable" -> Program
+    | _ -> error "unknown kind %S" kind
+  in
   let authors =
     match EzToml.get table [ "package" ; "authors" ] with
     | TArray ( NodeString authors ) -> authors
@@ -218,7 +191,7 @@ let project_of_toml filename =
     | _ -> failwith "Cannot load dependencies"
   in
   let tools = match EzToml.get table [ "tools" ] with
-    | exception Not_found -> [ "dune", DromGlobals.current_dune_version ]
+    | exception Not_found -> [ "dune", Globals.current_dune_version ]
     | TTable deps ->
       let dependencies = ref [] in
       TomlTypes.Table.iter (fun name version ->
@@ -233,10 +206,10 @@ let project_of_toml filename =
   in
   let synopsis =
     EzToml.get_string_default table [ "package"; "synopsis" ]
-      ( DromGlobals.default_synopsis ~name ) in
+      ( Globals.default_synopsis ~name ) in
   let description =
     EzToml.get_string_default table [ "package"; "description" ]
-      ( DromGlobals.default_description ~name ) in
+      ( Globals.default_description ~name ) in
   let github_organization =
     EzToml.get_string_option table [ "package" ; "github-organization" ] in
   let documentation =
@@ -251,11 +224,17 @@ let project_of_toml filename =
     EzToml.get_string_option table [ "package" ; "license" ] in
   let copyright =
     EzToml.get_string_option table [ "package" ; "copyright" ] in
+  let ignore =
+    match EzToml.get_string_option table [ "drom" ; "ignore" ] with
+    | None -> []
+    | Some s -> EzString.split s ' '
+  in
+
   {
     name ;
     version ;
     edition ;
-    library ;
+    kind ;
     authors ;
     synopsis ;
     description ;
@@ -268,4 +247,5 @@ let project_of_toml filename =
     bug_reports ;
     dev_repo ;
     copyright ;
+    ignore ;
   }

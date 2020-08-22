@@ -8,7 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open DromTypes
+open Types
 
 let conf_py p =
   let copyright =

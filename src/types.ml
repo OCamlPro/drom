@@ -10,12 +10,17 @@
 
 exception Error of string
 
+type kind =
+  | Program
+  | Library
+  | Both
+
 type project = {
   name : string ;
   version : string ;
   edition : string ;
   authors : string list ;
-  library : bool ;
+  kind : kind ;
   synopsis : string ;
   description : string ;
   github_organization : string option ;
@@ -27,6 +32,7 @@ type project = {
   documentation : string option ;
   dependencies : ( string * string ) list;
   tools : ( string * string ) list;
+  ignore : string list ;
 }
 
 type config = {

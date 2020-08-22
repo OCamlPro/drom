@@ -45,6 +45,8 @@ let make_cache_dir () =
 *)
 
 let call ?(stdout = Unix.stdout) args =
+  Printf.eprintf "Calling %s\n%!"
+    (String.concat " " ( Array.to_list args ) );
   let pid = Unix.create_process args.(0) args
       Unix.stdin stdout Unix.stderr in
   let rec iter () =

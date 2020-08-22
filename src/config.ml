@@ -8,7 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open DromTypes
+open Types
 
 open EzFile.OP
 
@@ -42,7 +42,7 @@ let config_template = {|
 |}
 
 let load () =
-  let config_dir = DromGlobals.home_dir // ".drom" in
+  let config_dir = Globals.home_dir // ".drom" in
   let filename = config_dir // "config" in
 
   if not ( Sys.file_exists filename ) then begin

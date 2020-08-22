@@ -1,7 +1,8 @@
-
-(executable
- (name main)
- (public_name drom)
- (libraries opam-file-format ez-cmdliner ez-file ez-config toml))
+(library
+ (name drom)
+ (public_name drom-lib)
+ (libraries toml opam-file-format ez-file ez-config ez-cmdliner)
+)
 
 (ocamllex configuration_Parser)
+

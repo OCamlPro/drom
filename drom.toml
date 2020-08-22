@@ -17,6 +17,11 @@ version = "0.1.0"
 # homepage = "...homepage..."
 
 [dependencies]
+opam-file-format = "2.0.0"
+ez-cmdliner = "0.1.0"
+ez-file = "0.1.0"
+ez-config = "0.1.0"
+toml = "5.0.0"
 
 [tools]
 dune = "2.6.0"

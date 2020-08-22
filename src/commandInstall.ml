@@ -10,14 +10,11 @@
 
 open Ezcmd.TYPES
 
-let cmd_name = "build"
+let cmd_name = "install"
 
 let action () =
-  let p = DromToml.project_of_toml "drom.toml" in
-  let build = true in
-  let create = false in
-  DromUpdate.update_files ~create ~build p ;
-  DromMisc.call [| "opam" ; "exec"; "--" ; "dune" ; "build" |]
+  let p = Build.build () in
+  Misc.call [| "opam" ; "exec"; "--" ; "dune" ; "install" ; "-p" ; p.name |]
 
 let cmd =
   {
@@ -26,5 +23,5 @@ let cmd =
     cmd_args = [
     ];
     cmd_man = [];
-    cmd_doc = "Build a project";
+    cmd_doc = "Build & install the project in the local opam switch _opam";
   }

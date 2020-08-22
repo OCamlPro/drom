@@ -1,14 +1,10 @@
 
 all:
 	dune build
-	cp -f _build/default/src/main.exe drom
+	cp -f _build/default/main/main.exe drom
 
 build-deps:
-	opam install --deps-only ./opam
-
-init:
-	git submodule init
-	git submodule update
+	opam install --deps-only ./drom.opam
 
 doc: html
 	markdown docs/index.md > docs/index.html
