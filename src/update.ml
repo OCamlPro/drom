@@ -573,7 +573,7 @@ let update_files ?(git=false) ?(create=false) p =
     write_file "drom.toml" ( Project.toml_of_project p ) ;
   write_file ".gitignore" ( template_DOTgitignore p ) ;
   write_file "Makefile" ( template_Makefile p ) ;
-  write_file "dune-workspace" "";
+  (*   write_file "dune-workspace" ""; *)
   write_file "README.md" ( template_readme_md p ) ;
   write_file "src/dune" ( template_src_dune p ) ;
   if p.kind = Both then begin
