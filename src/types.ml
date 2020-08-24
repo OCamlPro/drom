@@ -19,17 +19,19 @@ type project = {
   name : string ;
   version : string ;
   edition : string ;
+  min_edition : string ;
   authors : string list ;
   kind : kind ;
   synopsis : string ;
   description : string ;
   github_organization : string option ;
   homepage : string option ;
-  license : string option ;
+  license : string ;
   copyright : string option ;
   bug_reports : string option ;
   dev_repo : string option ;
-  documentation : string option ;
+  doc_gen : string option ;
+  doc_api : string option ;
   dependencies : ( string * string ) list;
   tools : ( string * string ) list;
   ignore : string list ;
@@ -41,6 +43,3 @@ type config = {
   config_license : string option ;
   config_copyright : string option ;
 }
-
-let error fmt =
-  Printf.kprintf (fun s -> raise (Error s) ) fmt

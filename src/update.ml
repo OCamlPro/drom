@@ -51,9 +51,9 @@ let template_main_main_ml p =
 
 let template_src_main_ml p =
   match p.kind with
-  | Library | Both ->
+  | Both ->
     {|
-(* If you rename this file, you should add 'main.ml' to the 'skip' field in "drom.toml" *)
+(* If you delete or rename this file, you should add 'src/main.ml' to the 'skip' field in "drom.toml" *)
 
 let main () = Printf.printf "Hello world!\n%!"
 |}
@@ -63,6 +63,7 @@ let main () = Printf.printf "Hello world!\n%!"
 
 let () = Printf.printf "Hello world!\n%!"
 |}
+  | Library -> assert false
 
 let template_readme_md p =
   match p.github_organization with
@@ -78,7 +79,9 @@ let template_readme_md p =
 %s
 
 * Website: https://%s.github.io/%s
-* Documentation: https://%s.github.io/%s/doc
+* General Documentation: https://%s.github.io/%s/sphinx
+* API Documentation: https://%s.github.io/%s/doc
+* Sources: https://github.com/%s/%s
 |}
 github_organization p.name
 github_organization p.name
@@ -86,6 +89,8 @@ github_organization p.name
 github_organization p.name
 p.name
 p.description
+github_organization p.name
+github_organization p.name
 github_organization p.name
 github_organization p.name
 
@@ -137,21 +142,26 @@ let template_main_dune p =
 let template_Makefile p =
   Printf.sprintf
   {|
-DEV_DEPS := merlin ocamlformat
+.PHONY: all build-deps doc sphinx odoc view fmt fmt-check install dev-deps test
+DEV_DEPS := merlin ocamlformat odoc
 
-all:
+all: build
+
+build:
 	dune build%s
 
 build-deps:
 	opam install --deps-only ./%s.opam
 
-doc: html
+sphinx:
+	sphinx-build sphinx docs/sphinx
 
-html:
-	sphinx-build sphinx docs/doc
+doc:
+	dune build @doc
+	rsync -auv --delete _build/default/_doc/_html/. docs/doc
 
 view:
-	xdg-open file://$$(pwd)/docs/doc/index.html
+	xdg-open file://$$(pwd)/docs/index.html
 
 fmt:
 	dune build @fmt --auto-promote
@@ -183,6 +193,7 @@ test:
 
 let template_DOTgithub_workflows_ci_ml _p =
   {|
+(* Credits: https://github.com/ocaml/dune *)
 open StdLabels
 
 let skip_test =
@@ -220,14 +231,9 @@ let pin () =
       opam [ "pin"; "add"; package ^ ".next"; "."; "--no-action" ])
 
 let test () =
-  if Sys.win32 then (
-    opam [ "install"; "./dune-configurator.opam"; "--deps-only" ];
-    run "make" [ "test-windows" ]
-  ) else (
     opam [ "install"; "."; "--deps-only"; "--with-test" ];
     run "make" [ "dev-deps" ];
     run "make" [ "test" ]
-  )
 
 let () =
   match Sys.argv with
@@ -260,7 +266,7 @@ jobs:
           - %s
         skip_test:
           - false
-
+%s
     env:
       SKIP_TEST: ${{ matrix.skip_test }}
       OCAML_VERSION: ${{ matrix.ocaml-version }}
@@ -292,15 +298,37 @@ jobs:
         run: opam exec -- ocaml .github/workflows/ci.ml test
         if: env.SKIP_TEST != 'true'
 
-#      - name: test source is well formatted
-#        run: opam exec -- make fmt-check
-#        if: env.OCAML_VERSION == '%s' && env.OS == 'ubuntu-latest'
+      - name: test source is well formatted
+        run: opam exec -- make fmt-check
+        continue-on-error: true
+        if: env.OCAML_VERSION == '%s' && env.OS == 'ubuntu-latest'
 |}
     p.edition
+    (if p.edition = p.min_edition then "" else
+       Printf.sprintf
+       {|
+        include:
+          - ocaml-version: %s
+            os: ubuntu-latest
+            skip_test: true
+|} p.min_edition)
     ( match p.kind with
       | Both -> p.name ^ "-lib"
       | Library | Program -> p.name)
     p.edition
+
+let template_CHANGES_md _p =
+  let tm = Misc.date () in
+  Printf.sprintf {|
+  ## %04d-%02d-%02d
+
+* Initial commit
+|}
+    tm.Unix.tm_year
+    tm.Unix.tm_mon
+    tm.Unix.tm_mday
+
+
 
 let semantic_version version =
   match EzString.split version '.' with
@@ -311,24 +339,6 @@ let semantic_version version =
         Not_found -> None
     end
   | _ -> None
-
-let homepage p =
-  match p.homepage with
-  | Some s -> Some s
-  | None ->
-    match p.github_organization with
-    | Some organization ->
-      Some ( Printf.sprintf "https://%s.github.com/%s" organization p.name )
-    | None -> None
-
-let documentation p =
-  match p.documentation with
-  | Some s -> Some s
-  | None ->
-    match p.github_organization with
-    | Some organization ->
-      Some ( Printf.sprintf "https://%s.github.com/%s" organization p.name )
-    | None -> None
 
 let bug_reports p =
   match p.bug_reports with
@@ -356,16 +366,21 @@ let template_docs_index_html p =
 
 <p>%s</p>
 
-<ul>%s%s
+<ul>%s%s%s
 </ul>
 |}
     p.name
     p.description
-    ( match documentation p with
+    ( match Misc.doc_gen p with
       | None -> ""
       | Some link ->
         Printf.sprintf {|
-<li><a href="%s">Documentation</a></li>|} link)
+<li><a href="%s">General Documentation</a></li>|} link)
+    ( match Misc.doc_api p with
+      | None -> ""
+      | Some link ->
+        Printf.sprintf {|
+<li><a href="%s">API Documentation</a></li>|} link)
     ( match bug_reports p with
       | None -> ""
       | Some link ->
@@ -390,9 +405,8 @@ let opam_of_project kind p =
     | None -> ()
     | Some v -> optionals := ( var_string s v ) :: !optionals
   in
-  add_optional_string "homepage" ( homepage p );
-  add_optional_string "doc" ( documentation p );
-  add_optional_string "license" p.license ;
+  add_optional_string "homepage" ( Misc.homepage p );
+  add_optional_string "doc" ( Misc.doc_gen p );
   add_optional_string "bug-reports" ( bug_reports p );
   add_optional_string "dev-repo" (dev_repo p );
 
@@ -402,6 +416,7 @@ let opam_of_project kind p =
         | LibraryPart -> p.name ^ "-lib"
         | Single | ProgramPart -> p.name ) ;
     var_string "version" p.version ;
+    var_string "license" ( License.name p ) ;
     var_string "synopsis" ( match kind with
         | LibraryPart -> p.synopsis ^ " (library)"
         | Single | ProgramPart -> p.synopsis );
@@ -428,15 +443,15 @@ let opam_of_project kind p =
                         [
                           OpamParser.value_from_string
                             ( Printf.sprintf {|
-                                "%s-lib" { = "%s" }
-|} p.name p.version ) file_name
+                                "%s-lib" { = version }
+|} p.name ) file_name
                         ]
                        )
                 | Single | LibraryPart ->
                   List (pos,
                         OpamParser.value_from_string
                           ( Printf.sprintf {| "ocaml" { >= "%s" } |}
-                              p.edition
+                              p.min_edition
                           )
                           file_name
                         ::
@@ -468,8 +483,13 @@ let opam_of_project kind p =
     "# This file was generated by `drom` from `drom.toml`. Do not modify.\n%s"
     s
 
-let update_files ~create ~build p =
 
+let update_files ?(git=false) ?(create=false) p =
+
+  let can_skip = ref [] in
+  let not_skipped s =
+    can_skip := s :: !can_skip;
+    not ( List.mem s p.ignore ) in
   let save_hashes = ref false in
   let hashes =
     if Sys.file_exists ".drom" then
@@ -526,7 +546,7 @@ let update_files ~create ~build p =
       with Not_found -> ()
   in
   let write_file filename content =
-    if not ( List.mem filename p.ignore ) then
+    if not_skipped filename then
       if not ( Sys.file_exists filename ) then begin
         Printf.eprintf "Creating file %s\n%!" filename;
         write_file filename content
@@ -540,11 +560,6 @@ let update_files ~create ~build p =
   let config = Lazy.force Config.config in
 
   let p =
-    match p.license, config.config_license with
-    | None, Some s -> { p with license = Some s }
-    | _ -> p
-  in
-  let p =
     match p.github_organization, config.config_github_organization with
     | None, Some s -> { p with github_organization = Some s }
     | _ -> p
@@ -554,7 +569,8 @@ let update_files ~create ~build p =
     | [], Some s -> { p with authors = [ s ] }
     | _ -> p
   in
-  write_file "drom.toml" ( Project.toml_of_project p ) ;
+  if not ( Sys.file_exists "drom.toml" ) then
+    write_file "drom.toml" ( Project.toml_of_project p ) ;
   write_file ".gitignore" ( template_DOTgitignore p ) ;
   write_file "Makefile" ( template_Makefile p ) ;
   write_file "dune-workspace" "";
@@ -567,10 +583,16 @@ let update_files ~create ~build p =
     remove_file "main/dune" ;
     remove_file "main/main.ml" ;
   end ;
-  write_file "src/main.ml" ( template_src_main_ml p ) ;
+  begin
+    match p.kind with
+    | Library -> ()
+    | Program | Both ->
+      write_file "src/main.ml" ( template_src_main_ml p ) ;
+  end ;
 
   if create then begin
-    if not ( Sys.file_exists ".git" ) then begin
+    write_file "CHANGES.md" ( template_CHANGES_md p ) ;
+    if git && not ( Sys.file_exists ".git" ) then begin
       Misc.call [| "git"; "init" |];
       match config.config_github_organization with
       | None -> ()
@@ -585,28 +607,55 @@ let update_files ~create ~build p =
     end
   end ;
 
-  if not ( List.mem "docs" p.ignore ) then begin
+  if not_skipped "docs" then begin
 
     write_file "docs/index.html"
       ( template_docs_index_html p ) ;
-    write_file "docs/doc/index.html"
-      ( Printf.sprintf {|
-<h1>Sphinx doc for %s</h1>
-<p>You need to run the following commands in the project to generate the doc:
+
+    if not ( Sys.file_exists  "docs/doc/index.html" ) then
+      write_file "docs/doc/index.html"
+        ( Printf.sprintf {|
+<h1>API documentation for %s</h1>
+<p>You need to run the following commands in the project to generate this doc:
 <pre>
 make doc
-git add docs/
-git commit -m "Add generated documentation"
+</pre>
+or
+<pre>
+drom doc
+</pre>
+and then:
+<pre>
+git add docs/doc
+</pre>
+</p>
+|} p.name ) ;
+
+    if not ( Sys.file_exists "docs/sphinx/index.html" ) then
+      write_file "docs/sphinx/index.html"
+        ( Printf.sprintf {|
+<h1>Sphinx doc for %s</h1>
+<p>You need to run the following commands in the project to generate this doc:
+<pre>
+make sphinx
+</pre>
+or
+<pre>
+drom sphinx
+</pre>
+and then:
+<pre>
+git add docs/sphinx
 </pre>
 </p>
 |} p.name ) ;
   end;
 
-  if not ( List.mem "sphinx" p.ignore ) then begin
+  if not_skipped "sphinx" then begin
     write_file "docs/.nojekyll" "";
     write_file "sphinx/conf.py" ( Sphinx.conf_py p ) ;
     write_file "sphinx/index.rst" ( Sphinx.index_rst p ) ;
-    write_file "sphinx/usage.rst" ( Sphinx.usage_rst p ) ;
+    write_file "sphinx/install.rst" ( Sphinx.install_rst p ) ;
     write_file "sphinx/about.rst" ( Sphinx.about_rst p ) ;
     write_file "sphinx/_static/css/fixes.css" "";
   end;
@@ -634,7 +683,7 @@ git commit -m "Add generated documentation"
       ( if p.kind = Both then p.synopsis ^ " (library)" else p.synopsis )
       p.description ;
     Printf.bprintf b " (depends\n";
-    Printf.bprintf b "   (ocaml (= %s))\n" p.edition ;
+    Printf.bprintf b "   (ocaml (>= %s))\n" p.min_edition ;
     List.iter (fun (name, version) ->
         match semantic_version version with
         | Some (major, minor, fix) ->
@@ -666,7 +715,7 @@ git commit -m "Add generated documentation"
   write_file "dune-project" dune_project ;
   write_file ".ocamlformat" "" ;
 
-  if not ( List.mem "workflows" p.ignore ) then begin
+  if not_skipped "workflows" then begin
 
     let workflows_dir = ".github/workflows" in
 
@@ -694,53 +743,16 @@ git commit -m "Add generated documentation"
         ( opam_of_project ProgramPart p )
   end;
 
+  EzFile.make_dir ~p:true Globals.drom_dir ;
+  EzFile.write_file ( Globals.drom_dir // "known-licences.txt" )
+    ( License.known_licenses () );
 
-  if build then
-    begin
-      let drom_opam_filename = "_drom/opam" in
-      let former_opam_file =
-        if Sys.file_exists drom_opam_filename then
-          Some ( EzFile.read_file drom_opam_filename )
-        else None
-      in
-      let new_opam_file = EzFile.read_file opam_filename in
-      if former_opam_file <> Some new_opam_file ||
-         not ( Sys.file_exists "_opam" ) then begin
-        Printf.eprintf "Updating %s\n%!" drom_opam_filename ;
+  if not_skipped "license" then
+    write_file "LICENSE.md" ( License.license p ) ;
 
-        let ocaml_nv = "ocaml." ^ p.edition in
-        if Sys.file_exists "_opam" &&
-           not ( Sys.file_exists ( "_opam" // ".opam-switch" // "packages"
-                                   // ocaml_nv )) then begin
-          error "Wrong ocaml version in _opam. Expecting %s. Remove '_opam/' or change the project edition" ocaml_nv
-        end;
-
-        if not ( Sys.file_exists "_opam" ) then begin
-          Misc.call [| "opam" ; "switch" ; "create"; "." ; "--empty" |];
-          let packages = [
-            ocaml_nv ;
-            "ocamlformat" ;
-            "user-setup" ;
-            "merlin" ;
-            "odoc" ;
-          ] in
-          Misc.call ( Array.of_list
-                        ( "opam" :: "install" :: "-y" :: packages ) );
-        end ;
-
-        let tmp_opam_filename = "_drom/new.opam" in
-        EzFile.make_dir ~p:true "_drom";
-        EzFile.write_file tmp_opam_filename new_opam_file ;
-
-        Misc.call [| "opam" ; "install" ; "-y" ; "--deps-only";
-                     "." // tmp_opam_filename |];
-
-        begin try Sys.remove drom_opam_filename with _ -> () end ;
-        Sys.rename tmp_opam_filename drom_opam_filename;
-
-      end
-
-    end;
+  EzFile.write_file ( Globals.drom_dir // "maximum-skip-field.txt" )
+    ( Printf.sprintf "skip = \"%s\"\n"
+        ( String.concat " " !can_skip )) ;
 
   if !save_hashes then
     let b = Buffer.create 1000 in
@@ -750,12 +762,14 @@ git commit -m "Add generated documentation"
         Printf.bprintf b "%s %s\n"
           ( Digest.to_hex hash ) filename ) !hashes ;
     EzFile.write_file ".drom" ( Buffer.contents b ) ;
-    Misc.call
-      ( Array.of_list
-          ( "git" :: "add" :: ".drom" :: !to_add ));
-    match !to_remove with
-    | [] -> ()
-    | files ->
+    if git then begin
       Misc.call
         ( Array.of_list
-            ( "git" :: "rm" :: files ))
+            ( "git" :: "add" :: ".drom" :: !to_add ));
+      match !to_remove with
+      | [] -> ()
+      | files ->
+        Misc.call
+          ( Array.of_list
+              ( "git" :: "rm" :: files ))
+    end

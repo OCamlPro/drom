@@ -77,12 +77,14 @@ let toml_of_project p =
     |> EzToml.put_string [ "package" ; "name" ] p.name
     |> EzToml.put_string [ "package" ; "version" ] p.version
     |> EzToml.put_string [ "package" ; "edition" ] p.edition
+    |> EzToml.put_string [ "package" ; "min-edition" ] p.min_edition
     |> EzToml.put_string [ "package" ; "kind" ]
       (match p.kind with
        | Library -> "library"
        | Program -> "program"
        | Both -> "both" )
     |> EzToml.put_string [ "package" ; "synopsis" ] p.synopsis
+    |> EzToml.put_string [ "package" ; "license" ] p.license
     |> EzToml.put [ "package"; "authors" ]
       ( TArray
           ( TomlTypes.NodeString p.authors ) )
@@ -97,10 +99,10 @@ let toml_of_project p =
     ( package, [] )
     |> maybe_package_key "github-organization" p.github_organization
     |> maybe_package_key "homepage" p.homepage
-    |> maybe_package_key "documentation" p.documentation
+    |> maybe_package_key "doc-gen" p.doc_gen
+    |> maybe_package_key "doc-api" p.doc_api
     |> maybe_package_key "bug-reports" p.bug_reports
     |> maybe_package_key "dev-repo" p.dev_repo
-    |> maybe_package_key "license" p.license
     |> maybe_package_key "copyright" p.copyright
   in
   let package2 =
@@ -159,22 +161,35 @@ let project_of_toml filename =
   let name = EzToml.get_string table [ "package" ; "name" ] in
   let version = EzToml.get_string_default table [ "package" ; "version" ]
       "0.1.0" in
-  let edition = EzToml.get_string_default table [ "package" ; "edition" ]
-      Globals.current_ocaml_edition in
+  let edition = EzToml.get_string_option table [ "package" ; "edition" ] in
+  let min_edition = EzToml.get_string_option table
+      [ "package" ; "min-edition" ] in
+  let ( edition, min_edition ) =
+    let default_version = Globals.current_ocaml_edition in
+    match edition, min_edition with
+    | None, None -> default_version, default_version
+    | None, Some edition
+    | Some edition, None -> edition, edition
+    | Some edition, Some min_edition ->
+      match VersionCompare.compare min_edition edition with
+      | 1 ->
+        Error.printf "min-edition is greater than edition in drom.toml"
+      | _ -> edition, min_edition
+  in
   let kind = EzToml.get_string_default table [ "package" ; "kind" ]
       "program" in
   let kind = match kind with
     | "lib" | "library" -> Library
     | "both" -> Both
     | "program" | "executable" -> Program
-    | _ -> error "unknown kind %S" kind
+    | _ -> Error.printf "unknown kind %S" kind
   in
   let authors =
     match EzToml.get table [ "package" ; "authors" ] with
     | TArray ( NodeString authors ) -> authors
-    | _ -> error "Cannot parse authors field in drom.toml"
+    | _ -> Error.printf "Cannot parse authors field in drom.toml"
     | exception Not_found ->
-      error "No field 'authors' in drom.toml"
+      Error.printf "No field 'authors' in drom.toml"
   in
   let dependencies = match EzToml.get table [ "dependencies" ] with
     | exception Not_found -> []
@@ -212,8 +227,10 @@ let project_of_toml filename =
       ( Globals.default_description ~name ) in
   let github_organization =
     EzToml.get_string_option table [ "package" ; "github-organization" ] in
-  let documentation =
-    EzToml.get_string_option table [ "package" ; "documentation" ] in
+  let doc_api =
+    EzToml.get_string_option table [ "package" ; "doc-api" ] in
+  let doc_gen =
+    EzToml.get_string_option table [ "package" ; "doc-gen" ] in
   let homepage =
     EzToml.get_string_option table [ "package" ; "homepage" ] in
   let bug_reports =
@@ -221,11 +238,12 @@ let project_of_toml filename =
   let dev_repo =
     EzToml.get_string_option table [ "package" ; "dev-repo" ] in
   let license =
-    EzToml.get_string_option table [ "package" ; "license" ] in
+    EzToml.get_string_default table [ "package" ; "license" ]
+      License.LGPL2.key in
   let copyright =
     EzToml.get_string_option table [ "package" ; "copyright" ] in
   let ignore =
-    match EzToml.get_string_option table [ "drom" ; "ignore" ] with
+    match EzToml.get_string_option table [ "drom" ; "skip" ] with
     | None -> []
     | Some s -> EzString.split s ' '
   in
@@ -234,6 +252,7 @@ let project_of_toml filename =
     name ;
     version ;
     edition ;
+    min_edition ;
     kind ;
     authors ;
     synopsis ;
@@ -241,7 +260,8 @@ let project_of_toml filename =
     dependencies ;
     tools ;
     github_organization ;
-    documentation ;
+    doc_gen ;
+    doc_api ;
     homepage ;
     license ;
     bug_reports ;

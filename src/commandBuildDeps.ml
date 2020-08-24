@@ -10,33 +10,21 @@
 
 open Ezcmd.TYPES
 
-let cmd_name = "run"
+let cmd_name = "build-deps"
 
-let action ~switch ~args =
-  let p = Build.build ~switch () in
-  let args = !args in
-  let args = match p.kind with
-    | Library -> args
-    | Both | Program -> p.name :: args
-  in
-  Misc.call
-    ( Array.of_list (
-          "opam" :: "exec" :: "--" ::
-          "dune"  :: "exec" :: "-p" :: p.name :: "--" ::
-          args )
-    )
+let action ~switch () =
+  let ( _p : Types.project ) = Build.build
+      ~build_deps:true ~build:false ~switch () in
+  ()
 
 let cmd =
-  let args = ref [] in
   let switch = ref None in
   {
     cmd_name ;
-    cmd_action = (fun () -> action ~switch ~args);
-    cmd_args = [
-      [], Arg.Anons (fun list -> args := list ),
-      Ezcmd.info "Arguments to the command";
-    ] @
+    cmd_action = (fun () -> action ~switch ());
+    cmd_args =
+      [] @
       Build.switch_args switch;
     cmd_man = [];
-    cmd_doc = "Execute the project";
+    cmd_doc = "Install build dependencies only";
   }

@@ -12,16 +12,17 @@ open Ezcmd.TYPES
 
 let cmd_name = "build"
 
-let action () =
-  let _p = Build.build () in
+let action ~switch () =
+  let ( _p : Types.project ) = Build.build ~switch () in
   Printf.eprintf "Build OK\n%!"
 
 let cmd =
+  let switch = ref None in
   {
     cmd_name ;
-    cmd_action = (fun () -> action ());
+    cmd_action = (fun () -> action ~switch ());
     cmd_args = [
-    ];
+    ] @ Build.switch_args switch;
     cmd_man = [];
     cmd_doc = "Build a project";
   }

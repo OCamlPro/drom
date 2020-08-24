@@ -8,7 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
-(* open EzFile.OP *)
+open EzFile.OP
 
 let command = "drom"
 let version = "0.9.4"
@@ -25,4 +25,9 @@ let home_dir = try Sys.getenv "HOME" with Not_found ->
   exit 2
 
 let default_synopsis ~name = Printf.sprintf "The %s project" name
-let default_description ~name = Printf.sprintf "The %s OCaml project" name
+let default_description ~name =
+  Printf.sprintf "This is the description\nof the %s OCaml project\n" name
+
+let drom_dir = "_drom"
+
+let config_dir = home_dir // ".drom"

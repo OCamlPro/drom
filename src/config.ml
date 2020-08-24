@@ -16,7 +16,7 @@ let config_of_toml filename =
   Printf.eprintf "Loading config from %s\n%!" filename ;
   match EzToml.from_file filename with
   | `Error _ ->
-    error "Could not parse config file %S" filename;
+    Error.printf "Could not parse config file %S" filename;
   | `Ok table ->
     let config_author =
       EzToml.get_string_option table [ "user" ; "author" ] in
@@ -42,11 +42,10 @@ let config_template = {|
 |}
 
 let load () =
-  let config_dir = Globals.home_dir // ".drom" in
-  let filename = config_dir // "config" in
+  let filename = Globals.config_dir // "config" in
 
   if not ( Sys.file_exists filename ) then begin
-    EzFile.make_dir ~p:true config_dir ;
+    EzFile.make_dir ~p:true Globals.config_dir ;
     EzFile.write_file filename config_template;
   end ;
 

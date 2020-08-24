@@ -17,6 +17,12 @@ let main () =
       CommandRun.cmd ;
       CommandInstall.cmd ;
       CommandClean.cmd ;
+      CommandFmt.cmd ;
+      CommandDevDeps.cmd ;
+      CommandBuildDeps.cmd ;
+      CommandDoc.cmd ;
+      CommandSphinx.cmd ;
+      CommandTest.cmd ;
     ]
   in
   Printexc.record_backtrace true;

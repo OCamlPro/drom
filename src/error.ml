@@ -8,22 +8,5 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
-
-let cmd_name = "install"
-
-let action ~switch () =
-  let p = Build.build ~switch () in
-  Misc.call [| "opam" ; "exec"; "--" ; "dune" ; "install" ; "-p" ; p.name |]
-
-let cmd =
-  let switch = ref None in
-  {
-    cmd_name ;
-    cmd_action = (fun () -> action ~switch ());
-    cmd_args =
-      [] @
-      Build.switch_args switch;
-    cmd_man = [];
-    cmd_doc = "Build & install the project in the local opam switch _opam";
-  }
+let printf fmt =
+  Printf.kprintf (fun s -> raise (Types.Error s) ) fmt

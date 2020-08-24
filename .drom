@@ -1,0 +1,9 @@
+# Keep this file in your GIT repo to help drom track generated files
+ac2aab1d8f78befbbfca730668f71e8d .github/workflows/ci.ml
+4f1c43c008fcd303e67e794d85262fe2 .github/workflows/workflow.yml
+8c71dd0a20524f84d2ddb7eb472de74f LICENSE.md
+8a2ddf0ce1706457ec54652cf0f5ffac docs/sphinx/index.html
+bd59d8728576b564d779a35c4cab2b30 drom-lib.opam
+783207d6fdfa8a1fbdaf64934cfad14d drom.opam
+84910a86d0d8d7c5e8d2ad3964ad51e9 dune-project
+491aa605b17fa5d9b010cd95b0fd22d6 sphinx/install.rst

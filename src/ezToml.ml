@@ -17,7 +17,7 @@ module EZ = struct
   let find = TomlTypes.Table.find
   let add = TomlTypes.Table.add
 
-  let to_string = Toml.Printer.string_of_table
+  let to_string = EzTomlPrinter.string_of_table
   let from_file = Toml.Parser.from_filename
 
 end

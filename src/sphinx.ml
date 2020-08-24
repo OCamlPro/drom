@@ -271,9 +271,9 @@ Welcome to %s doc
    :maxdepth: 2
    :caption: Documentation
 
-   usage
-   about
-%s
+%s   about
+   install
+%s%s
 
 Indices and tables
 ==================
@@ -284,6 +284,15 @@ Indices and tables
 |}
   p.name
   p.name
+  ( match Misc.homepage p with
+    | None -> ""
+    | Some link -> Printf.sprintf "   Home <%s>\n" link )
+  (match p.kind with
+   | Program -> ""
+   | Library | Both ->
+     match Misc.doc_api p with
+     | None -> ""
+     | Some link -> Printf.sprintf "   API doc <%s>\n" link )
   (match p.github_organization with
    | None -> ""
    | Some github_organization ->
@@ -292,12 +301,12 @@ Indices and tables
 |} github_organization p.name
   )
 
-let usage_rst p =
+let install_rst _p =
   Printf.sprintf {|
-How to use %s
+How to install
 =============
 
-|} p.name
+|}
 
 let about_rst p =
   Printf.sprintf {|
