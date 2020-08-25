@@ -10,6 +10,27 @@
 
 open Types
 
+let subst p s =
+  let b = Buffer.create ( 2 * String.length s ) in
+  Buffer.add_substitute b
+    (function
+      | "name" -> p.name
+      | "synopsis" -> p.synopsis
+      | "description" -> p.description
+      | "version" -> p.version
+      | "edition" -> p.edition
+      | "min-edition" -> p.min_edition
+      | "authors-list" -> String.concat "\n* " p.authors
+      | "copyright" -> begin
+          match p.copyright with
+          | None -> "(see authors)"
+          | Some copyright -> copyright
+        end
+      | "license" -> License.license p
+      | v -> Printf.sprintf "${%s}" v
+    ) s ;
+  Buffer.contents b
+
 let conf_py p =
   let copyright =
     match p.copyright with
@@ -273,7 +294,8 @@ Welcome to %s doc
 
 %s   about
    install
-%s%s
+%s   license
+%s
 
 Indices and tables
 ==================
@@ -301,20 +323,72 @@ Indices and tables
 |} github_organization p.name
   )
 
-let install_rst _p =
-  Printf.sprintf {|
+
+let install_rst p =
+  subst p {|
 How to install
-=============
+==============
+
+Install with :code:`opam`
+-------------------------
+
+If :code:`${name}` is available in your opam repository, you can just call::
+
+  opam install ${name}
+
+Build and install with :code:`dune`
+-----------------------------------
+
+Checkout the sources of :code:`${name}` in a directory.
+
+You need a switch with at least version :code:`${min-edition}` of OCaml,
+you can for example create it with::
+
+  opam switch create ${edition}
+
+Then, you need to install all the dependencies::
+
+  opam install --deps-only .
+
+Finally, you can build the package and install it::
+
+  eval $(opam env)
+  dune build
+  dune install
+
+Note that a :code:`Makefile` is provided, it contains the following
+targets:
+
+* :code:`build`: build the code
+* :code:`install`: install the generated files
+* :code:`build-deps`: install opam dependencies
+* :code:`sphinx`: build sphinx documentation (from the :code:`sphinx/` directory)
+* :code:`dev-deps`: build development dependencies, in particular
+  :code:`ocamlformat`, :code:`odoc` and :code:`merlin`
+* :code:`doc`: build documentation with :code:`odoc`
+* :code:`fmt`: format the code using :code:`ocamlformat`
+* :code:`test`: run tests
 
 |}
 
 let about_rst p =
-  Printf.sprintf {|
+  subst p {|
 About
 =====
 
-Authors:
+${description}
 
-* %s
+Authors
+-------
+
+* ${authors-list}
 |}
-    ( String.concat "\n* " p.authors )
+
+let license_rst p =
+  subst p {|
+Copyright and License
+=====================
+
+${license}
+
+|}

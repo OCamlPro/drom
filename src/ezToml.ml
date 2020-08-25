@@ -91,8 +91,29 @@ let rec put keys v table =
 let put_string keys s table =
   put keys ( TString s ) table
 
+let put_bool keys s table =
+  put keys ( TBool s ) table
+
 let put_string_option keys so table =
   match so with
   | None -> table
   | Some s ->
     put_string keys s table
+
+type 'a encoding = {
+  to_toml : ( 'a -> string ) ;
+  of_toml : ( string -> 'a ) ;
+}
+
+let encoding ~to_toml ~of_toml = { to_toml ; of_toml }
+
+let put_encoding encoding key v table =
+  put_string key (encoding.to_toml v) table
+
+let get_encoding encoding table key =
+  encoding.of_toml ( get_string key table )
+
+let get_encoding_default encoding table key default =
+  match get_string table key with
+  | exception _ -> default
+  | s -> encoding.of_toml s

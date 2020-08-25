@@ -12,22 +12,20 @@ open Ezcmd.TYPES
 
 let cmd_name = "dev-deps"
 
-let action ~switch () =
+let action ~args () =
   let ( _p : Types.project ) =
     Build.build
       ~dev_deps:true
       ~build_deps:false
-      ~build:false ~switch () in
+      ~build:false ~args () in
   ()
 
 let cmd =
-  let switch = ref None in
+  let ( args, specs ) = Build.build_args () in
   {
     cmd_name ;
-    cmd_action = (fun () -> action ~switch ());
-    cmd_args =
-      [] @
-      Build.switch_args switch;
+    cmd_action = (fun () -> action ~args ());
+    cmd_args = [] @ specs ;
     cmd_man = [];
     cmd_doc = "Install dev dependencies (odoc, ocamlformat, merlin, etc.)";
   }

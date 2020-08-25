@@ -12,19 +12,18 @@ open Ezcmd.TYPES
 
 let cmd_name = "fmt"
 
-let action ~switch () =
+let action ~args () =
   let ( _p : Types.project ) =
-    Build.build ~dev_deps:true ~build:false  ~switch () in
-  Misc.call [| "opam" ; "exec"; "--" ; "dune" ; "build" ; "@fmt" ; "--auto-promote" |]
+    Build.build ~dev_deps:true ~build:false  ~args () in
+  Misc.call [| "opam" ; "exec"; "--" ;
+               "dune" ; "build" ; "@fmt" ; "--auto-promote" |]
 
 let cmd =
-  let switch = ref None in
+  let ( args, specs ) = Build.build_args () in
   {
     cmd_name ;
-    cmd_action = (fun () -> action ~switch ());
-    cmd_args =
-      [] @
-      Build.switch_args switch;
+    cmd_action = (fun () -> action ~args ());
+    cmd_args = [] @ specs ;
     cmd_man = [];
     cmd_doc = "Format sources with ocamlformat";
   }

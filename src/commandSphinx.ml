@@ -13,12 +13,13 @@ open Ezcmd.TYPES
 let cmd_name = "sphinx"
 
 let action () =
+  let ( args, _ ) = Build.build_args () in
   let ( _p : Types.project ) =
     Build.build
       ~setup_opam:false
       ~build_deps:false
       ~build:false
-      ~switch:( ref None) () in
+      ~args () in
   Misc.call [| "sphinx-build" ; "sphinx" ; "docs/sphinx" |]
 
 let cmd =

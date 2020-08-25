@@ -6,7 +6,7 @@
  (version 0.1.0)
 
 (package
- (name drom-lib)
+ (name drom_lib)
  (synopsis "The drom project (library)")
  (description "The drom OCaml project")
  (depends
@@ -24,5 +24,5 @@
  (name drom)
  (synopsis "The drom project")
  (description "The drom OCaml project")
- (depends (drom-lib (= 0.1.0)))
+ (depends (drom_lib (= 0.1.0)))
  )

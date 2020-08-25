@@ -26,6 +26,38 @@ let user_of_git_config () =
 let email_of_git_config () =
   Configparser.get ( Lazy.force git_config ) "user" "email"
 
+let kind_encoding =
+  EzToml.encoding
+    ~to_toml:(function
+        | Library -> "library"
+        | Program -> "program"
+        | Both -> "both"
+      )
+    ~of_toml:(function
+        | "lib" | "library" -> Library
+        | "both" -> Both
+        | "program" | "executable" | "exe" -> Program
+        | kind ->
+          Error.printf
+            {|unknown kind %S (should be "library", "program" or "both")|}
+            kind
+      )
+
+let mode_encoding =
+  EzToml.encoding
+    ~to_toml:(function
+        | Binary -> "binary"
+        | Javascript -> "javascript"
+      )
+    ~of_toml:(function
+        | "bin" | "binary" -> Binary
+        | "js" | "javascript" | "jsoo" -> Javascript
+        | mode -> Error.printf
+                    {|unknown mode %S (should be "binary" or "javascript")|}
+                    mode
+      )
+
+
 let find_author config =
   match config.config_author with
   | Some author -> author
@@ -78,11 +110,8 @@ let toml_of_project p =
     |> EzToml.put_string [ "package" ; "version" ] p.version
     |> EzToml.put_string [ "package" ; "edition" ] p.edition
     |> EzToml.put_string [ "package" ; "min-edition" ] p.min_edition
-    |> EzToml.put_string [ "package" ; "kind" ]
-      (match p.kind with
-       | Library -> "library"
-       | Program -> "program"
-       | Both -> "both" )
+    |> EzToml.put_encoding kind_encoding [ "package" ; "kind" ] p.kind
+    |> EzToml.put_encoding mode_encoding [ "package" ; "mode" ] p.mode
     |> EzToml.put_string [ "package" ; "synopsis" ] p.synopsis
     |> EzToml.put_string [ "package" ; "license" ] p.license
     |> EzToml.put [ "package"; "authors" ]
@@ -146,8 +175,13 @@ let toml_of_project p =
         EzToml.empty p.tools
       |> EzToml.to_string
   in
-  Printf.sprintf "%s\n%s\n%s\n%s\n%s\n%s"
-    package optionals package2 drom dependencies tools
+  let package3 =
+    EzToml.empty
+    |> EzToml.put_bool [ "package" ; "wrapped" ] p.wrapped
+    |> EzToml.to_string
+  in
+  Printf.sprintf "%s\n%s\n%s\n%s\n%s\n%s%s\n"
+    package optionals package2 drom dependencies tools package3
 
 let project_of_toml filename =
   Printf.eprintf "Loading %s\n%!" filename ;
@@ -176,14 +210,10 @@ let project_of_toml filename =
         Error.printf "min-edition is greater than edition in drom.toml"
       | _ -> edition, min_edition
   in
-  let kind = EzToml.get_string_default table [ "package" ; "kind" ]
-      "program" in
-  let kind = match kind with
-    | "lib" | "library" -> Library
-    | "both" -> Both
-    | "program" | "executable" -> Program
-    | _ -> Error.printf "unknown kind %S" kind
-  in
+  let mode = EzToml.get_encoding_default mode_encoding table
+      [ "package" ; "mode" ] Binary in
+  let kind = EzToml.get_encoding_default kind_encoding table
+      [ "package" ; "kind" ] Program in
   let authors =
     match EzToml.get table [ "package" ; "authors" ] with
     | TArray ( NodeString authors ) -> authors
@@ -245,8 +275,9 @@ let project_of_toml filename =
   let ignore =
     match EzToml.get_string_option table [ "drom" ; "skip" ] with
     | None -> []
-    | Some s -> EzString.split s ' '
-  in
+    | Some s -> EzString.split s ' ' in
+  let wrapped =
+    EzToml.get_bool_default table [ "package" ; "wrapped" ] true in
 
   {
     name ;
@@ -268,4 +299,6 @@ let project_of_toml filename =
     dev_repo ;
     copyright ;
     ignore ;
+    mode ;
+    wrapped ;
   }

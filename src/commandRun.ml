@@ -12,31 +12,30 @@ open Ezcmd.TYPES
 
 let cmd_name = "run"
 
-let action ~switch ~args =
-  let p = Build.build ~switch () in
-  let args = !args in
-  let args = match p.kind with
-    | Library -> args
-    | Both | Program -> p.name :: args
+let action ~args ~cmd =
+  let p = Build.build ~args () in
+  let cmd = !cmd in
+  let cmd = match p.kind with
+    | Library -> cmd
+    | Both | Program -> p.name :: cmd
   in
   Misc.call
     ( Array.of_list (
           "opam" :: "exec" :: "--" ::
           "dune"  :: "exec" :: "-p" :: p.name :: "--" ::
-          args )
+          cmd )
     )
 
 let cmd =
-  let args = ref [] in
-  let switch = ref None in
+  let cmd = ref [] in
+  let args, specs = Build.build_args () in
   {
     cmd_name ;
-    cmd_action = (fun () -> action ~switch ~args);
+    cmd_action = (fun () -> action ~args ~cmd);
     cmd_args = [
-      [], Arg.Anons (fun list -> args := list ),
+      [], Arg.Anons (fun list -> cmd := list ),
       Ezcmd.info "Arguments to the command";
-    ] @
-      Build.switch_args switch;
+    ] @ specs ;
     cmd_man = [];
     cmd_doc = "Execute the project";
   }

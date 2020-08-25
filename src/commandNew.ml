@@ -14,7 +14,7 @@ open Ezcmd.TYPES
 let cmd_name = "new"
 
 (* lookup for "drom.toml" and update it *)
-let action ~project_name ~kind ~inplace =
+let action ~project_name ?kind ?mode ~inplace =
   let config = Lazy.force Config.config in
   let project, create = match !project_name with
     | None ->
@@ -30,7 +30,8 @@ let action ~project_name ~kind ~inplace =
           version = "0.1.0" ;
           edition = Globals.current_ocaml_edition ;
           min_edition = Globals.current_ocaml_edition ;
-          kind = !kind ;
+          kind = Program ;
+          mode = Binary ;
           authors = [ Project.find_author config ] ;
           synopsis = Globals.default_synopsis ~name ;
           description = Globals.default_description ~name ;
@@ -44,6 +45,7 @@ let action ~project_name ~kind ~inplace =
           license ;
           dev_repo = None ;
           copyright = config.config_copyright ;
+          wrapped = true ;
           ignore = [];
         } in
       let create =
@@ -56,21 +58,32 @@ let action ~project_name ~kind ~inplace =
       in
       p, create
   in
-  Update.update_files ~create ~git:true project
+  Update.update_files ~create ?kind ?mode ~git:true project
 
 let cmd =
   let project_name = ref None in
-  let kind = ref Program in
+  let kind = ref None in
+  let mode = ref None in
   let inplace = ref false in
   {
     cmd_name ;
-    cmd_action = (fun () -> action ~project_name ~kind ~inplace);
+    cmd_action = (fun () ->
+        action ~project_name
+          ?mode:!mode
+          ?kind:!kind ~inplace);
     cmd_args = [
-      [ "both" ], Arg.Unit (fun () -> kind := Both ),
-      Ezcmd.info "Project contains both a library and a program" ;
 
-      [ "library" ], Arg.Unit (fun () -> kind := Library ),
+      [ "both" ], Arg.Unit (fun () -> kind := Some Both ),
+      Ezcmd.info "Project contains both a library and a program" ;
+      [ "library" ], Arg.Unit (fun () -> kind := Some Library ),
       Ezcmd.info "Project contains only a library" ;
+      [ "program" ], Arg.Unit (fun () -> kind := Some Program ),
+      Ezcmd.info "Project contains only a program" ;
+
+      [ "binary" ], Arg.Unit (fun () -> mode := Some Binary ),
+      Ezcmd.info "Compile to binary" ;
+      [ "javascript" ], Arg.Unit (fun () -> mode := Some Javascript ),
+      Ezcmd.info "Compile to javascript" ;
 
       [ "inplace" ], Arg.Set inplace,
       Ezcmd.info "Create project in the the current directory" ;

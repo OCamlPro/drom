@@ -95,36 +95,93 @@ github_organization p.name
 github_organization p.name
 
 let template_src_dune p =
-  let libraries = String.concat " " ( List.map fst p.dependencies ) in
-  match p.kind with
-  | Program ->
-    Printf.sprintf {|
+  let b = Buffer.create 1000 in
+  let dependencies = List.map fst p.dependencies in
+  let dependencies =
+    match p.mode with
+    | Binary -> dependencies
+    | Javascript ->
+      if List.mem "js_of_ocaml" dependencies then
+        dependencies
+      else
+        "js_of_ocaml" :: dependencies
+  in
+  let libraries = String.concat " " dependencies in
+
+  begin
+    match p.kind with
+    | Program ->
+      Printf.bprintf b {|
 (executable
  (name main)
  (public_name %s)
- (libraries %s)
-)
-|} p.name libraries
-
-  | Library ->
-    Printf.sprintf {|
-(library
- (name main)
- (public_name %s)
- (libraries %s)
-)
-|} p.name libraries
-
-  | Both ->
-    Printf.sprintf {|
-(library
- (name %s)
- (public_name %s-lib)
- (libraries %s)
+ (libraries %s)%s
 )
 |}
-      ( library_name p )
-      p.name libraries
+        p.name
+        libraries
+        (match p.mode with
+         | Binary -> ""
+         | Javascript ->
+           {|
+ (mode js)
+ (preprocess (pps js_of_ocaml-ppx))|}
+        )
+
+    | Library ->
+      Printf.bprintf b {|
+(library
+ (name %s)
+ (public_name %s)%s
+ (libraries %s)%s
+)
+|}
+        ( library_name p)
+        p.name
+        (if not p.wrapped then {|
+ (wrapped false)|}
+         else "")
+        libraries
+        (match p.mode with
+         | Binary -> ""
+         | Javascript ->
+           {|
+ (preprocess (pps js_of_ocaml-ppx))|}
+        )
+
+    | Both ->
+      Printf.bprintf b {|
+(library
+ (name %s)
+ (public_name %s_lib)
+ (libraries %s)%s
+)
+|}
+        ( library_name p )
+        p.name libraries
+        (match p.mode with
+         | Binary -> ""
+         | Javascript ->
+           {|
+ (preprocess (pps js_of_ocaml-ppx))|}
+        )
+  end;
+
+  begin
+    match Sys.readdir "src" with
+    | exception _ -> ()
+    | files -> Array.iter (fun file ->
+        let file = String.lowercase file in
+        if Filename.check_suffix file ".mll" then
+          Printf.bprintf b "(ocamllex %s)\n"
+            ( Filename.chop_suffix file ".mll")
+        else
+        if Filename.check_suffix file ".mly" then
+          Printf.bprintf b "(ocamlyacc %s)\n"
+            ( Filename.chop_suffix file ".mly")
+      ) files;
+  end ;
+  Buffer.contents b
 
 let template_main_dune p =
   Printf.sprintf
@@ -133,7 +190,7 @@ let template_main_dune p =
  (name main)
  (public_name %s)
  (package %s)
- (libraries %s-lib)
+ (libraries %s_lib)
 )
 |}
     p.name p.name p.name
@@ -313,7 +370,7 @@ jobs:
             skip_test: true
 |} p.min_edition)
     ( match p.kind with
-      | Both -> p.name ^ "-lib"
+      | Both -> p.name ^ "_lib"
       | Library | Program -> p.name)
     p.edition
 
@@ -366,11 +423,18 @@ let template_docs_index_html p =
 
 <p>%s</p>
 
-<ul>%s%s%s
+<ul>%s%s%s%s
 </ul>
 |}
     p.name
     p.description
+    ( match p.github_organization with
+      | None -> ""
+      | Some github_organization ->
+        let link = Printf.sprintf "https://github.com/%s/%s"
+            github_organization p.name in
+        Printf.sprintf {|
+<li><a href="%s">Project on Github</a></li>|} link)
     ( match Misc.doc_gen p with
       | None -> ""
       | Some link ->
@@ -413,7 +477,7 @@ let opam_of_project kind p =
   let file_contents = [
     var_string "opam-version" "2.0";
     var_string "name" ( match kind with
-        | LibraryPart -> p.name ^ "-lib"
+        | LibraryPart -> p.name ^ "_lib"
         | Single | ProgramPart -> p.name ) ;
     var_string "version" p.version ;
     var_string "license" ( License.name p ) ;
@@ -443,7 +507,7 @@ let opam_of_project kind p =
                         [
                           OpamParser.value_from_string
                             ( Printf.sprintf {|
-                                "%s-lib" { = version }
+                                "%s_lib" { = version }
 |} p.name ) file_name
                         ]
                        )
@@ -484,7 +548,7 @@ let opam_of_project kind p =
     s
 
 
-let update_files ?(git=false) ?(create=false) p =
+let update_files ?kind ?mode ?(git=false) ?(create=false) p =
 
   let can_skip = ref [] in
   let not_skipped s =
@@ -518,9 +582,9 @@ let update_files ?(git=false) ?(create=false) p =
   in
   let can_update ~filename content =
     let old_content = EzFile.read_file filename in
-    if content = old_content then
+    if content = old_content then begin
       false
-    else
+    end else
       let hash = Digest.string old_content in
       try
         let former_hash = StringMap.find filename !hashes in
@@ -528,7 +592,9 @@ let update_files ?(git=false) ?(create=false) p =
         if not not_modified then
           Printf.eprintf "Skipping modified file %s\n%!" filename ;
         not_modified
-      with Not_found -> false
+      with Not_found ->
+        Printf.eprintf "Skipping existing file %s\n%!" filename ;
+        false
   in
   let remove_file filename =
     if Sys.file_exists filename then
@@ -559,6 +625,7 @@ let update_files ?(git=false) ?(create=false) p =
 
   let config = Lazy.force Config.config in
 
+  let old_p = p in
   let p =
     match p.github_organization, config.config_github_organization with
     | None, Some s -> { p with github_organization = Some s }
@@ -569,7 +636,39 @@ let update_files ?(git=false) ?(create=false) p =
     | [], Some s -> { p with authors = [ s ] }
     | _ -> p
   in
-  if not ( Sys.file_exists "drom.toml" ) then
+  let p =
+    match p.copyright, config.config_copyright with
+    | None, Some s -> { p with copyright = Some s }
+    | _ -> p
+  in
+  let p = match kind with
+    | None -> p
+    | Some kind -> { p with kind }
+  in
+  let p = match mode with
+    | None -> p
+    | Some mode ->
+      let js_dep = ( "js_of_ocaml", "3.6" ) in
+      let ppx_dep = ( "js_of_ocaml-ppx", "3.6" ) in
+      let add_dep dep deps = match mode with
+        | Binary ->
+          if List.mem dep deps then
+            EzList.remove dep deps
+          else
+            deps
+        | Javascript ->
+          if not ( List.mem_assoc (fst dep) deps ) then
+            dep :: deps
+          else
+            deps
+      in
+      let dependencies = add_dep js_dep p.dependencies in
+      let tools = add_dep js_dep p.tools in
+      let tools = add_dep ppx_dep tools in
+      { p with mode ; dependencies ; tools }
+  in
+
+  if p <> old_p ||  not ( Sys.file_exists "drom.toml" ) then
     write_file "drom.toml" ( Project.toml_of_project p ) ;
   write_file ".gitignore" ( template_DOTgitignore p ) ;
   write_file "Makefile" ( template_Makefile p ) ;
@@ -656,6 +755,7 @@ git add docs/sphinx
     write_file "sphinx/conf.py" ( Sphinx.conf_py p ) ;
     write_file "sphinx/index.rst" ( Sphinx.index_rst p ) ;
     write_file "sphinx/install.rst" ( Sphinx.install_rst p ) ;
+    write_file "sphinx/license.rst" ( Sphinx.license_rst p ) ;
     write_file "sphinx/about.rst" ( Sphinx.about_rst p ) ;
     write_file "sphinx/_static/css/fixes.css" "";
   end;
@@ -679,7 +779,7 @@ git add docs/sphinx
  (synopsis %S)
  (description %S)
 |}
-      ( if p.kind = Both then p.name ^ "-lib" else p.name )
+      ( if p.kind = Both then p.name ^ "_lib" else p.name )
       ( if p.kind = Both then p.synopsis ^ " (library)" else p.synopsis )
       p.description ;
     Printf.bprintf b " (depends\n";
@@ -701,7 +801,7 @@ git add docs/sphinx
  (name %s)
  (synopsis "%s")
  (description "%s")
- (depends (%s-lib (= %s)))
+ (depends (%s_lib (= %s)))
  )
 |}
         p.name
@@ -729,7 +829,7 @@ git add docs/sphinx
   let opam_filename, kind =
     match p.kind with
     | Both ->
-      ( p.name ^ "-lib.opam", LibraryPart )
+      ( p.name ^ "_lib.opam", LibraryPart )
     | Library | Program ->
       ( p.name ^ ".opam", Single )
   in
@@ -737,7 +837,7 @@ git add docs/sphinx
   begin
     match p.kind with
     | Library | Program ->
-      remove_file ( p.name ^ "-lib.opam" )
+      remove_file ( p.name ^ "_lib.opam" )
     | Both ->
       write_file ( p.name ^ ".opam" )
         ( opam_of_project ProgramPart p )

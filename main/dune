@@ -2,5 +2,5 @@
  (name main)
  (public_name drom)
  (package drom)
- (libraries drom-lib)
+ (libraries drom_lib)
 )

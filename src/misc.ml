@@ -46,7 +46,7 @@ let homepage p =
   | None ->
     match p.github_organization with
     | Some organization ->
-      Some ( Printf.sprintf "https://%s.github.com/%s" organization p.name )
+      Some ( Printf.sprintf "https://%s.github.io/%s" organization p.name )
     | None -> None
 
 let doc_api p =
@@ -58,7 +58,7 @@ let doc_api p =
     | Library | Both ->
       match p.github_organization with
       | Some organization ->
-        Some ( Printf.sprintf "https://%s.github.com/%s/doc" organization p.name )
+        Some ( Printf.sprintf "https://%s.github.io/%s/doc" organization p.name )
       | None -> None
 
 let doc_gen p =
@@ -67,5 +67,15 @@ let doc_gen p =
   | None ->
     match p.github_organization with
     | Some organization ->
-      Some ( Printf.sprintf "https://%s.github.com/%s/sphinx" organization p.name )
+      Some ( Printf.sprintf "https://%s.github.io/%s/sphinx" organization p.name )
     | None -> None
+
+let opam ?(y=false) cmd args =
+  call
+    (Array.of_list
+       (
+         [ "opam" ] @
+         cmd @
+         ( if y then [ "-y" ] else [] )
+         @
+         args ))

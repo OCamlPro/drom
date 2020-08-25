@@ -15,6 +15,10 @@ type kind =
   | Library
   | Both
 
+type mode =
+  | Binary
+  | Javascript
+
 type project = {
   name : string ;
   version : string ;
@@ -35,6 +39,8 @@ type project = {
   dependencies : ( string * string ) list;
   tools : ( string * string ) list;
   ignore : string list ;
+  mode : mode ;
+  wrapped : bool ;
 }
 
 type config = {

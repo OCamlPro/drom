@@ -12,20 +12,18 @@ open Ezcmd.TYPES
 
 let cmd_name = "test"
 
-let action ~switch () =
+let action ~args () =
   let ( _p : Types.project ) =
-    Build.build ~dev_deps:true  ~switch () in
+    Build.build ~dev_deps:true  ~args () in
   Misc.call [| "opam" ; "exec"; "--" ; "dune" ; "build" ; "@runtest" |];
   ()
 
 let cmd =
-  let switch = ref None in
+  let args, specs = Build.build_args () in
   {
     cmd_name ;
-    cmd_action = (fun () -> action ~switch ());
-    cmd_args =
-      [] @
-      Build.switch_args switch;
+    cmd_action = (fun () -> action ~args ());
+    cmd_args = [] @ specs;
     cmd_man = [];
     cmd_doc = "Run tests";
   }
