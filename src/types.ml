@@ -19,15 +19,33 @@ type mode =
   | Binary
   | Javascript
 
-type project = {
+type dependency = {
+  depversion : string ;
+  depname : string option ; (* for dune if different *)
+}
+
+type package = {
   name : string ;
-  version : string ;
+  dir : string ;
+  mutable project : project ; (* mutable for late initialization *)
+  p_kind : kind option ;
+  p_version : string option ;
+  p_authors : string list option ;
+  p_synopsis : string option ;
+  p_description : string option ;
+  p_dependencies : ( string * dependency ) list option ;
+  p_tools : ( string * string ) list option ;
+  p_mode : mode option ;
+  p_wrapped : bool option;
+}
+
+and project = {
+  package : package ;
+
+  (* common fields *)
   edition : string ;
   min_edition : string ;
-  authors : string list ;
   kind : kind ;
-  synopsis : string ;
-  description : string ;
   github_organization : string option ;
   homepage : string option ;
   license : string ;
@@ -36,9 +54,15 @@ type project = {
   dev_repo : string option ;
   doc_gen : string option ;
   doc_api : string option ;
-  dependencies : ( string * string ) list;
+  skip : string list ;
+
+  (* default fields *)
+  version : string ;
+  authors : string list ;
+  synopsis : string ;
+  description : string ;
+  dependencies : ( string * dependency ) list;
   tools : ( string * string ) list;
-  ignore : string list ;
   mode : mode ;
   wrapped : bool ;
 }

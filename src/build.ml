@@ -50,8 +50,8 @@ let build ~args
   EzFile.make_dir ~p:true "_drom";
   let opam_filename =
     match p.kind with
-    | Both -> p.name ^ "_lib.opam"
-    | Library | Program -> p.name ^ ".opam"
+    | Both -> p.package.name ^ "_lib.opam"
+    | Library | Program -> p.package.name ^ ".opam"
   in
 
   let had_switch, switch_packages =
@@ -72,11 +72,11 @@ let build ~args
             | st ->
               match st.Unix.st_kind with
               | Unix.S_DIR ->
-                Error.printf
+                Error.raise
                   "You must remove the local switch `_opam` before using option --global"
               | Unix.S_LNK -> ()
               | _ ->
-                Error.printf "Corrupted local switch '_opam'"
+                Error.raise "Corrupted local switch '_opam'"
           end;
           Misc.opam ~y [ "switch" ; "link" ] [ switch ];
           false
@@ -140,7 +140,7 @@ let build ~args
     | v ->
       match VersionCompare.compare p.min_edition v with
       | 1 ->
-        Error.printf
+        Error.raise
           "Wrong ocaml version %S in _opam. Expecting %S. You may want to remove _opam, or change the project min-edition field."
           v p.min_edition
       | _ -> ()

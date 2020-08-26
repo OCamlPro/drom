@@ -10,6 +10,51 @@
 
 open Types
 
+let rec dummy_project = {
+  package = dummy_package ;
+  edition = "dummy_project.edition" ;
+  min_edition = "dummy_project.min_edition" ;
+  kind = Program ;
+  github_organization = None ;
+  homepage = None ;
+  license = "dummy_project.license" ;
+  copyright = None ;
+  bug_reports = None ;
+  dev_repo = None ;
+  doc_gen = None ;
+  doc_api = None ;
+  skip = [] ;
+  version = "dummy_project.version" ;
+  authors = [ "dummy_project.authors" ] ;
+  synopsis = "dummy_project.synopsis " ;
+  description = "dummy_project.description" ;
+  dependencies = [];
+  tools = [] ;
+  mode = Binary ;
+  wrapped = true
+}
+
+and dummy_package = {
+  name = "dummy_package" ;
+  dir = "dummy_package.dir" ;
+  project = dummy_project ;
+  p_kind = None ;
+  p_version = None ;
+  p_authors = None ;
+  p_synopsis = None ;
+  p_description = None ;
+  p_dependencies = None ;
+  p_tools = None ;
+  p_mode = None ;
+  p_wrapped = None ;
+}
+
+let create_package ~name ~dir = {
+  dummy_package with
+  name ;
+  dir ;
+}
+
 open EzFile.OP
 
 let git_config =
@@ -38,7 +83,7 @@ let kind_encoding =
         | "both" -> Both
         | "program" | "executable" | "exe" -> Program
         | kind ->
-          Error.printf
+          Error.raise
             {|unknown kind %S (should be "library", "program" or "both")|}
             kind
       )
@@ -52,7 +97,7 @@ let mode_encoding =
     ~of_toml:(function
         | "bin" | "binary" -> Binary
         | "js" | "javascript" | "jsoo" -> Javascript
-        | mode -> Error.printf
+        | mode -> Error.raise
                     {|unknown mode %S (should be "binary" or "javascript")|}
                     mode
       )
@@ -106,7 +151,7 @@ let find_author config =
 let toml_of_project p =
   let package =
     EzToml.empty
-    |> EzToml.put_string [ "package" ; "name" ] p.name
+    |> EzToml.put_string [ "package" ; "name" ] p.package.name
     |> EzToml.put_string [ "package" ; "version" ] p.version
     |> EzToml.put_string [ "package" ; "edition" ] p.edition
     |> EzToml.put_string [ "package" ; "min-edition" ] p.min_edition
@@ -114,6 +159,7 @@ let toml_of_project p =
     |> EzToml.put_encoding mode_encoding [ "package" ; "mode" ] p.mode
     |> EzToml.put_string [ "package" ; "synopsis" ] p.synopsis
     |> EzToml.put_string [ "package" ; "license" ] p.license
+    |> EzToml.put_string [ "package" ; "dir" ] p.package.dir
     |> EzToml.put [ "package"; "authors" ]
       ( TArray
           ( TomlTypes.NodeString p.authors ) )
@@ -141,8 +187,7 @@ let toml_of_project p =
   in
   let drom =
     EzToml.empty
-    |> EzToml.put_string [ "drom" ; "skip" ]
-      ( String.concat " " p.ignore )
+    |> EzToml.put_string [ "drom" ; "skip" ] ( String.concat " " p.skip )
     |> EzToml.to_string
   in
   let package = EzToml.to_string package in
@@ -159,8 +204,9 @@ let toml_of_project p =
     match p.dependencies with
     | [] -> "[dependencies]\n"
     | _ ->
-      List.fold_left (fun table ( name, version ) ->
-          EzToml.put_string [ "dependencies" ; name ] version
+      List.fold_left (fun table ( name, d ) ->
+          EzToml.put_string [ "dependencies" ; name ]
+            (Misc.string_of_dependency d)
             table )
         EzToml.empty p.dependencies
       |> EzToml.to_string
@@ -207,7 +253,7 @@ let project_of_toml filename =
     | Some edition, Some min_edition ->
       match VersionCompare.compare min_edition edition with
       | 1 ->
-        Error.printf "min-edition is greater than edition in drom.toml"
+        Error.raise "min-edition is greater than edition in drom.toml"
       | _ -> edition, min_edition
   in
   let mode = EzToml.get_encoding_default mode_encoding table
@@ -217,9 +263,9 @@ let project_of_toml filename =
   let authors =
     match EzToml.get table [ "package" ; "authors" ] with
     | TArray ( NodeString authors ) -> authors
-    | _ -> Error.printf "Cannot parse authors field in drom.toml"
+    | _ -> Error.raise "Cannot parse authors field in drom.toml"
     | exception Not_found ->
-      Error.printf "No field 'authors' in drom.toml"
+      Error.raise "No field 'authors' in drom.toml"
   in
   let dependencies = match EzToml.get table [ "dependencies" ] with
     | exception Not_found -> []
@@ -228,7 +274,8 @@ let project_of_toml filename =
       TomlTypes.Table.iter (fun name version ->
           let name = TomlTypes.Table.Key.to_string name in
           let version = match version with
-            | TomlTypes.TString s -> s
+            | TomlTypes.TString s ->
+              Misc.dependency_of_string ~name s
             | _ -> failwith "Bad dependency version"
           in
           dependencies := ( name, version ) :: !dependencies ) deps ;
@@ -238,15 +285,15 @@ let project_of_toml filename =
   let tools = match EzToml.get table [ "tools" ] with
     | exception Not_found -> [ "dune", Globals.current_dune_version ]
     | TTable deps ->
-      let dependencies = ref [] in
+      let tools = ref [] in
       TomlTypes.Table.iter (fun name version ->
           let name = TomlTypes.Table.Key.to_string name in
           let version = match version with
             | TomlTypes.TString s -> s
             | _ -> failwith "Bad tool version"
           in
-          dependencies := ( name, version ) :: !dependencies ) deps ;
-      !dependencies
+          tools := ( name, version ) :: !tools ) deps ;
+      !tools
     | _ -> failwith "Cannot load tools"
   in
   let synopsis =
@@ -272,33 +319,40 @@ let project_of_toml filename =
       License.LGPL2.key in
   let copyright =
     EzToml.get_string_option table [ "package" ; "copyright" ] in
-  let ignore =
+  let skip =
     match EzToml.get_string_option table [ "drom" ; "skip" ] with
     | None -> []
     | Some s -> EzString.split s ' ' in
   let wrapped =
     EzToml.get_bool_default table [ "package" ; "wrapped" ] true in
+  let dir =
+    EzToml.get_string_default table [ "package" ; "dir" ] "src" in
 
-  {
-    name ;
-    version ;
-    edition ;
-    min_edition ;
-    kind ;
-    authors ;
-    synopsis ;
-    description ;
-    dependencies ;
-    tools ;
-    github_organization ;
-    doc_gen ;
-    doc_api ;
-    homepage ;
-    license ;
-    bug_reports ;
-    dev_repo ;
-    copyright ;
-    ignore ;
-    mode ;
-    wrapped ;
-  }
+  let package = create_package ~name ~dir in
+  let project =
+    {
+      package ;
+      version ;
+      edition ;
+      kind ;
+      min_edition ;
+      authors ;
+      synopsis ;
+      description ;
+      dependencies ;
+      tools ;
+      github_organization ;
+      doc_gen ;
+      doc_api ;
+      homepage ;
+      license ;
+      bug_reports ;
+      dev_repo ;
+      copyright ;
+      skip ;
+      mode ;
+      wrapped ;
+    }
+  in
+  package.project <- project ;
+  project

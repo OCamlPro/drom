@@ -8,5 +8,20 @@
 (*                                                                        *)
 (**************************************************************************)
 
-let raise fmt =
-  Printf.kprintf (fun s -> raise (Types.Error s) ) fmt
+open Ezcmd.TYPES
+
+let cmd_name = "uninstall"
+
+let action ~args () =
+  let _p = Build.build ~args () in
+  Misc.call [| "opam" ; "exec"; "--" ; "dune" ; "uninstall"  |]
+
+let cmd =
+  let args, specs = Build.build_args () in
+  {
+    cmd_name ;
+    cmd_action = (fun () -> action ~args ());
+    cmd_args = [] @ specs ;
+    cmd_man = [];
+    cmd_doc = "Uninstall the project in the local opam switch _opam";
+  }

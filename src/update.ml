@@ -22,7 +22,7 @@ _build
 /_drom
 /_opam
 /_build
-|} p.name
+|} p.package.name
 
 let library_name p =
   let s = Bytes.of_string p.name in
@@ -52,23 +52,26 @@ let template_main_main_ml p =
 let template_src_main_ml p =
   match p.kind with
   | Both ->
-    {|
-(* If you delete or rename this file, you should add 'src/main.ml' to the 'skip' field in "drom.toml" *)
+    Printf.sprintf
+      {|
+(* If you delete or rename this file, you should add '%s/main.ml' to the 'skip' field in "drom.toml" *)
 
 let main () = Printf.printf "Hello world!\n%!"
-|}
+|} p.package.dir
   | Program ->
-    {|
-(* If you rename this file, you should add 'main.ml' to the 'skip' field in "drom.toml" *)
+    Printf.sprintf
+      {|
+(* If you rename this file, you should add '%s/main.ml' to the 'skip' field in "drom.toml" *)
 
 let () = Printf.printf "Hello world!\n%!"
 |}
+      p.package.dir
   | Library -> assert false
 
 let template_readme_md p =
   match p.github_organization with
   | None ->
-    Printf.sprintf "# %s\n" p.name
+    Printf.sprintf "# %s\n" p.package.name
   | Some github_organization ->
   Printf.sprintf {|
 [![Actions Status](https://github.com/%s/%s/workflows/Main%%20Workflow/badge.svg)](https://github.com/%s/%s/actions)
@@ -83,22 +86,26 @@ let template_readme_md p =
 * API Documentation: https://%s.github.io/%s/doc
 * Sources: https://github.com/%s/%s
 |}
-github_organization p.name
-github_organization p.name
-github_organization p.name
-github_organization p.name
-p.name
+github_organization p.package.name
+github_organization p.package.name
+github_organization p.package.name
+github_organization p.package.name
+p.package.name
 p.description
-github_organization p.name
-github_organization p.name
-github_organization p.name
-github_organization p.name
+github_organization p.package.name
+github_organization p.package.name
+github_organization p.package.name
+github_organization p.package.name
 
-let template_src_dune p =
+let template_src_dune package =
   let b = Buffer.create 1000 in
-  let dependencies = List.map fst p.dependencies in
+  let dependencies = List.map (fun (name, d) ->
+      match d.depname with
+      | None -> name
+      | Some name -> name)  (Misc.p_dependencies package) in
+  let p_mode = Misc.p_mode package in
   let dependencies =
-    match p.mode with
+    match p_mode with
     | Binary -> dependencies
     | Javascript ->
       if List.mem "js_of_ocaml" dependencies then
@@ -109,7 +116,7 @@ let template_src_dune p =
   let libraries = String.concat " " dependencies in
 
   begin
-    match p.kind with
+    match Misc.p_kind package with
     | Program ->
       Printf.bprintf b {|
 (executable
@@ -118,9 +125,9 @@ let template_src_dune p =
  (libraries %s)%s
 )
 |}
-        p.name
+        package.name
         libraries
-        (match p.mode with
+        (match p_mode with
          | Binary -> ""
          | Javascript ->
            {|
@@ -136,13 +143,13 @@ let template_src_dune p =
  (libraries %s)%s
 )
 |}
-        ( library_name p)
-        p.name
-        (if not p.wrapped then {|
+        ( library_name package)
+        package.name
+        (if not ( Misc.p_wrapped package ) then {|
  (wrapped false)|}
          else "")
         libraries
-        (match p.mode with
+        (match p_mode with
          | Binary -> ""
          | Javascript ->
            {|
@@ -157,9 +164,9 @@ let template_src_dune p =
  (libraries %s)%s
 )
 |}
-        ( library_name p )
-        p.name libraries
-        (match p.mode with
+        ( library_name package )
+        package.name libraries
+        (match p_mode with
          | Binary -> ""
          | Javascript ->
            {|
@@ -168,7 +175,7 @@ let template_src_dune p =
   end;
 
   begin
-    match Sys.readdir "src" with
+    match Sys.readdir package.dir with
     | exception _ -> ()
     | files -> Array.iter (fun file ->
         let file = String.lowercase file in
@@ -229,24 +236,27 @@ fmt-check:
 install:
 	dune install
 
+uninstall:
+	dune uninstall
+
 dev-deps:
 	opam install -y ${DEV_DEPS}
 
 test:
 	dune build @runtest
 |}
-  (match p.kind with
+  (match Misc.p_kind p.package with
    | Library -> ""
    | Program ->
      Printf.sprintf {|
-	cp -f _build/default/src/main.exe %s
-|} p.name
+	cp -f _build/default/%s/main.exe %s
+|} p.package.dir p.package.name
    | Both ->
      Printf.sprintf {|
 	cp -f _build/default/main/main.exe %s
-|} p.name
+|} p.package.name
   )
-  p.name
+  p.package.name
 
 let template_DOTgithub_workflows_ci_ml _p =
   {|
@@ -370,14 +380,14 @@ jobs:
             skip_test: true
 |} p.min_edition)
     ( match p.kind with
-      | Both -> p.name ^ "_lib"
-      | Library | Program -> p.name)
+      | Both -> p.package.name ^ "_lib"
+      | Library | Program -> p.package.name)
     p.edition
 
 let template_CHANGES_md _p =
   let tm = Misc.date () in
   Printf.sprintf {|
-  ## %04d-%02d-%02d
+## v0.1.0 ( %04d-%02d-%02d )
 
 * Initial commit
 |}
@@ -404,7 +414,7 @@ let bug_reports p =
     match p.github_organization with
     | Some organization ->
       Some ( Printf.sprintf "https://github.com/%s/%s/issues"
-               organization p.name )
+               organization p.package.name )
     | None -> None
 
 let dev_repo p =
@@ -414,7 +424,7 @@ let dev_repo p =
     match p.github_organization with
     | Some organization ->
       Some ( Printf.sprintf "git+https://github.com/%s/%s.git"
-               organization p.name )
+               organization p.package.name )
     | None -> None
 
 let template_docs_index_html p =
@@ -426,13 +436,13 @@ let template_docs_index_html p =
 <ul>%s%s%s%s
 </ul>
 |}
-    p.name
+    p.package.name
     p.description
     ( match p.github_organization with
       | None -> ""
       | Some github_organization ->
         let link = Printf.sprintf "https://github.com/%s/%s"
-            github_organization p.name in
+            github_organization p.package.name in
         Printf.sprintf {|
 <li><a href="%s">Project on Github</a></li>|} link)
     ( match Misc.doc_gen p with
@@ -456,7 +466,8 @@ type opam_kind =
   | LibraryPart
   | ProgramPart
 
-let opam_of_project kind p =
+let opam_of_project kind package =
+  let p = package.project in
   let open OpamParserTypes in
   let file_name = "opam" in
   let pos = file_name, 0,0 in
@@ -477,15 +488,15 @@ let opam_of_project kind p =
   let file_contents = [
     var_string "opam-version" "2.0";
     var_string "name" ( match kind with
-        | LibraryPart -> p.name ^ "_lib"
-        | Single | ProgramPart -> p.name ) ;
-    var_string "version" p.version ;
+        | LibraryPart -> package.name ^ "_lib"
+        | Single | ProgramPart -> package.name ) ;
+    var_string "version" ( Misc.p_version package ) ;
     var_string "license" ( License.name p ) ;
     var_string "synopsis" ( match kind with
-        | LibraryPart -> p.synopsis ^ " (library)"
-        | Single | ProgramPart -> p.synopsis );
-    var_string "description" p.description ;
-    var_list "authors" ( List.map string p.authors ) ;
+        | LibraryPart -> Misc.p_synopsis package ^ " (library)"
+        | Single | ProgramPart -> Misc.p_synopsis package );
+    var_string "description" (Misc.p_description package ) ;
+    var_list "authors" ( List.map string ( Misc.p_authors package ) ) ;
     var_list "maintainer" ( List.map string p.authors ) ;
   ] @ List.rev !optionals @
     [
@@ -508,7 +519,7 @@ let opam_of_project kind p =
                           OpamParser.value_from_string
                             ( Printf.sprintf {|
                                 "%s_lib" { = version }
-|} p.name ) file_name
+|} package.name ) file_name
                         ]
                        )
                 | Single | LibraryPart ->
@@ -519,6 +530,21 @@ let opam_of_project kind p =
                           )
                           file_name
                         ::
+                        List.map (fun (name, d) ->
+                              OpamParser.value_from_string (
+                                match semantic_version d.depversion with
+                                | Some (major, minor, fix) ->
+                                  Printf.sprintf
+                                    {| "%s" { >= "%d.%d.%d" & < "%d.0.0" }|}
+                                    name major minor fix (major+1)
+                                | None ->
+                                  Printf.sprintf
+                                    {| "%s" {= "%s" } |} name d.depversion
+                              )
+                                file_name
+                          )
+                          ( Misc.p_dependencies package )
+                        @
                         List.map (fun (name, version) ->
                             OpamParser.value_from_string (
                               match semantic_version version with
@@ -532,8 +558,8 @@ let opam_of_project kind p =
                             )
                               file_name
                           )
-                          ( p.dependencies @ p.tools )
-                       ))
+                          ( Misc.p_tools package ) )
+               )
     ]
   in
   let f =
@@ -544,7 +570,9 @@ let opam_of_project kind p =
   in
   let s = OpamPrinter.opamfile f in
   Printf.sprintf
-    "# This file was generated by `drom` from `drom.toml`. Do not modify.\n%s"
+    {|# This file was generated by `drom` from `drom.toml`.
+Do not modify or add to the `skip` field of `drom.toml`.
+%s|}
     s
 
 
@@ -553,7 +581,7 @@ let update_files ?kind ?mode ?(git=false) ?(create=false) p =
   let can_skip = ref [] in
   let not_skipped s =
     can_skip := s :: !can_skip;
-    not ( List.mem s p.ignore ) in
+    not ( List.mem s p.skip ) in
   let save_hashes = ref false in
   let hashes =
     if Sys.file_exists ".drom" then
@@ -648,8 +676,9 @@ let update_files ?kind ?mode ?(git=false) ?(create=false) p =
   let p = match mode with
     | None -> p
     | Some mode ->
-      let js_dep = ( "js_of_ocaml", "3.6" ) in
-      let ppx_dep = ( "js_of_ocaml-ppx", "3.6" ) in
+      let js_dep = ( "js_of_ocaml", { depversion = "3.6" ; depname = None } ) in
+      let js_tool = ( "js_of_ocaml", "3.6") in
+      let ppx_tool = ( "js_of_ocaml-ppx", "3.6" ) in
       let add_dep dep deps = match mode with
         | Binary ->
           if List.mem dep deps then
@@ -663,8 +692,8 @@ let update_files ?kind ?mode ?(git=false) ?(create=false) p =
             deps
       in
       let dependencies = add_dep js_dep p.dependencies in
-      let tools = add_dep js_dep p.tools in
-      let tools = add_dep ppx_dep tools in
+      let tools = add_dep js_tool p.tools in
+      let tools = add_dep ppx_tool tools in
       { p with mode ; dependencies ; tools }
   in
 
@@ -674,23 +703,23 @@ let update_files ?kind ?mode ?(git=false) ?(create=false) p =
   write_file "Makefile" ( template_Makefile p ) ;
   (*   write_file "dune-workspace" ""; *)
   write_file "README.md" ( template_readme_md p ) ;
-  write_file "src/dune" ( template_src_dune p ) ;
-  if p.kind = Both then begin
-    write_file "main/dune" ( template_main_dune p ) ;
-    write_file "main/main.ml" ( template_main_main_ml p ) ;
+  write_file ( p.package.dir // "dune" ) ( template_src_dune p.package ) ;
+  if Misc.p_kind p.package = Both then begin
+    write_file "main/dune" ( template_main_dune p.package ) ;
+    write_file "main/main.ml" ( template_main_main_ml p.package ) ;
   end else begin
     remove_file "main/dune" ;
     remove_file "main/main.ml" ;
   end ;
   begin
-    match p.kind with
+    match Misc.p_kind p.package with
     | Library -> ()
     | Program | Both ->
-      write_file "src/main.ml" ( template_src_main_ml p ) ;
+      write_file ( p.package.dir // "main.ml" ) ( template_src_main_ml p ) ;
   end ;
 
+  write_file "CHANGES.md" ( template_CHANGES_md p ) ;
   if create then begin
-    write_file "CHANGES.md" ( template_CHANGES_md p ) ;
     if git && not ( Sys.file_exists ".git" ) then begin
       Misc.call [| "git"; "init" |];
       match config.config_github_organization with
@@ -700,7 +729,7 @@ let update_files ?kind ?mode ?(git=false) ?(create=false) p =
                      Printf.sprintf
                        "git@github.com:%s/%s"
                        organization
-                       p.name |];
+                       p.package.name |];
         Misc.call [| "git"; "add" ; "README.md" |];
         Misc.call [| "git"; "commit" ; "-m" ; "Initial commit" |];
     end
@@ -728,7 +757,7 @@ and then:
 git add docs/doc
 </pre>
 </p>
-|} p.name ) ;
+|} p.package.name ) ;
 
     if not ( Sys.file_exists "docs/sphinx/index.html" ) then
       write_file "docs/sphinx/index.html"
@@ -747,7 +776,7 @@ and then:
 git add docs/sphinx
 </pre>
 </p>
-|} p.name ) ;
+|} p.package.name ) ;
   end;
 
   if not_skipped "sphinx" then begin
@@ -768,9 +797,9 @@ git add docs/sphinx
 (name %s)
 (allow_approximate_merlin)
 (generate_opam_files false)
- (version %s)
+(version %s)
 |}
-      p.name
+      p.package.name
       p.version ;
 
     Printf.bprintf b {|
@@ -779,11 +808,21 @@ git add docs/sphinx
  (synopsis %S)
  (description %S)
 |}
-      ( if p.kind = Both then p.name ^ "_lib" else p.name )
-      ( if p.kind = Both then p.synopsis ^ " (library)" else p.synopsis )
+      ( if p.kind = Both then p.package.name ^ "_lib" else p.package.name )
+      ( if p.kind = Both then
+          ( Misc.p_synopsis p.package ) ^ " (library)" else
+          Misc.p_synopsis p.package )
       p.description ;
     Printf.bprintf b " (depends\n";
     Printf.bprintf b "   (ocaml (>= %s))\n" p.min_edition ;
+    List.iter (fun (name, d) ->
+        match semantic_version d.depversion with
+        | Some (major, minor, fix) ->
+          Printf.bprintf b "   (%s (and (>= %d.%d.%d) (< %d.0.0)))\n"
+            name major minor fix (major+1)
+        | None ->
+          Printf.bprintf b "   (%s (= %s))\n" name d.depversion
+      ) ( Misc.p_dependencies p.package ) ;
     List.iter (fun (name, version) ->
         match semantic_version version with
         | Some (major, minor, fix) ->
@@ -791,7 +830,7 @@ git add docs/sphinx
             name major minor fix (major+1)
         | None ->
           Printf.bprintf b "   (%s (= %s))\n" name version
-      ) ( p.dependencies @ p.tools );
+      ) ( Misc.p_tools p.package ) ;
     Printf.bprintf b " )\n";
     Printf.bprintf b ")\n";
 
@@ -804,10 +843,11 @@ git add docs/sphinx
  (depends (%s_lib (= %s)))
  )
 |}
-        p.name
-        p.synopsis
-        p.description
-        p.name p.version
+        p.package.name
+        ( Misc.p_synopsis p.package )
+        ( Misc.p_description p.package )
+        p.package.name
+        ( Misc.p_version p.package )
     end ;
 
     Buffer.contents b
@@ -829,18 +869,18 @@ git add docs/sphinx
   let opam_filename, kind =
     match p.kind with
     | Both ->
-      ( p.name ^ "_lib.opam", LibraryPart )
+      ( p.package.name ^ "_lib.opam", LibraryPart )
     | Library | Program ->
-      ( p.name ^ ".opam", Single )
+      ( p.package.name ^ ".opam", Single )
   in
-  write_file opam_filename ( opam_of_project kind p ) ;
+  write_file opam_filename ( opam_of_project kind p.package ) ;
   begin
     match p.kind with
     | Library | Program ->
-      remove_file ( p.name ^ "_lib.opam" )
+      remove_file ( p.package.name ^ "_lib.opam" )
     | Both ->
-      write_file ( p.name ^ ".opam" )
-        ( opam_of_project ProgramPart p )
+      write_file ( p.package.name ^ ".opam" )
+        ( opam_of_project ProgramPart p.package )
   end;
 
   EzFile.make_dir ~p:true Globals.drom_dir ;

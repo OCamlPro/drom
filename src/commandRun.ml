@@ -17,12 +17,12 @@ let action ~args ~cmd =
   let cmd = !cmd in
   let cmd = match p.kind with
     | Library -> cmd
-    | Both | Program -> p.name :: cmd
+    | Both | Program -> p.package.name :: cmd
   in
   Misc.call
     ( Array.of_list (
           "opam" :: "exec" :: "--" ::
-          "dune"  :: "exec" :: "-p" :: p.name :: "--" ::
+          "dune"  :: "exec" :: "-p" :: p.package.name :: "--" ::
           cmd )
     )
 

@@ -24,9 +24,10 @@ let action ~project_name ?kind ?mode ~inplace =
         | None -> License.LGPL2.key
         | Some license -> license
       in
+      let package = Project.create_package ~name ~dir:"src" in
       let p =
         {
-          name ;
+          package ;
           version = "0.1.0" ;
           edition = Globals.current_ocaml_edition ;
           min_edition = Globals.current_ocaml_edition ;
@@ -46,8 +47,9 @@ let action ~project_name ?kind ?mode ~inplace =
           dev_repo = None ;
           copyright = config.config_copyright ;
           wrapped = true ;
-          ignore = [];
+          skip = [];
         } in
+      package.project <- p ;
       let create =
         if !inplace then true else
           let create = not ( Sys.file_exists name ) in

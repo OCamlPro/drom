@@ -16,6 +16,7 @@ let main () =
       CommandBuild.cmd ;
       CommandRun.cmd ;
       CommandInstall.cmd ;
+      CommandUninstall.cmd ;
       CommandClean.cmd ;
       CommandFmt.cmd ;
       CommandDevDeps.cmd ;

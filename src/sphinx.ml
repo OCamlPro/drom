@@ -14,7 +14,7 @@ let subst p s =
   let b = Buffer.create ( 2 * String.length s ) in
   Buffer.add_substitute b
     (function
-      | "name" -> p.name
+      | "name" -> p.package.name
       | "synopsis" -> p.synopsis
       | "description" -> p.description
       | "version" -> p.version
@@ -264,17 +264,17 @@ def setup(app):
     app.add_stylesheet('css/fixes.css')
 
 |}
-    p.name
-    p.name
+    p.package.name
+    p.package.name
     copyright
     (String.concat " & " p.authors)
-    p.name
-    p.name
-    p.name
-    p.name
-    p.name
-    p.name
-    p.name
+    p.package.name
+    p.package.name
+    p.package.name
+    p.package.name
+    p.package.name
+    p.package.name
+    p.package.name
 
 
 let index_rst p =
@@ -304,8 +304,8 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 |}
-  p.name
-  p.name
+  p.package.name
+  p.package.name
   ( match Misc.homepage p with
     | None -> ""
     | Some link -> Printf.sprintf "   Home <%s>\n" link )
@@ -320,7 +320,7 @@ Indices and tables
    | Some github_organization ->
      Printf.sprintf {|
    Devel and Issues on Github <https://github.com/%s/%s>
-|} github_organization p.name
+|} github_organization p.package.name
   )
 
 
