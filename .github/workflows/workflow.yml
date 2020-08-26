@@ -19,6 +19,11 @@ jobs:
         skip_test:
           - false
 
+        include:
+          - ocaml-version: 4.03.0
+            os: ubuntu-latest
+            skip_test: true
+
     env:
       SKIP_TEST: ${{ matrix.skip_test }}
       OCAML_VERSION: ${{ matrix.ocaml-version }}

@@ -14,7 +14,7 @@ open Ezcmd.TYPES
 let cmd_name = "new"
 
 (* lookup for "drom.toml" and update it *)
-let action ~project_name ?kind ?mode ~inplace =
+let action ~project_name ~kind ~mode ~upgrade ~inplace =
   let config = Lazy.force Config.config in
   let project, create = match !project_name with
     | None ->
@@ -48,6 +48,7 @@ let action ~project_name ?kind ?mode ~inplace =
           copyright = config.config_copyright ;
           wrapped = true ;
           skip = [];
+          archive = None ;
         } in
       package.project <- p ;
       let create =
@@ -60,19 +61,23 @@ let action ~project_name ?kind ?mode ~inplace =
       in
       p, create
   in
-  Update.update_files ~create ?kind ?mode ~git:true project
+  Update.update_files ~create ?kind ?mode
+    ~upgrade:upgrade ~git:true project
 
 let cmd =
   let project_name = ref None in
   let kind = ref None in
   let mode = ref None in
   let inplace = ref false in
+  let upgrade = ref false in
   {
     cmd_name ;
     cmd_action = (fun () ->
         action ~project_name
-          ?mode:!mode
-          ?kind:!kind ~inplace);
+          ~mode:!mode
+          ~kind:!kind
+          ~upgrade:!upgrade
+          ~inplace);
     cmd_args = [
 
       [ "both" ], Arg.Unit (fun () -> kind := Some Both ),
@@ -89,6 +94,8 @@ let cmd =
 
       [ "inplace" ], Arg.Set inplace,
       Ezcmd.info "Create project in the the current directory" ;
+      [ "upgrade" ], Arg.Set upgrade,
+      Ezcmd.info "Upgrade drom.toml file" ;
 
       [], Arg.Anon (0, fun name -> project_name := Some name),
       Ezcmd.info "Name of the project" ;

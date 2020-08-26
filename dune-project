@@ -3,14 +3,14 @@
 (name drom)
 (allow_approximate_merlin)
 (generate_opam_files false)
- (version 0.1.0)
+(version 0.1.0)
 
 (package
  (name drom_lib)
  (synopsis "The drom project (library)")
  (description "The drom OCaml project")
  (depends
-   (ocaml (>= 4.10.0))
+   (ocaml (>= 4.03.0))
    (toml (and (>= 5.0.0) (< 6.0.0)))
    (opam-file-format (and (>= 2.0.0) (< 3.0.0)))
    (ez-file (and (>= 0.1.0) (< 1.0.0)))

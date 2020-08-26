@@ -28,6 +28,7 @@ type package = {
   name : string ;
   dir : string ;
   mutable project : project ; (* mutable for late initialization *)
+  p_pack : string option ;
   p_kind : kind option ;
   p_version : string option ;
   p_authors : string list option ;
@@ -55,6 +56,7 @@ and project = {
   doc_gen : string option ;
   doc_api : string option ;
   skip : string list ;
+  archive : string option ;
 
   (* default fields *)
   version : string ;
@@ -72,4 +74,5 @@ type config = {
   config_github_organization : string option ;
   config_license : string option ;
   config_copyright : string option ;
+  config_opam_repo : string option ;
 }

@@ -1,27 +1,40 @@
-[package]
+[project]
 authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
 copyright = "OCamlPro SAS & Origin Labs SAS"
-description = "The drom OCaml project"
+dir = "src"
 edition = "4.10.0"
 github-organization = "ocamlpro"
 kind = "both"
+license = "LGPL2"
+min-edition = "4.03.0"
+mode = "binary"
 name = "drom"
 synopsis = "The drom project"
 version = "0.1.0"
 
 # keys that you could also define:
-# license = "...license..."
+# archive = "...archive..."
 # dev-repo = "...dev-repo..."
 # bug-reports = "...bug-reports..."
-# documentation = "...documentation..."
+# doc-api = "...doc-api..."
+# doc-gen = "...doc-gen..."
 # homepage = "...homepage..."
 
+[project]
+description = "The drom OCaml project"
+
+[drom]
+skip = "src/main.ml main/main.ml"
+
 [dependencies]
-opam-file-format = "2.0.0"
 ez-cmdliner = "0.1.0"
-ez-file = "0.1.0"
 ez-config = "0.1.0"
+ez-file = "0.1.0"
+opam-file-format = "2.0.0"
 toml = "5.0.0"
 
 [tools]
 dune = "2.6.0"
+[project]
+wrapped = true
+

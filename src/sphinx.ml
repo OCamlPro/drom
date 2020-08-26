@@ -10,7 +10,7 @@
 
 open Types
 
-let subst p s =
+let subst ?(more=(fun v -> Printf.sprintf "${%s}" v)) p s =
   let b = Buffer.create ( 2 * String.length s ) in
   Buffer.add_substitute b
     (function
@@ -27,7 +27,7 @@ let subst p s =
           | Some copyright -> copyright
         end
       | "license" -> License.license p
-      | v -> Printf.sprintf "${%s}" v
+      | v -> more v
     ) s ;
   Buffer.contents b
 
@@ -392,3 +392,90 @@ Copyright and License
 ${license}
 
 |}
+
+let docs_style_css _p =
+
+  {|
+.content { width: 80%; margin-left: 100px; margin-top: 100px;
+  font-family: sans-serif;
+ }
+.header { }
+.section { }
+.trailer { }
+|}
+
+
+(* TODO: we should HTML-escape all strings *)
+let docs_index_html p =
+  subst p {|
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <title>${name}</title>
+    <link rel="stylesheet" href="style.css?v=${random}"/>
+  </head>
+  <body>
+<div class="content">
+  <div class="header">
+    <h1>${name}</h1>
+    <p>${description}</p>
+  </div>
+
+
+
+  <div class="section">
+    <ul>
+      ${li-github}
+      ${li-doc-gen}
+      ${li-doc-api}
+      ${li-bug-reports}
+    </ul>
+    <p>Authors:</p>
+    <ul>${li-authors}</ul>
+  </div>
+  <div class="trailer">
+  <hr/>
+  <p>Copyright (c) ${copyright}</p>
+  </div>
+</div>
+  </body>
+</html>
+|}
+    ~more:(function
+        | "random" ->
+          Random.int 1_000_000_000
+          |> string_of_int
+          |> Digest.string
+          |> Digest.to_hex
+        | "li-authors" -> String.concat "\n"
+                            ( List.map (fun s ->
+                                  Printf.sprintf "  <li><p>%s</p></li>" s)
+                                  p.authors )
+        | "li-github" ->
+          ( match p.github_organization with
+            | None -> ""
+            | Some github_organization ->
+              let link = Printf.sprintf "https://github.com/%s/%s"
+                  github_organization p.package.name in
+              Printf.sprintf {|
+<li><a href="%s">Project on Github</a></li>|} link)
+        | "li-doc-gen" ->
+          ( match Misc.doc_gen p with
+            | None -> ""
+            | Some link ->
+              Printf.sprintf {|
+<li><a href="%s">General Documentation</a></li>|} link)
+        | "li-doc-api" ->
+          ( match Misc.doc_api p with
+            | None -> ""
+            | Some link ->
+              Printf.sprintf {|
+<li><a href="%s">API Documentation</a></li>|} link)
+        | "li-bug-reports" ->
+          ( match Misc.bug_reports p with
+            | None -> ""
+            | Some link ->
+              Printf.sprintf {|
+<li><a href="%s">Bug reports</a></li>|} link)
+        | v -> Printf.sprintf "${%s}" v
+      )

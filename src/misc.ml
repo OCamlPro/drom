@@ -143,3 +143,34 @@ let p_authors package =
   match package.p_authors with
   | Some deps -> deps
   | None -> package.project.authors
+
+let wget ~url ~output =
+  let dirname = Filename.dirname output in
+  if not ( Sys.file_exists dirname ) then
+    EzFile.make_dir ~p:true dirname;
+  call [| "curl" ;
+          "--write-out" ; "%{http_code}\\n" ;
+          "--retry" ; "3" ;
+          "--retry-delay" ; "2" ;
+          "--user-agent" ; "opam-bin/2.0.5" ;
+          "-L" ;
+          "-o" ; output ;
+          url
+       |]
+
+
+let bug_reports p =
+  match p.bug_reports with
+  | Some s -> Some s
+  | None ->
+    match p.github_organization with
+    | Some organization ->
+      Some ( Printf.sprintf "https://github.com/%s/%s/issues"
+               organization p.package.name )
+    | None -> None
+
+
+let subst s f =
+  let b = Buffer.create ( 2 * String.length s ) in
+  Buffer.add_substitute b f s;
+  Buffer.contents b

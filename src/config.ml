@@ -26,11 +26,14 @@ let config_of_toml filename =
       EzToml.get_string_option table [ "user" ; "license" ] in
     let config_copyright =
       EzToml.get_string_option table [ "user" ; "copyright" ] in
+    let config_opam_repo =
+      EzToml.get_string_option table [ "user" ; "opam-repo" ] in
     {
       config_author ;
       config_github_organization ;
       config_license ;
       config_copyright ;
+      config_opam_repo ;
     }
 
 let config_template = {|
@@ -39,6 +42,7 @@ let config_template = {|
 # github-organization = "...organization..."
 # license = "...license..."
 # copyright = "Company Ltd"
+# opam-repo = "https://"
 |}
 
 let load () =
@@ -68,6 +72,11 @@ let load () =
 
   let config = match Sys.getenv "DROM_COPYRIGHT" with
     | s -> { config with config_copyright = Some s }
+    | exception Not_found -> config
+  in
+
+  let config = match Sys.getenv "DROM_OPAM_REPO" with
+    | s -> { config with config_opam_repo = Some s }
     | exception Not_found -> config
   in
 

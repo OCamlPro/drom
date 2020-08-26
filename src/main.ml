@@ -24,6 +24,7 @@ let main () =
       CommandDoc.cmd ;
       CommandSphinx.cmd ;
       CommandTest.cmd ;
+      CommandPublish.cmd ;
     ]
   in
   Printexc.record_backtrace true;
