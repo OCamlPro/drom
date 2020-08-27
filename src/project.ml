@@ -239,8 +239,7 @@ let project_of_toml filename =
     match EzToml.from_file filename with
     | `Ok table -> table
     | `Error _ ->
-      Printf.eprintf "Warning: could not parse %S\n%!" filename;
-      raise Not_found
+      Error.raise "Could not parse %S" filename
   in
   let project_key =
     match EzToml.get table [ "package" ] with

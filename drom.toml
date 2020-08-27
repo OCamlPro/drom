@@ -9,7 +9,7 @@ license = "LGPL2"
 min-edition = "4.03.0"
 mode = "binary"
 name = "drom"
-synopsis = "The drom project"
+synopsis = "drom is a wrapper over opam/dune in an attempt to provide a cargo-like user experience."
 version = "0.1.0"
 
 # keys that you could also define:
@@ -21,15 +21,20 @@ version = "0.1.0"
 # homepage = "...homepage..."
 
 [project]
-description = "The drom OCaml project"
+description = """
+drom is a wrapper over opam/dune in an attempt to provide a cargo-like
+user experience. It can be used to create full OCaml projects with
+sphinx and odoc documentation. It has specific knowledge of Github and
+will generate files for Github Actions CI and Github pages.
+"""
 
 [drom]
 skip = "src/main.ml main/main.ml"
 
 [dependencies]
-ez-cmdliner = "0.1.0"
-ez-config = "0.1.0"
-ez-file = "0.1.0"
+ez_cmdliner = "0.1.0"
+ez_config = "0.1.0"
+ez_file = "0.1.0"
 opam-file-format = "2.0.0"
 toml = "5.0.0"
 

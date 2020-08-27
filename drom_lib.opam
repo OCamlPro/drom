@@ -4,8 +4,14 @@ opam-version: "2.0"
 name: "drom_lib"
 version: "0.1.0"
 license: "LGPL-2.1-with-OCaml-exception"
-synopsis: "The drom project (library)"
-description: "The drom OCaml project"
+synopsis:
+  "drom is a wrapper over opam/dune in an attempt to provide a cargo-like user experience. (library)"
+description: """
+drom is a wrapper over opam/dune in an attempt to provide a cargo-like
+user experience. It can be used to create full OCaml projects with
+sphinx and odoc documentation. It has specific knowledge of Github and
+will generate files for Github Actions CI and Github pages.
+"""
 authors: ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
 maintainer: ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
 homepage: "https://ocamlpro.github.io/drom"
@@ -30,8 +36,8 @@ depends: [
   "ocaml" {>= "4.03.0"}
   "toml" {>= "5.0.0" & < "6.0.0"}
   "opam-file-format" {>= "2.0.0" & < "3.0.0"}
-  "ez-file" {>= "0.1.0" & < "1.0.0"}
-  "ez-config" {>= "0.1.0" & < "1.0.0"}
-  "ez-cmdliner" {>= "0.1.0" & < "1.0.0"}
+  "ez_file" {>= "0.1.0" & < "1.0.0"}
+  "ez_config" {>= "0.1.0" & < "1.0.0"}
+  "ez_cmdliner" {>= "0.1.0" & < "1.0.0"}
   "dune" {>= "2.6.0" & < "3.0.0"}
 ]

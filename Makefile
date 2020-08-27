@@ -31,6 +31,9 @@ fmt-check:
 install:
 	dune install
 
+opam:
+	opam pin -k path .
+
 uninstall:
 	dune uninstall
 

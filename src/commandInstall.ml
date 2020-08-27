@@ -14,7 +14,21 @@ let cmd_name = "install"
 
 let action ~args () =
   let _p = Build.build ~args () in
-  Misc.call [| "opam" ; "exec"; "--" ; "dune" ; "install"  |]
+  Misc.opam [ "pin" ] [ "-y" ; "-k" ; "path" ; "."  ];
+  let packages =
+    let packages = ref [] in
+    let files = match Sys.readdir "." with
+      | exception _ -> [||]
+      | files -> files
+    in
+    Array.iter (fun file ->
+        if Filename.check_suffix file ".opam" then
+          let package = Filename.chop_suffix file ".opam" in
+          packages := package :: !packages
+      ) files ;
+    !packages
+  in
+  Misc.opam [ "unpin" ] ( "-n" :: packages )
 
 let cmd =
   let args, specs = Build.build_args () in

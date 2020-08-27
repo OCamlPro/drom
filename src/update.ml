@@ -57,14 +57,14 @@ let template_main_main_ml p =
 |} ( library_module p )
 
 let template_src_main_ml p =
-  match p.kind with
+  match Misc.p_kind p with
   | Both ->
     Printf.sprintf
       {|
 (* If you delete or rename this file, you should add '%s/main.ml' to the 'skip' field in "drom.toml" *)
 
 let main () = Printf.printf "Hello world!\n%!"
-|} p.package.dir
+|} p.dir
   | Program ->
     Printf.sprintf
       {|
@@ -72,7 +72,7 @@ let main () = Printf.printf "Hello world!\n%!"
 
 let () = Printf.printf "Hello world!\n%!"
 |}
-      p.package.dir
+      p.dir
   | Library -> assert false
 
 let template_readme_md p =
@@ -241,6 +241,9 @@ fmt-check:
 
 install:
 	dune install
+
+opam:
+	opam pin -k path .
 
 uninstall:
 	dune uninstall
@@ -686,7 +689,8 @@ let update_files ?kind ?mode ?(upgrade=false) ?(git=false) ?(create=false) p =
     match Misc.p_kind p.package with
     | Library -> ()
     | Program | Both ->
-      write_file ( p.package.dir // "main.ml" ) ( template_src_main_ml p ) ;
+      write_file ( p.package.dir // "main.ml" ) ( template_src_main_ml
+                                                    p.package ) ;
   end ;
 
   write_file "CHANGES.md" ( template_CHANGES_md p ) ;
