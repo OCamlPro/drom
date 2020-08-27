@@ -114,10 +114,10 @@ let p_kind package =
   | Some deps -> deps
   | None -> package.project.kind
 
-let p_wrapped package =
-  match package.p_wrapped with
+let p_pack_modules package =
+  match package.p_pack_modules with
   | Some deps -> deps
-  | None -> package.project.wrapped
+  | None -> package.project.pack_modules
 
 let p_version package =
   match package.p_version with
@@ -174,3 +174,41 @@ let subst s f =
   let b = Buffer.create ( 2 * String.length s ) in
   Buffer.add_substitute b f s;
   Buffer.contents b
+
+let list_opam_packages dir =
+  let packages = ref [] in
+  let files = match Sys.readdir dir with
+    | exception _ -> [||]
+    | files -> files
+  in
+  Array.iter (fun file ->
+      if Filename.check_suffix file ".opam" then
+        let package = Filename.chop_suffix file ".opam" in
+        packages := package :: !packages
+    ) files ;
+  !packages
+
+let semantic_version version =
+  match EzString.split version '.' with
+    [ major ; minor ; fix ] ->
+    begin try
+        Some ( int_of_string major, int_of_string minor, int_of_string fix )
+      with
+        Not_found -> None
+    end
+  | _ -> None
+
+
+let library_name p =
+  match p.p_pack with
+  | Some name ->
+    String.uncapitalize_ascii name
+  | None ->
+    let s = Bytes.of_string p.name in
+    for i = 1 to String.length p.name - 2 do
+      let c = p.name.[i] in
+      match c with
+      | 'a'..'z' | '0'..'9' -> ()
+      | _ -> Bytes.set s i '_'
+    done;
+    Bytes.to_string s

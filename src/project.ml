@@ -31,7 +31,7 @@ let rec dummy_project = {
   dependencies = [];
   tools = [] ;
   mode = Binary ;
-  wrapped = true ;
+  pack_modules = true ;
   archive = None ;
 }
 
@@ -48,7 +48,7 @@ and dummy_package = {
   p_dependencies = None ;
   p_tools = None ;
   p_mode = None ;
-  p_wrapped = None ;
+  p_pack_modules = None ;
 }
 
 let create_package ~name ~dir = {
@@ -226,7 +226,7 @@ let toml_of_project p =
   in
   let package3 =
     EzToml.empty
-    |> EzToml.put_bool [ "project" ; "wrapped" ] p.wrapped
+    |> EzToml.put_bool [ "project" ; "pack-modules" ] p.pack_modules
     |> EzToml.put_string_option [ "project" ; "pack" ] p.package.p_pack
     |> EzToml.to_string
   in
@@ -337,8 +337,13 @@ let project_of_toml filename =
     match EzToml.get_string_option table [ "drom" ; "skip" ] with
     | None -> []
     | Some s -> EzString.split s ' ' in
-  let wrapped =
-    EzToml.get_bool_default table [ project_key ; "wrapped" ] true in
+  let pack_modules =
+    match EzToml.get_bool_option table [ project_key ; "pack-modules" ] with
+    | Some v -> v
+    | None ->
+      match EzToml.get_bool_option table [ project_key ; "wrapped" ] with
+      | Some v -> v
+      | None -> true in
   let dir =
     EzToml.get_string_default table [ project_key ; "dir" ] "src" in
 
@@ -368,7 +373,7 @@ let project_of_toml filename =
       copyright ;
       skip ;
       mode ;
-      wrapped ;
+      pack_modules ;
       archive ;
     }
   in

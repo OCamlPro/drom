@@ -30,4 +30,4 @@ let default_description ~name =
 
 let drom_dir = "_drom"
 
-let config_dir = home_dir // ".drom"
+let config_dir = home_dir // ".config" // "drom"

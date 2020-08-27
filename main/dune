@@ -3,5 +3,4 @@
  (name main)
  (public_name drom)
  (package drom)
- (libraries drom_lib)
-)
+ (libraries drom_lib))

@@ -14,21 +14,20 @@ let cmd_name = "install"
 
 let action ~args () =
   let _p = Build.build ~args () in
-  Misc.opam [ "pin" ] [ "-y" ; "-k" ; "path" ; "."  ];
-  let packages =
-    let packages = ref [] in
-    let files = match Sys.readdir "." with
-      | exception _ -> [||]
-      | files -> files
-    in
-    Array.iter (fun file ->
-        if Filename.check_suffix file ".opam" then
-          let package = Filename.chop_suffix file ".opam" in
-          packages := package :: !packages
-      ) files ;
-    !packages
-  in
-  Misc.opam [ "unpin" ] ( "-n" :: packages )
+  let packages = Misc.list_opam_packages "." in
+  (* (1) uninstall formerly install packages *)
+  List.iter (fun package ->
+      match Misc.opam [ "uninstall" ] [ "-y" ; package ] with
+      | exception Types.Error _ -> ()
+      | () -> ()
+    ) packages ;
+  (* (2) pin packages of this directory as they are *)
+  Misc.opam [ "pin" ] [ "-y" ; "--no-action"; "-k" ; "path" ; "."  ];
+  (* (3) install packages *)
+  Misc.opam [ "install" ] ( "-y" :: packages ) ;
+  (* (4) unpin packages to clean the state *)
+  Misc.opam [ "unpin" ] ( "-n" :: packages ) ;
+  ()
 
 let cmd =
   let args, specs = Build.build_args () in

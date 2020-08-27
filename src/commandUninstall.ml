@@ -14,7 +14,8 @@ let cmd_name = "uninstall"
 
 let action ~args () =
   let _p = Build.build ~args () in
-  Misc.call [| "opam" ; "exec"; "--" ; "dune" ; "uninstall"  |]
+  let packages = Misc.list_opam_packages "." in
+  Misc.opam [ "remove" ] packages
 
 let cmd =
   let args, specs = Build.build_args () in

@@ -42,16 +42,33 @@ let config_template = {|
 # github-organization = "...organization..."
 # license = "...license..."
 # copyright = "Company Ltd"
-# opam-repo = "https://"
+# opam-repo = "/home/user/GIT/opam-repository"
 |}
 
 let load () =
-  let filename = Globals.config_dir // "config" in
 
-  if not ( Sys.file_exists filename ) then begin
-    EzFile.make_dir ~p:true Globals.config_dir ;
-    EzFile.write_file filename config_template;
-  end ;
+  let filename = Globals.config_dir // "config" in
+  let alternate_filename = Globals.home_dir // ".drom" // "config" in
+
+  let filename_ok = Sys.file_exists filename in
+  let alternate_filename_ok = Sys.file_exists alternate_filename in
+
+  let filename =
+    if filename_ok then
+      if alternate_filename_ok then
+        Error.raise "Duplicate configuration in\n- %s\n- %s"
+          filename alternate_filename
+      else
+        filename
+     else
+      if alternate_filename_ok then
+        alternate_filename
+      else begin
+        EzFile.make_dir ~p:true Globals.config_dir ;
+        EzFile.write_file filename config_template;
+        filename
+      end
+  in
 
   let config = config_of_toml filename in
 

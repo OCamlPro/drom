@@ -4,7 +4,7 @@
 
 # drom
 
-drom is a wrapper over opam/dune in an attempt to provide a cargo-like
+The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like
 user experience. It can be used to create full OCaml projects with
 sphinx and odoc documentation. It has specific knowledge of Github and
 will generate files for Github Actions CI and Github pages.

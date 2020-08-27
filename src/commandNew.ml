@@ -46,7 +46,7 @@ let action ~project_name ~kind ~mode ~upgrade ~inplace =
           license ;
           dev_repo = None ;
           copyright = config.config_copyright ;
-          wrapped = true ;
+          pack_modules = true ;
           skip = [];
           archive = None ;
         } in
@@ -54,8 +54,10 @@ let action ~project_name ~kind ~mode ~upgrade ~inplace =
       let create =
         if !inplace then true else
           let create = not ( Sys.file_exists name ) in
-          if create then
+          if create then begin
+            Printf.eprintf "Creating directory %s\n%!" name ;
             EzFile.make_dir ~p:true name ;
+          end ;
           Unix.chdir name ;
           create
       in

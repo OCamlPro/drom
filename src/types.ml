@@ -37,7 +37,7 @@ type package = {
   p_dependencies : ( string * dependency ) list option ;
   p_tools : ( string * string ) list option ;
   p_mode : mode option ;
-  p_wrapped : bool option;
+  p_pack_modules : bool option;
 }
 
 and project = {
@@ -66,7 +66,7 @@ and project = {
   dependencies : ( string * dependency ) list;
   tools : ( string * string ) list;
   mode : mode ;
-  wrapped : bool ;
+  pack_modules : bool ;
 }
 
 type config = {
@@ -76,3 +76,8 @@ type config = {
   config_copyright : string option ;
   config_opam_repo : string option ;
 }
+
+type opam_kind =
+  | Single
+  | LibraryPart
+  | ProgramPart

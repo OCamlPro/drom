@@ -65,7 +65,18 @@ let get_string_option table keys =
 let get_bool table keys =
   match get table keys with
   | TBool s -> s
-  | _ ->   raise Not_found
+  | _ -> raise Not_found
+
+let expecting_type expect keys =
+  Error.raise
+    "Error parsing file: key %s should have type %s"
+    ( String.concat "." keys ) expect
+
+let get_bool_option table keys =
+  match get table keys with
+  | TBool s -> Some s
+  | _ -> expecting_type "bool" keys
+  | exception _ -> None
 
 let get_bool_default table keys default =
   match get_bool table keys with

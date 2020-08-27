@@ -7,8 +7,8 @@
 
 (package
  (name drom_lib)
- (synopsis "drom is a wrapper over opam/dune in an attempt to provide a cargo-like user experience. (library)")
- (description "drom is a wrapper over opam/dune in an attempt to provide a cargo-like\nuser experience. It can be used to create full OCaml projects with\nsphinx and odoc documentation. It has specific knowledge of Github and\nwill generate files for Github Actions CI and Github pages.\n")
+ (synopsis "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience (library)")
+ (description "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like\nuser experience. It can be used to create full OCaml projects with\nsphinx and odoc documentation. It has specific knowledge of Github and\nwill generate files for Github Actions CI and Github pages.\n")
  (depends
    (ocaml (>= 4.03.0))
    (toml (and (>= 5.0.0) (< 6.0.0)))
@@ -17,16 +17,14 @@
    (ez_config (and (>= 0.1.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.1.0) (< 1.0.0)))
    (dune (and (>= 2.6.0) (< 3.0.0)))
- )
-)
+ ))
 
 (package
  (name drom)
- (synopsis "drom is a wrapper over opam/dune in an attempt to provide a cargo-like user experience.")
- (description "drom is a wrapper over opam/dune in an attempt to provide a cargo-like
+ (synopsis "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience")
+ (description "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like
 user experience. It can be used to create full OCaml projects with
 sphinx and odoc documentation. It has specific knowledge of Github and
 will generate files for Github Actions CI and Github pages.
 ")
- (depends (drom_lib (= 0.1.0)))
- )
+ (depends (drom_lib (= version))))
