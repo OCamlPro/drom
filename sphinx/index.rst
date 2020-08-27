@@ -5,7 +5,7 @@
    contain the root `toctree` directive.
 
 Welcome to drom doc
-=================
+===================
 
 .. toctree::
    :maxdepth: 2
@@ -13,6 +13,12 @@ Welcome to drom doc
 
    Home <https://ocamlpro.github.io/drom>
    about
+   quickstart
+   reference
+   commands
+   config
+   github
+   licenses
    install
    API doc <https://ocamlpro.github.io/drom/doc>
    license
