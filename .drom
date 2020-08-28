@@ -13,7 +13,7 @@ a95f1ab7d178b468eff6188a527535d9 docs/style.css
 bd59d8728576b564d779a35c4cab2b30 drom-lib.opam
 b6c3329ec6c6b69335ad01d34025b17e drom.opam
 48d9b9e5f2e6ae91df90e5d8b5481650 drom.toml
-0dc5dad89f1cfdbf574d58de343d0403 drom_lib.opam
+b6dc5580e300659146436f3450907cf8 drom_lib.opam
 4c201215630cd217e7cf6d34fded5fdd dune-project
 eacbbf6b5847584b586a02f6c3ef7ef8 main/dune
 d41d8cd98f00b204e9800998ecf8427e sphinx/_static/css/fixes.css

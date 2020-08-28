@@ -14,7 +14,7 @@ let cmd_name = "build"
 
 let action ~args () =
   let ( _p : Types.project ) = Build.build ~args () in
-  Printf.eprintf "Build OK\n%!"
+  Printf.eprintf "\nBuild OK\n%!"
 
 let cmd =
   let ( args, specs ) =  Build.build_args () in

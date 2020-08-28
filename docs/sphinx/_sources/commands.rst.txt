@@ -32,7 +32,8 @@ Sub-commands and Arguments
        publish
            Generate a set of packages from all found drom.toml files
 
-       run Execute the project
+       run
+           Execute the project
 
        sphinx
            Generate general documentation using sphinx

@@ -44,7 +44,7 @@ let template_src_dune package =
          | Binary -> ""
          | Javascript ->
            {|
- (mode js)
+ (modes js byte)
  (preprocess (pps js_of_ocaml-ppx))|}
         )
 

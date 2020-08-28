@@ -17,17 +17,29 @@ let action ~args () =
   let packages = Misc.list_opam_packages "." in
   (* (1) uninstall formerly install packages *)
   List.iter (fun package ->
-      match Misc.opam [ "uninstall" ] [ "-y" ; package ] with
+      match Opam.run [ "uninstall" ] [ "-y" ; package ] with
       | exception Types.Error _ -> ()
       | () -> ()
     ) packages ;
   (* (2) pin packages of this directory as they are *)
-  Misc.opam [ "pin" ] [ "-y" ; "--no-action"; "-k" ; "path" ; "."  ];
+  Opam.run [ "pin" ] [ "-y" ; "--no-action"; "-k" ; "path" ; "."  ];
   (* (3) install packages *)
-  Misc.opam [ "install" ] ( "-y" :: packages ) ;
+  let exn = match
+      Opam.run [ "install" ] ( "-y" :: packages )
+    with
+    | () -> None
+    | exception exn -> Some exn
+  in
   (* (4) unpin packages to clean the state *)
-  Misc.opam [ "unpin" ] ( "-n" :: packages ) ;
-  ()
+  List.iter (fun package ->
+      match Opam.run [ "unpin" ] [ "-n" ; package ] with
+      | exception Types.Error _ -> ()
+      | () -> ()
+    ) packages ;
+  match exn with
+  | None ->
+    Printf.eprintf "\nInstallation OK\n%!"
+  | Some exn -> raise exn
 
 let cmd =
   let args, specs = Build.build_args () in

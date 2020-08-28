@@ -9,6 +9,7 @@
 (**************************************************************************)
 
 open Types
+open EzFile.OP
 
 let dev_repo p =
   match p.dev_repo with
@@ -87,6 +88,12 @@ let opam_of_project kind package =
                           )
                           file_name
                         ::
+                        OpamParser.value_from_string
+                          ( Printf.sprintf {| "dune" { >= "%s" } |}
+                              Globals.current_dune_version
+                          )
+                          file_name
+                        ::
                         List.map (fun (name, d) ->
                               OpamParser.value_from_string (
                                 match Misc.semantic_version d.depversion with
@@ -131,3 +138,39 @@ let opam_of_project kind package =
 # Do not modify or add to the `skip` field of `drom.toml`.
 %s|}
     s
+
+
+let () =
+  Unix.putenv "OPAMCLI" "2.0"
+
+let exec ?(y=false) cmd args =
+  Misc.call
+    (Array.of_list
+       (
+         [ "opam" ] @
+         cmd @
+         ( if y then [ "-y" ] else [] )
+         @
+         args ))
+
+
+let init ?y ?switch () =
+  let opam_dir = Globals.home_dir // ".opam" in
+  if not ( Sys.file_exists opam_dir ) then
+    let args =
+      match switch with
+      | None ->  [ "--bare" ]
+      | Some switch -> [ "--comp" ; switch ]
+    in
+    exec ?y [ "init" ] args
+  else
+    match switch with
+    | None -> ()
+    | Some switch ->
+      if Filename.is_relative switch then
+        if not ( Sys.file_exists ( opam_dir // switch ) ) then
+          exec ?y [ "switch" ; "create" ] [ switch ]
+
+let run ?y ?switch cmd args =
+  init ?y ?switch ();
+  exec ?y cmd args

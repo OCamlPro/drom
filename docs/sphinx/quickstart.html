@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Quickstart &mdash; drom master
- (6b623dd
-) (2020/08/28 00:54) documentation</title>
+ (209f01d
+) (2020/08/28 18:40) documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
               <div class="version">
                 master
- (6b623dd
+ (209f01d
 )
               </div>
             
@@ -97,7 +97,12 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#general-purpose">General Purpose</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-a-project-with-drom">Creating a Project with <code class="code docutils literal notranslate"><span class="pre">drom</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#building-a-project-with-drom">Building a Project with <code class="code docutils literal notranslate"><span class="pre">drom</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-a-project-with-drom">Building a Project with <code class="code docutils literal notranslate"><span class="pre">drom</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-locally">Building locally</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-with-a-global-opam-switch">Building with a global <code class="code docutils literal notranslate"><span class="pre">opam</span></code> switch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-the-project">Installing the Project</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Project Description</a></li>
@@ -258,7 +263,7 @@ license, description, dependencies, etc.</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">cd</span> <span class="n">hello_world</span>
 <span class="o">$</span> <span class="n">emacs</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
 <span class="o">$</span> <span class="n">drom</span> <span class="k">new</span>
-<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">lefessan</span><span class="o">/.</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
+<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
 <span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
 <span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
 <span class="nc">Updating</span> <span class="n">file</span> <span class="n">src</span><span class="o">/</span><span class="n">dune</span>
@@ -292,7 +297,180 @@ build it and run it with no error!</p>
 </div>
 <div class="section" id="building-a-project-with-drom">
 <h2>Building a Project with <code class="code docutils literal notranslate"><span class="pre">drom</span></code><a class="headerlink" href="#building-a-project-with-drom" title="Permalink to this headline">¶</a></h2>
-<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> can be used to build a</p>
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> can be used to build a project. In this case, it will use
+<code class="code docutils literal notranslate"><span class="pre">opam</span></code> to manage the environment (dependencies) and <code class="code docutils literal notranslate"><span class="pre">dune</span></code>
+to build the project. You don’t need to know these tools for basic
+usage of <code class="code docutils literal notranslate"><span class="pre">drom</span></code>.</p>
+<p>Because <code class="code docutils literal notranslate"><span class="pre">drom</span></code> makes extensive use of local <code class="code docutils literal notranslate"><span class="pre">opam</span></code>
+switches, it is a good idea to use it from <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> to benefit
+from binary caching of packages, to speedup creation of local
+switches.</p>
+<div class="section" id="building-locally">
+<h3>Building locally<a class="headerlink" href="#building-locally" title="Permalink to this headline">¶</a></h3>
+<p>By default, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will try to build the project in its directory:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ cd hello_world
+$ drom build -y
+Loading drom.toml
+Loading .drom
+Loading config from /home/user/.config/drom/config
+Calling opam switch create -y . --empty
+Calling opam install -y ocaml.4.10.0
+The following actions will be performed:
+  ∗ install base-bigarray       base
+  ∗ install base-threads        base
+  ∗ install base-unix           base
+  ∗ install ocaml-base-compiler 4.10.0                     [required by ocaml]
+  ∗ install ocaml-config        1                          [required by ocaml]
+  ∗ install ocaml               4.10.0
+===== ∗ 6 =====
+
+&lt;&gt;&lt;&gt; Gathering sources &gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+[ocaml-base-compiler.4.10.0] found in cache
+
+&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+∗ installed base-bigarray.base
+∗ installed base-threads.base
+∗ installed base-unix.base
+∗ installed ocaml-base-compiler.4.10.0
+∗ installed ocaml-config.1
+∗ installed ocaml.4.10.0
+Done.
+# Run eval $(opam env) to update the current shell environment
+Calling opam switch set-base ocaml
+Calling opam install -y --deps-only ./_drom/new.opam
+The following actions will be performed:
+∗ install dune 2.7.0
+
+&lt;&gt;&lt;&gt; Gathering sources &gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+[dune.2.7.0] found in cache
+
+&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+∗ installed dune.2.7.0
+Done.
+# Run eval $(opam env) to update the current shell environment
+Calling opam exec -- dune build
+Done: 40/46 (jobs: 1)
+Build OK
+</pre></div>
+</div>
+<p>During this build, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> performed the following operations:</p>
+<ul class="simple">
+<li>It loads the project definition file <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code></li>
+<li>It creates a local <code class="code docutils literal notranslate"><span class="pre">opam</span></code> switch (directory <code class="code docutils literal notranslate"><span class="pre">_opam</span></code>)
+where it installs the version of OCaml specified in the
+<code class="code docutils literal notranslate"><span class="pre">edition</span></code> field of the project definition</li>
+<li>It installs all the dependencies of the package. In our simple example,
+it is only the <code class="code docutils literal notranslate"><span class="pre">dune</span></code> build tool.</li>
+<li>Once the environment is ok, it builds the project using <code class="code docutils literal notranslate"><span class="pre">dune</span></code>.</li>
+</ul>
+<p>Since building the environment can take some time, it is important to
+know that it is only done the first time. It will also be upgraded
+only if the dependencies are changed.</p>
+<p>We can now run the program:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">run</span>
+<span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
+<span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
+<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
+<span class="nc">In</span> <span class="n">opam</span> <span class="n">switch</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/_</span><span class="n">opam</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">build</span>
+<span class="nc">Done</span><span class="o">:</span> <span class="mi">0</span><span class="o">/</span><span class="mi">0</span> <span class="o">(</span><span class="n">jobs</span><span class="o">:</span> <span class="mi">0</span><span class="o">)</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">exec</span> <span class="o">-</span><span class="n">p</span> <span class="n">hello_world</span> <span class="o">--</span> <span class="n">hello_world</span>
+<span class="nc">Hello</span> <span class="n">world</span><span class="o">!</span>
+</pre></div>
+</div>
+<p>It’s a bit verbose, but the last line <code class="code docutils literal notranslate"><span class="pre">Hello</span> <span class="pre">world!</span></code> was printed
+by our project!</p>
+</div>
+<div class="section" id="building-with-a-global-opam-switch">
+<h3>Building with a global <code class="code docutils literal notranslate"><span class="pre">opam</span></code> switch<a class="headerlink" href="#building-with-a-global-opam-switch" title="Permalink to this headline">¶</a></h3>
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> can use global switches also. For example, if you want to
+install the project in that switch:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">build</span> <span class="o">--</span><span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
+<span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
+<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
+<span class="nc">Error</span><span class="o">:</span> <span class="nc">You</span> <span class="n">must</span> <span class="n">remove</span> <span class="n">the</span> <span class="n">local</span> <span class="n">switch</span> <span class="o">`_</span><span class="n">opam</span><span class="o">`</span> <span class="n">before</span> <span class="n">using</span> <span class="n">option</span> <span class="o">--</span><span class="n">global</span>
+</pre></div>
+</div>
+<p>Since we previously built the project locally, we have a local
+<code class="code docutils literal notranslate"><span class="pre">_opam</span></code> switch. <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will not remove this switch
+automatically, because it is often long to rebuild. So, you will have
+to do it yourself (or backup it if you are not using
+<code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code>):</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">_</span><span class="n">opam</span>
+<span class="o">$</span> <span class="n">drom</span> <span class="n">build</span> <span class="o">--</span><span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
+<span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
+<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">switch</span> <span class="n">link</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">Directory</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span> <span class="n">set</span> <span class="k">to</span> <span class="n">use</span> <span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span>
+<span class="nc">Just</span> <span class="n">remove</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/_</span><span class="n">opam</span> <span class="k">to</span> <span class="n">unlink</span><span class="o">.</span>
+<span class="nc">In</span> <span class="n">opam</span> <span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">install</span> <span class="o">--</span><span class="n">deps</span><span class="o">-</span><span class="n">only</span> <span class="o">./_</span><span class="n">drom</span><span class="o">/</span><span class="k">new</span><span class="o">.</span><span class="n">opam</span>
+<span class="nc">Nothing</span> <span class="k">to</span> <span class="k">do</span><span class="o">.</span>
+<span class="o">#</span> <span class="nc">Run</span> <span class="n">eval</span> <span class="o">$(</span><span class="n">opam</span> <span class="n">env</span><span class="o">)</span> <span class="k">to</span> <span class="n">update</span> <span class="n">the</span> <span class="n">current</span> <span class="n">shell</span> <span class="n">environment</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">build</span>
+<span class="nc">Build</span> <span class="nc">OK</span>
+</pre></div>
+</div>
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> performed exactly the same steps as for a local build.
+In our case, the <code class="code docutils literal notranslate"><span class="pre">opam</span></code> switch <code class="code docutils literal notranslate"><span class="pre">4.10.0</span></code> already existed on
+our computer, and the dependencies were already installed, so it only
+built the project.</p>
+<p>However, if the switch specified by <code class="code docutils literal notranslate"><span class="pre">--switch</span></code> does not exist
+globally, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will call <code class="code docutils literal notranslate"><span class="pre">opam</span></code> to create it.</p>
+</div>
+<div class="section" id="installing-the-project">
+<h3>Installing the Project<a class="headerlink" href="#installing-the-project" title="Permalink to this headline">¶</a></h3>
+<p>Now that we have tested that our project correctly builds in a local
+switch and in a global switch, we can ask <code class="code docutils literal notranslate"><span class="pre">drom</span></code> to install it
+in the switch:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom install
+Loading drom.toml
+Loading .drom
+Loading config from /home/user/.config/drom/config
+Directory /tmp/hello_world set to use switch 4.07.0.
+Just remove /tmp/hello_world/_opam to unlink.
+In opam switch 4.07.0
+Calling opam install --deps-only ./_drom/new.opam
+Nothing to do.
+Calling opam exec -- dune build
+Calling opam uninstall -y hello_world
+The following actions will be performed:
+  ⊘ remove hello_world 0.1.0
+
+&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+  ⊘ removed   hello_world.0.1.0
+Done.
+Calling opam pin -y --no-action -k path .
+Package hello_world does not exist, create as a NEW package? [Y/n] y
+[hello_world.~dev] synchronised from file:///tmp/hello_world
+hello_world is now pinned to file:///tmp/hello_world (version 0.1.0)
+Calling opam install -y hello_world
+
+&lt;&gt;&lt;&gt; Synchronising pinned packages &gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+[hello_world.0.1.0] no changes from file:///tmp/hello_world
+
+The following actions will be performed:
+  ∗ install hello_world 0.1.0*
+
+&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+∗ installed hello_world.0.1.0
+Done.
+Calling opam unpin -n hello_world
+Ok, hello_world is no longer pinned to file:///tmp/hello_world (version 0.1.0)
+Installation OK
+</pre></div>
+</div>
+<p>As we can see in this example, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> performed the following steps:</p>
+<ul class="simple">
+<li>Building the project, as in the previous sections</li>
+<li>Removing all the packages of the project that may already be installed</li>
+<li>Pinning all the packages for <code class="code docutils literal notranslate"><span class="pre">opam</span></code></li>
+<li>Installing the pinned packages (rebuilding them in <code class="code docutils literal notranslate"><span class="pre">opam</span></code>)</li>
+<li>Unpinning all the packages</li>
+</ul>
+</div>
 </div>
 </div>
 

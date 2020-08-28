@@ -81,3 +81,7 @@ type opam_kind =
   | Single
   | LibraryPart
   | ProgramPart
+
+type switch_arg =
+  | Local
+  | Global of string

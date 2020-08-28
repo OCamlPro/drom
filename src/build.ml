@@ -13,26 +13,26 @@ open Ezcmd.TYPES
 open EzFile.OP
 open EzCompat
 
-type switch_arg =
-  | Local
-  | Global of string
-
 let build_args () =
   let switch = ref None in
   let y = ref false in
+  let edition = ref None in
   let specs =
   [
-    [ "global" ], Arg.String (fun s -> switch := Some (Global s) ),
+    [ "switch" ], Arg.String (fun s -> switch := Some (Global s) ),
     Ezcmd.info "Use global switch SWITCH instead of creating a local switch" ;
 
     [ "local" ], Arg.Unit (fun () -> switch := Some Local),
     Ezcmd.info "Create a local switch instead of using a global switch" ;
 
+    [ "edition" ], Arg.String (fun s -> edition := Some s ),
+    Ezcmd.info "Use this OCaml edition" ;
+
     [ "y"; "yes" ], Arg.Set y,
     Ezcmd.info "Reply yes to all questions";
   ]
   in
-  let args = ( switch, !y ) in
+  let args = ( switch, y, edition ) in
   ( args, specs )
 
 let build ~args
@@ -42,8 +42,34 @@ let build ~args
     ?( build_deps = true )
     ?( build = true )
     () =
-  let ( switch, y ) = args in
+
   let p = Project.project_of_toml "drom.toml" in
+
+  let ( switch, y, edition ) =
+    if true then args else fst ( build_args () )
+  in
+  let switch = !switch in
+  let y = !y in
+  let edition = !edition in
+  begin
+    match edition with
+    | None -> ()
+    | Some edition ->
+      match VersionCompare.compare p.min_edition edition with
+      | 1 ->
+        Error.raise "Option --edition %s should specify a version compatible with the project, whose min-edition is currently %s" edition p.min_edition
+      | _ -> ()
+  end;
+  begin
+    match switch with
+    | None | Some Local -> ()
+    | Some ( Global switch ) ->
+      match VersionCompare.compare p.min_edition switch with
+      | 1 ->
+        Error.raise "Option --switch %s should specify a version compatible with the project, whose min-edition is currently %s" switch p.min_edition
+      | _ -> ()
+  end;
+
   let create = false in
   Update.update_files ~create p ;
 
@@ -58,7 +84,7 @@ let build ~args
     if setup_opam then
 
       let had_switch =
-        match !switch with
+        match switch with
         | None -> Sys.file_exists "_opam"
         | Some Local ->
           ( try
@@ -73,12 +99,12 @@ let build ~args
               match st.Unix.st_kind with
               | Unix.S_DIR ->
                 Error.raise
-                  "You must remove the local switch `_opam` before using option --global"
+                  "You must remove the local switch `_opam` before using option --switch"
               | Unix.S_LNK -> ()
               | _ ->
                 Error.raise "Corrupted local switch '_opam'"
           end;
-          Misc.opam ~y [ "switch" ; "link" ] [ switch ];
+          Opam.run ~y ~switch [ "switch" ; "link" ] [ switch ];
           false
       in
 
@@ -91,7 +117,7 @@ let build ~args
       begin
         match Unix.lstat "_opam" with
         | exception _ ->
-          Misc.opam ~y [ "switch" ; "create" ] [ "." ; "--empty" ] ;
+          Opam.run ~y [ "switch" ; "create" ] [ "." ; "--empty" ] ;
         | st ->
           let current_switch =
             match st.Unix.st_kind with
@@ -135,15 +161,25 @@ let build ~args
   if setup_opam then begin
     match StringMap.find "ocaml" switch_packages with
     | exception Not_found ->
-      let ocaml_nv = "ocaml." ^ p.edition in
-      Misc.opam ~y [ "install" ] [ ocaml_nv ]
+      let ocaml_nv =
+        "ocaml." ^ ( match edition with
+            | None -> p.edition
+            | Some edition -> edition ) in
+      Opam.run ~y [ "install" ] [ ocaml_nv ] ;
+      Opam.run [ "switch" ; "set-base" ] [ "ocaml" ] ;
     | v ->
-      match VersionCompare.compare p.min_edition v with
-      | 1 ->
-        Error.raise
-          "Wrong ocaml version %S in _opam. Expecting %S. You may want to remove _opam, or change the project min-edition field."
-          v p.min_edition
-      | _ -> ()
+      match edition with
+      | Some edition ->
+        if edition = v then begin
+          Error.raise "Switch edition %s is not compatible with option --edition %s. You should remove the switch first." v edition
+        end;
+      | None ->
+        match VersionCompare.compare p.min_edition v with
+        | 1 ->
+          Error.raise
+            "Wrong ocaml version %S in _opam. Expecting %S. You may want to remove _opam, or change the project min-edition field."
+            v p.min_edition
+        | _ -> ()
   end ;
 
   if dev_deps then
@@ -163,7 +199,7 @@ let build ~args
       match !to_install with
       | [] -> ()
       | packages ->
-        Misc.opam ~y [ "install" ] packages;
+        Opam.run ~y [ "install" ] packages;
     end;
 
   let drom_opam_filename = "_drom/opam" in
@@ -183,7 +219,7 @@ let build ~args
     let tmp_opam_filename = "_drom/new.opam" in
     EzFile.write_file tmp_opam_filename new_opam_file ;
 
-    Misc.opam ~y [ "install" ]
+    Opam.run ~y [ "install" ]
       [ "--deps-only"; "." // tmp_opam_filename ];
 
     begin try Sys.remove drom_opam_filename with _ -> () end ;
@@ -192,6 +228,6 @@ let build ~args
   end ;
 
   if build then begin
-    Misc.opam [ "exec" ]  [ "--" ; "dune" ; "build" ] ;
+    Opam.run [ "exec" ]  [ "--" ; "dune" ; "build" ] ;
   end;
   p

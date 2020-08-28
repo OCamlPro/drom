@@ -76,16 +76,6 @@ let doc_gen p =
                organization p.package.name )
     | None -> None
 
-let opam ?(y=false) cmd args =
-  call
-    (Array.of_list
-       (
-         [ "opam" ] @
-         cmd @
-         ( if y then [ "-y" ] else [] )
-         @
-         args ))
-
 let string_of_dependency d =
   match d.depname with
   | None -> d.depversion
