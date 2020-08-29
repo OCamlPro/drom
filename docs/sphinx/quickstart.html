@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Quickstart &mdash; drom master
- (0ea537e
-) (2020/08/29 09:55) documentation</title>
+ (0db6c12
+) (2020/08/29 10:20) documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
               <div class="version">
                 master
- (0ea537e
+ (0db6c12
 )
               </div>
             
@@ -97,7 +97,7 @@
 <li class="toctree-l1"><a class="reference external" href="https://ocamlpro.github.io/drom">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#general-purpose">General Purpose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-a-project">Creating a Project</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#building-a-project">Building a Project</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#building-locally">Building locally</a></li>
@@ -184,8 +184,8 @@
             
   <div class="section" id="quickstart">
 <h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="general-purpose">
-<h2>General Purpose<a class="headerlink" href="#general-purpose" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> has two purposes:</p>
 <ul class="simple">
 <li>It’s a tool to easily create OCaml projects: <code class="code docutils literal notranslate"><span class="pre">drom</span> <span class="pre">new</span>
@@ -570,7 +570,7 @@ of your project. They are usually tools like <code class="code docutils literal 
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom dev-deps
 Loading drom.toml
 Loading .drom
-Loading config from /home/lefessan/.config/drom/config
+Loading config from /home/user/.config/drom/config
 In opam switch 4.10.0
 Calling opam install odoc ocamlformat
 The following actions will be performed:
@@ -594,7 +594,7 @@ detected as missing, so they are installed.</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">doc</span>
 <span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
 <span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
-<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">lefessan</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
+<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
 <span class="nc">In</span> <span class="n">opam</span> <span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
 <span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">build</span>
 <span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">build</span> <span class="o">@</span><span class="n">doc</span>
@@ -617,7 +617,7 @@ detected as missing, so they are installed.</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">sphinx</span>
 <span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
 <span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
-<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">lefessan</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
+<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
 <span class="nc">Creating</span> <span class="n">file</span> <span class="n">docs</span><span class="o">/</span><span class="n">sphinx</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>
 <span class="nc">Calling</span> <span class="n">sphinx</span><span class="o">-</span><span class="n">build</span> <span class="n">sphinx</span> <span class="n">docs</span><span class="o">/</span><span class="n">sphinx</span>
 <span class="nc">Running</span> <span class="nc">Sphinx</span> <span class="n">v1</span><span class="o">.</span><span class="mi">8</span><span class="o">.</span><span class="mi">5</span>

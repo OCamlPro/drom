@@ -25,6 +25,11 @@ let action ~project_name ~kind ~mode ~upgrade ~inplace =
         | Some license -> license
       in
       let package = Project.create_package ~name ~dir:"src" in
+      let author = Project.find_author config in
+      let copyright = match config.config_copyright with
+        | Some copyright -> Some copyright
+        | None -> Some author
+      in
       let p =
         {
           package ;
@@ -33,7 +38,7 @@ let action ~project_name ~kind ~mode ~upgrade ~inplace =
           min_edition = Globals.current_ocaml_edition ;
           kind = Program ;
           mode = Binary ;
-          authors = [ Project.find_author config ] ;
+          authors = [ author ] ;
           synopsis = Globals.default_synopsis ~name ;
           description = Globals.default_description ~name ;
           dependencies = [];
@@ -45,7 +50,7 @@ let action ~project_name ~kind ~mode ~upgrade ~inplace =
           bug_reports = None ;
           license ;
           dev_repo = None ;
-          copyright = config.config_copyright ;
+          copyright ;
           pack_modules = true ;
           skip = [];
           archive = None ;

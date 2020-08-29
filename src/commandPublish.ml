@@ -93,7 +93,13 @@ url {
                  ( package_dir // "opam" )
                  ( Printf.sprintf "%s\n%s" content url ) ;
                created := package_dir :: !created
-           ) files
+           ) files;
+         if !created = [] then
+           Error.raise "No opam file found.";
+         List.iter (fun package_dir ->
+             Printf.eprintf "File %s/opam created\n%!" package_dir
+           ) !created;
+         Printf.eprintf "You should:\n * upgrade to master\n * create a new branch\n * git add these files\n * push to Github and create a pull-request\n%!"
        with exn ->
          List.iter (fun dir ->
              ignore ( Printf.kprintf Sys.command "rm -rf %s" dir )

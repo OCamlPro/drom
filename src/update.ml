@@ -282,19 +282,25 @@ let update_files ?kind ?mode ?(upgrade=false) ?(git=false) ?(create=false) p =
 
   let changed = false in
   let p, changed =
-    match p.github_organization, config.config_github_organization with
-    | None, Some s -> { p with github_organization = Some s }, true
-    | _ -> p, changed
-  in
-  let p, changed =
-    match p.authors, config.config_author with
-    | [], Some s -> { p with authors = [ s ] }, true
-    | _ -> p, changed
-  in
-  let p, changed =
-    match p.copyright, config.config_copyright with
-    | None, Some s -> { p with copyright = Some s }, true
-    | _ -> p, changed
+    if upgrade then
+      let p, changed =
+        match p.github_organization, config.config_github_organization with
+        | None, Some s -> { p with github_organization = Some s }, true
+        | _ -> p, changed
+      in
+      let p, changed =
+        match p.authors, config.config_author with
+        | [], Some s -> { p with authors = [ s ] }, true
+        | _ -> p, changed
+      in
+      let p, changed =
+        match p.copyright, config.config_copyright with
+        | None, Some s -> { p with copyright = Some s }, true
+        | _ -> p, changed
+      in
+      ( p, changed )
+    else
+      ( p, changed )
   in
   let p, changed = match kind with
     | None -> p, changed

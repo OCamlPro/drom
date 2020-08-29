@@ -406,7 +406,7 @@ Still, you can trigger directly their installation using::
   $ drom dev-deps
   Loading drom.toml
   Loading .drom
-  Loading config from /home/lefessan/.config/drom/config
+  Loading config from /home/user/.config/drom/config
   In opam switch 4.10.0
   Calling opam install odoc ocamlformat
   The following actions will be performed:
@@ -431,7 +431,7 @@ Let's now generate the API documentation::
   $ drom doc
   Loading drom.toml
   Loading .drom
-  Loading config from /home/lefessan/.config/drom/config
+  Loading config from /home/user/.config/drom/config
   In opam switch 4.10.0
   Calling opam exec -- dune build
   Calling opam exec -- dune build @doc
@@ -455,7 +455,7 @@ Let's now generate the Sphinx documentation::
   $ drom sphinx
   Loading drom.toml
   Loading .drom
-  Loading config from /home/lefessan/.config/drom/config
+  Loading config from /home/user/.config/drom/config
   Creating file docs/sphinx/index.html
   Calling sphinx-build sphinx docs/sphinx
   Running Sphinx v1.8.5
