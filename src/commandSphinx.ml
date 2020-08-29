@@ -14,13 +14,16 @@ let cmd_name = "sphinx"
 
 let action () =
   let ( args, _ ) = Build.build_args () in
-  let ( _p : Types.project ) =
+  let ( p : Types.project ) =
     Build.build
       ~setup_opam:false
       ~build_deps:false
       ~build:false
       ~args () in
-  Misc.call [| "sphinx-build" ; "sphinx" ; "docs/sphinx" |]
+  Misc.call [| "sphinx-build" ; "sphinx" ; "docs/sphinx" |];
+  if not ( List.mem "git-add-sphinx" p.skip ) then
+    Misc.call [| "git" ; "add" ; "docs/sphinx" |]
+
 
 let cmd =
   {

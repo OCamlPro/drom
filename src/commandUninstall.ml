@@ -24,5 +24,5 @@ let cmd =
     cmd_action = (fun () -> action ~args ());
     cmd_args = [] @ specs ;
     cmd_man = [];
-    cmd_doc = "Uninstall the project in the local opam switch _opam";
+    cmd_doc = "Uninstall the project from the project opam switch";
   }
