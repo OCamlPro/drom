@@ -347,6 +347,8 @@ let update_files
   (*   write_file "dune-workspace" ""; *)
   write_file "README.md" ( template_readme_md p ) ;
   write_file ( p.package.dir // "dune" ) ( Dune.template_src_dune p.package ) ;
+  write_file ( p.package.dir // "version.ml" )
+    ( Printf.sprintf "let version = \"%s\"\n" p.version );
   if Misc.p_kind p.package = Both then begin
     write_file "main/dune" ( Dune.template_main_dune p.package ) ;
     write_file "main/main.ml" ( template_main_main_ml p.package ) ;
