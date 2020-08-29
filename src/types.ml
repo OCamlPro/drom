@@ -57,6 +57,7 @@ and project = {
   doc_api : string option ;
   skip : string list ;
   archive : string option ;
+  sphinx_target : string option ;
 
   (* default fields *)
   version : string ;

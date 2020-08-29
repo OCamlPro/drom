@@ -33,6 +33,7 @@ let rec dummy_project = {
   mode = Binary ;
   pack_modules = true ;
   archive = None ;
+  sphinx_target = None ;
 }
 
 and dummy_package = {
@@ -182,6 +183,7 @@ let toml_of_project p =
     |> maybe_package_key "dev-repo" p.dev_repo
     |> maybe_package_key "copyright" p.copyright
     |> maybe_package_key "archive" p.archive
+    |> maybe_package_key "sphinx-target" p.sphinx_target
   in
   let package2 =
     EzToml.empty
@@ -346,6 +348,8 @@ let project_of_toml filename =
       | None -> true in
   let dir =
     EzToml.get_string_default table [ project_key ; "dir" ] "src" in
+  let sphinx_target =
+    EzToml.get_string_option table [ project_key ; "sphinx-target" ] in
 
   let package = { dummy_package with
                   name ; dir ; p_pack
@@ -375,6 +379,7 @@ let project_of_toml filename =
       mode ;
       pack_modules ;
       archive ;
+      sphinx_target ;
     }
   in
   package.project <- project ;

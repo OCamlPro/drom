@@ -119,7 +119,7 @@ build-deps:
 	opam install --deps-only ./%s.opam
 
 sphinx:
-	sphinx-build sphinx docs/sphinx
+	sphinx-build sphinx %s
 
 doc:
 	dune build @doc
@@ -161,6 +161,9 @@ test:
 |} p.package.name
   )
   p.package.name
+  ( match p.sphinx_target with
+    | Some dir -> dir
+    | None -> "docs/sphinx" )
 
 let template_CHANGES_md _p =
   let tm = Misc.date () in
@@ -195,7 +198,11 @@ let dev_repo p =
                organization p.package.name )
     | None -> None
 
-let update_files ?kind ?mode ?(upgrade=false) ?(git=false) ?(create=false) p =
+let update_files
+    ?kind ?mode
+    ?(upgrade=false) ?(git=false) ?(create=false)
+    ?(promote_skip=false)
+    p =
 
   let can_skip = ref [] in
   let not_skipped s =
@@ -219,6 +226,7 @@ let update_files ?kind ?mode ?(upgrade=false) ?(git=false) ?(create=false) p =
   let hashes = ref hashes in
   let to_add = ref [] in
   let to_remove = ref [] in
+  let skipped = ref [] in
   let write_file filename content =
     let dirname = Filename.dirname filename in
     EzFile.make_dir ~p:true dirname ;
@@ -236,10 +244,13 @@ let update_files ?kind ?mode ?(upgrade=false) ?(git=false) ?(create=false) p =
       try
         let former_hash = StringMap.find filename !hashes in
         let not_modified = former_hash = hash in
-        if not not_modified then
+        if not not_modified then begin
+          skipped := filename :: !skipped ;
           Printf.eprintf "Skipping modified file %s\n%!" filename ;
+        end ;
         not_modified
       with Not_found ->
+        skipped := filename :: !skipped ;
         Printf.eprintf "Skipping existing file %s\n%!" filename ;
         false
   in
@@ -331,8 +342,6 @@ let update_files ?kind ?mode ?(upgrade=false) ?(git=false) ?(create=false) p =
       { p with mode ; dependencies ; tools }, changed
   in
 
-  if upgrade || changed ||  not ( Sys.file_exists "drom.toml" ) then
-    write_file ~force:upgrade "drom.toml" ( Project.toml_of_project p ) ;
   write_file ".gitignore" ( template_DOTgitignore p ) ;
   write_file "Makefile" ( template_Makefile p ) ;
   (*   write_file "dune-workspace" ""; *)
@@ -468,6 +477,19 @@ git add docs/sphinx
   EzFile.write_file ( Globals.drom_dir // "maximum-skip-field.txt" )
     ( Printf.sprintf "skip = \"%s\"\n"
         ( String.concat " " !can_skip )) ;
+
+  let p, changed =
+    if promote_skip && !skipped <> [] then
+      let skip = p.skip @ !skipped in
+      Printf.eprintf "skip field promotion: %s\n%!"
+        ( String.concat " " !skipped );
+      { p with skip }, true
+    else
+      ( p, changed )
+  in
+
+  if upgrade || changed ||  not ( Sys.file_exists "drom.toml" ) then
+    write_file ~force:upgrade "drom.toml" ( Project.toml_of_project p ) ;
 
   if !save_hashes then
     let b = Buffer.create 1000 in

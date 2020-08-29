@@ -20,10 +20,14 @@ let action () =
       ~build_deps:false
       ~build:false
       ~args () in
-  Misc.call [| "sphinx-build" ; "sphinx" ; "docs/sphinx" |];
-  if not ( List.mem "git-add-sphinx" p.skip ) then
-    Misc.call [| "git" ; "add" ; "docs/sphinx" |]
 
+  let sphinx_target = match p.sphinx_target with
+    | None -> "docs/sphinx"
+    | Some dir -> dir
+  in
+  Misc.call [| "sphinx-build" ; "sphinx" ; sphinx_target |];
+  if not ( List.mem "git-add-sphinx" p.skip ) then
+    Misc.call [| "git" ; "add" ; sphinx_target |]
 
 let cmd =
   {

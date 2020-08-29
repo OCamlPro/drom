@@ -285,8 +285,8 @@ let index_rst p =
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to %s doc
-=================
+Welcome to %s
+================
 
 .. toctree::
    :maxdepth: 2
