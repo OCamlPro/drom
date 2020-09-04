@@ -10,7 +10,7 @@ build:
 
 
 build-deps:
-	opam install --deps-only ./drom.opam
+	opam install --deps-only ./*.opam
 
 sphinx:
 	sphinx-build sphinx docs/sphinx

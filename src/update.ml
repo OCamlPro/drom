@@ -52,28 +52,33 @@ let library_module p =
     done;
     Bytes.to_string s
 
-let template_main_main_ml p =
-  Printf.sprintf {|let () = %s.Main.main ()
-|} ( library_module p )
-
-let template_src_main_ml p =
-  match Misc.p_kind p with
-  | Both ->
+let template_src_main_ml ~header_ml p =
+  match p.kind with
+  | Library ->
     Printf.sprintf
-      {|
+      {|%s
 (* If you delete or rename this file, you should add '%s/main.ml' to the 'skip' field in "drom.toml" *)
 
 let main () = Printf.printf "Hello world!\n%!"
-|} p.dir
+|}
+      header_ml p.dir
   | Program ->
+    match p.p_driver_only with
+    | Some library_module ->
+      Printf.sprintf {|%s
+let () = %s ()
+|}
+        header_ml library_module
+
+    | _ ->
     Printf.sprintf
-      {|
+      {|%s
+
 (* If you rename this file, you should add '%s/main.ml' to the 'skip' field in "drom.toml" *)
 
 let () = Printf.printf "Hello world!\n%!"
 |}
-      p.dir
-  | Library -> assert false
+      header_ml p.dir
 
 let template_readme_md p =
   match p.github_organization with
@@ -149,16 +154,12 @@ dev-deps:
 test:
 	dune build @runtest
 |}
-  (match Misc.p_kind p.package with
+  (match p.package.kind with
    | Library -> ""
    | Program ->
      Printf.sprintf {|
 	cp -f _build/default/%s/main.exe %s
 |} p.package.dir p.package.name
-   | Both ->
-     Printf.sprintf {|
-	cp -f _build/default/main/main.exe %s
-|} p.package.name
   )
   p.package.name
   ( match p.sphinx_target with
@@ -177,17 +178,6 @@ let template_CHANGES_md _p =
     tm.Unix.tm_mday
 
 
-
-let semantic_version version =
-  match EzString.split version '.' with
-    [ major ; minor ; fix ] ->
-    begin try
-        Some ( int_of_string major, int_of_string minor, int_of_string fix )
-      with
-        Not_found -> None
-    end
-  | _ -> None
-
 let dev_repo p =
   match p.dev_repo with
   | Some s -> Some s
@@ -197,6 +187,8 @@ let dev_repo p =
       Some ( Printf.sprintf "git+https://github.com/%s/%s.git"
                organization p.package.name )
     | None -> None
+
+exception Skip
 
 let update_files
     ?kind ?mode
@@ -212,7 +204,7 @@ let update_files
   let hashes =
     if Sys.file_exists ".drom" then
       let map = ref StringMap.empty in
-      Printf.eprintf "Loading .drom\n%!";
+      (* Printf.eprintf "Loading .drom\n%!"; *)
       Array.iter (fun line ->
           if line <> "" && line.[0] <> '#' then
             let ( digest, filename ) = EzString.cut_at line ' ' in
@@ -254,6 +246,7 @@ let update_files
         Printf.eprintf "Skipping existing file %s\n%!" filename ;
         false
   in
+  (*
   let remove_file filename =
     if Sys.file_exists filename then
       let old_content = EzFile.read_file filename in
@@ -269,24 +262,30 @@ let update_files
         end
       with Not_found -> ()
   in
-  let write_file ?(force=false) filename content =
-    if force then begin
-      Printf.eprintf "Updating file %s\n%!" filename;
-      write_file filename content
-    end else
-    if not_skipped filename then
-      if not ( Sys.file_exists filename ) then begin
-        Printf.eprintf "Creating file %s\n%!" filename;
-        write_file filename content
-      end else
-      if can_update ~filename content then begin
+*)
+  let write_file ?(skip=false) ?(force=false) filename content =
+    try
+      if skip then raise Skip;
+      if force then begin
         Printf.eprintf "Updating file %s\n%!" filename;
         write_file filename content
-      end else begin
-        let filename = "_drom" // "skipped" // filename in
-        EzFile.make_dir ~p:true ( Filename.dirname filename ) ;
-        EzFile.write_file filename content
-      end
+      end else
+      if not_skipped filename then
+        if not ( Sys.file_exists filename ) then begin
+          Printf.eprintf "Creating file %s\n%!" filename;
+          write_file filename content
+        end else
+        if can_update ~filename content then begin
+          Printf.eprintf "Updating file %s\n%!" filename;
+          write_file filename content
+        end
+        else raise Skip
+      else
+        raise Skip
+    with Skip ->
+      let filename = "_drom" // "skipped" // filename in
+      EzFile.make_dir ~p:true ( Filename.dirname filename ) ;
+      EzFile.write_file filename content
   in
 
   let config = Lazy.force Config.config in
@@ -315,15 +314,18 @@ let update_files
   in
   let p, changed = match kind with
     | None -> p, changed
-    | Some kind -> { p with kind }, true
+    | Some kind ->
+      p.package.kind <- kind ;
+      p , true
   in
   let p, changed = match mode with
     | None -> p, changed
     | Some mode ->
-      let js_dep = ( "js_of_ocaml", { depversion = "3.6" ; depname = None } ) in
-      let js_tool = ( "js_of_ocaml", "3.6") in
-      let ppx_tool = ( "js_of_ocaml-ppx", "3.6" ) in
-      let add_dep dep deps changed  =
+      let js_dep = ( "js_of_ocaml", [ Semantic (3,6,0) ] ) in
+      let js_tool = ( "js_of_ocaml", [ Semantic (3,6,0) ] ) in
+      let ppx_tool = ( "js_of_ocaml-ppx", [ Semantic (3,6,0) ] ) in
+      let add_dep ( name, depversions ) deps changed  =
+        let dep = ( name, { depversions ; depname = None } ) in
         match mode with
         | Binary ->
           if List.mem dep deps then
@@ -344,42 +346,37 @@ let update_files
 
   write_file ".gitignore" ( template_DOTgitignore p ) ;
   write_file "Makefile" ( template_Makefile p ) ;
-  (*   write_file "dune-workspace" ""; *)
   write_file "README.md" ( template_readme_md p ) ;
-  write_file ( p.package.dir // "dune" ) ( Dune.template_src_dune p.package ) ;
-  write_file ( p.package.dir // "version.ml" )
-    ( Printf.sprintf "let version = \"%s\"\n" p.version );
-  if Misc.p_kind p.package = Both then begin
-    write_file "main/dune" ( Dune.template_main_dune p.package ) ;
-    write_file "main/main.ml" ( template_main_main_ml p.package ) ;
-  end else begin
-    remove_file "main/dune" ;
-    remove_file "main/main.ml" ;
-  end ;
-  begin
-    match Misc.p_kind p.package with
-    | Library -> ()
-    | Program | Both ->
-      write_file ( p.package.dir // "main.ml" ) ( template_src_main_ml
-                                                    p.package ) ;
-  end ;
+
+  write_file "dune" ( Dune.template_dune p ) ;
+
+  let header_ml = License.header_ml p in
+
+  List.iter (fun package ->
+
+      write_file ( package.dir // "dune" ) ( Dune.template_src_dune package ) ;
+      begin
+        match package.p_gen_version with
+        | None -> ()
+        | Some file ->
+          (* TODO : we should put info in this file *)
+          write_file ( package.dir // file )
+            ( Printf.sprintf "let version = \"%s\"\n"
+                ( Misc.p_version package ) );
+      end;
+
+      let file = package.dir // "main.ml" in
+      write_file file ( template_src_main_ml ~header_ml package ) ;
+
+      begin
+        match Odoc.template_src_index_mld package with
+        | None -> ()
+        | Some content ->
+            write_file ( package.dir // "index.mld" ) content
+      end;
+    ) p.packages ;
 
   write_file "CHANGES.md" ( template_CHANGES_md p ) ;
-  if create then begin
-    if git && not ( Sys.file_exists ".git" ) then begin
-      Misc.call [| "git"; "init" |];
-      match config.config_github_organization with
-      | None -> ()
-      | Some organization ->
-        Misc.call [| "git"; "remote" ; "add" ; "origin" ;
-                     Printf.sprintf
-                       "git@github.com:%s/%s"
-                       organization
-                       p.package.name |];
-        Misc.call [| "git"; "add" ; "README.md" |];
-        Misc.call [| "git"; "commit" ; "-m" ; "Initial commit" |];
-    end
-  end ;
 
   if not_skipped "docs" then begin
 
@@ -439,7 +436,9 @@ git add docs/sphinx
   end;
 
   write_file "dune-project" ( Dune.template_dune_project p ) ;
-  write_file ".ocamlformat" "" ;
+  write_file ".ocamlformat" ( Ocamlformat.template p );
+  write_file ".ocamlformat-ignore" ( Ocamlformat.ignore p );
+  write_file ".ocp-indent" ( Ocpindent.template p );
 
   if not_skipped "workflows" then begin
 
@@ -452,29 +451,27 @@ git add docs/sphinx
 
   end;
 
-  let opam_filename, kind =
-    match p.kind with
-    | Both ->
-      ( p.package.name ^ "_lib.opam", LibraryPart )
-    | Library | Program ->
-      ( p.package.name ^ ".opam", Single )
-  in
-  write_file opam_filename ( Opam.opam_of_project kind p.package ) ;
-  begin
-    match p.kind with
-    | Library | Program ->
-      remove_file ( p.package.name ^ "_lib.opam" )
-    | Both ->
-      write_file ( p.package.name ^ ".opam" )
-        ( Opam.opam_of_project ProgramPart p.package )
-  end;
+  List.iter (fun package ->
+      let opam_filename = package.name ^ ".opam" in
+      write_file opam_filename ( Opam.opam_of_project Single package )
+    ) p.packages ;
+
+  let opam_filename = Globals.drom_dir // p.package.name ^ "-deps.opam" in
+  let deps_package = Misc.deps_package p in
+  EzFile.write_file opam_filename ( Opam.opam_of_project Deps deps_package ) ;
 
   EzFile.make_dir ~p:true Globals.drom_dir ;
   EzFile.write_file ( Globals.drom_dir // "known-licences.txt" )
     ( License.known_licenses () );
 
-  if not_skipped "license" then
-    write_file "LICENSE.md" ( License.license p ) ;
+  write_file "LICENSE.md" ( License.license p ) ;
+  EzFile.write_file ( Globals.drom_dir // "header.ml" )
+    ( License.header_ml p ) ;
+  EzFile.write_file ( Globals.drom_dir // "header.mll" )
+    ( License.header_mll p ) ;
+  EzFile.write_file ( Globals.drom_dir // "header.mly" )
+    ( License.header_mly p ) ;
+
 
   EzFile.write_file ( Globals.drom_dir // "maximum-skip-field.txt" )
     ( Printf.sprintf "skip = \"%s\"\n"
@@ -490,8 +487,28 @@ git add docs/sphinx
       ( p, changed )
   in
 
-  if upgrade || changed ||  not ( Sys.file_exists "drom.toml" ) then
-    write_file ~force:upgrade "drom.toml" ( Project.toml_of_project p ) ;
+  let skip = not (
+      upgrade || changed ||  not ( Sys.file_exists "drom.toml" )
+    ) in
+  write_file ~skip ~force:upgrade "drom.toml" ( Project.toml_of_project p ) ;
+
+
+  if create then begin
+    if git && not ( Sys.file_exists ".git" ) then begin
+      Misc.call [| "git"; "init" |];
+      match config.config_github_organization with
+      | None -> ()
+      | Some organization ->
+        Misc.call [| "git"; "remote" ; "add" ; "origin" ;
+                     Printf.sprintf
+                       "git@github.com:%s/%s"
+                       organization
+                       p.package.name |];
+        Misc.call [| "git"; "add" ; "README.md" |];
+        Misc.call [| "git"; "commit" ; "-m" ; "Initial commit" |];
+    end
+  end ;
+
 
   if !save_hashes then
     let b = Buffer.create 1000 in

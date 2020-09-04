@@ -10,6 +10,27 @@
 
 open EzCompat
 
+module EzString = struct
+  include EzString
+
+  let chop_prefix s ~prefix =
+    if EzString.starts_with s ~prefix then
+      let prefix_len = String.length prefix in
+      let len = String.length s in
+      Some ( String.sub s prefix_len (len - prefix_len) )
+    else
+      None
+
+  let chop_suffix s ~suffix =
+    if EzString.ends_with s ~suffix then
+      let suffix_len = String.length suffix in
+      let len = String.length s in
+      Some ( String.sub s 0 (len - suffix_len) )
+    else
+      None
+
+end
+
 let call ?(stdout = Unix.stdout) args =
   Printf.eprintf "Calling %s\n%!"
     (String.concat " " ( Array.to_list args ) );
@@ -57,52 +78,38 @@ let doc_api p =
   match p.doc_api with
   | Some s -> Some s
   | None ->
-    match p.kind with
-    | Program -> None
-    | Library | Both ->
-      match p.github_organization with
-      | Some organization ->
-        Some ( Printf.sprintf "https://%s.github.io/%s/doc"
-                 organization p.package.name )
-      | None -> None
+    match p.github_organization with
+    | Some organization ->
+      Some ( Printf.sprintf "https://%s.github.io/%s/doc"
+               organization p.package.name )
+    | None -> None
 
 let doc_gen p =
   match p.doc_gen with
   | Some s -> Some s
   | None ->
-    match p.github_organization with
-    | Some organization ->
-      Some ( Printf.sprintf "https://%s.github.io/%s/sphinx"
-               organization p.package.name )
+    match
+      match p.sphinx_target with
+      | Some dir ->
+        EzString.chop_prefix dir ~prefix:"docs"
+      | None -> Some "/sphinx"
+    with
     | None -> None
-
-let string_of_dependency d =
-  match d.depname with
-  | None -> d.depversion
-  | Some depname -> Printf.sprintf "%s %s" d.depversion depname
-
-let dependency_of_string ~name s =
-  match EzString.split s ' ' with
-  | [] -> Error.raise "dependency %S: no version" name
-  | _ :: _ :: _ :: _ ->
-    Error.raise "dependency %S: unparsable version %S" name s
-  | [ depversion ] -> { depversion ; depname = None }
-  | [ depversion ; depname ] -> { depversion ; depname = Some depname }
+    | Some subdir ->
+      match p.github_organization with
+      | Some organization ->
+        Some ( Printf.sprintf "https://%s.github.io/%s%s"
+                 organization p.package.name subdir )
+      | None -> None
 
 let p_dependencies package =
-  match package.p_dependencies with
-  | Some deps -> deps
-  | None -> package.project.dependencies
+  package.p_dependencies @
+  package.project.dependencies
 
 let p_mode package =
   match package.p_mode with
   | Some deps -> deps
   | None -> package.project.mode
-
-let p_kind package =
-  match package.p_kind with
-  | Some deps -> deps
-  | None -> package.project.kind
 
 let p_pack_modules package =
   match package.p_pack_modules with
@@ -115,9 +122,7 @@ let p_version package =
   | None -> package.project.version
 
 let p_tools package =
-  match package.p_tools with
-  | Some deps -> deps
-  | None -> package.project.tools
+  package.p_tools @ package.project.tools
 
 let p_synopsis package =
   match package.p_synopsis with
@@ -189,16 +194,70 @@ let semantic_version version =
   | _ -> None
 
 
+let underscorify s =
+  let b = Bytes.of_string s in
+  for i = 1 to String.length s - 2 do
+    let c = s.[i] in
+    match c with
+    | 'a'..'z' | '0'..'9' -> ()
+    | _ -> Bytes.set b i '_'
+  done;
+  Bytes.to_string b
+
 let library_name p =
   match p.p_pack with
   | Some name ->
-    String.uncapitalize_ascii name
+    String.uncapitalize name
   | None ->
-    let s = Bytes.of_string p.name in
-    for i = 1 to String.length p.name - 2 do
-      let c = p.name.[i] in
-      match c with
-      | 'a'..'z' | '0'..'9' -> ()
-      | _ -> Bytes.set s i '_'
-    done;
-    Bytes.to_string s
+    underscorify p.name
+
+let package_lib package =
+  underscorify package.name ^ "_lib"
+
+let deps_package p =
+  let packages = ref StringSet.empty in
+  List.iter (fun package ->
+      packages := StringSet.add package.name !packages ) p.packages ;
+  let p_dependencies =
+    List.flatten (List.map (fun pk ->
+        pk.p_dependencies) p.packages ) ;
+  in
+  let p_tools =
+    List.flatten (List.map (fun pk ->
+        pk.p_tools) p.packages ) ;
+  in
+  let p_dependencies = List.filter (fun (name, _d) ->
+      not ( StringSet.mem name !packages )
+    ) p_dependencies
+  in
+  let p_tools = List.filter (fun (name, _d) ->
+      not ( StringSet.mem name !packages )
+    ) p_tools
+  in
+  { p.package with
+    name = p.package.name ^ "-deps" ;
+    p_synopsis = Some ( p.synopsis ^ " (all deps)" ) ;
+    p_dependencies ;
+    p_tools ;
+  }
+
+let modules package =
+  let files = try Sys.readdir package.dir with _ -> [||] in
+  let set = ref StringSet.empty in
+  let add_module file =
+    let m = String.capitalize file in
+    set := StringSet.add m !set ;
+  in
+  Array.iter (fun file ->
+      match EzString.chop_suffix file ".ml" with
+      | Some file -> add_module file
+      | None ->
+      match EzString.chop_suffix file ".mll" with
+      | Some file -> add_module file
+      | None ->
+          match EzString.chop_suffix file ".mly" with
+      | Some file -> add_module file
+      | None -> ()
+    ) files ;
+  let modules = ref [] in
+  StringSet.to_list !set

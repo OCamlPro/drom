@@ -10,6 +10,7 @@
 
 open Types
 open Ezcmd.TYPES
+open EzCompat
 
 let cmd_name = "new"
 
@@ -33,10 +34,10 @@ let action ~project_name ~kind ~mode ~upgrade ~inplace ~promote_skip =
       let p =
         {
           package ;
+          packages = [ package ] ;
           version = "0.1.0" ;
           edition = Globals.current_ocaml_edition ;
           min_edition = Globals.current_ocaml_edition ;
-          kind = Program ;
           mode = Binary ;
           authors = [ author ] ;
           synopsis = Globals.default_synopsis ~name ;
@@ -55,6 +56,9 @@ let action ~project_name ~kind ~mode ~upgrade ~inplace ~promote_skip =
           skip = [];
           archive = None ;
           sphinx_target = None ;
+          windows_ci = true ;
+          profiles = StringMap.empty ;
+          skip_dirs = [];
         } in
       package.project <- p ;
       let create =
@@ -90,9 +94,6 @@ let cmd =
           ~inplace);
     cmd_args = [
 
-      [ "both" ], Arg.Unit (fun () ->
-          kind := Some Both ; upgrade := true ),
-      Ezcmd.info "Project contains both a library and a program" ;
       [ "library" ], Arg.Unit (fun () ->
           kind := Some Library ; upgrade := true ),
       Ezcmd.info "Project contains only a library" ;

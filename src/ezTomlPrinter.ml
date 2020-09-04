@@ -94,7 +94,7 @@ let rec print_array formatter toml_array sections =
          * print [[x.y.z]] as appropriate instead of [[x]][[y]][[z]]
          *)
         if not (TomlTypes.Table.for_all is_array_of_table tbl)
-        then Format.fprintf formatter "[[%s]]\n"
+        then Format.fprintf formatter "\n[[%s]]\n"
             (sections |> List.map TomlTypes.Table.Key.to_string |> String.concat ".");
         print_table formatter tbl sections) values
   | NodeEmpty         -> Format.pp_print_string formatter "[]"
