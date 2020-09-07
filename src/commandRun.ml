@@ -15,9 +15,9 @@ let cmd_name = "run"
 let action ~args ~cmd =
   let p = Build.build ~args () in
   let cmd = !cmd in
-  let cmd = match p.kind with
+  let cmd = match p.package.kind with
     | Library -> cmd
-    | Both | Program -> p.package.name :: cmd
+    | Program -> p.package.name :: cmd
   in
   Misc.call
     ( Array.of_list (

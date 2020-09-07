@@ -80,7 +80,7 @@ jobs:
         os:
           - macos-latest
           - ubuntu-latest
-          - windows-latest
+%s          - windows-latest
         ocaml-version:
           - %s
         skip_test:
@@ -109,7 +109,7 @@ jobs:
 
       - run: opam exec -- ocaml .github/workflows/ci.ml pin
 
-      - run: opam install ./%s.opam --deps-only --with-test
+      - run: opam install ./*.opam --deps-only --with-test
 
       - run: opam exec -- make all
 
@@ -122,16 +122,14 @@ jobs:
         continue-on-error: true
         if: env.OCAML_VERSION == '%s' && env.OS == 'ubuntu-latest'
 |}
+    ( if p.windows_ci then "" else "#" )
     p.edition
     (if p.edition = p.min_edition then "" else
        Printf.sprintf
-       {|
+         {|
         include:
           - ocaml-version: %s
             os: ubuntu-latest
             skip_test: true
 |} p.min_edition)
-    ( match p.kind with
-      | Both -> p.package.name ^ "_lib"
-      | Library | Program -> p.package.name)
     p.edition

@@ -13,7 +13,7 @@ open Types
 open EzFile.OP
 
 let config_of_toml filename =
-  Printf.eprintf "Loading config from %s\n%!" filename ;
+  (* Printf.eprintf "Loading config from %s\n%!" filename ; *)
   match EzToml.from_file filename with
   | `Error _ ->
     Error.raise "Could not parse config file %S" filename;

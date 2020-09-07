@@ -32,9 +32,7 @@ let action ~args () =
   in
   (* (4) unpin packages to clean the state *)
   List.iter (fun package ->
-      match Opam.run [ "unpin" ] [ "-n" ; package ] with
-      | exception Types.Error _ -> ()
-      | () -> ()
+      Opam.run ~error:(ref None) [ "unpin" ] [ "-n" ; package ]
     ) packages ;
   match exn with
   | None ->

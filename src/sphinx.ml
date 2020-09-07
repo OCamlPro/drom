@@ -9,6 +9,7 @@
 (**************************************************************************)
 
 open Types
+open EzCompat
 
 let subst ?(more=(fun v -> Printf.sprintf "${%s}" v)) p s =
   let b = Buffer.create ( 2 * String.length s ) in
@@ -309,10 +310,7 @@ Indices and tables
   ( match Misc.homepage p with
     | None -> ""
     | Some link -> Printf.sprintf "   Home <%s>\n" link )
-  (match p.kind with
-   | Program -> ""
-   | Library | Both ->
-     match Misc.doc_api p with
+  ( match Misc.doc_api p with
      | None -> ""
      | Some link -> Printf.sprintf "   API doc <%s>\n" link )
   (match p.github_organization with

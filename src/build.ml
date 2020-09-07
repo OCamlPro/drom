@@ -13,6 +13,9 @@ open Ezcmd.TYPES
 open EzFile.OP
 open EzCompat
 
+type build_args =
+  switch_arg option ref * bool ref * string option ref
+
 let build_args () =
   let switch = ref None in
   let y = ref false in
@@ -32,7 +35,7 @@ let build_args () =
     Ezcmd.info "Reply yes to all questions";
   ]
   in
-  let args = ( switch, y, edition ) in
+  let ( args : build_args ) = ( switch, y, edition ) in
   ( args, specs )
 
 let build ~args
@@ -45,9 +48,7 @@ let build ~args
 
   let p = Project.project_of_toml "drom.toml" in
 
-  let ( switch, y, edition ) =
-    if true then args else fst ( build_args () )
-  in
+  let ( switch, y, edition ) = ( args : build_args ) in
   let switch = !switch in
   let y = !y in
   let edition = !edition in
@@ -74,11 +75,7 @@ let build ~args
   Update.update_files ~create p ;
 
   EzFile.make_dir ~p:true "_drom";
-  let opam_filename =
-    match p.kind with
-    | Both -> p.package.name ^ "_lib.opam"
-    | Library | Program -> p.package.name ^ ".opam"
-  in
+  let opam_filename = Globals.drom_dir // p.package.name ^ "-deps.opam" in
 
   let had_switch, switch_packages =
     if setup_opam then
@@ -202,7 +199,7 @@ let build ~args
         Opam.run ~y [ "install" ] packages;
     end;
 
-  let drom_opam_filename = "_drom/opam" in
+  let drom_opam_filename = "_drom/opam.current" in
   let former_opam_file =
     if Sys.file_exists drom_opam_filename then
       Some ( EzFile.read_file drom_opam_filename )

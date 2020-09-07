@@ -8,13 +8,16 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open EzToml.TYPES
 open Types
+open EzCompat
+open EzFile.OP
 
 let rec dummy_project = {
   package = dummy_package ;
+  packages = [] ;
   edition = "dummy_project.edition" ;
   min_edition = "dummy_project.min_edition" ;
-  kind = Program ;
   github_organization = None ;
   homepage = None ;
   license = "dummy_project.license" ;
@@ -34,6 +37,9 @@ let rec dummy_project = {
   pack_modules = true ;
   archive = None ;
   sphinx_target = None ;
+  windows_ci = true ;
+  profiles = StringMap.empty ;
+  skip_dirs = [] ;
 }
 
 and dummy_package = {
@@ -41,15 +47,17 @@ and dummy_package = {
   dir = "dummy_package.dir" ;
   project = dummy_project ;
   p_pack = None ;
-  p_kind = None ;
+  kind = Library ;
   p_version = None ;
   p_authors = None ;
   p_synopsis = None ;
   p_description = None ;
-  p_dependencies = None ;
-  p_tools = None ;
+  p_dependencies = [] ;
+  p_tools = [] ;
   p_mode = None ;
   p_pack_modules = None ;
+  p_gen_version = Some "version.ml" ;
+  p_driver_only = None ;
 }
 
 let create_package ~name ~dir = {
@@ -57,8 +65,6 @@ let create_package ~name ~dir = {
   name ;
   dir ;
 }
-
-open EzFile.OP
 
 let git_config =
   lazy
@@ -75,29 +81,29 @@ let email_of_git_config () =
   Configparser.get ( Lazy.force git_config ) "user" "email"
 
 let kind_encoding =
-  EzToml.encoding
-    ~to_toml:(function
+  EzToml.string_encoding
+    ~to_string:(function
         | Library -> "library"
         | Program -> "program"
-        | Both -> "both"
       )
-    ~of_toml:(function
+    ~of_string:(fun ~key:_ s ->
+        match s with
         | "lib" | "library" -> Library
-        | "both" -> Both
         | "program" | "executable" | "exe" -> Program
         | kind ->
           Error.raise
-            {|unknown kind %S (should be "library", "program" or "both")|}
+            {|unknown kind %S (should be "library" or "program")|}
             kind
       )
 
 let mode_encoding =
-  EzToml.encoding
-    ~to_toml:(function
+  EzToml.string_encoding
+    ~to_string:(function
         | Binary -> "binary"
         | Javascript -> "javascript"
       )
-    ~of_toml:(function
+    ~of_string:(fun ~key:_ s ->
+        match s with
         | "bin" | "binary" -> Binary
         | "js" | "javascript" | "jsoo" -> Javascript
         | mode -> Error.raise
@@ -105,6 +111,138 @@ let mode_encoding =
                     mode
       )
 
+let string_of_versions versions =
+  String.concat " "
+    ( List.map (function
+          | Version -> "version"
+          | Semantic (major, minor, fix) ->
+              Printf.sprintf "%d.%d.%d" major minor fix
+          | Lt version -> Printf.sprintf "<%s" version
+          | Le version -> Printf.sprintf "<=%s" version
+          | Eq version -> Printf.sprintf "=%s" version
+          | Ge version -> Printf.sprintf ">%s" version
+          | Gt version -> Printf.sprintf ">=%s" version
+        ) versions )
+
+let versions_of_string versions =
+  List.map (fun version ->
+      match Misc.semantic_version version with
+      | Some (major, minor, fix) -> Semantic ( major, minor, fix)
+      | None ->
+          if version = "version" then
+            Version
+          else
+            let len = String.length version in
+            match version.[0] with
+            | '=' -> Eq (String.sub version 1 ( len - 1 ))
+            | '<' ->
+                if len > 1 && version.[1] = '=' then
+                  Le (String.sub version 2 ( len - 2 ))
+                else
+                  Lt (String.sub version 1 ( len - 1 ))
+            | '>' ->
+                if len > 1 && version.[1] = '=' then
+                  Ge (String.sub version 2 ( len - 2 ))
+                else
+                  Gt (String.sub version 1 ( len - 1 ))
+            | _ ->
+                Ge version
+    ) ( EzString.split_simplify versions ' ' )
+
+let dependency_encoding =
+  EzToml.encoding
+    ~to_toml:(fun d ->
+        let version = TString ( string_of_versions d.depversions ) in
+        match d.depname with
+        | None -> version
+        | Some name ->
+            let table = EzToml.empty in
+            let table = EzToml.put [ "name" ] ( TString name ) table in
+            let table = EzToml.put [ "version" ] version table in
+            TTable table
+      )
+    ~of_toml:(fun ~key v ->
+        match v with
+        | TString s ->
+            let depversions = versions_of_string s in
+            { depname = None ; depversions }
+        | TTable table ->
+            let depname = EzToml.get_string_option table [ "name" ] in
+            let depversions = EzToml.get_string_default table [ "version" ] ""
+            in
+            let depversions = versions_of_string depversions in
+            { depname ; depversions }
+        | _ ->
+            Error.raise "Bad dependency version for %s"
+              ( EzToml.key2str key )
+      )
+
+let dependencies_encoding =
+  EzToml.encoding
+    ~to_toml: (fun deps ->
+        let table =
+          List.fold_left (fun table ( name, d ) ->
+              EzToml.put_encoding dependency_encoding [ name ] d table )
+            EzToml.empty deps
+        in
+        TTable table
+      )
+    ~of_toml:(fun ~key v ->
+        let deps = EzToml.expect_table ~key
+            ~name:"dependency list" v in
+        let dependencies = ref [] in
+        Table.iter (fun name _version ->
+            let name = Table.Key.to_string name in
+            let d = EzToml.get_encoding dependency_encoding deps [ name ] in
+            dependencies := ( name, d ) :: !dependencies ) deps ;
+        !dependencies
+      )
+
+let stringMap_encoding enc =
+  EzToml.encoding
+    ~to_toml:(fun map ->
+        let table = ref EzToml.empty in
+        StringMap.iter (fun name s ->
+            table := EzToml.put [ name ] ( enc.to_toml s ) !table
+          ) map;
+        TTable !table
+      )
+    ~of_toml:(fun ~key v ->
+        let table = EzToml.expect_table ~key
+            ~name:"profile" v in
+        let map = ref StringMap.empty in
+        EzToml.iter (fun k v ->
+            map := StringMap.add k ( enc.of_toml ~key:(key @ [k]) v ) !map
+          ) table;
+        !map
+      )
+
+let profile_encoding =
+  EzToml.encoding
+    ~to_toml:(fun prof ->
+        let table = ref EzToml.empty in
+        StringMap.iter (fun name s ->
+            table := EzToml.put [ name ^ "-flags" ] ( TString s ) !table
+          ) prof.flags;
+        TTable !table
+      )
+    ~of_toml:(fun ~key v ->
+        let table = EzToml.expect_table ~key ~name:"profile" v in
+        let flags = ref StringMap.empty in
+        EzToml.iter (fun k v ->
+            let key = key @ [k] in
+            match Misc.EzString.chop_suffix k ~suffix:"-flags" with
+            | None ->
+                Printf.eprintf "Warning: discarding profile field %S\n%!"
+                  ( EzToml.key2str key )
+            | Some tool ->
+                flags := StringMap.add tool
+                    (EzToml.expect_string ~key v) !flags
+          ) table ;
+        {
+          flags = !flags ;
+        }
+      )
 
 let find_author config =
   match config.config_author with
@@ -151,6 +289,66 @@ let find_author config =
     in
     Printf.sprintf "%s <%s>" user email
 
+let toml_of_package pk =
+  EzToml.empty
+  |> EzToml.put_string [ "name" ] pk.name
+  |> EzToml.put_string [ "dir" ] pk.dir
+  |> EzToml.put_string_option [ "pack" ] pk.p_pack
+  |> EzToml.put_string_option [ "version" ] pk.p_version
+  |> EzToml.put_encoding kind_encoding [ "kind" ] pk.kind
+  |> EzToml.put_string_list_option [ "authors" ] pk.p_authors
+  |> EzToml.put_string_option [ "synopsis" ] pk.p_synopsis
+  |> EzToml.put_string_option [ "description" ] pk.p_description
+  |> EzToml.put_encoding_option mode_encoding [ "mode" ] pk.p_mode
+  |> EzToml.put_encoding dependencies_encoding
+    [ "dependencies" ] pk.p_dependencies
+  |> EzToml.put_encoding dependencies_encoding
+    [ "tools" ] pk.p_tools
+  |> EzToml.put_bool_option [ "pack-modules" ] pk.p_pack_modules
+  |> EzToml.put_string_option [ "gen-version" ] pk.p_gen_version
+  |> EzToml.put_string_option [ "driver-only" ] pk.p_driver_only
+
+
+
+let package_of_toml table =
+  let name = EzToml.get_string table [ "name" ] in
+  let dir = EzToml.get_string table [ "dir" ] in
+  let kind = EzToml.get_encoding_default kind_encoding table [ "kind" ]
+      Library in
+  let project = dummy_project in
+  let p_pack = EzToml.get_string_option table [ "pack" ] in
+  let p_version = EzToml.get_string_option table [ "version" ] in
+  let p_authors = EzToml.get_string_list_option table [ "authors" ] in
+  let p_synopsis = EzToml.get_string_option table [ "synopsis" ]  in
+  let p_description = EzToml.get_string_option table [ "description" ] in
+  let p_pack_modules = EzToml.get_bool_option table [ "pack-modules" ] in
+  let p_mode = EzToml.get_encoding_option mode_encoding table [ "mode" ] in
+  let p_dependencies =
+    EzToml.get_encoding_default dependencies_encoding table
+      [ "dependencies" ] [] in
+  let p_tools =
+    EzToml.get_encoding_default dependencies_encoding table
+      [ "tools" ] [] in
+  let p_gen_version = EzToml.get_string_option table [ "gen-version" ] in
+  let p_driver_only = EzToml.get_string_option table [ "driver-only" ] in
+  {
+    name ;
+    dir ; project ;
+    p_pack ;
+    kind ;
+    p_version ;
+    p_authors ;
+    p_synopsis ;
+    p_description ;
+    p_dependencies ;
+    p_tools ;
+    p_mode ;
+    p_pack_modules ;
+    p_gen_version ;
+    p_driver_only ;
+  }
+
+
 let toml_of_project p =
   let package =
     EzToml.empty
@@ -158,14 +356,14 @@ let toml_of_project p =
     |> EzToml.put_string [ "project" ; "version" ] p.version
     |> EzToml.put_string [ "project" ; "edition" ] p.edition
     |> EzToml.put_string [ "project" ; "min-edition" ] p.min_edition
-    |> EzToml.put_encoding kind_encoding [ "project" ; "kind" ] p.kind
     |> EzToml.put_encoding mode_encoding [ "project" ; "mode" ] p.mode
     |> EzToml.put_string [ "project" ; "synopsis" ] p.synopsis
     |> EzToml.put_string [ "project" ; "license" ] p.license
-    |> EzToml.put_string [ "project" ; "dir" ] p.package.dir
+    (*    |> EzToml.put_string [ "project" ; "dir" ] p.package.dir *)
     |> EzToml.put [ "project"; "authors" ]
       ( TArray
-          ( TomlTypes.NodeString p.authors ) )
+          ( NodeString p.authors ) )
+    |> EzToml.put_bool [ "project"; "windows-ci" ] p.windows_ci
   in
   let maybe_package_key key v (table, optionals) =
     match v with
@@ -209,49 +407,80 @@ let toml_of_project p =
     match p.dependencies with
     | [] -> "[dependencies]\n"
     | _ ->
-      List.fold_left (fun table ( name, d ) ->
-          EzToml.put_string [ "dependencies" ; name ]
-            (Misc.string_of_dependency d)
-            table )
-        EzToml.empty p.dependencies
+      EzToml.empty
+      |> EzToml.put_encoding dependencies_encoding [ "dependencies" ]
+        p.dependencies
       |> EzToml.to_string
   in
   let tools =
     match p.tools with
     | [] -> "[tools]\n"
     | _ ->
-      List.fold_left (fun table ( name, version ) ->
-          EzToml.put_string [ "tools" ; name ] version
-            table )
-        EzToml.empty p.tools
+      EzToml.empty
+      |> EzToml.put_encoding dependencies_encoding [ "tools" ] p.tools
       |> EzToml.to_string
   in
   let package3 =
     EzToml.empty
     |> EzToml.put_bool [ "project" ; "pack-modules" ] p.pack_modules
     |> EzToml.put_string_option [ "project" ; "pack" ] p.package.p_pack
+    |> EzToml.put [ "project"; "skip-dirs" ]
+      ( TArray ( NodeString p.skip_dirs ) )
+    |> EzToml.put_encoding
+      ( stringMap_encoding profile_encoding )
+      [ "profile" ]
+      p.profiles
     |> EzToml.to_string
   in
-  Printf.sprintf "%s\n%s\n%s\n%s\n%s\n%s%s\n"
-    package optionals package2 drom dependencies tools package3
+
+  let packages =
+    EzToml.empty
+    |> EzToml.put [ "package" ]
+      ( TArray ( NodeTable ( List.map toml_of_package p.packages ) ) )
+    |> EzToml.to_string
+  in
+
+  Printf.sprintf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n"
+    package optionals package2 drom dependencies tools package3 packages
+
+
+
+
+
+
+
+
+
+
+
+
 
 let project_of_toml filename =
-  Printf.eprintf "Loading %s\n%!" filename ;
+  (*  Printf.eprintf "Loading %s\n%!" filename ; *)
   let table =
     match EzToml.from_file filename with
     | `Ok table -> table
     | `Error _ ->
       Error.raise "Could not parse %S" filename
   in
-  let project_key =
+  let project_key, packages =
     match EzToml.get table [ "package" ] with
-    | exception _ -> "project"
-    | TTable _ -> "package"
-    | TArray _ -> "project"
+    | exception _ -> "project", []
+    | TTable _ -> "package", []
+    | TArray ( NodeTable tables ) ->
+      let project_key = "project" in
+      let packages = List.map package_of_toml tables in
+      project_key, packages
+    | TArray NodeEmpty -> "project", []
+    | TArray _ ->
+      Error.raise "Wrong type for field 'package'"
     | _ -> Error.raise "Unparsable field 'package'"
   in
 
-  let name = EzToml.get_string table [ project_key ; "name" ] in
+  let name = try EzToml.get_string table [ project_key ; "name" ] with
+    | Not_found ->
+      Error.raise "Missing project field 'name'"
+  in
   let version = EzToml.get_string_default table [ project_key ; "version" ]
       "0.1.0" in
   let edition = EzToml.get_string_option table [ project_key ; "edition" ] in
@@ -271,43 +500,19 @@ let project_of_toml filename =
   in
   let mode = EzToml.get_encoding_default mode_encoding table
       [ project_key ; "mode" ] Binary in
-  let kind = EzToml.get_encoding_default kind_encoding table
-      [ project_key ; "kind" ] Program in
   let authors =
-    match EzToml.get table [ project_key ; "authors" ] with
-    | TArray ( NodeString authors ) -> authors
-    | _ -> Error.raise "Cannot parse authors field in drom.toml"
-    | exception Not_found ->
+    match EzToml.get_string_list_option table [ project_key ; "authors" ] with
+    | Some authors -> authors
+    | None ->
       Error.raise "No field 'authors' in drom.toml"
   in
-  let dependencies = match EzToml.get table [ "dependencies" ] with
-    | exception Not_found -> []
-    | TTable deps ->
-      let dependencies = ref [] in
-      TomlTypes.Table.iter (fun name version ->
-          let name = TomlTypes.Table.Key.to_string name in
-          let version = match version with
-            | TomlTypes.TString s ->
-              Misc.dependency_of_string ~name s
-            | _ -> failwith "Bad dependency version"
-          in
-          dependencies := ( name, version ) :: !dependencies ) deps ;
-      !dependencies
-    | _ -> failwith "Cannot load dependencies"
+  let dependencies =
+    EzToml.get_encoding_default dependencies_encoding table
+      [ "dependencies" ] []
   in
-  let tools = match EzToml.get table [ "tools" ] with
-    | exception Not_found -> [ "dune", Globals.current_dune_version ]
-    | TTable deps ->
-      let tools = ref [] in
-      TomlTypes.Table.iter (fun name version ->
-          let name = TomlTypes.Table.Key.to_string name in
-          let version = match version with
-            | TomlTypes.TString s -> s
-            | _ -> failwith "Bad tool version"
-          in
-          tools := ( name, version ) :: !tools ) deps ;
-      !tools
-    | _ -> failwith "Cannot load tools"
+  let tools =
+    EzToml.get_encoding_default dependencies_encoding table
+      [ "tools" ] []
   in
   let synopsis =
     EzToml.get_string_default table [ project_key; "synopsis" ]
@@ -330,7 +535,6 @@ let project_of_toml filename =
   let license =
     EzToml.get_string_default table [ project_key ; "license" ]
       License.LGPL2.key in
-  let p_pack = EzToml.get_string_option table [ project_key ; "pack" ] in
   let copyright =
     EzToml.get_string_option table [ project_key ; "copyright" ] in
   let archive =
@@ -346,21 +550,93 @@ let project_of_toml filename =
       match EzToml.get_bool_option table [ project_key ; "wrapped" ] with
       | Some v -> v
       | None -> true in
-  let dir =
-    EzToml.get_string_default table [ project_key ; "dir" ] "src" in
   let sphinx_target =
     EzToml.get_string_option table [ project_key ; "sphinx-target" ] in
 
-  let package = { dummy_package with
-                  name ; dir ; p_pack
-                }
+  let p_pack = EzToml.get_string_option table [ project_key ; "pack" ] in
+  let dir =
+    EzToml.get_string_option table [ project_key ; "dir" ] in
+  let windows_ci = EzToml.get_bool_default table [ project_key ; "windows-ci" ]
+      true in
+  let package, packages =
+    let rec iter list =
+      match list with
+      | [] ->
+        begin
+          let dir = match dir with
+            | None -> "src"
+            | Some dir -> dir
+          in
+          let p = { dummy_package with
+                    name ; dir ; p_pack
+                  } in
+          p, p :: packages
+        end
+      | p :: tail ->
+        if p.name = name then
+          begin
+            begin
+              match dir with
+              | None -> ()
+              | Some dir ->
+                if dir <> p.dir then
+                  Error.raise "'dir' field differs in project and %S" name
+            end ;
+            begin
+              match p_pack, p.p_pack with
+              | Some v1, Some v2 when v1 <> v2 ->
+                Error.raise "'pack' field differs in project and %S" name
+              | Some p_pack, None ->
+                p.p_pack <- Some p_pack
+              | _ -> ()
+            end ;
+            p, packages
+          end
+        else
+          iter tail
+    in
+    iter packages
   in
+
+  let packages =
+    match EzToml.get_string_option table [ project_key ; "kind" ] with
+    | Some "both" ->
+      package.dir <- "main" ;
+      package.kind <- Program ;
+      let driver_only =
+          String.capitalize ( Misc.package_lib package ) ^
+          ".Main.main"
+      in
+      package.p_driver_only <- Some driver_only ;
+      package.p_dependencies <- (
+        Misc.package_lib package,
+        {
+          depname = None ;
+          depversions = [ Version ] ;
+        }) :: package.p_dependencies ;
+      package.p_gen_version <- None ;
+      let lib = { dummy_package with
+                  name = Misc.package_lib package ;
+                  dir = "src" ;
+                  kind = Library ; }
+      in
+      packages @ [ lib ]
+    | Some _
+    | None -> packages
+  in
+
+  let profiles = EzToml.get_encoding_default
+      ( stringMap_encoding profile_encoding ) table [ "profile" ]
+      StringMap.empty in
+  let skip_dirs =
+    EzToml.get_string_list_default table [ project_key ; "skip-dirs" ] []
+  in
+
   let project =
     {
       package ;
       version ;
       edition ;
-      kind ;
       min_edition ;
       authors ;
       synopsis ;
@@ -380,7 +656,12 @@ let project_of_toml filename =
       pack_modules ;
       archive ;
       sphinx_target ;
+      windows_ci ;
+      packages ;
+      profiles ;
+      skip_dirs ;
     }
   in
   package.project <- project ;
+  List.iter (fun p ->  p.project <- project ) packages ;
   project

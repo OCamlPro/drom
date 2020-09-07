@@ -11,6 +11,15 @@
 open Types
 open EzFile.OP
 
+module OpamParser = struct
+  let value_from_string s f =
+    try OpamParser.value_from_string s f
+    with exn ->
+      Printf.eprintf "Error with [%s]:\n" s;
+      raise exn
+end
+
+
 let dev_repo p =
   match p.dev_repo with
   | Some s -> Some s
@@ -42,25 +51,15 @@ let opam_of_project kind package =
   add_optional_string "tags" (match p.github_organization with
       | None -> None
       | Some github_organization ->
-        Some ( Printf.sprintf "org:%s" github_organization) );
-  let file_contents = [
-    var_string "opam-version" "2.0";
-    var_string "name" ( match kind with
-        | LibraryPart -> package.name ^ "_lib"
-        | Single | ProgramPart -> package.name ) ;
-    var_string "version" ( Misc.p_version package ) ;
-    var_string "license" ( License.name p ) ;
-    var_string "synopsis" ( match kind with
-        | LibraryPart -> Misc.p_synopsis package ^ " (library)"
-        | Single | ProgramPart -> Misc.p_synopsis package );
-    var_string "description" (Misc.p_description package ) ;
-    var_list "authors" ( List.map string ( Misc.p_authors package ) ) ;
-    var_list "maintainer" ( List.map string p.authors ) ;
-  ] @ List.rev !optionals @
-    [
-      Variable (pos, "build",
-                OpamParser.value_from_string
-                  {|
+          Some ( Printf.sprintf "org:%s" github_organization) );
+
+  let build_commands =
+    match kind with
+    | Deps -> []
+    | _ ->
+        [ Variable (pos, "build",
+                    OpamParser.value_from_string
+                      {|
 [
   ["dune" "subst"] {pinned}
   ["dune" "build" "-p" name "-j" jobs "@install"
@@ -68,63 +67,93 @@ let opam_of_project kind package =
     "@doc" {with-doc}
   ]
 ]
-|} file_name);
+|}
+                      file_name)
+        ]
+  in
+  let depend_of_dep name d =
+    let b = Buffer.create 100 in
+    Printf.bprintf b {| "%s" { |} name ;
+    List.iteri (fun i version ->
+        if i > 0 then
+          Printf.bprintf b "& ";
+        match version with
+        | Version ->
+            Printf.bprintf b "= version"
+        | Semantic (major, minor, fix) ->
+            Printf.bprintf b {|>= "%d.%d.%d" & < "%d.0.0" |}
+              major minor fix (major+1)
+        | Lt version -> Printf.bprintf b {| < "%s" |} version
+        | Le version -> Printf.bprintf b {| <= "%s" |} version
+        | Eq version -> Printf.bprintf b {| = "%s" |} version
+        | Ge version -> Printf.bprintf b {| >= "%s" |} version
+        | Gt version -> Printf.bprintf b {| > "%s" |} version
+      ) d.depversions ;
+    Printf.bprintf b "}\n" ;
+    (*  Printf.eprintf "parse: %s\n%!" s; *)
+    OpamParser.value_from_string ( Buffer.contents b ) file_name
+  in
+  let depends =
+    [
       Variable (pos, "depends",
                 match kind with
                 | ProgramPart ->
-                  List (pos,
-                        [
-                          OpamParser.value_from_string
-                            ( Printf.sprintf {|
-                                "%s_lib" { = version }
-|} package.name ) file_name
-                        ]
-                       )
-                | Single | LibraryPart ->
-                  List (pos,
-                        OpamParser.value_from_string
-                          ( Printf.sprintf {| "ocaml" { >= "%s" } |}
-                              p.min_edition
-                          )
-                          file_name
-                        ::
-                        OpamParser.value_from_string
-                          ( Printf.sprintf {| "dune" { >= "%s" } |}
-                              Globals.current_dune_version
-                          )
-                          file_name
-                        ::
-                        List.map (fun (name, d) ->
-                              OpamParser.value_from_string (
-                                match Misc.semantic_version d.depversion with
-                                | Some (major, minor, fix) ->
-                                  Printf.sprintf
-                                    {| "%s" { >= "%d.%d.%d" & < "%d.0.0" }|}
-                                    name major minor fix (major+1)
-                                | None ->
-                                  Printf.sprintf
-                                    {| "%s" {>= "%s" } |} name d.depversion
-                              )
-                                file_name
-                          )
-                          ( Misc.p_dependencies package )
-                        @
-                        List.map (fun (name, version) ->
-                            OpamParser.value_from_string (
-                              match Misc.semantic_version version with
-                              | Some (major, minor, fix) ->
-                                Printf.sprintf
-                                  {| "%s" { >= "%d.%d.%d" & < "%d.0.0" }|}
-                                  name major minor fix (major+1)
-                              | None ->
-                                Printf.sprintf
-                                  {| "%s" {>= "%s" } |} name version
-                            )
+                    List (pos,
+                          [
+                            OpamParser.value_from_string
+                              ( Printf.sprintf {|
+                                "%s" { = version }
+|}
+                                  ( Misc.package_lib package ) )
                               file_name
-                          )
-                          ( Misc.p_tools package ) )
+                          ]
+                         )
+                | Single
+                | LibraryPart
+                | Deps ->
+                    List (pos,
+                          OpamParser.value_from_string
+                            ( Printf.sprintf {| "ocaml" { >= "%s" } |}
+                                p.min_edition
+                            )
+                            file_name
+                          ::
+                          OpamParser.value_from_string
+                            ( Printf.sprintf {| "dune" { >= "%s" } |}
+                                Globals.current_dune_version
+                            )
+                            file_name
+                          ::
+                          List.map (fun (name, d) ->
+                              depend_of_dep name d
+                            )
+                            ( Misc.p_dependencies package )
+                          @
+                          List.map (fun (name, d) ->
+                              depend_of_dep name d
+                            )
+                            ( Misc.p_tools package ) )
                )
     ]
+  in
+  let file_contents = [
+    var_string "opam-version" "2.0";
+    var_string "name" ( match kind with
+        | LibraryPart -> Misc.package_lib package
+        | Single | ProgramPart -> package.name
+        | Deps -> package.name ) ;
+    var_string "version" ( Misc.p_version package ) ;
+    var_string "license" ( License.name p ) ;
+    var_string "synopsis" ( match kind with
+        | LibraryPart -> Misc.p_synopsis package ^ " (library)"
+        | Deps -> Misc.p_synopsis package
+        | Single | ProgramPart -> Misc.p_synopsis package );
+    var_string "description" (Misc.p_description package ) ;
+    var_list "authors" ( List.map string ( Misc.p_authors package ) ) ;
+    var_list "maintainer" ( List.map string p.authors ) ;
+  ] @ List.rev !optionals @
+    build_commands @
+    depends
   in
   let f =
     {
@@ -171,6 +200,13 @@ let init ?y ?switch () =
         if not ( Sys.file_exists ( opam_dir // switch ) ) then
           exec ?y [ "switch" ; "create" ] [ switch ]
 
-let run ?y ?switch cmd args =
+let run ?y ?error ?switch cmd args =
   init ?y ?switch ();
-  exec ?y cmd args
+  match error with
+  | None ->
+      exec ?y cmd args
+  | Some error ->
+      try
+        exec ?y cmd args
+      with exn ->
+        error := Some exn

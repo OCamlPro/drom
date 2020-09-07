@@ -1,0 +1,14 @@
+
+# profile=conventional
+# margin=80
+# parens-ite=true
+# if-then-else=k-r
+# parens-tuple=always
+# type-decl=sparse
+# space-around-collection-expressions=false
+# break-cases=toplevel
+# cases-exp-indent=2
+# leading-nested-match-parens=true
+# module-item-spacing=preserve
+# doc-comments=after
+# break-separators=after-and-docked
