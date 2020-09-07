@@ -11,20 +11,23 @@
 open EzFile.OP
 
 let command = "drom"
-let version = "0.9.4"
+
 let about =
-  Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>"
-    command version
+  Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>" command
+    Version.version
 
 let current_ocaml_edition = "4.10.0"
+
 let current_dune_version = "2.6.0"
 
-
-let home_dir = try Sys.getenv "HOME" with Not_found ->
-  Printf.eprintf "Error: HOME variable not defined\n%!";
-  exit 2
+let home_dir =
+  try Sys.getenv "HOME"
+  with Not_found ->
+    Printf.eprintf "Error: HOME variable not defined\n%!";
+    exit 2
 
 let default_synopsis ~name = Printf.sprintf "The %s project" name
+
 let default_description ~name =
   Printf.sprintf "This is the description\nof the %s OCaml project\n" name
 
@@ -37,3 +40,5 @@ let xdg_config_dir =
   | x -> x
 
 let config_dir = xdg_config_dir // "drom"
+
+let min_drom_version = "0.1.0"

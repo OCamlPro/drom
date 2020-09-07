@@ -4,14 +4,19 @@
 (allow_approximate_merlin)
 (generate_opam_files false)
 (version 0.1.0)
+(formatting (enabled_for ocaml reason))
 
 (package
  (name drom)
  (synopsis "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience")
  (description "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like\nuser experience. It can be used to create full OCaml projects with\nsphinx and odoc documentation. It has specific knowledge of Github and\nwill generate files for Github Actions CI and Github pages.\n")
  (depends
-   (ocaml (>= 4.03.0))
+   (ocaml (>= 4.05.0))
    (drom_lib (= version))
+   ppx_inline_test
+   ppx_expect
+   odoc
+   ocamlformat
  ))
 
 (package
@@ -19,10 +24,14 @@
  (synopsis "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience")
  (description "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like\nuser experience. It can be used to create full OCaml projects with\nsphinx and odoc documentation. It has specific knowledge of Github and\nwill generate files for Github Actions CI and Github pages.\n")
  (depends
-   (ocaml (>= 4.03.0))
+   (ocaml (>= 4.05.0))
    (toml (and (>= 5.0.0) (< 6.0.0)))
    (opam-file-format (and (>= 2.0.0) (< 3.0.0)))
    (ez_file (and (>= 0.1.0) (< 1.0.0)))
    (ez_config (and (>= 0.1.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.1.0) (< 1.0.0)))
+   ppx_inline_test
+   ppx_expect
+   odoc
+   ocamlformat
  ))

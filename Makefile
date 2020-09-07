@@ -1,44 +1,43 @@
 
 .PHONY: all build-deps doc sphinx odoc view fmt fmt-check install dev-deps test
-DEV_DEPS := merlin ocamlformat odoc
+DEV_DEPS := merlin ocamlformat odoc ppx_expect ppx_inline_test
 
 all: build
 
 build:
-	dune build
+	opam exec -- dune build @install
 	cp -f _build/default/main/main.exe drom
 
-
 build-deps:
-	opam install --deps-only ./*.opam
+	opam install ./*.opam --deps-only
 
 sphinx:
 	sphinx-build sphinx docs/sphinx
 
 doc:
-	dune build @doc
+	opam exec -- dune build @doc
 	rsync -auv --delete _build/default/_doc/_html/. docs/doc
 
 view:
 	xdg-open file://$$(pwd)/docs/index.html
 
 fmt:
-	dune build @fmt --auto-promote
+	opam exec -- dune build @fmt --auto-promote
 
 fmt-check:
-	dune build @fmt
+	opam exec -- dune build @fmt
 
 install:
-	dune install
+	opam exec -- dune install
 
 opam:
 	opam pin -k path .
 
 uninstall:
-	dune uninstall
+	opam exec -- dune uninstall
 
 dev-deps:
-	opam install -y ${DEV_DEPS}
+	opam install ./*.opam --deps-only --with-doc --with-test
 
 test:
-	dune build @runtest
+	opam exec -- dune build @runtest

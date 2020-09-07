@@ -11,28 +11,37 @@
 open EzCompat
 open Types
 
+(*
+TODO: it's not clear how to correctly format dune files so that
+they will not trigger a promotion with 'dune build @fmt'. The use
+of sexplib0 does not immediately generate files in the correct format.
+'dune' does not export a module for that in its library either.
+We end up adding '(formatting (enabled_for ocaml reason))' to dune-project
+to completely disable formatting of dune files.
+*)
+
 let template_src_dune package =
   let b = Buffer.create 1000 in
-  let dependencies = List.map (fun (name, d) ->
-      match d.depname with
-      | None -> name
-      | Some name -> name)  (Misc.p_dependencies package) in
+  let dependencies =
+    List.map
+      (fun (name, d) -> match d.depname with None -> name | Some name -> name)
+      (Misc.p_dependencies package)
+  in
   let p_mode = Misc.p_mode package in
   let dependencies =
     match p_mode with
     | Binary -> dependencies
     | Javascript ->
-        if List.mem "js_of_ocaml" dependencies then
-          dependencies
-        else
-          "js_of_ocaml" :: dependencies
+        if List.mem "js_of_ocaml" dependencies then dependencies
+        else "js_of_ocaml" :: dependencies
   in
   let libraries = String.concat " " dependencies in
 
-  begin
-    match package.kind with
-    | Program ->
-        Printf.bprintf b {|
+  ( match package.kind with
+  | Virtual -> assert false
+  | Program ->
+      Printf.bprintf b
+        {|
 (executable
  (name main)
  (public_name %s)
@@ -40,65 +49,50 @@ let template_src_dune package =
  (libraries %s)%s
 )
 |}
-          package.name
-          package.name
-          libraries
-          (match p_mode with
-           | Binary -> ""
-           | Javascript ->
-               {|
+        package.name package.name libraries
+        ( match p_mode with
+        | Binary -> ""
+        | Javascript ->
+            {|
  (modes js byte)
- (preprocess (pps js_of_ocaml-ppx))|}
-          )
-
-    | Library ->
-        Printf.bprintf b {|
+ (preprocess (pps js_of_ocaml-ppx))|} )
+  | Library ->
+      Printf.bprintf b
+        {|
 (library
  (name %s)
  (public_name %s)%s
  (libraries %s)%s
 )
 |}
-          ( Misc.library_name package)
-          package.name
-          (if not ( Misc.p_pack_modules package ) then {|
- (wrapped false)|}
-           else "")
-          libraries
-          (match p_mode with
-           | Binary -> ""
-           | Javascript ->
-               {|
- (preprocess (pps js_of_ocaml-ppx))|}
-          )
+        (Misc.library_name package)
+        package.name
+        (if not (Misc.p_pack_modules package) then {|
+ (wrapped false)|} else "")
+        libraries
+        ( match p_mode with
+        | Binary -> ""
+        | Javascript -> {|
+ (preprocess (pps js_of_ocaml-ppx))|} ) );
 
-  end;
-
-  begin
-    match Sys.readdir package.dir with
-    | exception _ -> ()
-    | files -> Array.iter (fun file ->
-        if Filename.check_suffix file ".mll" then
-          Printf.bprintf b "(ocamllex %s)\n"
-            ( Filename.chop_suffix file ".mll")
-        else
-        if Filename.check_suffix file ".mly" then
-          Printf.bprintf b "(ocamlyacc %s)\n"
-            ( Filename.chop_suffix file ".mly")
-      ) files;
-  end ;
+  ( match Sys.readdir package.dir with
+  | exception _ -> ()
+  | files ->
+      Array.iter
+        (fun file ->
+          if Filename.check_suffix file ".mll" then
+            Printf.bprintf b "(ocamllex %s)\n"
+              (Filename.chop_suffix file ".mll")
+          else if Filename.check_suffix file ".mly" then
+            Printf.bprintf b "(ocamlyacc %s)\n"
+              (Filename.chop_suffix file ".mly"))
+        files );
 
   Printf.bprintf b {|
 (documentation
   (package %s))
-|}
-    package.name ;
+|} package.name;
   Buffer.contents b
-
-
-
-
-
 
 let template_dune_project p =
   let b = Buffer.create 100000 in
@@ -109,9 +103,9 @@ let template_dune_project p =
 (allow_approximate_merlin)
 (generate_opam_files false)
 (version %s)
+(formatting (enabled_for ocaml reason))
 |}
-    p.package.name
-    p.version ;
+    p.package.name p.version;
 
   let add_package package =
     Printf.bprintf b {|
@@ -120,80 +114,73 @@ let template_dune_project p =
  (synopsis %S)
  (description %S)
 |}
-      package.name
-      ( Misc.p_synopsis package )
-      ( Misc.p_description package ) ;
+      package.name (Misc.p_synopsis package)
+      (Misc.p_description package);
 
     Printf.bprintf b " (depends\n";
-    Printf.bprintf b "   (ocaml (>= %s))\n" package.project.min_edition ;
+    Printf.bprintf b "   (ocaml (>= %s))\n" package.project.min_edition;
     let depend_of_dep name d =
-      Printf.bprintf b "   (%s " name;
-      let rec iter versions =
-        match versions with
-        | [] -> ()
-        | [ version ] ->
-
-            begin
-              match version with
-            | Version ->
-                Printf.bprintf b "(= version)"
-            | Semantic (major, minor, fix) ->
-                Printf.bprintf b "(and (>= %d.%d.%d) (< %d.0.0))"
-                  major minor fix (major+1)
-            | Lt version -> Printf.bprintf b "( < %s )" version
-            | Le version -> Printf.bprintf b "( <= %s )" version
-            | Eq version -> Printf.bprintf b "( = %s )" version
-            | Ge version -> Printf.bprintf b "( > %s )" version
-            | Gt version -> Printf.bprintf b "( >= %s )" version
-            end
-        | version :: tail ->
-            Printf.bprintf b "(and ";
-            iter [version] ;
-            iter tail ;
-            Printf.bprintf b ")";
-      in
-      iter d.depversions ;
-      Printf.bprintf b ")\n"
+      match d.depversions with
+      | [] -> Printf.bprintf b "   %s\n" name
+      | _ ->
+          Printf.bprintf b "   (%s " name;
+          let rec iter versions =
+            match versions with
+            | [] -> ()
+            | [ version ] -> (
+                match version with
+                | Version -> Printf.bprintf b "(= version)"
+                | Semantic (major, minor, fix) ->
+                    Printf.bprintf b "(and (>= %d.%d.%d) (< %d.0.0))" major
+                      minor fix (major + 1)
+                | Lt version -> Printf.bprintf b "( < %s )" version
+                | Le version -> Printf.bprintf b "( <= %s )" version
+                | Eq version -> Printf.bprintf b "( = %s )" version
+                | Ge version -> Printf.bprintf b "( > %s )" version
+                | Gt version -> Printf.bprintf b "( >= %s )" version )
+            | version :: tail ->
+                Printf.bprintf b "(and ";
+                iter [ version ];
+                iter tail;
+                Printf.bprintf b ")"
+          in
+          iter d.depversions;
+          Printf.bprintf b ")\n"
     in
-    List.iter (fun (name, d) ->
-        depend_of_dep name d
-      ) ( Misc.p_dependencies package ) ;
-    List.iter (fun (name, d) ->
-        depend_of_dep name d
-      ) ( Misc.p_tools package ) ;
-    Printf.bprintf b " ))\n";
-
+    List.iter
+      (fun (name, d) -> depend_of_dep name d)
+      (Misc.p_dependencies package);
+    List.iter (fun (name, d) -> depend_of_dep name d) (Misc.p_tools package);
+    Printf.bprintf b " ))\n"
   in
 
-  List.iter add_package p.packages ;
+  List.iter add_package p.packages;
   Buffer.contents b
-
-
-
 
 let template_dune p =
   let b = Buffer.create 1000 in
   Printf.bprintf b "; This file was generated by drom, using drom.toml\n";
   Printf.bprintf b "(env\n";
-  StringMap.iter (fun name profile ->
+  StringMap.iter
+    (fun name profile ->
       Printf.bprintf b "  (%s\n" name;
-      StringMap.iter (fun name value ->
+      StringMap.iter
+        (fun name value ->
           Printf.bprintf b "    (%s %s%s)\n"
-            (match name with
-             | "ocaml" -> "flags (:standard"
-             | "odoc" -> "odoc"
-             | "coq" -> "coq ("
-             | tool -> tool ^ "_flags" )
+            ( match name with
+            | "ocaml" -> "flags (:standard"
+            | "odoc" -> "odoc"
+            | "coq" -> "coq ("
+            | tool -> tool ^ "_flags" )
             value
-            (match name with
-             | "coq" -> ")" (* (coq (flags XXX)) *)
-             | "ocaml" -> ")"
-             | _ -> "")
-        ) profile.flags ;
-      Printf.bprintf b "  )\n";
-    ) p.profiles ;
+            ( match name with
+            | "coq" -> ")" (* (coq (flags XXX)) *)
+            | "ocaml" -> ")"
+            | _ -> "" ))
+        profile.flags;
+      Printf.bprintf b "  )\n")
+    p.profiles;
   Printf.bprintf b ")\n";
   if p.skip_dirs <> [] then
-    Printf.bprintf b "(data_only_dirs %s)\n"
-      ( String.concat " " p.skip_dirs );
+    Printf.bprintf b "(data_only_dirs %s)\n" (String.concat " " p.skip_dirs);
   Buffer.contents b

@@ -24,21 +24,20 @@
     - bindings;
     - parse errors. *)
 
-
-(** Position in an input stream. *)
 type pos = Lexing.position
+(** Position in an input stream. *)
 
-(** The type of excerpts. *)
 type excerpt
+(** The type of excerpts. *)
 
-(** The start position of an excerpt. *)
 val startpos : excerpt -> pos
+(** The start position of an excerpt. *)
 
-(** The end position of an excerpt. *)
 val endpos : excerpt -> pos
+(** The end position of an excerpt. *)
 
-(** The text of an excerpt. *)
 val text : excerpt -> string
+(** The text of an excerpt. *)
 
 (** Parsing errors. *)
 type error =
@@ -50,56 +49,47 @@ type error =
   | Expecting_path_elt
   | Expecting_path_sep_or_term
 
-(** Textual description of errors. *)
 val error_to_string : error -> string
-
+(** Textual description of errors. *)
 
 (** The input signature of the functor [Configuration_Parser.Make]. *)
-module type Definition =
-sig
-
-  (** The type of functional parser state. *)
+module type Definition = sig
   type t
+  (** The type of functional parser state. *)
 
-  (** Receive a comment. *)
   val comment : excerpt -> t -> t
+  (** Receive a comment. *)
 
-  (** Receive a section specification. *)
   val section : excerpt list -> t -> t
+  (** Receive a section specification. *)
 
-  (** Receive a binding specificaton. *)
   val binding : excerpt -> excerpt -> t -> t
+  (** Receive a binding specificaton. *)
 
-  (** Receive a parser error. *)
   val parse_error : pos -> error -> t -> t
-
+  (** Receive a parser error. *)
 end
 
 (** The output signature of the functor [Configuration_Parser.Make]. *)
-module type S =
-sig
-
-  (** The type of functional parser state. *)
+module type S = sig
   type t
+  (** The type of functional parser state. *)
 
-  (** Parse the given lexing buffer stream. *)
   val parse : Lexing.lexbuf -> t -> t
+  (** Parse the given lexing buffer stream. *)
 
-  (** Parse the given string. *)
   val parse_string : string -> t -> t
+  (** Parse the given string. *)
 
-  (** Parse the given input channel. *)
   val parse_channel : in_channel -> t -> t
+  (** Parse the given input channel. *)
 
+  val parse_file : string -> t -> t
   (** Parse the given file.
 
       @raise Sys_error if the file cannot be opened. *)
-  val parse_file : string -> t -> t
-
 end
-
 
 (** Functor building an implementation of the configuration file
     parser given a parser definition. *)
-module Make(D:Definition): S
-  with type t = D.t
+module Make (D : Definition) : S with type t = D.t

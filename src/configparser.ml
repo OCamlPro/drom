@@ -10,7 +10,8 @@
 
 open EzCompat
 
-let example = {|
+let example =
+  {|
 [Simple Values]
 key=value
 spaces in keys=allowed
@@ -54,36 +55,33 @@ empty string value here =
         # Did I mention we can indent comments, too?
 |}
 
-type t = {
-  mutable sections : section StringMap.t;
-}
+type t = { mutable sections : section StringMap.t }
 
 and section = {
   mutable section_name : string;
   mutable section_options : string StringMap.t;
 }
 
-let get t s o =
-  StringMap.find o
-    ( StringMap.find s t.sections ). section_options
+let get t s o = StringMap.find o (StringMap.find s t.sections).section_options
 
 let to_string t =
   let b = Buffer.create 10_000 in
-  StringMap.iter (fun _ s ->
-      Printf.bprintf b "[%s]\n" s.section_name ;
-      StringMap.iter (fun s v ->
+  StringMap.iter
+    (fun _ s ->
+      Printf.bprintf b "[%s]\n" s.section_name;
+      StringMap.iter
+        (fun s v ->
           let lines = EzString.split v '\n' in
           let v = String.concat "\t  " lines in
-          Printf.bprintf b "\t%s = %s\n" s v
-        ) s.section_options
-    ) t.sections ;
+          Printf.bprintf b "\t%s = %s\n" s v)
+        s.section_options)
+    t.sections;
   Buffer.contents b
 
 let parse_string s =
   let sections = ref StringMap.empty in
   let current_section = ref None in
-  let module Logger =
-  struct
+  let module Logger = struct
     type t = unit
 
     (*
@@ -110,17 +108,15 @@ let parse_string s =
     let comment _exc () = ()
 
     let section path () =
-      let section_name = String.concat "."
-          ( List.map Configuration_Parser.text path ) in
+      let section_name =
+        String.concat "." (List.map Configuration_Parser.text path)
+      in
       let s =
         match StringMap.find section_name !sections with
         | exception Not_found ->
-          let s = {
-            section_name ;
-            section_options = StringMap.empty;
-          } in
-          sections := StringMap.add section_name s !sections ;
-          s
+            let s = { section_name; section_options = StringMap.empty } in
+            sections := StringMap.add section_name s !sections;
+            s
         | s -> s
       in
       current_section := Some s
@@ -129,19 +125,15 @@ let parse_string s =
       match !current_section with
       | None -> failwith "key outside of section"
       | Some s ->
-        s.section_options <- StringMap.add
-            ( Configuration_Parser.text key )
-            ( Configuration_Parser.text value )
-            s.section_options
+          s.section_options <-
+            StringMap.add
+              (Configuration_Parser.text key)
+              (Configuration_Parser.text value)
+              s.section_options
 
     let parse_error _errpos _error () = failwith "parse error"
-
-  end
-  in
-  let module ConfigurationLogger =
-    Configuration_Parser.Make(Logger)
-  in
-
+  end in
+  let module ConfigurationLogger = Configuration_Parser.Make (Logger) in
   ConfigurationLogger.parse_string s ();
 
   { sections = !sections }

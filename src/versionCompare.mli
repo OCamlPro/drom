@@ -29,12 +29,12 @@
     "1.02-0".
 *)
 
+val equal : string -> string -> bool
 (** @return [true] iff the two strings define the same version. Hence,
     the result may be true even when the two string differ
     syntactically. *)
-val equal : string -> string -> bool
 
+val compare : string -> string -> int
 (** [compare x y] returns 0 if x is eqivalent to y, -1 if x is smaller
     than y, and 1 if x is greater than y. This is consistent with
     [Stdlib.compare]. *)
-val compare : string -> string -> int

@@ -13,15 +13,14 @@ open Ezcmd.TYPES
 let cmd_name = "test"
 
 let action ~args () =
-  let ( _p : Types.project ) =
-    Build.build ~dev_deps:true  ~args () in
-  Misc.call [| "opam" ; "exec"; "--" ; "dune" ; "build" ; "@runtest" |];
+  let (_p : Types.project) = Build.build ~dev_deps:true ~args () in
+  Misc.call [| "opam"; "exec"; "--"; "dune"; "build"; "@runtest" |];
   ()
 
 let cmd =
   let args, specs = Build.build_args () in
   {
-    cmd_name ;
+    cmd_name;
     cmd_action = (fun () -> action ~args ());
     cmd_args = [] @ specs;
     cmd_man = [];

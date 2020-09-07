@@ -30,19 +30,27 @@ open EzFile.OP
 
 module type LICENSE = sig
   val key : string
+
   val name : string
+
   val header : string list
+
   val license : string
 end
 
 module BSD3 = struct
   let key = "BSD3"
+
   let name = "BSD-3-Clause"
-  let header = [
-    "This source code is licensed under the BSD3 style license found in the" ;
-    "LICENSE.md file in the root directory of this source tree. " ;
-  ]
-  let license = {|
+
+  let header =
+    [
+      "This source code is licensed under the BSD3 style license found in the";
+      "LICENSE.md file in the root directory of this source tree. ";
+    ]
+
+  let license =
+    {|
 All rights reserved.
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -67,18 +75,21 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 |}
-
 end
 
 module BSD2 = struct
   let key = "BSD2"
+
   let name = "BSD-2-Clause"
-  let header = [
-    "This source code is licensed under the BSD2 style license found in the" ;
-    "LICENSE.md file in the root directory of this source tree. " ;
-  ]
+
+  let header =
+    [
+      "This source code is licensed under the BSD2 style license found in the";
+      "LICENSE.md file in the root directory of this source tree. ";
+    ]
+
   let license =
-   {|
+    {|
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -101,36 +112,43 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 |}
-
-  end
-
+end
 
 module MIT : LICENSE = struct
   let key = "MIT"
+
   let name = "MIT"
-  let header = [
-    "This source code is licensed under the MIT license found in the" ;
-    "LICENSE.md file in the root directory of this source tree." ;
-  ]
-  let license = {|
+
+  let header =
+    [
+      "This source code is licensed under the MIT license found in the";
+      "LICENSE.md file in the root directory of this source tree.";
+    ]
+
+  let license =
+    {|
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 |}
-
 end
 
 module ISC = struct
   let key = "ISC"
+
   let name = "ISC"
-  let header = [
-    "Permission to use, copy, modify, and distribute this software for any" ;
-    "purpose with or without fee is hereby granted, provided that the above" ;
-    "copyright notice and this permission notice appear in all copies." ;
-  ]
-  let license = {|
+
+  let header =
+    [
+      "Permission to use, copy, modify, and distribute this software for any";
+      "purpose with or without fee is hereby granted, provided that the above";
+      "copyright notice and this permission notice appear in all copies.";
+    ]
+
+  let license =
+    {|
 Permission to use, copy, modify, and distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
 copyright notice and this permission notice appear in all copies.
@@ -143,17 +161,22 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 |}
-  end
+end
 
 module LGPL2 = struct
   let key = "LGPL2"
+
   let name = "LGPL-2.1-with-OCaml-exception"
-  let header = [
-    "This file is distributed under the terms of the GNU Lesser General" ;
-    "Public License version 2.1, with the special exception on linking" ;
-    "described in the LICENSE.md file in the root directory." ;
-  ]
-  let license = {|
+
+  let header =
+    [
+      "This file is distributed under the terms of the GNU Lesser General";
+      "Public License version 2.1, with the special exception on linking";
+      "described in the LICENSE.md file in the root directory.";
+    ]
+
+  let license =
+    {|
 This software is distributed under the terms of the
 GNU Lesser General Public License (LGPL) version 2.1 (included below).
 
@@ -357,14 +380,18 @@ end
 
 module GPL3 = struct
   let key = "GPL3"
-  let name = "GPL-3.0-only"
-  let header = [
-    "This file is distributed under the terms of the GNU General Public" ;
-    "License version 3.0, as described in the LICENSE.md file in the root" ;
-    "directory of this source tree." ;
 
-  ]
-  let license = {|
+  let name = "GPL-3.0-only"
+
+  let header =
+    [
+      "This file is distributed under the terms of the GNU General Public";
+      "License version 3.0, as described in the LICENSE.md file in the root";
+      "directory of this source tree.";
+    ]
+
+  let license =
+    {|
 
                      GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
@@ -1045,124 +1072,109 @@ Public License instead of this License.  But first, please read
 end
 
 let licenses =
-  StringMap.of_list [
-    MIT.key, (module MIT : LICENSE ) ;
-    ISC.key, (module ISC : LICENSE ) ;
-    BSD2.key, (module BSD2 : LICENSE ) ;
-    BSD3.key, (module BSD3 : LICENSE ) ;
-    LGPL2.key, (module LGPL2 : LICENSE ) ;
-    GPL3.key, (module GPL3 : LICENSE ) ;
-  ]
-
-let license p =
-  let key = p.license in
-  let txt =
-    try
-      let m = StringMap.find key licenses in
-      let module M = ( val m : LICENSE ) in
-      M.license
-    with Not_found ->
-      let maybe_file =
-        Globals.config_dir // "licenses" // key // "LICENSE.md" in
-      if Sys.file_exists maybe_file then
-        EzFile.read_file maybe_file
-      else begin
-        Printf.eprintf "Warning: unknown license %S. You can fix this problem by either:\n" key;
-        Printf.eprintf "* Choosing one of the known licenses in '_drom/known-licences.txt'\n";
-        Printf.eprintf "* Adding 'licence' to the 'skip' field in 'drom.toml'\n%!";
-        Printf.eprintf "* Adding a file %s and NAME\n%!" maybe_file;
-
-        Printf.sprintf
-          "This software is distributed under license %S.\n%!" key
-      end
-  in
-  Printf.sprintf "%s%s"
-    ( match p.copyright with
-      | None -> ""
-      | Some copyright ->
-        Printf.sprintf "Copyright (c) %d %s\n\n"
-          (Misc.date ()).Unix.tm_year
-          copyright )
-    txt
+  StringMap.of_list
+    [
+      (MIT.key, (module MIT : LICENSE));
+      (ISC.key, (module ISC : LICENSE));
+      (BSD2.key, (module BSD2 : LICENSE));
+      (BSD3.key, (module BSD3 : LICENSE));
+      (LGPL2.key, (module LGPL2 : LICENSE));
+      (GPL3.key, (module GPL3 : LICENSE));
+    ]
 
 let known_licenses () =
   let b = Buffer.create 100 in
   Printf.bprintf b "Licenses known by drom:\n";
-  StringMap.iter (fun name m ->
+  StringMap.iter
+    (fun name m ->
       let module M = (val m : LICENSE) in
-      Printf.bprintf b "* %s -> %s\n" name M.name
-    ) licenses;
+      Printf.bprintf b "* %s -> %s\n" name M.name)
+    licenses;
   Buffer.contents b
 
 let name p =
   let license = p.license in
   try
     let m = StringMap.find license licenses in
-    let module M : LICENSE = ( val m : LICENSE ) in
+    let module M : LICENSE = (val m : LICENSE) in
     M.name
   with Not_found ->
     let maybe_file = Globals.config_dir // "licenses" // license // "NAME" in
-    if Sys.file_exists maybe_file then
-      String.trim ( EzFile.read_file maybe_file )
-    else
-      license
+    if Sys.file_exists maybe_file then String.trim (EzFile.read_file maybe_file)
+    else license
 
-let c_sep = ( "/*", '*', "*/" )
-let ml_sep = ( "(*", '*', "*)" )
-let header ?( sep = ml_sep ) p =
-  let ( boc, sec, eoc) = sep in
+let c_sep = ("/*", '*', "*/")
+
+let ml_sep = ("(*", '*', "*)")
+
+let header ?(sep = ml_sep) p =
+  let boc, sec, eoc = sep in
   let boc_len = String.length boc in
-  assert ( boc_len = 2 ) ;
+  assert (boc_len = 2);
   let eoc_len = String.length eoc in
-  assert ( eoc_len = 2 ) ;
+  assert (eoc_len = 2);
 
   let lines =
     let license = p.license in
     try
       let m = StringMap.find license licenses in
-      let module M : LICENSE = ( val m : LICENSE ) in
+      let module M : LICENSE = (val m : LICENSE) in
       M.header
     with Not_found ->
       let maybe_file =
-        Globals.config_dir // "licenses" // license // "HEADER" in
+        Globals.config_dir // "licenses" // license // "HEADER"
+      in
       if Sys.file_exists maybe_file then
-        List.map String.trim
-          ( EzFile.read_lines maybe_file |> Array.to_list )
+        List.map String.trim (EzFile.read_lines maybe_file |> Array.to_list)
       else
         [
-          "This file is distributed under the terms of the" ;
-          Printf.sprintf "%s license." license
+          "This file is distributed under the terms of the";
+          Printf.sprintf "%s license." license;
         ]
   in
-  let starline =
-    Printf.sprintf "%s%s%s" boc ( String.make 72 sec ) eoc
-  in
+  let starline = Printf.sprintf "%s%s%s" boc (String.make 72 sec) eoc in
   let line s = Printf.sprintf "%s  %-70s%s" boc s eoc in
-  String.concat "\n" (
-    [
-      starline ;
-      line "" ;
-    ] @
-    ( match p.copyright with
+  String.concat "\n"
+    ( [ starline; line "" ]
+    @ ( match p.copyright with
       | None -> []
       | Some copyright ->
           [
             Printf.kprintf line "Copyright (c) %d %s"
-              (Misc.date ()).Unix.tm_year copyright ;
-            line ""
+              (Misc.date ()).Unix.tm_year copyright;
+            line "";
           ] )
-    @
-    [ line "All rights reserved." ]
-    @
-    ( List.map line lines )
-    @
-    [
-      line "";
-      starline ;
-      ""
-    ]
-  )
+    @ [ line "All rights reserved." ]
+    @ List.map line lines @ [ line ""; starline; "" ] )
 
 let header_ml p = header p
+
 let header_mll p = header p
+
 let header_mly p = header ~sep:c_sep p
+
+let license p =
+  let key = p.license in
+  try
+    let m = StringMap.find key licenses in
+    let module M = (val m : LICENSE) in
+    M.license
+  with Not_found ->
+    let maybe_file = Globals.config_dir // "licenses" // key // "LICENSE.md" in
+    if Sys.file_exists maybe_file then EzFile.read_file maybe_file
+    else (
+      Printf.eprintf
+        "Warning: unknown license %S. You can fix this problem by either:\n" key;
+      Printf.eprintf
+        "* Choosing one of the known licenses in '_drom/known-licences.txt'\n";
+      Printf.eprintf "* Adding 'licence' to the 'skip' field in 'drom.toml'\n%!";
+      Printf.eprintf "* Adding a file %s and NAME\n%!" maybe_file;
+
+      Printf.sprintf "This software is distributed under license %S.\n%!" key )
+
+let template_LICENSE_md =
+  {|!{license:skip}Copyright (c) !{year} !{copyright}
+
+!{license}|}
+
+let project_files = [ ("LICENSE.md", template_LICENSE_md) ]

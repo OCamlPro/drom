@@ -9,7 +9,6 @@
 (**************************************************************************)
 
 val update_files :
-  ?kind:Types.kind ->
   ?mode:Types.mode ->
   ?upgrade:bool ->
   ?git:bool ->
@@ -18,6 +17,6 @@ val update_files :
   Types.project ->
   unit
 
-val library_name :  Types.package -> string
-val library_module :  Types.package -> string
-val dev_repo : Types.project -> string option
+val library_name : Types.package -> string
+
+val library_module : Types.package -> string
