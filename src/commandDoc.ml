@@ -13,29 +13,28 @@ open Ezcmd.TYPES
 let cmd_name = "doc"
 
 let action ~args ~open_www () =
-  let ( p : Types.project ) =
-    Build.build ~dev_deps:true  ~args () in
-  Misc.call [| "opam" ; "exec"; "--" ; "dune" ; "build" ; "@doc" |];
-  Misc.call [|
-    "rsync" ; "-auv" ; "--delete" ;
-    "_build/default/_doc/_html/." ;
-    "docs/doc"
-  |];
-  if not ( List.mem "git-add-doc" p.skip ) then
-    Misc.call [| "git" ; "add" ; "docs/doc" |];
+  let (p : Types.project) = Build.build ~dev_deps:true ~args () in
+  Misc.call [| "opam"; "exec"; "--"; "dune"; "build"; "@doc" |];
+  Misc.call
+    [| "rsync"; "-auv"; "--delete"; "_build/default/_doc/_html/."; "docs/doc" |];
+  if not (List.mem "git-add-doc" p.skip) then
+    Misc.call [| "git"; "add"; "docs/doc" |];
   if !open_www then
-    Misc.call [| "xdg-open" ; "_build/default/_doc/_html/index.html" |]
+    Misc.call [| "xdg-open"; "_build/default/_doc/_html/index.html" |]
 
 let cmd =
-  let ( args, specs ) =  Build.build_args () in
+  let args, specs = Build.build_args () in
   let open_www = ref false in
   {
-    cmd_name ;
+    cmd_name;
     cmd_action = (fun () -> action ~args ~open_www ());
-    cmd_args =  [
-      [ "open" ], Arg.Set open_www,
-      Ezcmd.info "Open a browser on the documentation" ;
-    ] @ specs ;
+    cmd_args =
+      [
+        ( [ "open" ],
+          Arg.Set open_www,
+          Ezcmd.info "Open a browser on the documentation" );
+      ]
+      @ specs;
     cmd_man = [];
     cmd_doc = "Generate API documentation using odoc in the docs/doc directory";
   }

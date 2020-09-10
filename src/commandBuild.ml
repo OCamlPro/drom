@@ -13,16 +13,15 @@ open Ezcmd.TYPES
 let cmd_name = "build"
 
 let action ~args () =
-  let ( _p : Types.project ) = Build.build ~args () in
+  let (_p : Types.project) = Build.build ~args () in
   Printf.eprintf "\nBuild OK\n%!"
 
 let cmd =
-  let ( args, specs ) =  Build.build_args () in
+  let args, specs = Build.build_args () in
   {
-    cmd_name ;
+    cmd_name;
     cmd_action = (fun () -> action ~args ());
-    cmd_args = [
-    ] @ specs ;
+    cmd_args = [] @ specs;
     cmd_man = [];
     cmd_doc = "Build a project";
   }

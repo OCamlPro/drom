@@ -1,10 +1,13 @@
 [project]
+drom-version = "0.1.0"
+
+[project]
 authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
 copyright = "OCamlPro SAS & Origin Labs SAS"
 edition = "4.10.0"
 github-organization = "ocamlpro"
 license = "LGPL2"
-min-edition = "4.03.0"
+min-edition = "4.05.0"
 mode = "binary"
 name = "drom"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
@@ -29,19 +32,26 @@ will generate files for Github Actions CI and Github pages.
 """
 
 [drom]
-skip = "src/main.ml sphinx/index.rst CHANGES.md"
+skip = "src/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml"
 
 [dependencies]
 
-[tools]
+[tools.ocamlformat]
+for-test = true
+[tools.odoc]
+for-doc = true
+[tools.ppx_expect]
+for-test = true
+[tools.ppx_inline_test]
+for-test = true
 
 [profile.dev]
-ocaml-flags = "-w -a"
+ocaml-flags = "-w +a-4-40-41-42-44"
 [profile.release]
 ocaml-flags = "-O3"
 [project]
 pack-modules = true
-skip-dirs = [ "test" ]
+skip-dirs = ["drom-test"]
 
 
 [[package]]

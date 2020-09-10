@@ -26,81 +26,77 @@ let action () =
   let p = Project.project_of_toml "drom.toml" in
 
   let h = Hashtbl.create 97 in
-  List.iter (fun package ->
-      Hashtbl.add h package.name ( package, ref 0, ref false );
-    ) p.packages ;
-  let add_dep ( name, d ) =
+  List.iter
+    (fun package -> Hashtbl.add h package.name (package, ref 0, ref false))
+    p.packages;
+  let add_dep (name, d) =
     try
       match d.depversions with
       | [] | [ Version ] ->
-          let ( _, counter, _ ) = Hashtbl.find h name in
+          let _, counter, _ = Hashtbl.find h name in
           incr counter
       | _ -> ()
     with Not_found -> ()
   in
-  List.iter (fun package ->
-      List.iter add_dep package.p_dependencies ;
-      List.iter add_dep package.p_tools ;
-    ) p.packages ;
+  List.iter
+    (fun package ->
+      List.iter add_dep package.p_dependencies;
+      List.iter add_dep package.p_tools)
+    p.packages;
 
-  let rec tree_of_dep kind ( name, d ) =
+  let rec tree_of_dep kind (name, d) =
     try
       match d.depversions with
       | [] | [ Version ] ->
-          let ( package, counter, printed ) = Hashtbl.find h name in
-          if not !printed && !counter = 1 then begin
-            printed := true ;
-            tree_of_package package
-          end else
-            raise Not_found
+          let package, counter, printed = Hashtbl.find h name in
+          if (not !printed) && !counter = 1 then (
+            printed := true;
+            tree_of_package package )
+          else raise Not_found
       | _ -> raise Not_found
     with Not_found ->
       let dep_descr =
-        Printf.sprintf "%s%s %s"  name kind
-          (String.concat " " (List.map string_of_version d.depversions) )
+        Printf.sprintf "%s%s %s" name kind
+          (String.concat " " (List.map string_of_version d.depversions))
       in
       EzPrintTree.Branch (dep_descr, [])
-
   and tree_of_package package =
-    let package_descr =
-      Printf.sprintf "%s (/%s)" package.name package.dir
-    in
-    EzPrintTree.Branch (package_descr,
-                        List.map ( tree_of_dep "" ) package.p_dependencies @
-                        List.map ( tree_of_dep "(tool)" ) package.p_tools )
+    let package_descr = Printf.sprintf "%s (/%s)" package.name package.dir in
+    EzPrintTree.Branch
+      ( package_descr,
+        List.map (tree_of_dep "") package.p_dependencies
+        @ List.map (tree_of_dep "(tool)") package.p_tools )
   in
 
   let print indent p =
-    let ( _package, counter, printed ) = Hashtbl.find h p.name in
-    if not !printed && !counter <> 1 then begin
-      printed := true ;
-      EzPrintTree.print_tree indent ( tree_of_package p )
-    end
+    let _package, counter, printed = Hashtbl.find h p.name in
+    if (not !printed) && !counter <> 1 then (
+      printed := true;
+      EzPrintTree.print_tree indent (tree_of_package p) )
   in
-  print "" p.package ;
-  List.iter (fun package ->
-      if package != p.package then print "" package
-    ) p.packages;
+  print "" p.package;
+  List.iter
+    (fun package -> if package != p.package then print "" package)
+    p.packages;
   let print_deps indent kind list =
     match list with
     | [] -> ()
     | _ ->
-        Printf.printf "%s[%s]\n" indent kind ;
+        Printf.printf "%s[%s]\n" indent kind;
         let indent = indent ^ "\226\148\148\226\148\128\226\148\128" in
-        List.iter (fun ( name , d ) ->
+        List.iter
+          (fun (name, d) ->
             Printf.printf "%s %s %s\n" indent name
-              (String.concat " " (List.map string_of_version d.depversions) );
-          ) list
+              (String.concat " " (List.map string_of_version d.depversions)))
+          list
   in
-  print_deps "" "dependencies" p.dependencies ;
-  print_deps "" "tools" p.tools ;
+  print_deps "" "dependencies" p.dependencies;
+  print_deps "" "tools" p.tools;
   ()
-
-
 
 let cmd =
   {
-    cmd_name ;
+    cmd_name;
     cmd_action = (fun () -> action ());
     cmd_args = [];
     cmd_man = [];

@@ -9,34 +9,36 @@
 (**************************************************************************)
 
 open Types
-
 open EzFile.OP
 
 let config_of_toml filename =
   (* Printf.eprintf "Loading config from %s\n%!" filename ; *)
   match EzToml.from_file filename with
-  | `Error _ ->
-    Error.raise "Could not parse config file %S" filename;
+  | `Error _ -> Error.raise "Could not parse config file %S" filename
   | `Ok table ->
-    let config_author =
-      EzToml.get_string_option table [ "user" ; "author" ] in
-    let config_github_organization =
-      EzToml.get_string_option table [ "user" ; "github-organization" ] in
-    let config_license =
-      EzToml.get_string_option table [ "user" ; "license" ] in
-    let config_copyright =
-      EzToml.get_string_option table [ "user" ; "copyright" ] in
-    let config_opam_repo =
-      EzToml.get_string_option table [ "user" ; "opam-repo" ] in
-    {
-      config_author ;
-      config_github_organization ;
-      config_license ;
-      config_copyright ;
-      config_opam_repo ;
-    }
+      let config_author = EzToml.get_string_option table [ "user"; "author" ] in
+      let config_github_organization =
+        EzToml.get_string_option table [ "user"; "github-organization" ]
+      in
+      let config_license =
+        EzToml.get_string_option table [ "user"; "license" ]
+      in
+      let config_copyright =
+        EzToml.get_string_option table [ "user"; "copyright" ]
+      in
+      let config_opam_repo =
+        EzToml.get_string_option table [ "user"; "opam-repo" ]
+      in
+      {
+        config_author;
+        config_github_organization;
+        config_license;
+        config_copyright;
+        config_opam_repo;
+      }
 
-let config_template = {|
+let config_template =
+  {|
 [user]
 # author = "Author Name <email>"
 # github-organization = "...organization..."
@@ -46,7 +48,6 @@ let config_template = {|
 |}
 
 let load () =
-
   let filename = Globals.config_dir // "config" in
   let alternate_filename = Globals.home_dir // ".drom" // "config" in
 
@@ -56,47 +57,48 @@ let load () =
   let filename =
     if filename_ok then
       if alternate_filename_ok then
-        Error.raise "Duplicate configuration in\n- %s\n- %s"
-          filename alternate_filename
-      else
-        filename
-     else
-      if alternate_filename_ok then
-        alternate_filename
-      else begin
-        EzFile.make_dir ~p:true Globals.config_dir ;
-        EzFile.write_file filename config_template;
-        filename
-      end
+        Error.raise "Duplicate configuration in\n- %s\n- %s" filename
+          alternate_filename
+      else filename
+    else if alternate_filename_ok then alternate_filename
+    else (
+      EzFile.make_dir ~p:true Globals.config_dir;
+      EzFile.write_file filename config_template;
+      filename )
   in
 
   let config = config_of_toml filename in
 
-  let config = match Sys.getenv "DROM_AUTHOR" with
+  let config =
+    match Sys.getenv "DROM_AUTHOR" with
     | s -> { config with config_author = Some s }
     | exception Not_found -> config
   in
 
-  let config = match Sys.getenv "DROM_GITHUB_ORGANIZATION" with
+  let config =
+    match Sys.getenv "DROM_GITHUB_ORGANIZATION" with
     | s -> { config with config_github_organization = Some s }
     | exception Not_found -> config
   in
 
-  let config = match Sys.getenv "DROM_LICENSE" with
+  let config =
+    match Sys.getenv "DROM_LICENSE" with
     | s -> { config with config_license = Some s }
     | exception Not_found -> config
   in
 
-  let config = match Sys.getenv "DROM_COPYRIGHT" with
+  let config =
+    match Sys.getenv "DROM_COPYRIGHT" with
     | s -> { config with config_copyright = Some s }
     | exception Not_found -> config
   in
 
-  let config = match Sys.getenv "DROM_OPAM_REPO" with
+  let config =
+    match Sys.getenv "DROM_OPAM_REPO" with
     | s -> { config with config_opam_repo = Some s }
     | exception Not_found -> config
   in
 
   config
 
-let config = lazy ( load () )
+let config = lazy (load ())

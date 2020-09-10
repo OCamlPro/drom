@@ -12,27 +12,26 @@
 
 (** Extension of the stdlib List module *)
 
+val last : 'a list -> 'a
 (** [last l] returns the last elements of [l]. Raise [Not_found] if
     [l] is empty *)
-val last : 'a list -> 'a
 
-(** [take n l] returns the [n] first elements of [l] *)
 val take : int -> 'a list -> 'a list
+(** [take n l] returns the [n] first elements of [l] *)
 
-(** [drop n l] drops the [n] first elements of [l] *)
 val drop : int -> 'a list -> 'a list
+(** [drop n l] drops the [n] first elements of [l] *)
 
-(** [make n x] returns a list of [n] times the element [x] *)
 val make : int -> 'a -> 'a list
+(** [make n x] returns a list of [n] times the element [x] *)
 
-(** Same as {!List.map} but tail recursive *)
 val tail_map : ('a -> 'b) -> 'a list -> 'b list
+(** Same as {!List.map} but tail recursive *)
 
-
+val remove : 'a -> 'a list -> 'a list
 (** [remove x l] removes all the elements structuraly equal to [x] in
     list [l] *)
-val remove : 'a -> 'a list -> 'a list
 
+val removeq : 'a -> 'a list -> 'a list
 (** [removeq x l] removes all the elements physically equal to [x] in
     list [l] *)
-val removeq : 'a -> 'a list -> 'a list

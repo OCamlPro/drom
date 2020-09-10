@@ -2,8 +2,12 @@
 name: Main Workflow
 
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build:
@@ -20,9 +24,10 @@ jobs:
           - false
 
         include:
-          - ocaml-version: 4.03.0
+          - ocaml-version: 4.05.0
             os: ubuntu-latest
             skip_test: true
+
 
     env:
       SKIP_TEST: ${{ matrix.skip_test }}
@@ -35,6 +40,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/.opam
+          key: ${{ runner.os }}-drom-opam-cache-${{ hashFiles('*.opam') }}
       - name: Use OCaml ${{ matrix.ocaml-version }}
         uses: avsm/setup-ocaml@v1
         with:
@@ -45,17 +55,19 @@ jobs:
           git config --global user.name github-actions
           git config --global user.email github-actions-bot@users.noreply.github.com
 
-      - run: opam exec -- ocaml .github/workflows/ci.ml pin
+      - run: opam pin add . -y --no-action
 
-      - run: opam install ./*.opam --deps-only --with-test
+      - run: opam depext -y drom drom_lib
 
-      - run: opam exec -- make all
+      - run: opam install -y ./*.opam --deps-only --with-test
+
+      - run: opam exec -- dune build @install
 
       - name: run test suite
-        run: opam exec -- ocaml .github/workflows/ci.ml test
+        run: opam exec -- dune build @runtest
         if: env.SKIP_TEST != 'true'
 
       - name: test source is well formatted
-        run: opam exec -- make fmt-check
+        run: opam exec -- dune build @fmt
         continue-on-error: true
         if: env.OCAML_VERSION == '4.10.0' && env.OS == 'ubuntu-latest'

@@ -10,7 +10,8 @@
 
 (* copied from ocp-indent/.ocp-indent *)
 
-let template = {|
+let skeleton_DOTocpindent =
+  {|!{ocpindent:skip}!{global-ocpindent}
 # -*- conf -*-
 # This is an example configuration file for ocp-indent
 #
@@ -145,10 +146,11 @@ align_params = auto
 
 open EzFile.OP
 
-let template _p =
+let find_global () =
   let file = Globals.xdg_config_dir // "ocp" // "ocp-indent.conf" in
-  try EzFile.read_file file with
-  | _exn ->
+  try Some (EzFile.read_file file)
+  with _exn -> (
     let file = Globals.home_dir // ".ocp" // "ocp-indent.conf" in
-    try EzFile.read_file file with
-    | _exn -> template
+    try Some (EzFile.read_file file) with _exn -> None )
+
+let project_files = [ (".ocp-indent", skeleton_DOTocpindent) ]

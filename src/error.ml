@@ -8,5 +8,4 @@
 (*                                                                        *)
 (**************************************************************************)
 
-let raise fmt =
-  Printf.kprintf (fun s -> raise (Types.Error s) ) fmt
+let raise fmt = Printf.kprintf (fun s -> raise (Types.Error s)) fmt
