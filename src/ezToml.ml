@@ -162,9 +162,15 @@ let expect_string ~key v =
   | TString s -> s
   | _ -> Error.raise "wrong type for key %s (string expected)" (key2str key)
 
-let string_encoding ~to_string ~of_string =
+let enum_encoding ~to_string ~of_string =
   encoding
     ~to_toml:(fun v -> TString (to_string v))
     ~of_toml:(fun ~key v ->
       let s = expect_string ~key v in
       of_string ~key s)
+
+let string_encoding =
+  encoding
+    ~to_toml:(fun v -> TString v)
+    ~of_toml:(fun ~key v ->
+        expect_string ~key v )

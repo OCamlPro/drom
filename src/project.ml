@@ -42,6 +42,7 @@ let rec dummy_project =
     windows_ci = true;
     profiles = StringMap.empty;
     skip_dirs = [];
+    fields = StringMap.empty ;
   }
 
 and dummy_package =
@@ -61,12 +62,13 @@ and dummy_package =
     p_pack_modules = None;
     p_gen_version = Some "version.ml";
     p_driver_only = None;
+    p_fields = StringMap.empty ;
   }
 
 let create_package ~name ~dir ~kind = { dummy_package with name; dir; kind }
 
 let kind_encoding =
-  EzToml.string_encoding
+  EzToml.enum_encoding
     ~to_string:(function
       | Virtual -> "virtual" | Library -> "library" | Program -> "program")
     ~of_string:(fun ~key:_ s ->
@@ -79,7 +81,7 @@ let kind_encoding =
             kind)
 
 let mode_encoding =
-  EzToml.string_encoding
+  EzToml.enum_encoding
     ~to_string:(function Binary -> "binary" | Javascript -> "javascript")
     ~of_string:(fun ~key:_ s ->
       match s with
@@ -224,6 +226,8 @@ let profile_encoding =
         table;
       { flags = !flags })
 
+let fields_encoding = stringMap_encoding EzToml.string_encoding
+
 let find_author config =
   match config.config_author with
   | Some author -> author
@@ -273,6 +277,7 @@ let toml_of_package pk =
   |> EzToml.put_bool_option [ "pack-modules" ] pk.p_pack_modules
   |> EzToml.put_string_option [ "gen-version" ] pk.p_gen_version
   |> EzToml.put_string_option [ "driver-only" ] pk.p_driver_only
+  |> EzToml.put_encoding fields_encoding [ "fields" ] pk.p_fields
 
 let package_of_toml table =
   let name = EzToml.get_string table [ "name" ] in
@@ -297,6 +302,8 @@ let package_of_toml table =
   in
   let p_gen_version = EzToml.get_string_option table [ "gen-version" ] in
   let p_driver_only = EzToml.get_string_option table [ "driver-only" ] in
+  let p_fields = EzToml.get_encoding_default
+      fields_encoding table [ "fields" ] StringMap.empty in
   {
     name;
     dir;
@@ -313,6 +320,7 @@ let package_of_toml table =
     p_pack_modules;
     p_gen_version;
     p_driver_only;
+    p_fields ;
   }
 
 let toml_of_project p =
@@ -379,7 +387,7 @@ let toml_of_project p =
     | _ ->
         EzToml.empty
         |> EzToml.put_encoding dependencies_encoding [ "dependencies" ]
-             p.dependencies
+          p.dependencies
         |> EzToml.to_string
   in
   let tools =
@@ -396,15 +404,16 @@ let toml_of_project p =
     |> EzToml.put_string_option [ "project"; "pack" ] p.package.p_pack
     |> EzToml.put [ "project"; "skip-dirs" ] (TArray (NodeString p.skip_dirs))
     |> EzToml.put_encoding
-         (stringMap_encoding profile_encoding)
-         [ "profile" ] p.profiles
+      (stringMap_encoding profile_encoding)
+      [ "profile" ] p.profiles
+    |> EzToml.put_encoding fields_encoding [ "fields" ] p.fields
     |> EzToml.to_string
   in
 
   let packages =
     EzToml.empty
     |> EzToml.put [ "package" ]
-         (TArray (NodeTable (List.map toml_of_package p.packages)))
+      (TArray (NodeTable (List.map toml_of_package p.packages)))
     |> EzToml.to_string
   in
 
@@ -420,14 +429,14 @@ let project_of_toml filename =
   in
 
   ( match EzToml.get_string_option table [ "project"; "drom-version" ] with
-  | None -> ()
-  | Some version -> (
-      match VersionCompare.compare version Version.version with
-      | 1 ->
-          Error.raise
-            "You must update `drom` to version %s to work with this project."
-            version
-      | _ -> () ) );
+    | None -> ()
+    | Some version -> (
+        match VersionCompare.compare version Version.version with
+        | 1 ->
+            Error.raise
+              "You must update `drom` to version %s to work with this project."
+              version
+        | _ -> () ) );
 
   let project_key, packages =
     match EzToml.get table [ "package" ] with
@@ -537,15 +546,15 @@ let project_of_toml filename =
       | p :: tail ->
           if p.name = name then (
             ( match dir with
-            | None -> ()
-            | Some dir ->
-                if dir <> p.dir then
-                  Error.raise "'dir' field differs in project and %S" name );
+              | None -> ()
+              | Some dir ->
+                  if dir <> p.dir then
+                    Error.raise "'dir' field differs in project and %S" name );
             ( match (p_pack, p.p_pack) with
-            | Some v1, Some v2 when v1 <> v2 ->
-                Error.raise "'pack' field differs in project and %S" name
-            | Some p_pack, None -> p.p_pack <- Some p_pack
-            | _ -> () );
+              | Some v1, Some v2 when v1 <> v2 ->
+                  Error.raise "'pack' field differs in project and %S" name
+              | Some p_pack, None -> p.p_pack <- Some p_pack
+              | _ -> () );
             (p, packages) )
           else iter tail
     in
@@ -591,6 +600,8 @@ let project_of_toml filename =
   let skip_dirs =
     EzToml.get_string_list_default table [ project_key; "skip-dirs" ] []
   in
+  let fields = EzToml.get_encoding_default
+      fields_encoding table [ project_key ; "fields" ] StringMap.empty in
 
   let project =
     {
@@ -621,6 +632,7 @@ let project_of_toml filename =
       packages;
       profiles;
       skip_dirs;
+      fields;
     }
   in
   package.project <- project;

@@ -13,10 +13,10 @@ let template_DOTgithub_workflows_workflow_yml =
 name: Main Workflow
 
 on:
-  push:
+  pull_request:
     branches:
       - master
-  pull_request:
+  push:
     branches:
       - master
 
@@ -35,22 +35,21 @@ jobs:
           - false
 !{include-for-min-edition}
 
-    env:
-      SKIP_TEST: ${{ matrix.skip_test }}
-      OCAML_VERSION: ${{ matrix.ocaml-version }}
-      OS: ${{ matrix.os }}
-
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Cache
+      - name: Retrieve opam cache
         uses: actions/cache@v2
+        id: cache-opam
         with:
-          path: /home/runner/.opam
-          key: ${{ runner.os }}-!{name}-opam-cache-${{ hashFiles('*.opam') }}
+          path: ~/.opam
+          key: v1-${{ runner.os }}-opam-${{ matrix.ocaml-version }}-${{ hashFiles('*.opam') }}
+          restore-keys: |
+            v1-${{ runner.os }}-opam-${{ matrix.ocaml-version }}-
+
       - name: Use OCaml ${{ matrix.ocaml-version }}
         uses: avsm/setup-ocaml@v1
         with:
@@ -64,19 +63,24 @@ jobs:
       - run: opam pin add . -y --no-action
 
       - run: opam depext -y !{packages}
+        if: steps.cache-opam.outputs.cache-hit != 'true'
 
       - run: opam install -y ./*.opam --deps-only --with-test
+        if: steps.cache-opam.outputs.cache-hit != 'true'
+
+      - run: opam upgrade --fixup
+        if: steps.cache-opam.outputs.cache-hit == 'true'
 
       - run: opam exec -- dune build @install
 
       - name: run test suite
         run: opam exec -- dune build @runtest
-        if: env.SKIP_TEST != 'true'
+        if: matrix.skip_test  != 'true'
 
       - name: test source is well formatted
         run: opam exec -- dune build @fmt
         continue-on-error: true
-        if: env.OCAML_VERSION == '!{edition}' && env.OS == 'ubuntu-latest'
+        if: matrix.ocaml-version == '!{edition}' && matrix.os == 'ubuntu-latest'
 |}
 
 let project_files =

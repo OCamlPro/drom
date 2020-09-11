@@ -72,6 +72,7 @@ let create_project ~config ~name ~skeleton ~kind ~mode ~dir ~inplace =
       windows_ci = true;
       profiles = StringMap.empty;
       skip_dirs = [];
+      fields = StringMap.empty;
     }
   in
   package.project <- p;

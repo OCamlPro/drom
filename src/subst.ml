@@ -9,6 +9,7 @@
 (**************************************************************************)
 
 open Types
+open EzCompat
 
 exception ReplaceContent of string
 
@@ -38,8 +39,8 @@ let project_subst p v =
         Printf.sprintf
           {|
         include:
-          - ocaml-version: %s
-            os: ubuntu-latest
+          - os: ubuntu-latest
+            ocaml-version: %s
             skip_test: true
 |}
           p.min_edition
@@ -166,30 +167,54 @@ let project_subst p v =
       match Ocpindent.find_global () with
       | None -> ""
       | Some content -> raise (ReplaceContent content) )
-  | _ -> raise Not_found
+  | _ ->
+      raise Not_found
+
+let project_field p name =
+  match StringMap.find name p.fields with
+  | exception Not_found -> ""
+  | s -> s
 
 let package_subst p v =
   match v with
-  | "name" -> p.name
-  | "dir" -> p.dir
+  | "name" | "package-name" -> p.name
+  | "dir" | "package-dir" -> p.dir
+  | "package-dune" -> Dune.package_dune p
+  | "package-dune-files" -> Dune.package_dune_files p
   | _ -> (
       match Misc.EzString.chop_prefix v ~prefix:"project-" with
       | Some v -> project_subst p.project v
       | None -> project_subst p.project v )
 
+let package_field package name =
+  match Misc.EzString.chop_prefix ~prefix:"project-" name with
+  | Some name -> project_field package.project name
+  | None ->
+      match StringMap.find name package.p_fields with
+      | s -> s
+      | exception Not_found ->
+          match Misc.EzString.chop_prefix ~prefix:"package-" name with
+          | None -> project_field package.project name
+          | Some _ -> ""
+
 let no_escape _escape _v = false
 
-let subst ?(escape = no_escape) p_subst p s =
+let subst ?(escape = no_escape) p_subst p_field p s =
   let v, enc = EzString.cut_at s ':' in
-  if escape enc v then ""
-  else
-    let v = p_subst p v in
-    match enc with "html" -> EzHtml.string v | "" -> v | _ -> raise Not_found
+  match enc with
+  | "field" -> p_field p v
+  | _ ->
+      if escape enc v then ""
+      else
+        let v = p_subst p v in
+        match enc with
+        | "html" -> EzHtml.string v
+        | "" -> v | _ -> raise Not_found
 
 let project ?escape p s =
-  try EzSubst.string ~sep:'!' s ~f:(subst ?escape project_subst p)
+  try EzSubst.string ~sep:'!' s ~f:(subst ?escape project_subst project_field p)
   with ReplaceContent content -> content
 
 let package ?escape p s =
-  try EzSubst.string ~sep:'!' s ~f:(subst ?escape package_subst p)
+  try EzSubst.string ~sep:'!' s ~f:(subst ?escape package_subst package_field p)
   with ReplaceContent content -> content

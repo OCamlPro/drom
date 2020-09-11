@@ -20,6 +20,72 @@ We end up adding '(formatting (enabled_for ocaml reason))' to dune-project
 to completely disable formatting of dune files.
 *)
 
+let package_dune package =
+  let b = Buffer.create 1000 in
+  let dependencies =
+    List.map
+      (fun (name, d) -> match d.depname with None -> name | Some name -> name)
+      (Misc.p_dependencies package)
+  in
+  let p_mode = Misc.p_mode package in
+  let dependencies =
+    match p_mode with
+    | Binary -> dependencies
+    | Javascript ->
+        if List.mem "js_of_ocaml" dependencies then dependencies
+        else "js_of_ocaml" :: dependencies
+  in
+  let libraries = String.concat " " dependencies in
+
+  ( match package.kind with
+  | Virtual -> assert false
+  | Program ->
+      Printf.bprintf b
+        {|executable
+ (name main)
+ (public_name %s)
+ (package %s)
+ (libraries %s)%s|}
+        package.name package.name libraries
+        ( match p_mode with
+        | Binary -> ""
+        | Javascript ->
+            {|
+ (modes js byte)
+ (preprocess (pps js_of_ocaml-ppx))|} )
+  | Library ->
+      Printf.bprintf b
+        {|library
+ (name %s)
+ (public_name %s)%s
+ (libraries %s)%s|}
+        (Misc.library_name package)
+        package.name
+        (if not (Misc.p_pack_modules package) then {|
+ (wrapped false)|} else "")
+        libraries
+        ( match p_mode with
+        | Binary -> ""
+        | Javascript -> {|
+ (preprocess (pps js_of_ocaml-ppx))|} ) );
+  Buffer.contents b
+
+let package_dune_files package =
+  let b = Buffer.create 1000 in
+  ( match Sys.readdir package.dir with
+    | exception _ -> ()
+    | files ->
+        Array.iter
+          (fun file ->
+             if Filename.check_suffix file ".mll" then
+               Printf.bprintf b "(ocamllex %s)\n"
+                 (Filename.chop_suffix file ".mll")
+             else if Filename.check_suffix file ".mly" then
+               Printf.bprintf b "(ocamlyacc %s)\n"
+                 (Filename.chop_suffix file ".mly"))
+          files );
+  Buffer.contents b
+
 let template_src_dune package =
   let b = Buffer.create 1000 in
   let dependencies =
@@ -184,3 +250,17 @@ let template_dune p =
   if p.skip_dirs <> [] then
     Printf.bprintf b "(data_only_dirs %s)\n" (String.concat " " p.skip_dirs);
   Buffer.contents b
+
+let skeleton_dune =
+  {|(!{package-dune}
+ !{package-dune:field}
+)
+!{package-dune-files}
+(documentation
+  (package !{package-name}))
+!{package-dune-trailer:field}
+|}
+
+let package_files = [
+  (*  "dune2", skeleton_dune ; *)
+]

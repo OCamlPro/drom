@@ -17,7 +17,9 @@ let default =
       Test.project_files @ Github.project_files @ Ocamlformat.project_files
       @ Ocpindent.project_files @ Sphinx.project_files @ Docs.project_files
       @ License.project_files @ Git.project_files @ Makefile.project_files;
-    package_files = [] (* main.ml, index.mld and dune are hardcoded *);
+    package_files =
+      Dune.package_files @
+      [] (* main.ml, index.mld and dune are hardcoded *);
   }
 
 let write_files write_file p skeleton =
