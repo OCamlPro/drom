@@ -6,7 +6,7 @@ version: "0.1.0"
 license: "LGPL-2.1-with-OCaml-exception"
 synopsis:
   "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
-description: """
+description: """\
 The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like
 user experience. It can be used to create full OCaml projects with
 sphinx and odoc documentation. It has specific knowledge of Github and
@@ -34,7 +34,7 @@ build: [
   ]
 ]
 depends: [
-  "ocaml" {>= "4.05.0"}
+  "ocaml" {>= "4.07.0"}
   "dune" {>= "2.6.0"}
   "drom_lib" {= version}
   "ppx_inline_test" {with-test}
