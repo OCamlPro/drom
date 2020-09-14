@@ -1,0 +1,10 @@
+
+/drom
+*~
+_build
+.merlin
+.vscode
+/_drom
+/_opam
+/_build
+

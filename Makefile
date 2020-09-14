@@ -6,9 +6,13 @@ all: build
 
 build:
 	opam exec -- dune build @install
-	cp -f _build/default/main/main.exe drom
+	cp -f _build/default/src/drom/main.exe drom
 
 build-deps:
+	if ! [ -e _opam ]; then \
+	   opam switch create . --empty && \
+	   opam install ocaml.4.10.0 ; \
+	fi
 	opam install ./*.opam --deps-only
 
 sphinx:

@@ -14,7 +14,7 @@ Build and install with :code:`dune`
 
 Checkout the sources of :code:`drom` in a directory.
 
-You need a switch with at least version :code:`4.05.0` of OCaml,
+You need a switch with at least version :code:`4.07.0` of OCaml,
 you can for example create it with::
 
   opam switch create 4.10.0
@@ -41,4 +41,3 @@ targets:
 * :code:`doc`: build documentation with :code:`odoc`
 * :code:`fmt`: format the code using :code:`ocamlformat`
 * :code:`test`: run tests
-

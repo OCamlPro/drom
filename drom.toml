@@ -7,7 +7,7 @@ copyright = "OCamlPro SAS & Origin Labs SAS"
 edition = "4.10.0"
 github-organization = "ocamlpro"
 license = "LGPL2"
-min-edition = "4.05.0"
+min-edition = "4.07.0"
 mode = "binary"
 name = "drom"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
@@ -32,7 +32,7 @@ will generate files for Github Actions CI and Github pages.
 """
 
 [drom]
-skip = "src/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml"
+skip = "src/drom_lib/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml"
 
 [dependencies]
 
@@ -55,7 +55,7 @@ skip-dirs = ["drom-test"]
 
 
 [[package]]
-dir = "main"
+dir = "src/drom"
 driver-only = "Drom_lib.Main.main"
 kind = "program"
 name = "drom"
@@ -63,7 +63,7 @@ name = "drom"
 drom_lib = "version"
 
 [[package]]
-dir = "src"
+dir = "src/drom_lib"
 gen-version = "version.ml"
 kind = "library"
 name = "drom_lib"
@@ -74,4 +74,45 @@ ez_config = "0.1.0"
 ez_file = "0.1.0"
 opam-file-format = "2.0.0"
 toml = "5.0.0"
+[package.fields]
+dune-trailer = """
+(rule
+  (targets skel_default.ml)
+  (deps
+skeletons/default/project/dot_ocp-indent
+skeletons/default/project/dot_ocamlformat-ignore
+skeletons/default/project/LICENSE.md
+skeletons/default/project/CHANGES.md
+skeletons/default/project/README.md
+skeletons/default/project/dot_ocamlformat
+skeletons/default/project/sphinx/index.rst
+skeletons/default/project/sphinx/install.rst
+skeletons/default/project/sphinx/about.rst
+skeletons/default/project/sphinx/conf.py
+skeletons/default/project/sphinx/license.rst
+skeletons/default/project/sphinx/under_static/css/fixes.css
+skeletons/default/project/Makefile
+skeletons/default/project/dot_gitignore
+skeletons/default/project/test/output-tests/test1.expected
+skeletons/default/project/test/output-tests/dune
+skeletons/default/project/test/output-tests/test2.expected
+skeletons/default/project/test/output-tests/test2.ml
+skeletons/default/project/test/expect-tests/dune
+skeletons/default/project/test/expect-tests/test.ml
+skeletons/default/project/test/inline-tests/dune
+skeletons/default/project/test/inline-tests/test.ml
+skeletons/default/project/docs/doc/index.html
+skeletons/default/project/docs/dot_nojekyll
+skeletons/default/project/docs/index.html
+skeletons/default/project/docs/sphinx/index.html
+skeletons/default/project/docs/style.css
+skeletons/default/project/dot_github/workflows/workflow.yml
 
+skeletons/default/package/dune
+     )
+  (action
+    (with-stdout-to %{targets}
+    (run skel_packer default skeletons/default))))
+
+(data_only_dirs skeletons)
+"""

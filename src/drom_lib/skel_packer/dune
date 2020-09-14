@@ -1,0 +1,5 @@
+(executable
+ (name skel_packer)
+ (public_name skel_packer)
+ (package drom_lib)
+ (libraries ez_file))
