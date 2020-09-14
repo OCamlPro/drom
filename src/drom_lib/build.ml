@@ -198,6 +198,9 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
                   v p.min_edition
             | _ -> () ) ) );
 
+  let deps_package = Misc.deps_package p in
+  EzFile.write_file opam_filename (Opam.opam_of_project Deps deps_package);
+
   let drom_opam_filename = "_drom/opam.current" in
   let drom_opam_deps = "_drom/opam.deps" in
   let former_opam_file =
@@ -211,14 +214,34 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
   in
   let need_update =
     force_build_deps || force_dev_deps
-    || (build_deps || dev_deps)
-       && (former_opam_file <> Some new_opam_file || not had_switch)
+    ||
+    (
+      (build_deps || dev_deps)
+      && (former_opam_file <> Some new_opam_file || not had_switch)
+    )
     || (dev_deps && not has_dev_deps)
   in
   let need_dev_deps =
     dev_deps || force_dev_deps || (has_dev_deps && not force_build_deps)
   in
-
+  (*
+  Printf.eprintf
+    {|need_update :%b
+force_build_deps: %b
+force_dev_deps: %b
+build_deps: %b
+dev_deps: %b
+diff_opam: %b
+had_switch: %b
+|}
+    need_update
+    force_build_deps
+    force_dev_deps
+    build_deps
+    dev_deps
+    (former_opam_file <> Some new_opam_file)
+    had_switch
+  ; *)
   if need_update then (
     let tmp_opam_filename = "_drom/new.opam" in
     EzFile.write_file tmp_opam_filename new_opam_file;

@@ -270,10 +270,6 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
              write_file file ~create ~skips ~record content)
            p skeleton);
 
-    let opam_filename = (Globals.drom_dir // p.package.name) ^ "-deps.opam" in
-    let deps_package = Misc.deps_package p in
-    EzFile.write_file opam_filename (Opam.opam_of_project Deps deps_package);
-
     let p, changed =
       if promote_skip && !skipped <> [] then (
         let skip = p.skip @ !skipped in
