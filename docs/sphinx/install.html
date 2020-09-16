@@ -7,9 +7,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>How to install &mdash; drom master
- (0db6c12
-) (2020/08/29 10:20) documentation</title>
+  <title>How to install &mdash; drom z-2020-09-11-file-skeletons
+ (e57ad67
+) (2020/09/15 21:20) documentation</title>
   
 
   
@@ -65,8 +65,8 @@
             
             
               <div class="version">
-                master
- (0db6c12
+                z-2020-09-11-file-skeletons
+ (e57ad67
 )
               </div>
             
@@ -187,7 +187,7 @@
 <div class="section" id="build-and-install-with-dune">
 <h2>Build and install with <code class="code docutils literal notranslate"><span class="pre">dune</span></code><a class="headerlink" href="#build-and-install-with-dune" title="Permalink to this headline">¶</a></h2>
 <p>Checkout the sources of <code class="code docutils literal notranslate"><span class="pre">drom</span></code> in a directory.</p>
-<p>You need a switch with at least version <code class="code docutils literal notranslate"><span class="pre">4.03.0</span></code> of OCaml,
+<p>You need a switch with at least version <code class="code docutils literal notranslate"><span class="pre">4.07.0</span></code> of OCaml,
 you can for example create it with:</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
 </pre></div>
@@ -197,7 +197,7 @@ you can for example create it with:</p>
 </pre></div>
 </div>
 <p>Finally, you can build the package and install it:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">eval</span> <span class="o">${</span><span class="n">opam</span> <span class="n">env</span><span class="o">}</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">eval</span> <span class="o">$(</span><span class="n">opam</span> <span class="n">env</span><span class="o">)</span>
 <span class="n">dune</span> <span class="n">build</span>
 <span class="n">dune</span> <span class="n">install</span>
 </pre></div>

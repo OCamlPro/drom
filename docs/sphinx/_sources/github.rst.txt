@@ -3,7 +3,7 @@ Github Projects
 ===============
 
 :code:`drom` has builtins to ease the deployment of your project on
-Github.
+`Github <https://github.com>__`.
 
 To configure your account, edit the file
 :code:`$HOME/.config/drom/config` and setup the
@@ -19,7 +19,7 @@ If the field :code:`github-organization` is not set in your project
 description, and you set it in your account configuration, you can use
 the following command to update it::
 
-  $ drom new --upgrade
+  $ drom project --upgrade
   Loading config from /home/user/.config/drom/config
   Loading drom.toml
   Loading .drom

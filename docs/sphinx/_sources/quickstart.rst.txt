@@ -7,7 +7,7 @@ Overview
 
 :code:`drom` has two purposes:
 
-* It's a tool to easily create OCaml projects: :code:`drom new
+* It's a tool to easily create OCaml projects: :code:`drom project
   PROJECT` will create a complete OCaml project, with all the required
   files for :code:`opam` and :code:`dune`, plus additional files for
   documentation (Sphinx and Github Pages) and CI (Github Actions).
@@ -53,12 +53,17 @@ Overview
          install
              Build & install the project in the project opam switch
   
-         new Create an initial project
+         package
+             Create or update a package within a project
+
+         project
+             Create or update a project
   
          publish
              Generate a set of packages from all found drom.toml files
   
-         run Execute the project
+         run
+             Execute the project
   
          sphinx
              Generate general documentation using sphinx
@@ -66,8 +71,14 @@ Overview
          test
              Run tests
   
+         tree
+             Display dependencies in the project as a tree
+  
          uninstall
              Uninstall the project from the project opam switch
+  
+         update
+             Update packages in the project opam switch
   
   COMMON OPTIONS
          --help[=FMT] (default=auto)
@@ -86,7 +97,7 @@ can use `drom` to create almost everything we need for that!
 
 Let's create the project::
 
-  $ drom new hello_world
+  $ drom project hello_world
   Loading config from /home/user/.config/drom
   Creating directory hello_world
   Creating file drom.toml
@@ -148,11 +159,11 @@ information. It contains information on the project, such as its name,
 license, description, dependencies, etc.
 
 Everytime you modify :code:`drom.toml`, you should call :code:`drom
-new` again to update the project::
+project` again to update the project::
 
   $ cd hello_world
   $ emacs drom.toml
-  $ drom new
+  $ drom project
   Loading config from /home/user/.drom/config
   Loading drom.toml
   Loading .drom
@@ -171,7 +182,7 @@ Here, we added a dependency in the `drom.toml` file::
 And we see that :code:`drom` updated the files :code:`src/dune`,
 :code:`dune-project` and :code:`hello_world.opam`.
 
-:code:`drom new` also takes a few command line options that can be
+:code:`drom project` also takes a few command line options that can be
 used to modify the :code:`drom.toml` file:
 
 * :code:`--upgrade` can be used to upgrade the :code:`drom.toml` file

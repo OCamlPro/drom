@@ -1,6 +1,6 @@
 
 .. drom documentation master file, created by
-   drom new
+   drom project
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 

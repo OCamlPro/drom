@@ -26,8 +26,11 @@ Sub-commands and Arguments
        install
            Build & install the project in the local opam switch _opam
 
-       new
-           Create an initial project
+       package
+           Create or update a package within a project
+
+       project
+           Create or update a project
 
        publish
            Generate a set of packages from all found drom.toml files
@@ -41,5 +44,11 @@ Sub-commands and Arguments
        test
            Run tests
 
+       tree
+           Display the dependences of packages as a tree
+
        uninstall
            Uninstall the project in the local opam switch _opam
+
+       update
+           Update packages in the opam switch

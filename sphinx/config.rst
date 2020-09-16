@@ -25,9 +25,9 @@ following template in :code:`.config/drom/config`::
   # opam-repo = "/home/user/GIT/opam-repository"
 
 These fields are used as default values when calling
-:code:`drom`. Most of them are used by :code:`drom new`, except
+:code:`drom`. Most of them are used by :code:`drom project`, except
 :code:`opam-repo` which is used by :code:`drom publish` to find an
-opam repository where to save new package descriptions.
+opam repository where to save new project descriptions.
 
 If the :code:`author` field is not specified, :code:`drom` will try to
 compute it from :code:`git` configuration file in
