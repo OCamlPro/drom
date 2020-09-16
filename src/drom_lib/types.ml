@@ -52,7 +52,7 @@ type package = {
   p_pack_modules : bool option;
   mutable p_gen_version : string option;
   mutable p_driver_only : string option;
-  mutable p_fields : string StringMap.t ;
+  mutable p_fields : string StringMap.t;
 }
 
 and project = {
@@ -91,7 +91,7 @@ and project = {
   tools : (string * dependency) list;
   mode : mode;
   pack_modules : bool;
-  mutable fields : string StringMap.t ;
+  mutable fields : string StringMap.t;
 }
 
 and profile = { flags : string StringMap.t }

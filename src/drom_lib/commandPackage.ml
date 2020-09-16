@@ -16,7 +16,7 @@ let cmd_name = "package"
 
 (* lookup for "drom.toml" and update it *)
 let action ~package_name ~kind ~mode ~promote_skip ~dir ~create ~remove =
-  let (p, inferred_dir) = Project.get () in
+  let p, inferred_dir = Project.get () in
   let name =
     match package_name with None -> p.package.name | Some name -> name
   in
@@ -39,37 +39,33 @@ let action ~package_name ~kind ~mode ~promote_skip ~dir ~create ~remove =
   else (
     if List.for_all (fun package -> package.name <> name) p.packages then
       Error.raise "No such package";
-    if dir <> None then
-      Error.raise "Option --dir is not available for update";
+    if dir <> None then Error.raise "Option --dir is not available for update";
 
     let upgrade =
       if remove then (
         if p.package.name = name then Error.raise "Cannot remove main package";
         p.packages <-
           List.filter (fun package -> package.name <> name) p.packages;
-        true)
+        true )
       else
         let upgrade = ref false in
         List.iter
           (fun package ->
-             if package.name = name then (
-               ( match kind with
-                 | None -> ()
-                 | Some kind ->
-                     p.package.kind <- kind ;
-                     upgrade := true );
-               match mode with
-               | None -> ()
-               | Some mode ->
-                   p.package.p_mode <- Some mode ;
-                   upgrade := true
-             ))
-          p.packages ;
+            if package.name = name then (
+              ( match kind with
+              | None -> ()
+              | Some kind ->
+                  p.package.kind <- kind;
+                  upgrade := true );
+              match mode with
+              | None -> ()
+              | Some mode ->
+                  p.package.p_mode <- Some mode;
+                  upgrade := true ))
+          p.packages;
         !upgrade
     in
-    Update.update_files ~create:false ?mode
-      ~upgrade ~promote_skip
-      ~git:true p )
+    Update.update_files ~create:false ?mode ~upgrade ~promote_skip ~git:true p )
 
 let cmd =
   let package_name = ref None in

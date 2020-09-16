@@ -42,7 +42,7 @@ let rec dummy_project =
     windows_ci = true;
     profiles = StringMap.empty;
     skip_dirs = [];
-    fields = StringMap.empty ;
+    fields = StringMap.empty;
   }
 
 and dummy_package =
@@ -62,7 +62,7 @@ and dummy_package =
     p_pack_modules = None;
     p_gen_version = Some "version.ml";
     p_driver_only = None;
-    p_fields = StringMap.empty ;
+    p_fields = StringMap.empty;
   }
 
 let create_package ~name ~dir ~kind = { dummy_package with name; dir; kind }
@@ -302,8 +302,10 @@ let package_of_toml table =
   in
   let p_gen_version = EzToml.get_string_option table [ "gen-version" ] in
   let p_driver_only = EzToml.get_string_option table [ "driver-only" ] in
-  let p_fields = EzToml.get_encoding_default
-      fields_encoding table [ "fields" ] StringMap.empty in
+  let p_fields =
+    EzToml.get_encoding_default fields_encoding table [ "fields" ]
+      StringMap.empty
+  in
   {
     name;
     dir;
@@ -320,7 +322,7 @@ let package_of_toml table =
     p_pack_modules;
     p_gen_version;
     p_driver_only;
-    p_fields ;
+    p_fields;
   }
 
 let toml_of_project p =
@@ -387,7 +389,7 @@ let toml_of_project p =
     | _ ->
         EzToml.empty
         |> EzToml.put_encoding dependencies_encoding [ "dependencies" ]
-          p.dependencies
+             p.dependencies
         |> EzToml.to_string
   in
   let tools =
@@ -404,8 +406,8 @@ let toml_of_project p =
     |> EzToml.put_string_option [ "project"; "pack" ] p.package.p_pack
     |> EzToml.put [ "project"; "skip-dirs" ] (TArray (NodeString p.skip_dirs))
     |> EzToml.put_encoding
-      (stringMap_encoding profile_encoding)
-      [ "profile" ] p.profiles
+         (stringMap_encoding profile_encoding)
+         [ "profile" ] p.profiles
     |> EzToml.put_encoding fields_encoding [ "fields" ] p.fields
     |> EzToml.to_string
   in
@@ -413,7 +415,7 @@ let toml_of_project p =
   let packages =
     EzToml.empty
     |> EzToml.put [ "package" ]
-      (TArray (NodeTable (List.map toml_of_package p.packages)))
+         (TArray (NodeTable (List.map toml_of_package p.packages)))
     |> EzToml.to_string
   in
 
@@ -429,14 +431,14 @@ let project_of_toml filename =
   in
 
   ( match EzToml.get_string_option table [ "project"; "drom-version" ] with
-    | None -> ()
-    | Some version -> (
-        match VersionCompare.compare version Version.version with
-        | 1 ->
-            Error.raise
-              "You must update `drom` to version %s to work with this project."
-              version
-        | _ -> () ) );
+  | None -> ()
+  | Some version -> (
+      match VersionCompare.compare version Version.version with
+      | 1 ->
+          Error.raise
+            "You must update `drom` to version %s to work with this project."
+            version
+      | _ -> () ) );
 
   let project_key, packages =
     match EzToml.get table [ "package" ] with
@@ -546,15 +548,15 @@ let project_of_toml filename =
       | p :: tail ->
           if p.name = name then (
             ( match dir with
-              | None -> ()
-              | Some dir ->
-                  if dir <> p.dir then
-                    Error.raise "'dir' field differs in project and %S" name );
+            | None -> ()
+            | Some dir ->
+                if dir <> p.dir then
+                  Error.raise "'dir' field differs in project and %S" name );
             ( match (p_pack, p.p_pack) with
-              | Some v1, Some v2 when v1 <> v2 ->
-                  Error.raise "'pack' field differs in project and %S" name
-              | Some p_pack, None -> p.p_pack <- Some p_pack
-              | _ -> () );
+            | Some v1, Some v2 when v1 <> v2 ->
+                Error.raise "'pack' field differs in project and %S" name
+            | Some p_pack, None -> p.p_pack <- Some p_pack
+            | _ -> () );
             (p, packages) )
           else iter tail
     in
@@ -584,7 +586,7 @@ let project_of_toml filename =
         let lib =
           {
             dummy_package with
-            name = lib_name ;
+            name = lib_name;
             dir = "src" // lib_name;
             kind = Library;
           }
@@ -601,8 +603,10 @@ let project_of_toml filename =
   let skip_dirs =
     EzToml.get_string_list_default table [ project_key; "skip-dirs" ] []
   in
-  let fields = EzToml.get_encoding_default
-      fields_encoding table [ project_key ; "fields" ] StringMap.empty in
+  let fields =
+    EzToml.get_encoding_default fields_encoding table [ project_key; "fields" ]
+      StringMap.empty
+  in
 
   let project =
     {
@@ -646,7 +650,7 @@ let find () =
     let drom_file = dir // "drom.toml" in
     if Sys.file_exists drom_file then (
       Unix.chdir dir;
-      Printf.eprintf "drom: Entering directory '%s'\n%!" (Sys.getcwd ()) ;
+      Printf.eprintf "drom: Entering directory '%s'\n%!" (Sys.getcwd ());
       Some (project_of_toml drom_file, path) )
     else
       let updir = Filename.dirname dir in

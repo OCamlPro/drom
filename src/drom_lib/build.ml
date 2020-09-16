@@ -14,19 +14,21 @@ open EzFile.OP
 open EzCompat
 
 type build_args = {
-  mutable arg_switch : switch_arg option ;
-  mutable arg_yes : bool ;
-  mutable arg_edition : string option ;
-  mutable arg_upgrade : bool ;
+  mutable arg_switch : switch_arg option;
+  mutable arg_yes : bool;
+  mutable arg_edition : string option;
+  mutable arg_upgrade : bool;
 }
 
 let build_args () =
-  let args = {
-    arg_switch = None ;
-    arg_yes = false ;
-    arg_edition = None ;
-    arg_upgrade = false ;
-  } in
+  let args =
+    {
+      arg_switch = None;
+      arg_yes = false;
+      arg_edition = None;
+      arg_upgrade = false;
+    }
+  in
   let specs =
     [
       ( [ "switch" ],
@@ -39,10 +41,12 @@ let build_args () =
       ( [ "edition" ],
         Arg.String (fun s -> args.arg_edition <- Some s),
         Ezcmd.info "Use this OCaml edition" );
-      ([ "y"; "yes" ], Arg.Unit (fun () -> args.arg_yes <- true),
-       Ezcmd.info "Reply yes to all questions");
-      ([ "upgrade" ], Arg.Unit (fun () -> args.arg_upgrade <- true),
-       Ezcmd.info "Upgrade project files from drom.toml")
+      ( [ "y"; "yes" ],
+        Arg.Unit (fun () -> args.arg_yes <- true),
+        Ezcmd.info "Reply yes to all questions" );
+      ( [ "upgrade" ],
+        Arg.Unit (fun () -> args.arg_upgrade <- true),
+        Ezcmd.info "Upgrade project files from drom.toml" );
     ]
   in
   (args, specs)
@@ -53,35 +57,33 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
     dev_deps = false) ?(force_dev_deps = false)
     ?((* only for `drom dev-deps` *)
     build = true) () =
-  let (p, _inferred_dir) = Project.get () in
+  let p, _inferred_dir = Project.get () in
 
-  let { arg_switch ; arg_yes = y ;
-        arg_edition = edition ; arg_upgrade } = args in
+  let { arg_switch; arg_yes = y; arg_edition = edition; arg_upgrade } = args in
   ( match edition with
-    | None -> ()
-    | Some edition -> (
-        match VersionCompare.compare p.min_edition edition with
-        | 1 ->
-            Error.raise
-              "Option --edition %s should specify a version compatible with the \
-               project, whose min-edition is currently %s"
-              edition p.min_edition
-        | _ -> () ) );
+  | None -> ()
+  | Some edition -> (
+      match VersionCompare.compare p.min_edition edition with
+      | 1 ->
+          Error.raise
+            "Option --edition %s should specify a version compatible with the \
+             project, whose min-edition is currently %s"
+            edition p.min_edition
+      | _ -> () ) );
   ( match arg_switch with
-    | None | Some Local -> ()
-    | Some (Global switch) -> (
-        match VersionCompare.compare p.min_edition switch with
-        | 1 ->
-            Error.raise
-              "Option --switch %s should specify a version compatible with the \
-               project, whose min-edition is currently %s"
-              switch p.min_edition
-        | _ -> () ) );
+  | None | Some Local -> ()
+  | Some (Global switch) -> (
+      match VersionCompare.compare p.min_edition switch with
+      | 1 ->
+          Error.raise
+            "Option --switch %s should specify a version compatible with the \
+             project, whose min-edition is currently %s"
+            switch p.min_edition
+      | _ -> () ) );
 
-  if arg_upgrade then begin
+  ( if arg_upgrade then
     let create = false in
-    Update.update_files ~create p;
-  end ;
+    Update.update_files ~create p );
 
   EzFile.make_dir ~p:true "_drom";
   let opam_filename = (Globals.drom_dir // p.package.name) ^ "-deps.opam" in
@@ -96,15 +98,15 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
             Sys.file_exists "_opam"
         | Some (Global switch) ->
             ( match Unix.lstat "_opam" with
-              | exception _ -> ()
-              | st -> (
-                  match st.Unix.st_kind with
-                  | Unix.S_DIR ->
-                      Error.raise
-                        "You must remove the local switch `_opam` before using \
-                         option --switch"
-                  | Unix.S_LNK -> ()
-                  | _ -> Error.raise "Corrupted local switch '_opam'" ) );
+            | exception _ -> ()
+            | st -> (
+                match st.Unix.st_kind with
+                | Unix.S_DIR ->
+                    Error.raise
+                      "You must remove the local switch `_opam` before using \
+                       option --switch"
+                | Unix.S_LNK -> ()
+                | _ -> Error.raise "Corrupted local switch '_opam'" ) );
             Opam.run ~y ~switch ?edition [ "switch"; "link" ] [ switch ];
             false
       in
@@ -116,28 +118,28 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
       in
 
       ( match Unix.lstat "_opam" with
-        | exception _ -> Opam.run ~y [ "switch"; "create" ] [ "."; "--empty" ]
-        | st -> (
-            let current_switch =
-              match st.Unix.st_kind with
-              | Unix.S_LNK -> Filename.basename (Unix.readlink "_opam")
-              (* | Unix.S_DIR *)
-              | _ -> Unix.getcwd () // "_opam"
-            in
-            Printf.eprintf "In opam switch %s\n%!" current_switch;
-            match env_switch with
-            | None -> ()
-            | Some env_switch ->
-                let env_switch =
-                  if Filename.basename env_switch = "_opam" then env_switch
-                  else Filename.basename env_switch
-                in
-                if env_switch <> current_switch then
-                  Printf.eprintf
-                    "Warning: your current environment contains a different opam \
-                     switch %S, be careful.\n\
-                     %!"
-                    env_switch ) );
+      | exception _ -> Opam.run ~y [ "switch"; "create" ] [ "."; "--empty" ]
+      | st -> (
+          let current_switch =
+            match st.Unix.st_kind with
+            | Unix.S_LNK -> Filename.basename (Unix.readlink "_opam")
+            (* | Unix.S_DIR *)
+            | _ -> Unix.getcwd () // "_opam"
+          in
+          Printf.eprintf "In opam switch %s\n%!" current_switch;
+          match env_switch with
+          | None -> ()
+          | Some env_switch ->
+              let env_switch =
+                if Filename.basename env_switch = "_opam" then env_switch
+                else Filename.basename env_switch
+              in
+              if env_switch <> current_switch then
+                Printf.eprintf
+                  "Warning: your current environment contains a different opam \
+                   switch %S, be careful.\n\
+                   %!"
+                  env_switch ) );
 
       let packages_dir = "_opam" // ".opam-switch" // "packages" in
       let packages =
@@ -148,9 +150,9 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
       let map = ref StringMap.empty in
       Array.iter
         (fun nv ->
-           let n, v = EzString.cut_at nv '.' in
-           map := StringMap.add n v !map;
-           map := StringMap.add nv v !map)
+          let n, v = EzString.cut_at nv '.' in
+          map := StringMap.add n v !map;
+          map := StringMap.add nv v !map)
         packages;
       (had_switch, !map) )
     else (true, StringMap.empty)
@@ -214,11 +216,8 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
   in
   let need_update =
     force_build_deps || force_dev_deps
-    ||
-    (
-      (build_deps || dev_deps)
-      && (former_opam_file <> Some new_opam_file || not had_switch)
-    )
+    || (build_deps || dev_deps)
+       && (former_opam_file <> Some new_opam_file || not had_switch)
     || (dev_deps && not has_dev_deps)
   in
   let need_dev_deps =
@@ -248,7 +247,7 @@ had_switch: %b
 
     Opam.run ~y [ "install" ]
       ( [ "--deps-only"; "." // tmp_opam_filename ]
-        @ if need_dev_deps then [ "--with-doc"; "--with-test" ] else [] );
+      @ if need_dev_deps then [ "--with-doc"; "--with-test" ] else [] );
 
     (try Sys.remove drom_opam_filename with _ -> ());
     Sys.rename tmp_opam_filename drom_opam_filename;

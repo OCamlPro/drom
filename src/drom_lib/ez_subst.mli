@@ -28,7 +28,7 @@
   [false] even during the substitution.
 *)
 
-type 'context t = ('context -> string -> string)
+type 'context t = 'context -> string -> string
 (** The type for functions performing the translation from [ident] to
     its replacement. ['context] is some information, that is from the
     initial call to the substitution. *)
@@ -37,24 +37,33 @@ exception UnclosedExpression of string
 (** The only exception that may be raised by substitutions: it indicates
     that the end of the expression could not be found. *)
 
-val string : ?sep:char -> ?sym:bool ->
+val string :
+  ?sep:char ->
+  ?sym:bool ->
   ?escape:bool ref ->
   ?brace:'context t ->
   ?paren:'context t ->
   ?bracket:'context t ->
   ?var:'context t ->
-  'context -> string -> string
+  'context ->
+  string ->
+  string
 (** [string f context s] performs substitutions on [s] following [f],
    passing the context [context] to [f] for every expression,
    returning the result as a string. *)
 
-val buffer : ?sep:char -> ?sym:bool ->
+val buffer :
+  ?sep:char ->
+  ?sym:bool ->
   ?escape:bool ref ->
   ?brace:'context t ->
   ?paren:'context t ->
   ?bracket:'context t ->
   ?var:'context t ->
-  Buffer.t -> 'context -> string -> unit
+  Buffer.t ->
+  'context ->
+  string ->
+  unit
 (** [buffer f b context s] performs substitutions on [s] following [f],
    passing the context [context] to [f] for every expression,
    returning the result by appending it to the buffer [b]. *)
