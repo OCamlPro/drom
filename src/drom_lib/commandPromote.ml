@@ -10,28 +10,18 @@
 
 open Ezcmd.TYPES
 
-let cmd_name = "fmt"
+let cmd_name = "promote"
 
-let action ~args ~auto_promote () =
+let action ~args () =
   let (_p : Types.project) = Build.build ~dev_deps:true ~build:false ~args () in
-  Misc.call
-    (Array.of_list
-       ( [ "opam"; "exec"; "--"; "dune"; "build"; "@fmt" ]
-       @ if auto_promote then [ "--auto-promote" ] else [] ))
+  Misc.call (Array.of_list [ "opam"; "exec"; "--"; "dune"; "promote" ])
 
 let cmd =
-  let auto_promote = ref false in
   let args, specs = Build.build_args () in
   {
     cmd_name;
-    cmd_action = (fun () -> action ~args ~auto_promote:!auto_promote ());
-    cmd_args =
-      [
-        ( [ "auto-promote" ],
-          Arg.Set auto_promote,
-          Ezcmd.info "Promote detected changes immediately" );
-      ]
-      @ specs;
+    cmd_action = (fun () -> action ~args ());
+    cmd_args = [] @ specs;
     cmd_man = [];
-    cmd_doc = "Format sources with ocamlformat";
+    cmd_doc = "Promote detected changes after running drom test or drom fmt";
   }
