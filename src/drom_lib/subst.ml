@@ -13,11 +13,13 @@ open EzCompat
 
 exception ReplaceContent of string
 
-let verbose_subst = try
-    ignore ( Sys.getenv "DROM_VERBOSE_SUBST" ); true
+let verbose_subst =
+  try
+    ignore (Sys.getenv "DROM_VERBOSE_SUBST");
+    true
   with Not_found -> false
 
-let project_brace (_,p) v =
+let project_brace (_, p) v =
   match v with
   | "name" -> p.package.name
   | "synopsis" -> p.synopsis
@@ -113,8 +115,8 @@ let project_brace (_,p) v =
   | "make-copy-programs" ->
       List.filter (fun package -> package.kind = Program) p.packages
       |> List.map (fun package ->
-          Printf.sprintf "\n\tcp -f _build/default/%s/main.exe %s"
-            package.dir package.name)
+             Printf.sprintf "\n\tcp -f _build/default/%s/main.exe %s"
+               package.dir package.name)
       |> String.concat ""
   | "badge-ci" -> (
       match p.github_organization with
@@ -149,10 +151,7 @@ let project_brace (_,p) v =
       |> List.map (fun p -> "/" ^ p.name)
       |> String.concat "\n"
   (* for git *)
-  | "packages" ->
-      p.packages
-      |> List.map (fun p -> p.name)
-      |> String.concat " "
+  | "packages" -> p.packages |> List.map (fun p -> p.name) |> String.concat " "
   | "opams" ->
       p.packages
       |> List.map (fun p -> Printf.sprintf "./%s.opam" p.name)
@@ -175,7 +174,7 @@ let project_brace (_,p) v =
       Printf.eprintf "Error: no project substitution for %S\n%!" s;
       raise Not_found
 
-let project_paren (_,p) name =
+let project_paren (_, p) name =
   match StringMap.find name p.fields with
   | exception Not_found ->
       if verbose_subst then
@@ -183,7 +182,7 @@ let project_paren (_,p) name =
       ""
   | s -> s
 
-let package_brace (context,p) v =
+let package_brace (context, p) v =
   match v with
   | "name" | "package-name" -> p.name
   | "dir" | "package-dir" -> p.dir
@@ -191,40 +190,45 @@ let package_brace (context,p) v =
   | "package-dune-files" -> Dune.package_dune_files p
   | _ -> (
       match Misc.EzString.chop_prefix v ~prefix:"project-" with
-      | Some v -> project_brace ( context, p.project ) v
-      | None -> project_brace ( context, p.project ) v )
+      | Some v -> project_brace (context, p.project) v
+      | None -> project_brace (context, p.project) v )
 
-let package_paren (context,package) name =
+let package_paren (context, package) name =
   match Misc.EzString.chop_prefix ~prefix:"project-" name with
-  | Some name -> project_paren (context,package.project) name
-  | None ->
+  | Some name -> project_paren (context, package.project) name
+  | None -> (
       match StringMap.find name package.p_fields with
       | s -> s
-      | exception Not_found ->
+      | exception Not_found -> (
           match Misc.EzString.chop_prefix ~prefix:"package-" name with
-          | None -> project_paren (context,package.project) name
-          | Some name ->
+          | None -> project_paren (context, package.project) name
+          | Some name -> (
               match StringMap.find name package.p_fields with
               | s -> s
               | exception Not_found ->
                   if verbose_subst then
                     Printf.eprintf "Warning: no package field %S\n%!" name;
-                  ""
+                  "" ) ) )
 
 let subst_encode p_subst escape p s =
   match EzString.split s ':' with
   | [] ->
       Printf.eprintf "Warning: empty expression\n%!";
       raise Not_found
-  | [ "escape" ; "true" ] -> escape := true; ""
-  | [ "escape" ; "false" ] -> escape := true; ""
+  | [ "escape"; "true" ] ->
+      escape := true;
+      ""
+  | [ "escape"; "false" ] ->
+      escape := true;
+      ""
   | var :: encodings ->
       let var = p_subst p var in
       let rec iter encodings var =
         match encodings with
         | [] -> var
         | encoding :: encodings ->
-            let var = match encoding with
+            let var =
+              match encoding with
               | "html" -> EzHtml.string var
               | "cap" -> String.capitalize var
               | "uncap" -> String.uncapitalize var
@@ -242,23 +246,17 @@ let subst_encode p_subst escape p s =
 let project context ?bracket p s =
   try
     let escape = ref false in
-    Ez_subst.string ~sep:'!'
-      ~escape
+    Ez_subst.string ~sep:'!' ~escape
       ~brace:(subst_encode project_brace escape)
       ~paren:(subst_encode project_paren (ref true))
-      ?bracket
-      (context,p)
-      s
+      ?bracket (context, p) s
   with ReplaceContent content -> content
 
 let package context ?bracket p s =
   try
     let escape = ref false in
-    Ez_subst.string ~sep:'!'
-      ~escape
+    Ez_subst.string ~sep:'!' ~escape
       ~brace:(subst_encode package_brace escape)
       ~paren:(subst_encode package_paren (ref true))
-      ?bracket
-      (context,p)
-      s
+      ?bracket (context, p) s
   with ReplaceContent content -> content

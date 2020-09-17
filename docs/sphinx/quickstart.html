@@ -7,9 +7,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Quickstart &mdash; drom master
- (0db6c12
-) (2020/08/29 10:20) documentation</title>
+  <title>Quickstart &mdash; drom z-2020-09-11-file-skeletons
+ (e57ad67
+) (2020/09/15 21:20) documentation</title>
   
 
   
@@ -65,8 +65,8 @@
             
             
               <div class="version">
-                master
- (0db6c12
+                z-2020-09-11-file-skeletons
+ (e57ad67
 )
               </div>
             
@@ -188,7 +188,7 @@
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> has two purposes:</p>
 <ul class="simple">
-<li>It’s a tool to easily create OCaml projects: <code class="code docutils literal notranslate"><span class="pre">drom</span> <span class="pre">new</span>
+<li>It’s a tool to easily create OCaml projects: <code class="code docutils literal notranslate"><span class="pre">drom</span> <span class="pre">project</span>
 <span class="pre">PROJECT</span></code> will create a complete OCaml project, with all the required
 files for <code class="code docutils literal notranslate"><span class="pre">opam</span></code> and <code class="code docutils literal notranslate"><span class="pre">dune</span></code>, plus additional files for
 documentation (Sphinx and Github Pages) and CI (Github Actions).</li>
@@ -232,12 +232,17 @@ build the project and its documentation</li>
        <span class="n">install</span>
            <span class="nc">Build</span> <span class="o">&amp;</span> <span class="n">install</span> <span class="n">the</span> <span class="n">project</span> <span class="k">in</span> <span class="n">the</span> <span class="n">project</span> <span class="n">opam</span> <span class="n">switch</span>
 
-       <span class="k">new</span> <span class="nc">Create</span> <span class="n">an</span> <span class="n">initial</span> <span class="n">project</span>
+       <span class="n">package</span>
+           <span class="nc">Create</span> <span class="ow">or</span> <span class="n">update</span> <span class="n">a</span> <span class="n">package</span> <span class="n">within</span> <span class="n">a</span> <span class="n">project</span>
+
+       <span class="n">project</span>
+           <span class="nc">Create</span> <span class="ow">or</span> <span class="n">update</span> <span class="n">a</span> <span class="n">project</span>
 
        <span class="n">publish</span>
            <span class="nc">Generate</span> <span class="n">a</span> <span class="n">set</span> <span class="k">of</span> <span class="n">packages</span> <span class="n">from</span> <span class="n">all</span> <span class="n">found</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span> <span class="n">files</span>
 
-       <span class="n">run</span> <span class="nc">Execute</span> <span class="n">the</span> <span class="n">project</span>
+       <span class="n">run</span>
+           <span class="nc">Execute</span> <span class="n">the</span> <span class="n">project</span>
 
        <span class="n">sphinx</span>
            <span class="nc">Generate</span> <span class="n">general</span> <span class="n">documentation</span> <span class="n">using</span> <span class="n">sphinx</span>
@@ -245,8 +250,14 @@ build the project and its documentation</li>
        <span class="n">test</span>
            <span class="nc">Run</span> <span class="n">tests</span>
 
+       <span class="n">tree</span>
+           <span class="nc">Display</span> <span class="n">dependencies</span> <span class="k">in</span> <span class="n">the</span> <span class="n">project</span> <span class="k">as</span> <span class="n">a</span> <span class="n">tree</span>
+
        <span class="n">uninstall</span>
            <span class="nc">Uninstall</span> <span class="n">the</span> <span class="n">project</span> <span class="n">from</span> <span class="n">the</span> <span class="n">project</span> <span class="n">opam</span> <span class="n">switch</span>
+
+       <span class="n">update</span>
+           <span class="nc">Update</span> <span class="n">packages</span> <span class="k">in</span> <span class="n">the</span> <span class="n">project</span> <span class="n">opam</span> <span class="n">switch</span>
 
 <span class="nc">COMMON</span> <span class="nc">OPTIONS</span>
        <span class="o">--</span><span class="n">help</span><span class="o">[=</span><span class="nc">FMT</span><span class="o">]</span> <span class="o">(</span><span class="n">default</span><span class="o">=</span><span class="n">auto</span><span class="o">)</span>
@@ -264,7 +275,7 @@ build the project and its documentation</li>
 <p>Let’s suppose we want to create a new project <code class="code docutils literal notranslate"><span class="pre">hello_world</span></code>. We
 can use <cite>drom</cite> to create almost everything we need for that!</p>
 <p>Let’s create the project:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="k">new</span> <span class="n">hello_world</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">project</span> <span class="n">hello_world</span>
 <span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span>
 <span class="nc">Creating</span> <span class="n">directory</span> <span class="n">hello_world</span>
 <span class="nc">Creating</span> <span class="n">file</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
@@ -325,10 +336,10 @@ by <code class="code docutils literal notranslate"><span class="pre">drom</span>
 information. It contains information on the project, such as its name,
 license, description, dependencies, etc.</p>
 <p>Everytime you modify <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code>, you should call <code class="code docutils literal notranslate"><span class="pre">drom</span>
-<span class="pre">new</span></code> again to update the project:</p>
+<span class="pre">project</span></code> again to update the project:</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">cd</span> <span class="n">hello_world</span>
 <span class="o">$</span> <span class="n">emacs</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
-<span class="o">$</span> <span class="n">drom</span> <span class="k">new</span>
+<span class="o">$</span> <span class="n">drom</span> <span class="n">project</span>
 <span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
 <span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
 <span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
@@ -347,7 +358,7 @@ license, description, dependencies, etc.</p>
 </div>
 <p>And we see that <code class="code docutils literal notranslate"><span class="pre">drom</span></code> updated the files <code class="code docutils literal notranslate"><span class="pre">src/dune</span></code>,
 <code class="code docutils literal notranslate"><span class="pre">dune-project</span></code> and <code class="code docutils literal notranslate"><span class="pre">hello_world.opam</span></code>.</p>
-<p><code class="code docutils literal notranslate"><span class="pre">drom</span> <span class="pre">new</span></code> also takes a few command line options that can be
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span> <span class="pre">project</span></code> also takes a few command line options that can be
 used to modify the <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> file:</p>
 <ul class="simple">
 <li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code> can be used to upgrade the <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> file

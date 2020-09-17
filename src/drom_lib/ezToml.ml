@@ -172,5 +172,4 @@ let enum_encoding ~to_string ~of_string =
 let string_encoding =
   encoding
     ~to_toml:(fun v -> TString v)
-    ~of_toml:(fun ~key v ->
-        expect_string ~key v )
+    ~of_toml:(fun ~key v -> expect_string ~key v)

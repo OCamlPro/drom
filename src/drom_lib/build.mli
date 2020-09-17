@@ -11,10 +11,10 @@
 open Types
 
 type build_args = {
-  mutable arg_switch : switch_arg option ;
-  mutable arg_yes : bool ;
-  mutable arg_edition : string option ;
-  mutable arg_upgrade : bool ;
+  mutable arg_switch : switch_arg option;
+  mutable arg_yes : bool;
+  mutable arg_edition : string option;
+  mutable arg_upgrade : bool;
 }
 
 val build_args :

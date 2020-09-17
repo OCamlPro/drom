@@ -179,10 +179,9 @@ let init ?y ?switch ?edition () =
         if Filename.is_relative switch then
           if not (Sys.file_exists (opam_dir // switch)) then
             exec ?y [ "switch"; "create" ]
-              (match edition with
-               | None -> [ switch ]
-               | Some edition ->  [ switch ; edition ]
-              )
+              ( match edition with
+              | None -> [ switch ]
+              | Some edition -> [ switch; edition ] )
 
 let run ?y ?error ?switch ?edition cmd args =
   init ?y ?switch ?edition ();

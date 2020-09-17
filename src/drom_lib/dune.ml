@@ -20,7 +20,6 @@ We end up adding '(formatting (enabled_for ocaml reason))' to dune-project
 to completely disable formatting of dune files.
 *)
 
-
 let package_dune package =
   let b = Buffer.create 1000 in
   let dependencies =
@@ -71,23 +70,21 @@ let package_dune package =
  (preprocess (pps js_of_ocaml-ppx))|} ) );
   Buffer.contents b
 
-
 let package_dune_files package =
   let b = Buffer.create 1000 in
   ( match Sys.readdir package.dir with
-    | exception _ -> ()
-    | files ->
-        Array.iter
-          (fun file ->
-             if Filename.check_suffix file ".mll" then
-               Printf.bprintf b "(ocamllex %s)\n"
-                 (Filename.chop_suffix file ".mll")
-             else if Filename.check_suffix file ".mly" then
-               Printf.bprintf b "(ocamlyacc %s)\n"
-                 (Filename.chop_suffix file ".mly"))
-          files );
+  | exception _ -> ()
+  | files ->
+      Array.iter
+        (fun file ->
+          if Filename.check_suffix file ".mll" then
+            Printf.bprintf b "(ocamllex %s)\n"
+              (Filename.chop_suffix file ".mll")
+          else if Filename.check_suffix file ".mly" then
+            Printf.bprintf b "(ocamlyacc %s)\n"
+              (Filename.chop_suffix file ".mly"))
+        files );
   Buffer.contents b
-
 
 let template_dune_project p =
   let b = Buffer.create 100000 in
@@ -151,7 +148,6 @@ let template_dune_project p =
 
   List.iter add_package p.packages;
   Buffer.contents b
-
 
 let template_dune p =
   let b = Buffer.create 1000 in

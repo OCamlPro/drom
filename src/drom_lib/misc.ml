@@ -189,9 +189,8 @@ let underscorify s =
   for i = 1 to String.length s - 2 do
     let c = s.[i] in
     match c with
-    | 'a' .. 'z'
-    | 'A' .. 'Z'
-    | '0' .. '9' -> () | _ -> Bytes.set b i '_'
+    | 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' -> ()
+    | _ -> Bytes.set b i '_'
   done;
   Bytes.to_string b
 

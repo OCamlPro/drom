@@ -164,7 +164,7 @@ this project.
 
   An exception is the :code:`drom.toml` file itself. It is only
   modified when the user configuration has been changed, a changing
-  option passed to :code:`drom new`, or the :code:`--upgrade` option
+  option passed to :code:`drom project`, or the :code:`--upgrade` option
   to benefit from a more recent version of :code:`drom`.
 
   To detect modifications of its files, :code:`drom` generates a file
