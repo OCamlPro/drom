@@ -23,7 +23,41 @@ let create_project ~config ~name ~skeleton ~kind ~mode ~dir ~inplace =
   in
   let kind = match kind with None -> Program | Some kind -> kind in
   let dir = match dir with None -> "src" // name | Some dir -> dir in
-  let package = Project.create_package ~kind ~name ~dir in
+  let package, packages =
+    match kind with
+    | Virtual ->
+        let package = Project.create_package ~kind ~name ~dir in
+        package, [ package ]
+    | Library ->
+        let package =
+          Project.create_package ~kind:Library ~name ~dir
+        in
+        package, [ package ]
+    | Program ->
+        let lib_name = Misc.underscorify name ^ "_lib" in
+        let library =
+          Project.create_package ~kind:Library
+            ~name:lib_name
+            ~dir: ( "src" // lib_name )
+        in
+        let program =
+          Project.create_package ~kind:Program
+            ~name ~dir
+        in
+        let program = { program
+                        with
+                          p_dependencies = [
+                            lib_name, { depname = None ;
+                                        depversions = [ Version ] ;
+                                        deptest = false ;
+                                        depdoc = false ;
+                                      } ];
+                          p_gen_version = None ;
+                      }
+        in
+        program, [ program ; library ]
+
+  in
   let author = Project.find_author config in
   let copyright =
     match config.config_copyright with
@@ -33,7 +67,7 @@ let create_project ~config ~name ~skeleton ~kind ~mode ~dir ~inplace =
   let p =
     {
       package;
-      packages = [ package ];
+      packages;
       skeleton;
       version = "0.1.0";
       edition = Globals.current_ocaml_edition;
@@ -101,8 +135,7 @@ let action ~skeleton ~project_name ~kind ~mode ~upgrade ~inplace ~promote_skip
       let upgrade =
         match (p.package.kind, kind) with
         | kind, Some new_kind when kind <> new_kind ->
-            p.package.kind <- new_kind;
-            true
+            Error.raise "Project kind cannot be modified by drom after creation. Edit the drom.toml file."
         | _ -> upgrade
       in
       if dir <> None then Error.raise "Option --dir is not available for update";

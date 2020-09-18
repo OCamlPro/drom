@@ -61,29 +61,29 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
 
   let { arg_switch; arg_yes = y; arg_edition = edition; arg_upgrade } = args in
   ( match edition with
-  | None -> ()
-  | Some edition -> (
-      match VersionCompare.compare p.min_edition edition with
-      | 1 ->
-          Error.raise
-            "Option --edition %s should specify a version compatible with the \
-             project, whose min-edition is currently %s"
-            edition p.min_edition
-      | _ -> () ) );
+    | None -> ()
+    | Some edition -> (
+        match VersionCompare.compare p.min_edition edition with
+        | 1 ->
+            Error.raise
+              "Option --edition %s should specify a version compatible with the \
+               project, whose min-edition is currently %s"
+              edition p.min_edition
+        | _ -> () ) );
   ( match arg_switch with
-  | None | Some Local -> ()
-  | Some (Global switch) -> (
-      match VersionCompare.compare p.min_edition switch with
-      | 1 ->
-          Error.raise
-            "Option --switch %s should specify a version compatible with the \
-             project, whose min-edition is currently %s"
-            switch p.min_edition
-      | _ -> () ) );
+    | None | Some Local -> ()
+    | Some (Global switch) -> (
+        match VersionCompare.compare p.min_edition switch with
+        | 1 ->
+            Error.raise
+              "Option --switch %s should specify a version compatible with the \
+               project, whose min-edition is currently %s"
+              switch p.min_edition
+        | _ -> () ) );
 
   ( if arg_upgrade then
-    let create = false in
-    Update.update_files ~create p );
+      let create = false in
+      Update.update_files ~create p );
 
   EzFile.make_dir ~p:true "_drom";
   let opam_filename = (Globals.drom_dir // p.package.name) ^ "-deps.opam" in
@@ -98,15 +98,15 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
             Sys.file_exists "_opam"
         | Some (Global switch) ->
             ( match Unix.lstat "_opam" with
-            | exception _ -> ()
-            | st -> (
-                match st.Unix.st_kind with
-                | Unix.S_DIR ->
-                    Error.raise
-                      "You must remove the local switch `_opam` before using \
-                       option --switch"
-                | Unix.S_LNK -> ()
-                | _ -> Error.raise "Corrupted local switch '_opam'" ) );
+              | exception _ -> ()
+              | st -> (
+                  match st.Unix.st_kind with
+                  | Unix.S_DIR ->
+                      Error.raise
+                        "You must remove the local switch `_opam` before using \
+                         option --switch"
+                  | Unix.S_LNK -> ()
+                  | _ -> Error.raise "Corrupted local switch '_opam'" ) );
             Opam.run ~y ~switch ?edition [ "switch"; "link" ] [ switch ];
             false
       in
@@ -118,28 +118,28 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
       in
 
       ( match Unix.lstat "_opam" with
-      | exception _ -> Opam.run ~y [ "switch"; "create" ] [ "."; "--empty" ]
-      | st -> (
-          let current_switch =
-            match st.Unix.st_kind with
-            | Unix.S_LNK -> Filename.basename (Unix.readlink "_opam")
-            (* | Unix.S_DIR *)
-            | _ -> Unix.getcwd () // "_opam"
-          in
-          Printf.eprintf "In opam switch %s\n%!" current_switch;
-          match env_switch with
-          | None -> ()
-          | Some env_switch ->
-              let env_switch =
-                if Filename.basename env_switch = "_opam" then env_switch
-                else Filename.basename env_switch
-              in
-              if env_switch <> current_switch then
-                Printf.eprintf
-                  "Warning: your current environment contains a different opam \
-                   switch %S, be careful.\n\
-                   %!"
-                  env_switch ) );
+        | exception _ -> Opam.run ~y [ "switch"; "create" ] [ "."; "--empty" ]
+        | st -> (
+            let current_switch =
+              match st.Unix.st_kind with
+              | Unix.S_LNK -> Filename.basename (Unix.readlink "_opam")
+              (* | Unix.S_DIR *)
+              | _ -> Unix.getcwd () // "_opam"
+            in
+            Printf.eprintf "In opam switch %s\n%!" current_switch;
+            match env_switch with
+            | None -> ()
+            | Some env_switch ->
+                let env_switch =
+                  if Filename.basename env_switch = "_opam" then env_switch
+                  else Filename.basename env_switch
+                in
+                if env_switch <> current_switch then
+                  Printf.eprintf
+                    "Warning: your current environment contains a different opam \
+                     switch %S, be careful.\n\
+                     %!"
+                    env_switch ) );
 
       let packages_dir = "_opam" // ".opam-switch" // "packages" in
       let packages =
@@ -150,9 +150,9 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
       let map = ref StringMap.empty in
       Array.iter
         (fun nv ->
-          let n, v = EzString.cut_at nv '.' in
-          map := StringMap.add n v !map;
-          map := StringMap.add nv v !map)
+           let n, v = EzString.cut_at nv '.' in
+           map := StringMap.add n v !map;
+           map := StringMap.add nv v !map)
         packages;
       (had_switch, !map) )
     else (true, StringMap.empty)
@@ -245,9 +245,14 @@ had_switch: %b
     let tmp_opam_filename = "_drom/new.opam" in
     EzFile.write_file tmp_opam_filename new_opam_file;
 
+    let vendor_packages = Misc.vendor_packages () in
+
     Opam.run ~y [ "install" ]
       ( [ "--deps-only"; "." // tmp_opam_filename ]
-      @ if need_dev_deps then [ "--with-doc"; "--with-test" ] else [] );
+        @ (
+          if need_dev_deps then [ "--with-doc"; "--with-test" ] else [] )
+        @ vendor_packages
+      );
 
     (try Sys.remove drom_opam_filename with _ -> ());
     Sys.rename tmp_opam_filename drom_opam_filename;

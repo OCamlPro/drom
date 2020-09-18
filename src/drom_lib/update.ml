@@ -77,10 +77,10 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
       (* Printf.eprintf "Loading .drom\n%!"; *)
       Array.iter
         (fun line ->
-          if line <> "" && line.[0] <> '#' then
-            let digest, filename = EzString.cut_at line ' ' in
-            let digest = Digest.from_hex digest in
-            map := StringMap.add filename digest !map)
+           if line <> "" && line.[0] <> '#' then
+             let digest, filename = EzString.cut_at line ' ' in
+             let digest = Digest.from_hex digest in
+             map := StringMap.add filename digest !map)
         (EzFile.read_lines ".drom");
       !map )
     else StringMap.empty
@@ -133,12 +133,12 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
   in
 *)
   let write_file ?(record = true) ?((* add to git *)
-                                  create = false)
+      create = false)
       ?((* only create, never update *)
       skip = false) ?((* force to skip *)
-                    force = false) ?((* force to write *)
-                                   skips = []) (* tests for skipping *)
-                                                 filename content =
+      force = false) ?((* force to write *)
+      skips = []) (* tests for skipping *)
+      filename content =
     try
       if skip then raise Skip;
       if force then (
@@ -212,6 +212,32 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
   in
 
   let body () =
+
+    if create then begin
+      if git && not (Sys.file_exists ".git") then (
+        Misc.call [| "git"; "init" |];
+        match config.config_github_organization with
+        | None -> ()
+        | Some organization ->
+            Misc.call
+              [|
+                "git";
+                "remote";
+                "add";
+                "origin";
+                Printf.sprintf "git@github.com:%s/%s" organization
+                  p.package.name;
+              |];
+            let keep_readme = Sys.file_exists "README.md" in
+            if not keep_readme then
+              Misc.call [| "touch"; "README.md" |];
+            Misc.call [| "git"; "add"; "README.md" |];
+            Misc.call [| "git"; "commit"; "-m"; "Initial commit" |] ;
+            if not keep_readme then
+              Misc.call [| "rm"; "-f" ; "README.md" |];
+      )
+    end;
+
     write_file "dune" (Dune.template_dune p);
 
     let header_ml = License.header_ml p in
@@ -220,26 +246,26 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
 
     List.iter
       (fun package ->
-        match package.kind with
-        | Virtual -> ()
-        | _ ->
-            ( match package.p_gen_version with
-            | None -> ()
-            | Some file ->
-                (* TODO : we should put info in this file *)
-                write_file (package.dir // file)
-                  (Printf.sprintf "let version = \"%s\"\n"
-                     (Misc.p_version package)) );
+         match package.kind with
+         | Virtual -> ()
+         | _ ->
+             ( match package.p_gen_version with
+               | None -> ()
+               | Some file ->
+                   (* TODO : we should put info in this file *)
+                   write_file (package.dir // file)
+                     (Printf.sprintf "let version = \"%s\"\n"
+                        (Misc.p_version package)) );
 
-            let file = package.dir // "main.ml" in
-            write_file file (template_src_main_ml ~header_ml package);
+             let file = package.dir // "main.ml" in
+             write_file file (template_src_main_ml ~header_ml package);
 
-            ( match Odoc.template_src_index_mld package with
-            | None -> ()
-            | Some content -> write_file (package.dir // "index.mld") content );
+             ( match Odoc.template_src_index_mld package with
+               | None -> ()
+               | Some content -> write_file (package.dir // "index.mld") content );
 
-            let opam_filename = package.name ^ ".opam" in
-            write_file opam_filename (Opam.opam_of_project Single package))
+             let opam_filename = package.name ^ ".opam" in
+             write_file opam_filename (Opam.opam_of_project Single package))
       p.packages;
 
     EzFile.make_dir ~p:true Globals.drom_dir;
@@ -267,7 +293,7 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
      | Some skeleton ->
          Skeleton.write_files
            (fun file ~create ~skips ~content ~record ->
-             write_file file ~create ~skips ~record content)
+              write_file file ~create ~skips ~record content)
            p skeleton);
 
     let p, changed =
@@ -282,25 +308,7 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
     let skip = not (upgrade || changed || not (Sys.file_exists "drom.toml")) in
     write_file ~skip ~force:upgrade "drom.toml" (Project.toml_of_project p);
 
-    if create then
-      if git && not (Sys.file_exists ".git") then (
-        Misc.call [| "git"; "init" |];
-        match config.config_github_organization with
-        | None -> ()
-        | Some organization ->
-            Misc.call
-              [|
-                "git";
-                "remote";
-                "add";
-                "origin";
-                Printf.sprintf "git@github.com:%s/%s" organization
-                  p.package.name;
-              |];
-            Misc.call [| "git"; "add"; "README.md" |];
-            Misc.call [| "git"; "commit"; "-m"; "Initial commit" |] )
   in
-
   let closer () =
     if !save_hashes then (
       let b = Buffer.create 1000 in
@@ -308,7 +316,7 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
         "# Keep this file in your GIT repo to help drom track generated files\n";
       StringMap.iter
         (fun filename hash ->
-          Printf.bprintf b "%s %s\n" (Digest.to_hex hash) filename)
+           Printf.bprintf b "%s %s\n" (Digest.to_hex hash) filename)
         !hashes;
       EzFile.write_file ".drom" (Buffer.contents b);
       if git && Sys.file_exists ".git" then (

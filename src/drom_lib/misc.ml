@@ -8,6 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open EzFile.OP
 open EzCompat
 
 module EzString = struct
@@ -262,3 +263,25 @@ let dev_repo p =
             (Printf.sprintf "https://github.com/%s/%s" organization
                p.package.name)
       | None -> None )
+
+let vendor_packages () =
+  let vendors_dir = "vendors" in
+  ( try Sys.readdir vendors_dir with _ -> [||] )
+  |> Array.map (fun dir ->
+      let dir = vendors_dir // dir in
+      ( try Sys.readdir dir with Not_found -> [||] )
+      |> Array.map (fun file ->
+          if Filename.check_suffix file ".opam" then
+            Some ( dir // file )
+          else None
+        )
+      |> Array.to_list
+      |> List.filter (function
+          | None -> false
+          | Some _file -> true)
+      |> List.map (function
+            None -> assert false
+          | Some file -> file)
+    )
+  |> Array.to_list
+  |> List.flatten
