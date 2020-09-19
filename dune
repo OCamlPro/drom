@@ -4,7 +4,7 @@
     (flags (:standard -w +a-4-40-41-42-44))
   )
   (release
-    (flags (:standard -O3))
+    (flags (:standard -w -a))
   )
 )
 (data_only_dirs drom-test)

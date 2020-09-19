@@ -241,6 +241,9 @@ had_switch: %b
     (former_opam_file <> Some new_opam_file)
     had_switch
   ; *)
+
+  Git.update_submodules ();
+
   if need_update then (
     let tmp_opam_filename = "_drom/new.opam" in
     EzFile.write_file tmp_opam_filename new_opam_file;

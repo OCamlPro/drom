@@ -71,21 +71,7 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
     not (List.mem s p.skip)
   in
   let save_hashes = ref false in
-  let hashes =
-    if Sys.file_exists ".drom" then (
-      let map = ref StringMap.empty in
-      (* Printf.eprintf "Loading .drom\n%!"; *)
-      Array.iter
-        (fun line ->
-           if line <> "" && line.[0] <> '#' then
-             let digest, filename = EzString.cut_at line ' ' in
-             let digest = Digest.from_hex digest in
-             map := StringMap.add filename digest !map)
-        (EzFile.read_lines ".drom");
-      !map )
-    else StringMap.empty
-  in
-  let hashes = ref hashes in
+  let hashes = Hashes.load () in
   let to_add = ref [] in
   let to_remove = ref [] in
   let skipped = ref [] in
@@ -94,7 +80,7 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
     EzFile.make_dir ~p:true dirname;
     EzFile.write_file filename content;
     if record then (
-      hashes := StringMap.add filename (Digest.string content) !hashes;
+      Hashes.update hashes filename (Hashes.digest_string content);
       save_hashes := true;
       to_add := filename :: !to_add )
   in
@@ -102,18 +88,18 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
     let old_content = EzFile.read_file filename in
     if content = old_content then false
     else
-      let hash = Digest.string old_content in
-      try
-        let former_hash = StringMap.find filename !hashes in
-        let not_modified = former_hash = hash in
-        if not not_modified then (
+      let hash = Hashes.digest_string old_content in
+      match Hashes.get hashes filename with
+      | exception Not_found ->
           skipped := filename :: !skipped;
-          Printf.eprintf "Skipping modified file %s\n%!" filename );
-        not_modified
-      with Not_found ->
-        skipped := filename :: !skipped;
-        Printf.eprintf "Skipping existing file %s\n%!" filename;
-        false
+          Printf.eprintf "Skipping existing file %s\n%!" filename;
+          false
+      | former_hash ->
+          let not_modified = former_hash = hash in
+          if not not_modified then (
+            skipped := filename :: !skipped;
+            Printf.eprintf "Skipping modified file %s\n%!" filename );
+          not_modified
   in
   (*
   let remove_file filename =
@@ -215,24 +201,22 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
 
     if create then begin
       if git && not (Sys.file_exists ".git") then (
-        Misc.call [| "git"; "init" |];
+        Git.call [ "init" ];
         match config.config_github_organization with
         | None -> ()
         | Some organization ->
-            Misc.call
-              [|
-                "git";
+            Git.call [
                 "remote";
                 "add";
                 "origin";
                 Printf.sprintf "git@github.com:%s/%s" organization
                   p.package.name;
-              |];
+              ];
             let keep_readme = Sys.file_exists "README.md" in
             if not keep_readme then
               Misc.call [| "touch"; "README.md" |];
-            Misc.call [| "git"; "add"; "README.md" |];
-            Misc.call [| "git"; "commit"; "-m"; "Initial commit" |] ;
+            Git.call [ "add"; "README.md" ];
+            Git.call [ "commit"; "-m"; "Initial commit" ] ;
             if not keep_readme then
               Misc.call [| "rm"; "-f" ; "README.md" |];
       )
@@ -311,19 +295,12 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
   in
   let closer () =
     if !save_hashes then (
-      let b = Buffer.create 1000 in
-      Printf.bprintf b
-        "# Keep this file in your GIT repo to help drom track generated files\n";
-      StringMap.iter
-        (fun filename hash ->
-           Printf.bprintf b "%s %s\n" (Digest.to_hex hash) filename)
-        !hashes;
-      EzFile.write_file ".drom" (Buffer.contents b);
+      Hashes.save hashes;
       if git && Sys.file_exists ".git" then (
-        Misc.call (Array.of_list ("git" :: "add" :: ".drom" :: !to_add));
+        Git.run ( "add" :: ".drom" :: !to_add);
         match !to_remove with
         | [] -> ()
-        | files -> Misc.call (Array.of_list ("git" :: "rm" :: files)) ) )
+        | files -> Git.run ( "rm" :: files)) )
   in
 
   match body () with

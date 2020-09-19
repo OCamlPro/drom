@@ -48,7 +48,7 @@ for-test = true
 [profile.dev]
 ocaml-flags = "-w +a-4-40-41-42-44"
 [profile.release]
-ocaml-flags = "-O3"
+ocaml-flags = "-w -a"
 [project]
 pack-modules = true
 skip-dirs = ["drom-test"]
@@ -71,7 +71,7 @@ pack-modules = true
 [package.dependencies]
 ez_cmdliner = "0.1.0"
 ez_config = "0.1.0"
-ez_file = "0.1.0"
+ez_file = "0.2.0"
 opam-file-format = "2.0.0"
 toml = "5.0.0"
 [package.fields]
