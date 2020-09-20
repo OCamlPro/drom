@@ -14,37 +14,70 @@ open EzFile.OP
 
 let cmd_name = "package"
 
-(*
-let remove hashes dir =
-  EzFile.iter_dir ~f:(fun ~basename ~localpath ~file ->
-      ()
+let remove_file hashes file =
+  try
+    if Sys.is_directory file then
+      Unix.rmdir file
+    else begin
+      Sys.remove file;
+      Hashes.remove hashes file
+    end
+  with exn ->
+    Printf.eprintf "remove %s failed with %s\n%!"
+      file (Printexc.to_string exn)
+
+let remove_dir hashes dir =
+  EzFile.make_select EzFile.iter_dir dir
+    ~deep:true ~dft:`After
+    ~f:(fun path ->
+        let file = Filename.concat dir path in
+        remove_file hashes file;
+      )
+
+let rename_dir hashes src dst =
+  EzFile.make_dir ~p:true dst ;
+
+  EzFile.make_select EzFile.iter_dir src
+    ~deep:true ~dft:`Before
+    ~f:(fun path ->
+       let src_file = Filename.concat src path in
+       let dst_file = Filename.concat dst path in
+       if Sys.is_directory src_file  then
+         EzFile.make_dir ~p:true dst_file
+       else begin
+         Misc.call [| "mv" ; "-f" ; src_file ; dst_file |];
+         Hashes.rename hashes src_file dst_file
+       end
+      );
+
+  EzFile.make_select EzFile.iter_dir src
+    ~deep:true ~dft:`After
+    ~f:(fun path ->
+       let src_file = Filename.concat src path in
+       if Sys.is_directory src_file then
+         remove_file hashes src_file
     )
 
-  Misc.call [| "rm" ; "-rf" ; dir |];
-  run [ "rm" ; "-rf" ; dir ]
+let remove_package hashes package =
+  remove_dir hashes package.dir;
+  let file = package.name ^ ".opam" in
+  remove_file hashes file
 
-let rename hashes old_dir new_dir =
-  Misc.call [| "mv" ; old_dir ; new_dir |];
-  run [ "rm" ; "-rf" ; old_dir ] ;
-  run [ "add" ; new_dir ]
-*)
+let rename_package hashes package new_name =
+  let new_dir = "src" // new_name in
+  EzFile.make_dir ~p:true "src";
+  rename_dir hashes package.dir new_dir;
 
-(*
-let () =
-  EzFile.iter_dir
-      (fun ~basename ~localpath ~file ->
-         Printf.eprintf "%S %S %S\n%!" basename localpath file
-      ) "src";
+  let opam_file = package.name ^ ".opam" in
+  remove_file hashes opam_file;
 
-    exit 2
-*)
+  { package
+    with
+      dir = new_dir ;
+      name = new_name ;
+  }
 
-let remove_package package =
-  Git.remove package.dir;
-  Git.remove ( package.name ^ ".opam") ;
-  ()
-
-(* lookup for "drom.toml" and update it *)
+  (* lookup for "drom.toml" and update it *)
 let action ~package_name ~kind ~mode ~promote_skip ~dir ~create ~remove
     ?rename
     () =
@@ -74,59 +107,53 @@ let action ~package_name ~kind ~mode ~promote_skip ~dir ~create ~remove
     if dir <> None then Error.raise "Option --dir is not available for update";
 
     let upgrade =
-      if remove then (
-        if p.package.name = name then Error.raise "Cannot remove main package";
-        p.packages <-
-          List.filter (fun package ->
-              if package.name = name then begin
-                remove_package package ;
-                false
-              end
-              else true
-            ) p.packages;
-        true
-      )
-      else
-        match rename with
-        | Some new_name ->
-            if p.package.name = name then
-              Error.raise "Cannot rename main package";
-            if List.exists (fun package -> package.name = new_name) p.packages
-            then
-              Error.raise "Cannot rename to an already existing package name";
+      Hashes.with_ctxt ~git:true (fun hashes ->
+          if remove then (
+            if p.package.name = name then Error.raise "Cannot remove main package";
             p.packages <-
-              List.map (fun package ->
-                  if package.name = name then
-                    let new_dir = "src" // new_name in
-                    EzFile.make_dir "src";
-                    Git.rename package.dir new_dir ;
-                    Git.remove (name ^ ".opam");
-                    { package
-                      with
-                        dir = new_dir ;
-                        name = new_name ;
-                    }
-                  else
-                    package
+              List.filter (fun package ->
+                  if package.name = name then begin
+                    remove_package hashes package ;
+                    false
+                  end
+                  else true
                 ) p.packages;
             true
-        | None ->
-            let upgrade = ref false in
-            List.iter
-              (fun package ->
-                 if package.name = name then (
-                   ( match kind with
-                     | None -> ()
-                     | Some kind ->
-                         p.package.kind <- kind;
-                         upgrade := true );
-                   match mode with
-                   | None -> ()
-                   | Some mode ->
-                       p.package.p_mode <- Some mode;
-                       upgrade := true ))
-              p.packages;
-            !upgrade
+          )
+          else
+            match rename with
+            | Some new_name ->
+                if p.package.name = name then
+                  Error.raise "Cannot rename main package";
+                if List.exists (fun package -> package.name = new_name) p.packages
+                then
+                  Error.raise "Cannot rename to an already existing package name";
+                p.packages <-
+                  List.map (fun package ->
+                      if package.name = name then
+                        rename_package hashes package new_name
+                      else
+                        package
+                    ) p.packages;
+                true
+            | None ->
+                let upgrade = ref false in
+                List.iter
+                  (fun package ->
+                     if package.name = name then (
+                       ( match kind with
+                         | None -> ()
+                         | Some kind ->
+                             p.package.kind <- kind;
+                             upgrade := true );
+                       match mode with
+                       | None -> ()
+                       | Some mode ->
+                           p.package.p_mode <- Some mode;
+                           upgrade := true ))
+                  p.packages;
+                !upgrade
+        )
     in
     Update.update_files ~create:false ?mode ~upgrade ~promote_skip ~git:true p )
 
