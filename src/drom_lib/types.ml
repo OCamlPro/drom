@@ -53,6 +53,7 @@ type package = {
   mutable p_gen_version : string option;
   mutable p_driver_only : string option;
   mutable p_fields : string StringMap.t;
+  mutable p_skeleton : string option;
 }
 
 and project = {
@@ -109,24 +110,7 @@ type opam_kind = Single | LibraryPart | ProgramPart | Deps
 type switch_arg = Local | Global of string
 
 type skeleton = {
-  project_files : (string * string) list;
-  package_files : (string * string) list;
+  skeleton_inherits : string option ;
+  skeleton_toml : string option ;
+  skeleton_files : ( string * string ) list ;
 }
-
-module V2 = struct
-
-
-  type package_skeleton = {
-    package_inherits : string option ;
-    package_toml : string option ;
-    package_files : ( string * string ) list ;
-  }
-
-  type project_skeleton = {
-    project_inherits : string option ;
-    project_toml : string option ;
-    project_files : (string * string) list;
-    project_packages : package_skeleton StringMap.t;
-  }
-
-end

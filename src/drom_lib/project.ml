@@ -63,6 +63,7 @@ and dummy_package =
     p_gen_version = Some "version.ml";
     p_driver_only = None;
     p_fields = StringMap.empty;
+    p_skeleton = None ; (* TODO : load and save *)
   }
 
 let create_package ~name ~dir ~kind = { dummy_package with name; dir; kind }
@@ -302,6 +303,7 @@ let package_of_toml table =
   in
   let p_gen_version = EzToml.get_string_option table [ "gen-version" ] in
   let p_driver_only = EzToml.get_string_option table [ "driver-only" ] in
+  let p_skeleton = EzToml.get_string_option table [ "skeleton" ] in
   let p_fields =
     EzToml.get_encoding_default fields_encoding table [ "fields" ]
       StringMap.empty
@@ -323,6 +325,7 @@ let package_of_toml table =
     p_gen_version;
     p_driver_only;
     p_fields;
+    p_skeleton;
   }
 
 let toml_of_project p =

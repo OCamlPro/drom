@@ -23,12 +23,7 @@ let chop_prefix s ~prefix =
 
 let () =
   match Sys.argv |> Array.to_list with
-  | _exe :: name :: skeleton_dir :: _deps ->
-      if not (Sys.file_exists skeleton_dir) then
-        Printf.kprintf failwith
-          "Warning: skeleton %s/ not found. Skipping skeleton files.\n%!"
-          skeleton_dir;
-
+  | _exe :: kind :: name :: super :: skeleton_dir :: _deps ->
       let rec iter todo ret =
         match todo with
         | [] -> ret
@@ -46,18 +41,7 @@ let () =
                     let files = Sys.readdir dir in
                     let files =
                       Array.map
-                        (fun file ->
-                          ( dir // file,
-                            dirname
-                            // (* match chop_prefix ~prefix:"dot_" file with
-                                  | Some file -> "DOT_" ^ file
-                                  | None ->
-                                      (
-                                        match chop_prefix ~prefix:"under_" file with
-                                        | Some file -> "UNDER_" ^ file
-                                        | None ->
-                               *)
-                            file ))
+                        (fun file -> ( dir // file, dirname // file ))
                         files
                     in
                     let files = Array.to_list files in
@@ -67,23 +51,44 @@ let () =
                     iter todo ret ) )
       in
 
-      let project_files = iter [ (skeleton_dir // "project", "") ] [] in
-      let package_files = iter [ (skeleton_dir // "package", "") ] [] in
+      let toml =
+        let file = skeleton_dir ^ ".toml" in
+        if Sys.file_exists file then
+          Some (EzFile.read_file file)
+        else
+          None
+      in
+      let files =
+        if Sys.file_exists skeleton_dir then
+          iter [ (skeleton_dir, "") ] []
+        else
+          []
+      in
 
       Printf.printf "open Types\n";
       Printf.printf "let name = %S\n" name;
-      Printf.printf "let skeleton = {\n";
+      Printf.printf "let %s_skeleton = {\n" kind;
 
-      let print_files name files =
-        Printf.printf "  %s_files = [\n%s ] ;\n" name
+      let print_files files =
+        begin
+          if super = "None" then
+            Printf.printf "  skeleton_inherits = None ;\n"
+          else
+            Printf.printf "  skeleton_inherits = Some %S ;\n" super
+        end;
+        begin match toml with
+          | None ->
+              Printf.printf "  skeleton_toml = None ;\n"
+          | Some content ->
+              Printf.printf "  skeleton_toml = Some %S ;\n"  content
+        end;
+        Printf.printf "  skeleton_files = [\n%s ] ;\n"
           (String.concat "\n"
              (List.map
                 (fun (name, content) ->
-                  Printf.sprintf "     %S, %S ;" name content)
-                files))
+                   Printf.sprintf "     %S, %S ;" name content)
+                (List.sort compare files)))
       in
-      print_files "project" project_files;
-      print_files "package" package_files;
-
+      print_files files;
       Printf.printf "  }\n"
   | _ -> failwith "bad arguments"

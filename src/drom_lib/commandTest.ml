@@ -15,6 +15,7 @@ let cmd_name = "test"
 let action ~args () =
   let (_p : Types.project) = Build.build ~dev_deps:true ~args () in
   Misc.call [| "opam"; "exec"; "--"; "dune"; "build"; "@runtest" |];
+  Printf.eprintf "Tests OK\n%!";
   ()
 
 let cmd =

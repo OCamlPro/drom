@@ -247,18 +247,10 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
         (Printf.sprintf "skip = \"%s\"\n" (String.concat " " !can_skip));
 
       (* Most of the files are created using Skeleton *)
-      (let skeleton =
-         match p.skeleton with
-         | None -> Some Skel_default.skeleton
-         | Some skeleton -> Skeleton.load skeleton
-       in
-       match skeleton with
-       | None -> ()
-       | Some skeleton ->
-           Skeleton.write_files
-             (fun file ~create ~skips ~content ~record ->
-                write_file hashes file ~create ~skips ~record content)
-             p skeleton);
+      Skeleton.write_files
+        (fun file ~create ~skips ~content ~record ~skip ->
+           write_file hashes file ~create ~skips ~record ~skip content)
+        p;
 
       let p, changed =
         if promote_skip && !skipped <> [] then (
