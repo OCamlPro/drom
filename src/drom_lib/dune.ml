@@ -72,18 +72,42 @@ let package_dune package =
 
 let package_dune_files package =
   let b = Buffer.create 1000 in
+  let p_generators = match package.p_generators with
+    | None -> []
+    | Some generators -> generators in
   ( match Sys.readdir package.dir with
-  | exception _ -> ()
-  | files ->
-      Array.iter
-        (fun file ->
-          if Filename.check_suffix file ".mll" then
-            Printf.bprintf b "(ocamllex %s)\n"
-              (Filename.chop_suffix file ".mll")
-          else if Filename.check_suffix file ".mly" then
-            Printf.bprintf b "(ocamlyacc %s)\n"
-              (Filename.chop_suffix file ".mly"))
-        files );
+    | exception _ -> ()
+    | files ->
+        Array.iter
+          (fun file ->
+             if Filename.check_suffix file ".mll" then begin
+               if List.mem "ocamllex" package.project.generators ||
+                  List.mem "ocamllex" p_generators
+               then
+                 Printf.bprintf b "(ocamllex %s)\n"
+                   (Filename.chop_suffix file ".mll")
+             end
+             else
+             if Filename.check_suffix file ".mly" then begin
+               if List.mem "ocamlyacc" p_generators then
+                 Printf.bprintf b "(ocamlyacc %s)\n"
+                   (Filename.chop_suffix file ".mly")
+               else
+               if List.mem "menhir" p_generators then
+                 Printf.bprintf b "(menhir (modules %s))\n"
+                   (Filename.chop_suffix file ".mly")
+               else
+               if List.mem "ocamlyacc" package.project.generators then
+                 Printf.bprintf b "(ocamlyacc %s)\n"
+                   (Filename.chop_suffix file ".mly")
+               else
+               if List.mem "menhir" package.project.generators then
+                 Printf.bprintf b "(menhir (modules %s))\n"
+                   (Filename.chop_suffix file ".mly")
+               else
+                 Printf.eprintf "no generator for %s\n%!" file
+             end)
+          files );
   Buffer.contents b
 
 let template_dune_project p =

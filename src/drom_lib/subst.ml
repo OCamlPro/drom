@@ -19,6 +19,8 @@ let verbose_subst =
     true
   with Not_found -> false
 
+let maybe_string = function None -> "" | Some s -> s
+
 let project_brace (_, p) v =
   match v with
   | "name" -> p.package.name
@@ -27,11 +29,18 @@ let project_brace (_, p) v =
   | "version" -> p.version
   | "edition" -> p.edition
   | "min-edition" -> p.min_edition
+  | "github-organization" -> maybe_string p.github_organization
+  | "authors-as-strings" ->
+      String.concat " " (List.map (Printf.sprintf "%S") p.authors)
   | "copyright" -> (
       match p.copyright with
       | Some copyright -> copyright
       | None -> String.concat ", " p.authors )
   | "license" -> License.license p
+  | "license-name" -> p.license
+  | "header-ml" -> License.header_ml p
+  | "header-mll" -> License.header_mll p
+  | "header-mly" -> License.header_mly p
   | "authors-ampersand" -> String.concat " & " p.authors
   (* general *)
   | "year" -> (Misc.date ()).Unix.tm_year |> string_of_int

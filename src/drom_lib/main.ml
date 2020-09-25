@@ -8,9 +8,12 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ezcmd.TYPES
+
 let main () =
   let commands =
     [
+      CommandNew.cmd;
       CommandProject.cmd;
       CommandPackage.cmd;
       CommandBuild.cmd;
@@ -30,6 +33,13 @@ let main () =
       CommandPromote.cmd;
     ]
   in
+  let common_args = [
+    [ "v"; "verbose" ], Arg.Unit (fun () -> incr Globals.verbosity),
+    Ezcmd.info "Increase verbosity level"
+  ] in
+  let commands = List.map (fun sub ->
+      { sub with cmd_args = common_args @ sub.cmd_args }) commands
+  in
   Printexc.record_backtrace true;
   match Sys.argv with
   | [| _; "--version" |] -> Printf.printf "%s\n%!" Version.version
@@ -42,7 +52,7 @@ let main () =
           ~version:Version.version ~doc:"Create and manage an OCaml project"
           ~man:[] commands
       with
-      | Types.Error s ->
+      | Error.Error s ->
           Printf.eprintf "Error: %s\n%!" s;
           exit 2
       | exn ->

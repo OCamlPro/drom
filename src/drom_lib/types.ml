@@ -10,8 +10,6 @@
 
 open EzCompat (* for StringMap *)
 
-exception Error of string
-
 type kind = Program | Library | Virtual
 
 type mode = Binary | Javascript
@@ -38,6 +36,7 @@ type dependency = {
 
 type package = {
   name : string;
+  mutable p_skeleton : string option;
   mutable dir : string;
   mutable project : project;
   mutable p_pack : string option;
@@ -53,7 +52,7 @@ type package = {
   mutable p_gen_version : string option;
   mutable p_driver_only : string option;
   mutable p_fields : string StringMap.t;
-  mutable p_skeleton : string option;
+  mutable p_generators : string list option;
 }
 
 and project = {
@@ -62,7 +61,7 @@ and project = {
   (* sub-packages *)
 
   (* common fields *)
-  skeleton : string option;
+  mutable skeleton : string option;
   edition : string;
   min_edition : string;
   (* not that ocamlformat => ocaml.4.04.0 *)
@@ -81,6 +80,7 @@ and project = {
   sphinx_target : string option;
   (* CI options *)
   windows_ci : bool;
+  generators : string list ;
   skip_dirs : string list;
   profiles : profile StringMap.t;
   (* default fields *)
@@ -111,6 +111,16 @@ type switch_arg = Local | Global of string
 
 type skeleton = {
   skeleton_inherits : string option ;
-  skeleton_toml : string option ;
+  skeleton_toml : string list ;
   skeleton_files : ( string * string ) list ;
 }
+
+module type LICENSE = sig
+  val key : string
+
+  val name : string
+
+  val header : string list
+
+  val license : string
+end

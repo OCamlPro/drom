@@ -2,15 +2,15 @@
 drom-version = "0.1.0"
 
 [project]
-authors = ["%{author}"]
-copyright = "%{copyright}"
-edition = "%{edition}"
-github-organization = "%{github-organization}"
-license = "%{license}"
-min-edition = "%{min-edition}"
+authors = [!{authors-as-strings}]
+copyright = "!{copyright}"
+edition = "!{edition}"
+github-organization = "!{github-organization}"
+license = "!{license-name}"
+min-edition = "!{min-edition}"
 mode = "binary"
-name = "%{name}"
-synopsis = "The %{name} project"
+name = "!{name}"
+synopsis = "The !{name} project"
 version = "0.1.0"
 windows-ci = true
 
@@ -26,7 +26,7 @@ windows-ci = true
 [project]
 description = """
 This is the description
-of the %{name} OCaml project
+of the !{name} OCaml project
 """
 
 [drom]
@@ -49,8 +49,8 @@ skip-dirs = []
 
 [[package]]
 skeleton = "library"
-dir = "src/%{name}"
+dir = "src/!{name}"
 gen-version = "version.ml"
 kind = "library"
-name = "%{name}"
+name = "!{name}"
 

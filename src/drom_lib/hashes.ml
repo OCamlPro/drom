@@ -29,7 +29,12 @@ let load () =
       Array.iter
         (fun line ->
            if line <> "" && line.[0] <> '#' then
-             let digest, filename = EzString.cut_at line ' ' in
+             let digest, filename =
+               if String.contains line ':' then
+                 EzString.cut_at line ':'
+               else
+                 EzString.cut_at line ' ' (* only for backward compat *)
+             in
              let digest = Digest.from_hex digest in
              map := StringMap.add filename digest !map)
         (EzFile.read_lines ".drom");
@@ -50,7 +55,7 @@ let save ?(git=true) t =
     StringMap.iter
       (fun filename hash ->
          if Sys.file_exists filename then
-           Printf.bprintf b "%s %s\n" (Digest.to_hex hash) filename)
+           Printf.bprintf b "%s:%s\n" (Digest.to_hex hash) filename)
       t.hashes;
     EzFile.write_file ".drom" (Buffer.contents b);
 
@@ -107,6 +112,5 @@ let with_ctxt ?git f =
       res
   | exception exn ->
       let bt = Printexc.get_raw_backtrace () in
-      Printf.eprintf "An error happened. Saving intermediate changes.\n%!";
       save t;
       Printexc.raise_with_backtrace exn bt

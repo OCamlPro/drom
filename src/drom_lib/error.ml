@@ -8,4 +8,6 @@
 (*                                                                        *)
 (**************************************************************************)
 
-let raise fmt = Printf.kprintf (fun s -> raise (Types.Error s)) fmt
+exception Error of string
+
+let raise fmt = Printf.kprintf (fun s -> raise (Error s)) fmt

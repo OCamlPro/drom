@@ -64,9 +64,9 @@ let load_skeleton ~dir ~toml ~kind =
   let skeleton_toml =
     let file = dir // ( kind ^ ".toml" ) in
     if Sys.file_exists file then
-      Some ( EzFile.read_file file )
+      [ EzFile.read_file file ]
     else
-      None
+      []
   in
   let skeleton_files =
     let dir = dir // "files" in
@@ -142,6 +142,7 @@ let builtin_project_skeletons = StringMap.of_list [
   ]
 
 let builtin_package_skeletons = StringMap.of_list [
+    "virtual", Skel_package_virtual.package_skeleton ;
     "library", Skel_package_library.package_skeleton ;
     "program", Skel_package_program.package_skeleton ;
     "driver", Skel_package_driver.package_skeleton ;
@@ -182,14 +183,11 @@ let lookup_skeleton skeletons name =
         Error.raise "Missing skeleton %S" name
     | self ->
         match self.skeleton_inherits with
-        | None -> self
+        | None ->
+            self
         | Some super ->
             let super = iter super in
-            let skeleton_toml =
-              match self.skeleton_toml, super.skeleton_toml with
-              | None, super_toml -> super_toml
-              | Some self_toml, _ -> Some self_toml
-            in
+            let skeleton_toml = self.skeleton_toml @ super.skeleton_toml in
             let skeleton_files =
               inherit_files self.skeleton_files super.skeleton_files
             in
@@ -210,14 +208,11 @@ let backup_skeleton file content =
 let lookup_project skeleton =
   lookup_skeleton project_skeletons
     (match skeleton with
-     | None -> "virtual"
+     | None -> "program"
      | Some skeleton -> skeleton)
 
 let lookup_package skeleton =
-  lookup_skeleton package_skeletons
-    (match skeleton with
-     | None -> "library"
-     | Some skeleton -> skeleton)
+  lookup_skeleton package_skeletons skeleton
 
 let write_project_files write_file p =
 
@@ -240,7 +235,14 @@ let write_project_files write_file p =
 
 let write_package_files write_file package =
 
-  let skeleton = lookup_package package.p_skeleton in
+  let skeleton = lookup_package (match package.p_skeleton with
+      | Some skeleton -> skeleton
+      | None ->
+          match package.kind with
+          | Program -> "program"
+          | Library -> "library"
+          | Virtual -> "virtual")
+  in
 
   List.iter
     (fun (file, content) ->

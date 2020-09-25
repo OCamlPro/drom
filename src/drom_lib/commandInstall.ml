@@ -23,7 +23,7 @@ let action ~args () =
   List.iter
     (fun package ->
       match Opam.run [ "uninstall" ] [ "-y"; package ] with
-      | exception Types.Error _ -> ()
+      | exception Error.Error _ -> ()
       | () -> ())
     packages;
   (* (2) pin packages of this directory as they are *)

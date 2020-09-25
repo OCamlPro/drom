@@ -35,6 +35,7 @@ let library_module p =
       done;
       Bytes.to_string s
 
+(*
 let template_src_main_ml ~header_ml p =
   match p.kind with
   | Virtual -> assert false
@@ -60,6 +61,7 @@ let () = %s ()
 let () = Printf.printf "Hello world!\n%!"
 |}
             header_ml p.dir )
+      *)
 
 exception Skip
 
@@ -106,7 +108,7 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
     try
       if skip then raise Skip;
       if force then (
-        Printf.eprintf "Updating file %s\n%!" filename;
+        Printf.eprintf "Forced Update of file %s\n%!" filename;
         write_file hashes filename content )
       else if not_skipped filename && List.for_all not_skipped skips then
         if not record then write_file ~record:false hashes filename content
@@ -202,8 +204,6 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
 
       write_file hashes "dune" (Dune.template_dune p);
 
-      let header_ml = License.header_ml p in
-
       write_file hashes "dune-project" (Dune.template_dune_project p);
 
       List.iter
@@ -218,10 +218,6 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
                      write_file hashes (package.dir // file)
                        (Printf.sprintf "let version = \"%s\"\n"
                           (Misc.p_version package)) );
-
-               let file = package.dir // "main.ml" in
-               write_file hashes file (template_src_main_ml ~header_ml package);
-
                ( match Odoc.template_src_index_mld package with
                  | None -> ()
                  | Some content ->
@@ -261,8 +257,16 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
         else (p, changed)
       in
 
-      let skip = not (upgrade || changed || not (Sys.file_exists "drom.toml")) in
-      write_file ~skip ~force:upgrade hashes "drom.toml"
-        (Project.toml_of_project p);
+      let skip =
+        not (upgrade || changed || not (Sys.file_exists "drom.toml")) in
+      let content = Project.to_string p in
+      write_file ~skip ~force:upgrade hashes "drom.toml" content;
+
+      (* Save the "hash of all files", i.e. the hash of the drom.toml
+         file that was used to generate all other files, to be able to
+         detect need for update. We use '.' for the associated name,
+         because it must be an existent file, otherwise `Hashes.save`
+         will discard it.  *)
+      Hashes.update hashes "." ( Hashes.digest_file "drom.toml" )
     );
   ()

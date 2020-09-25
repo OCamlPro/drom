@@ -83,7 +83,16 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
 
   ( if arg_upgrade then
       let create = false in
-      Update.update_files ~create p );
+      Update.update_files ~create p
+    else
+      let hashes = Hashes.load () in
+      if
+        match Hashes.get hashes "." with
+        | exception Not_found -> true
+        | old_hash -> old_hash <> Hashes.digest_file "drom.toml"
+      then
+        Printf.eprintf "Warning: 'drom.toml' changed since last update,\n  you should run `drom project` to regenerate files.\n%!"
+  );
 
   EzFile.make_dir ~p:true "_drom";
   let opam_filename = (Globals.drom_dir // p.package.name) ^ "-deps.opam" in
@@ -126,7 +135,8 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
               (* | Unix.S_DIR *)
               | _ -> Unix.getcwd () // "_opam"
             in
-            Printf.eprintf "In opam switch %s\n%!" current_switch;
+            if Misc.verbose 1 then
+              Printf.eprintf "In opam switch %s\n%!" current_switch;
             match env_switch with
             | None -> ()
             | Some env_switch ->

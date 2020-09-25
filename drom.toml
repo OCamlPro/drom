@@ -50,6 +50,7 @@ ocaml-flags = "-w +a-4-40-41-42-44"
 [profile.release]
 ocaml-flags = "-w -a"
 [project]
+generators = ["ocamllex", "menhir"]
 pack-modules = true
 skip-dirs = ["drom-test"]
 
@@ -80,6 +81,8 @@ dune-trailer = """
 (rule
   (targets skel_project_virtual.ml)
   (deps
+skeletons/projects/virtual.toml
+
 skeletons/projects/virtual/dot_ocp-indent
 skeletons/projects/virtual/dot_ocamlformat-ignore
 skeletons/projects/virtual/LICENSE.md
@@ -132,9 +135,20 @@ skeletons/projects/library.toml
     (run skel_packer project library virtual skeletons/projects/library))))
 
 (rule
+  (targets skel_package_virtual.ml)
+  (deps
+    skeletons/packages/virtual.toml
+     )
+  (action
+    (with-stdout-to %{targets}
+    (run skel_packer package virtual None skeletons/packages/virtual))))
+
+(rule
   (targets skel_package_program.ml)
   (deps
+    skeletons/packages/program.toml
     skeletons/packages/program/dune
+    skeletons/packages/program/main.ml
      )
   (action
     (with-stdout-to %{targets}
@@ -143,7 +157,9 @@ skeletons/projects/library.toml
 (rule
   (targets skel_package_library.ml)
   (deps
+    skeletons/packages/library.toml
     skeletons/packages/library/dune
+    skeletons/packages/library/main.ml
      )
   (action
     (with-stdout-to %{targets}
@@ -152,11 +168,41 @@ skeletons/projects/library.toml
 (rule
   (targets skel_package_driver.ml)
   (deps
+    skeletons/packages/driver.toml
     skeletons/packages/driver/dune
+    skeletons/packages/driver/main.ml
      )
   (action
     (with-stdout-to %{targets}
     (run skel_packer package driver None skeletons/packages/driver))))
 
+(rule
+  (targets skel_licenses.ml)
+  (deps
+    licenses/LGPL2/NAME
+    licenses/LGPL2/HEADER
+    licenses/LGPL2/LICENSE
+
+    licenses/GPL3/NAME
+    licenses/GPL3/HEADER
+    licenses/GPL3/LICENSE
+
+    licenses/BSD2/NAME
+    licenses/BSD2/HEADER
+    licenses/BSD2/LICENSE
+
+    licenses/BSD3/NAME
+    licenses/BSD3/HEADER
+    licenses/BSD3/LICENSE
+
+    licenses/ISC/NAME
+    licenses/ISC/HEADER
+    licenses/ISC/LICENSE
+     )
+  (action
+    (with-stdout-to %{targets}
+    (run skel_packer licenses))))
+
 (data_only_dirs skeletons)
 """
+

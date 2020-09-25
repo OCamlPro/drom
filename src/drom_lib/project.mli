@@ -12,11 +12,17 @@ val find : unit -> (Types.project * string) option
 
 val get : unit -> Types.project * string
 
-val read : string -> Types.project
+val read : ?default:Types.project -> string -> Types.project
 
-val toml_of_project : Types.project -> string
+val to_string : Types.project -> string
+val of_string : msg:string -> ?default:Types.project -> string -> Types.project
 
 val create_package :
   name:string -> dir:string -> kind:Types.kind -> Types.package
 
 val find_author : Types.config -> string
+
+val package_of_string : msg:string -> string -> Types.package
+val string_of_package : Types.package -> string
+
+val dummy_project : Types.project

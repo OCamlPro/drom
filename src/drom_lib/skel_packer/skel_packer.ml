@@ -55,8 +55,10 @@ let () =
         let file = skeleton_dir ^ ".toml" in
         if Sys.file_exists file then
           Some (EzFile.read_file file)
-        else
+        else begin
+          Printf.eprintf "%S does not exist\n%!" file;
           None
+        end
       in
       let files =
         if Sys.file_exists skeleton_dir then
@@ -78,9 +80,11 @@ let () =
         end;
         begin match toml with
           | None ->
-              Printf.printf "  skeleton_toml = None ;\n"
+              Printf.printf "  skeleton_toml = [] ;\n"
           | Some content ->
-              Printf.printf "  skeleton_toml = Some %S ;\n"  content
+              Printf.printf
+                "  skeleton_toml = [ %S ] ;\n"
+                content
         end;
         Printf.printf "  skeleton_files = [\n%s ] ;\n"
           (String.concat "\n"
@@ -91,4 +95,30 @@ let () =
       in
       print_files files;
       Printf.printf "  }\n"
+  | _exe :: "licenses" :: [] ->
+      let licenses_dir =  "licenses" in
+      let dirs = Sys.readdir licenses_dir in
+      Printf.printf "let licenses = []\n";
+      Array.iter (fun dir ->
+          let dirname = licenses_dir // dir in
+          Printf.printf "module %s = struct\n" dir;
+          Printf.printf "  let key = \"%s\"\n" dir;
+          Printf.printf "  let name = \"%s\"\n"
+            ( String.trim ( EzFile.read_file ( dirname // "NAME" ) ));
+          Printf.printf "  let header = [ %s ]\n"
+            ( String.concat
+                "; \n"
+                (List.map (fun line ->
+                     Printf.sprintf "  %S" line
+                   )
+                    ( EzFile.read_lines ( dirname // "HEADER" )
+                      |> Array.to_list )));
+          Printf.printf "  let license = {|%s|}\n"
+            ( EzFile.read_file ( dirname // "LICENSE" ));
+          Printf.printf "end\n";
+          Printf.printf
+            "let licenses = (%s.key, (module %s : Types.LICENSE)) :: licenses\n"
+            dir dir
+        ) dirs
+
   | _ -> failwith "bad arguments"
