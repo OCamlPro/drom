@@ -8,6 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open EzFile.OP
 open EzCompat
 
 module EzString = struct
@@ -28,8 +29,11 @@ module EzString = struct
     else None
 end
 
+let verbose i = !Globals.verbosity >= i
+
 let call ?(stdout = Unix.stdout) args =
-  Printf.eprintf "Calling %s\n%!" (String.concat " " (Array.to_list args));
+  if verbose 1 then
+    Printf.eprintf "Calling %s\n%!" (String.concat " " (Array.to_list args));
   let pid = Unix.create_process args.(0) args Unix.stdin stdout Unix.stderr in
   let rec iter () =
     match Unix.waitpid [] pid with
@@ -262,3 +266,25 @@ let dev_repo p =
             (Printf.sprintf "https://github.com/%s/%s" organization
                p.package.name)
       | None -> None )
+
+let vendor_packages () =
+  let vendors_dir = "vendors" in
+  ( try Sys.readdir vendors_dir with _ -> [||] )
+  |> Array.map (fun dir ->
+      let dir = vendors_dir // dir in
+      ( try Sys.readdir dir with Not_found -> [||] )
+      |> Array.map (fun file ->
+          if Filename.check_suffix file ".opam" then
+            Some ( dir // file )
+          else None
+        )
+      |> Array.to_list
+      |> List.filter (function
+          | None -> false
+          | Some _file -> true)
+      |> List.map (function
+            None -> assert false
+          | Some file -> file)
+    )
+  |> Array.to_list
+  |> List.flatten

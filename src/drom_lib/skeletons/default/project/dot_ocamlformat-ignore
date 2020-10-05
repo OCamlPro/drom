@@ -1,4 +1,0 @@
-![skip:ocamlformat]![file:.ocamlformat-ignore]
-vendor/*/*
-vendor/*/*/*
-vendor/*/*/*/*

@@ -13,13 +13,17 @@ open Ezcmd.TYPES
 let cmd_name = "install"
 
 let action ~args () =
+
+  if Misc.vendor_packages () <> [] then
+    Error.raise "Cannot install project if the project has vendors/ packages";
+
   let _p = Build.build ~args () in
   let packages = Misc.list_opam_packages "." in
   (* (1) uninstall formerly install packages *)
   List.iter
     (fun package ->
       match Opam.run [ "uninstall" ] [ "-y"; package ] with
-      | exception Types.Error _ -> ()
+      | exception Error.Error _ -> ()
       | () -> ())
     packages;
   (* (2) pin packages of this directory as they are *)

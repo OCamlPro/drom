@@ -35,6 +35,7 @@ let library_module p =
       done;
       Bytes.to_string s
 
+(*
 let template_src_main_ml ~header_ml p =
   match p.kind with
   | Virtual -> assert false
@@ -60,6 +61,7 @@ let () = %s ()
 let () = Printf.printf "Hello world!\n%!"
 |}
             header_ml p.dir )
+      *)
 
 exception Skip
 
@@ -70,89 +72,53 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
     can_skip := s :: !can_skip;
     not (List.mem s p.skip)
   in
-  let save_hashes = ref false in
-  let hashes =
-    if Sys.file_exists ".drom" then (
-      let map = ref StringMap.empty in
-      (* Printf.eprintf "Loading .drom\n%!"; *)
-      Array.iter
-        (fun line ->
-          if line <> "" && line.[0] <> '#' then
-            let digest, filename = EzString.cut_at line ' ' in
-            let digest = Digest.from_hex digest in
-            map := StringMap.add filename digest !map)
-        (EzFile.read_lines ".drom");
-      !map )
-    else StringMap.empty
-  in
-  let hashes = ref hashes in
-  let to_add = ref [] in
-  let to_remove = ref [] in
   let skipped = ref [] in
-  let write_file ?(record = true) filename content =
+  let write_file ?(record = true) hashes filename content =
     let dirname = Filename.dirname filename in
     EzFile.make_dir ~p:true dirname;
     EzFile.write_file filename content;
-    if record then (
-      hashes := StringMap.add filename (Digest.string content) !hashes;
-      save_hashes := true;
-      to_add := filename :: !to_add )
+    if record then
+      Hashes.update hashes filename (Hashes.digest_string content);
   in
-  let can_update ~filename content =
+  let can_update ~filename hashes content =
     let old_content = EzFile.read_file filename in
     if content = old_content then false
     else
-      let hash = Digest.string old_content in
-      try
-        let former_hash = StringMap.find filename !hashes in
-        let not_modified = former_hash = hash in
-        if not not_modified then (
+      let hash = Hashes.digest_string old_content in
+      match Hashes.get hashes filename with
+      | exception Not_found ->
           skipped := filename :: !skipped;
-          Printf.eprintf "Skipping modified file %s\n%!" filename );
-        not_modified
-      with Not_found ->
-        skipped := filename :: !skipped;
-        Printf.eprintf "Skipping existing file %s\n%!" filename;
-        false
+          Printf.eprintf "Skipping existing file %s\n%!" filename;
+          false
+      | former_hash ->
+          let not_modified = former_hash = hash in
+          if not not_modified then (
+            skipped := filename :: !skipped;
+            Printf.eprintf "Skipping modified file %s\n%!" filename );
+          not_modified
   in
-  (*
-  let remove_file filename =
-    if Sys.file_exists filename then
-      let old_content = EzFile.read_file filename in
-      let hash = Digest.string old_content in
-      try
-        let former_hash = StringMap.find filename !hashes in
-        if former_hash <> hash then
-          Printf.eprintf "Keeping modified file %s\n%!" filename
-        else begin
-          hashes := StringMap.remove filename !hashes ;
-          save_hashes := true ;
-          to_remove := filename ::!to_remove
-        end
-      with Not_found -> ()
-  in
-*)
+
   let write_file ?(record = true) ?((* add to git *)
-                                  create = false)
+      create = false)
       ?((* only create, never update *)
       skip = false) ?((* force to skip *)
-                    force = false) ?((* force to write *)
-                                   skips = []) (* tests for skipping *)
-                                                 filename content =
+      force = false) ?((* force to write *)
+      skips = []) (* tests for skipping *)
+      hashes filename content =
     try
       if skip then raise Skip;
       if force then (
-        Printf.eprintf "Updating file %s\n%!" filename;
-        write_file filename content )
+        Printf.eprintf "Forced Update of file %s\n%!" filename;
+        write_file hashes filename content )
       else if not_skipped filename && List.for_all not_skipped skips then
-        if not record then write_file ~record:false filename content
+        if not record then write_file ~record:false hashes filename content
         else if not (Sys.file_exists filename) then (
           Printf.eprintf "Creating file %s\n%!" filename;
-          write_file filename content )
+          write_file hashes filename content )
         else if create then raise Skip
-        else if can_update ~filename content then (
+        else if can_update ~filename hashes content then (
           Printf.eprintf "Updating file %s\n%!" filename;
-          write_file filename content )
+          write_file hashes filename content )
         else raise Skip
       else raise Skip
     with Skip ->
@@ -211,117 +177,94 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
         ({ p with mode; dependencies; tools }, changed)
   in
 
-  let body () =
-    write_file "dune" (Dune.template_dune p);
+  Hashes.with_ctxt ~git (fun hashes ->
 
-    let header_ml = License.header_ml p in
-
-    write_file "dune-project" (Dune.template_dune_project p);
-
-    List.iter
-      (fun package ->
-        match package.kind with
-        | Virtual -> ()
-        | _ ->
-            ( match package.p_gen_version with
-            | None -> ()
-            | Some file ->
-                (* TODO : we should put info in this file *)
-                write_file (package.dir // file)
-                  (Printf.sprintf "let version = \"%s\"\n"
-                     (Misc.p_version package)) );
-
-            let file = package.dir // "main.ml" in
-            write_file file (template_src_main_ml ~header_ml package);
-
-            ( match Odoc.template_src_index_mld package with
-            | None -> ()
-            | Some content -> write_file (package.dir // "index.mld") content );
-
-            let opam_filename = package.name ^ ".opam" in
-            write_file opam_filename (Opam.opam_of_project Single package))
-      p.packages;
-
-    EzFile.make_dir ~p:true Globals.drom_dir;
-
-    EzFile.write_file
-      (Globals.drom_dir // "known-licences.txt")
-      (License.known_licenses ());
-
-    EzFile.write_file (Globals.drom_dir // "header.ml") (License.header_ml p);
-    EzFile.write_file (Globals.drom_dir // "header.mll") (License.header_mll p);
-    EzFile.write_file (Globals.drom_dir // "header.mly") (License.header_mly p);
-
-    EzFile.write_file
-      (Globals.drom_dir // "maximum-skip-field.txt")
-      (Printf.sprintf "skip = \"%s\"\n" (String.concat " " !can_skip));
-
-    (* Most of the files are created using Skeleton *)
-    (let skeleton =
-       match p.skeleton with
-       | None -> Some Skel_default.skeleton
-       | Some skeleton -> Skeleton.load skeleton
-     in
-     match skeleton with
-     | None -> ()
-     | Some skeleton ->
-         Skeleton.write_files
-           (fun file ~create ~skips ~content ~record ->
-             write_file file ~create ~skips ~record content)
-           p skeleton);
-
-    let p, changed =
-      if promote_skip && !skipped <> [] then (
-        let skip = p.skip @ !skipped in
-        Printf.eprintf "skip field promotion: %s\n%!"
-          (String.concat " " !skipped);
-        ({ p with skip }, true) )
-      else (p, changed)
-    in
-
-    let skip = not (upgrade || changed || not (Sys.file_exists "drom.toml")) in
-    write_file ~skip ~force:upgrade "drom.toml" (Project.toml_of_project p);
-
-    if create then
-      if git && not (Sys.file_exists ".git") then (
-        Misc.call [| "git"; "init" |];
-        match config.config_github_organization with
-        | None -> ()
-        | Some organization ->
-            Misc.call
-              [|
-                "git";
+      if create then begin
+        if git && not (Sys.file_exists ".git") then (
+          Git.call [ "init" ];
+          match config.config_github_organization with
+          | None -> ()
+          | Some organization ->
+              Git.call [
                 "remote";
                 "add";
                 "origin";
                 Printf.sprintf "git@github.com:%s/%s" organization
                   p.package.name;
-              |];
-            Misc.call [| "git"; "add"; "README.md" |];
-            Misc.call [| "git"; "commit"; "-m"; "Initial commit" |] )
-  in
+              ];
+              let keep_readme = Sys.file_exists "README.md" in
+              if not keep_readme then
+                Misc.call [| "touch"; "README.md" |];
+              Git.call [ "add"; "README.md" ];
+              Git.call [ "commit"; "-m"; "Initial commit" ] ;
+              if not keep_readme then
+                Misc.call [| "rm"; "-f" ; "README.md" |];
+        )
+      end;
 
-  let closer () =
-    if !save_hashes then (
-      let b = Buffer.create 1000 in
-      Printf.bprintf b
-        "# Keep this file in your GIT repo to help drom track generated files\n";
-      StringMap.iter
-        (fun filename hash ->
-          Printf.bprintf b "%s %s\n" (Digest.to_hex hash) filename)
-        !hashes;
-      EzFile.write_file ".drom" (Buffer.contents b);
-      if git && Sys.file_exists ".git" then (
-        Misc.call (Array.of_list ("git" :: "add" :: ".drom" :: !to_add));
-        match !to_remove with
-        | [] -> ()
-        | files -> Misc.call (Array.of_list ("git" :: "rm" :: files)) ) )
-  in
+      write_file hashes "dune-project" (Dune.template_dune_project p);
 
-  match body () with
-  | () -> closer ()
-  | exception exn ->
-      let bt = Printexc.get_raw_backtrace () in
-      Printf.eprintf "An error happened. Saving intermediate changes.\n%!";
-      closer ();
-      Printexc.raise_with_backtrace exn bt
+      List.iter
+        (fun package ->
+           match package.kind with
+           | Virtual -> ()
+           | _ ->
+               ( match package.p_gen_version with
+                 | None -> ()
+                 | Some file ->
+                     (* TODO : we should put info in this file *)
+                     write_file hashes (package.dir // file)
+                       (Printf.sprintf "let version = \"%s\"\n"
+                          (Misc.p_version package)) );
+               ( match Odoc.template_src_index_mld package with
+                 | None -> ()
+                 | Some content ->
+                     write_file hashes (package.dir // "index.mld") content );
+
+               let opam_filename = package.name ^ ".opam" in
+               write_file hashes opam_filename
+                 (Opam.opam_of_project Single package))
+        p.packages;
+
+      EzFile.make_dir ~p:true Globals.drom_dir;
+
+      EzFile.write_file
+        (Globals.drom_dir // "known-licences.txt")
+        (License.known_licenses ());
+
+      EzFile.write_file (Globals.drom_dir // "header.ml") (License.header_ml p);
+      EzFile.write_file (Globals.drom_dir // "header.mll") (License.header_mll p);
+      EzFile.write_file (Globals.drom_dir // "header.mly") (License.header_mly p);
+
+      EzFile.write_file
+        (Globals.drom_dir // "maximum-skip-field.txt")
+        (Printf.sprintf "skip = \"%s\"\n" (String.concat " " !can_skip));
+
+      (* Most of the files are created using Skeleton *)
+      Skeleton.write_files
+        (fun file ~create ~skips ~content ~record ~skip ->
+           write_file hashes file ~create ~skips ~record ~skip content)
+        p;
+
+      let p, changed =
+        if promote_skip && !skipped <> [] then (
+          let skip = p.skip @ !skipped in
+          Printf.eprintf "skip field promotion: %s\n%!"
+            (String.concat " " !skipped);
+          ({ p with skip }, true) )
+        else (p, changed)
+      in
+
+      let skip =
+        not (upgrade || changed || not (Sys.file_exists "drom.toml")) in
+      let content = Project.to_string p in
+      write_file ~skip ~force:upgrade hashes "drom.toml" content;
+
+      (* Save the "hash of all files", i.e. the hash of the drom.toml
+         file that was used to generate all other files, to be able to
+         detect need for update. We use '.' for the associated name,
+         because it must be an existent file, otherwise `Hashes.save`
+         will discard it.  *)
+      Hashes.update hashes "." ( Hashes.digest_file "drom.toml" )
+    );
+  ()

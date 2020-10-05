@@ -48,8 +48,9 @@ for-test = true
 [profile.dev]
 ocaml-flags = "-w +a-4-40-41-42-44"
 [profile.release]
-ocaml-flags = "-O3"
+ocaml-flags = "-w -a"
 [project]
+generators = ["ocamllex", "menhir"]
 pack-modules = true
 skip-dirs = ["drom-test"]
 
@@ -59,6 +60,7 @@ dir = "src/drom"
 driver-only = "Drom_lib.Main.main"
 kind = "program"
 name = "drom"
+skeleton = "driver"
 [package.dependencies]
 drom_lib = "version"
 
@@ -71,48 +73,139 @@ pack-modules = true
 [package.dependencies]
 ez_cmdliner = "0.1.0"
 ez_config = "0.1.0"
-ez_file = "0.1.0"
+ez_file = "0.2.0"
 opam-file-format = "2.0.0"
 toml = "5.0.0"
 [package.fields]
+dune-libraries = ""
 dune-trailer = """
-(rule
-  (targets skel_default.ml)
-  (deps
-skeletons/default/project/dot_ocp-indent
-skeletons/default/project/dot_ocamlformat-ignore
-skeletons/default/project/LICENSE.md
-skeletons/default/project/CHANGES.md
-skeletons/default/project/README.md
-skeletons/default/project/dot_ocamlformat
-skeletons/default/project/sphinx/index.rst
-skeletons/default/project/sphinx/install.rst
-skeletons/default/project/sphinx/about.rst
-skeletons/default/project/sphinx/conf.py
-skeletons/default/project/sphinx/license.rst
-skeletons/default/project/sphinx/under_static/css/fixes.css
-skeletons/default/project/Makefile
-skeletons/default/project/dot_gitignore
-skeletons/default/project/test/output-tests/test1.expected
-skeletons/default/project/test/output-tests/dune
-skeletons/default/project/test/output-tests/test2.expected
-skeletons/default/project/test/output-tests/test2.ml
-skeletons/default/project/test/expect-tests/dune
-skeletons/default/project/test/expect-tests/test.ml
-skeletons/default/project/test/inline-tests/dune
-skeletons/default/project/test/inline-tests/test.ml
-skeletons/default/project/docs/doc/index.html
-skeletons/default/project/docs/dot_nojekyll
-skeletons/default/project/docs/index.html
-skeletons/default/project/docs/sphinx/index.html
-skeletons/default/project/docs/style.css
-skeletons/default/project/dot_github/workflows/workflow.yml
 
-skeletons/default/package/dune
+(rule
+  (targets skel_project_virtual.ml)
+  (deps
+skeletons/projects/virtual.toml
+
+skeletons/projects/virtual/dune
+skeletons/projects/virtual/dot_ocp-indent
+skeletons/projects/virtual/dot_ocamlformat-ignore
+skeletons/projects/virtual/LICENSE.md
+skeletons/projects/virtual/CHANGES.md
+skeletons/projects/virtual/README.md
+skeletons/projects/virtual/dot_ocamlformat
+skeletons/projects/virtual/sphinx/index.rst
+skeletons/projects/virtual/sphinx/install.rst
+skeletons/projects/virtual/sphinx/about.rst
+skeletons/projects/virtual/sphinx/conf.py
+skeletons/projects/virtual/sphinx/license.rst
+skeletons/projects/virtual/sphinx/under_static/css/fixes.css
+skeletons/projects/virtual/Makefile
+skeletons/projects/virtual/dot_gitignore
+skeletons/projects/virtual/test/output-tests/test1.expected
+skeletons/projects/virtual/test/output-tests/dune
+skeletons/projects/virtual/test/output-tests/test2.expected
+skeletons/projects/virtual/test/output-tests/test2.ml
+skeletons/projects/virtual/test/expect-tests/dune
+skeletons/projects/virtual/test/expect-tests/test.ml
+skeletons/projects/virtual/test/inline-tests/dune
+skeletons/projects/virtual/test/inline-tests/test.ml
+skeletons/projects/virtual/docs/doc/index.html
+skeletons/projects/virtual/docs/dot_nojekyll
+skeletons/projects/virtual/docs/index.html
+skeletons/projects/virtual/docs/sphinx/index.html
+skeletons/projects/virtual/docs/style.css
+skeletons/projects/virtual/dot_github/workflows/workflow.yml
      )
   (action
     (with-stdout-to %{targets}
-    (run skel_packer default skeletons/default))))
+    (run skel_packer project virtual None skeletons/projects/virtual))))
+
+(rule
+  (targets skel_project_program.ml)
+  (deps
+skeletons/projects/program.toml
+     )
+  (action
+    (with-stdout-to %{targets}
+    (run skel_packer project program virtual skeletons/projects/program))))
+
+(rule
+  (targets skel_project_library.ml)
+  (deps
+skeletons/projects/library.toml
+     )
+  (action
+    (with-stdout-to %{targets}
+    (run skel_packer project library virtual skeletons/projects/library))))
+
+(rule
+  (targets skel_package_virtual.ml)
+  (deps
+    skeletons/packages/virtual.toml
+     )
+  (action
+    (with-stdout-to %{targets}
+    (run skel_packer package virtual None skeletons/packages/virtual))))
+
+(rule
+  (targets skel_package_program.ml)
+  (deps
+    skeletons/packages/program.toml
+    skeletons/packages/program/dune
+    skeletons/packages/program/main.ml
+     )
+  (action
+    (with-stdout-to %{targets}
+    (run skel_packer package program None skeletons/packages/program))))
+
+(rule
+  (targets skel_package_library.ml)
+  (deps
+    skeletons/packages/library.toml
+    skeletons/packages/library/dune
+    skeletons/packages/library/main.ml
+     )
+  (action
+    (with-stdout-to %{targets}
+    (run skel_packer package library None skeletons/packages/library))))
+
+(rule
+  (targets skel_package_driver.ml)
+  (deps
+    skeletons/packages/driver.toml
+    skeletons/packages/driver/dune
+    skeletons/packages/driver/main.ml
+     )
+  (action
+    (with-stdout-to %{targets}
+    (run skel_packer package driver None skeletons/packages/driver))))
+
+(rule
+  (targets skel_licenses.ml)
+  (deps
+    licenses/LGPL2/NAME
+    licenses/LGPL2/HEADER
+    licenses/LGPL2/LICENSE
+
+    licenses/GPL3/NAME
+    licenses/GPL3/HEADER
+    licenses/GPL3/LICENSE
+
+    licenses/BSD2/NAME
+    licenses/BSD2/HEADER
+    licenses/BSD2/LICENSE
+
+    licenses/BSD3/NAME
+    licenses/BSD3/HEADER
+    licenses/BSD3/LICENSE
+
+    licenses/ISC/NAME
+    licenses/ISC/HEADER
+    licenses/ISC/LICENSE
+     )
+  (action
+    (with-stdout-to %{targets}
+    (run skel_packer licenses))))
 
 (data_only_dirs skeletons)
 """
+

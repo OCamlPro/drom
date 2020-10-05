@@ -1,0 +1,62 @@
+[project]
+drom-version = "0.1.0"
+
+[project]
+authors = [!{authors-as-strings}]
+copyright = "!{copyright}"
+edition = "!{edition}"
+github-organization = "!{github-organization}"
+license = "!{license-name}"
+min-edition = "!{min-edition}"
+mode = "binary"
+name = "!{name}"
+synopsis = "The !{name} project"
+version = "0.1.0"
+windows-ci = true
+
+# keys that you could also define:
+# sphinx-target = "...sphinx-target..."
+# archive = "...archive..."
+# dev-repo = "...dev-repo..."
+# bug-reports = "...bug-reports..."
+# doc-api = "...doc-api..."
+# doc-gen = "...doc-gen..."
+# homepage = "...homepage..."
+
+[project]
+description = """
+This is the description
+of the !{name} OCaml project
+"""
+
+[dependencies]
+
+[tools.ocamlformat]
+for-test = true
+[tools.odoc]
+for-doc = true
+[tools.ppx_expect]
+for-test = true
+[tools.ppx_inline_test]
+for-test = true
+
+[project]
+pack-modules = true
+skip-dirs = []
+
+
+[[package]]
+skeleton = "driver"
+dir = "src/!{name}"
+kind = "program"
+name = "!{name}"
+[package.dependencies]
+!{name}_lib = "version"
+
+[[package]]
+skeleton = "library"
+dir = "src/!{name}_lib"
+gen-version = "version.ml"
+kind = "library"
+name = "!{name}_lib"
+

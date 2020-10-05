@@ -42,3 +42,5 @@ let xdg_config_dir =
 let config_dir = xdg_config_dir // "drom"
 
 let min_drom_version = "0.1.0"
+
+let verbosity = ref 1

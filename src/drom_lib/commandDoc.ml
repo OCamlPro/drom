@@ -30,7 +30,7 @@ let cmd =
     cmd_action = (fun () -> action ~args ~open_www ());
     cmd_args =
       [
-        ( [ "open" ],
+        ( [ "view" ],
           Arg.Set open_www,
           Ezcmd.info "Open a browser on the documentation" );
       ]

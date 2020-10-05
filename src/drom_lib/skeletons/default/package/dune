@@ -1,7 +1,0 @@
-(!{package-dune}
- !(package-dune-stanzas)
-)
-!{package-dune-files}
-(documentation
-  (package !{package-name}))
-!(package-dune-trailer)

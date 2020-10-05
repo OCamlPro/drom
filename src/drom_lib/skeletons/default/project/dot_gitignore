@@ -1,9 +1,0 @@
-![skip:git]![file:.gitignore]!{gitignore-programs}
-*~
-_build
-.merlin
-.vscode
-/_drom
-/_opam
-/_build
-!(dot-gitignore-trailer)

@@ -1,0 +1,25 @@
+
+
+* Utiliser les squelettes à la création du projet:
+  * lookup du squelette
+  * écriture avec substitution de certains champs
+  * rechargement du projet
+
+* Utiliser les squelettes à la création des packages:
+  * lookup du squelette
+  * écriture avec substitution de certains champs
+  * rechargement du projet
+
+* Ne pas écrire tant que tout n'a pas été calculé, permet d'éviter des
+   erreurs avec un état partiel
+
+* In the case where we share a global switch, pin the package.
+
+* Générer la doc dans gh-pages depuis les github actions plutot que les
+   pusher dans docs/
+
+cargo build --release :
+dune build --profile xxx
+drom run -p xxx
+drom build -p xxx
+drom test -p xxx

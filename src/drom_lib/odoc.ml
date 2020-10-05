@@ -49,7 +49,8 @@ The entry point of this library is the module: {!${pack}}.
 
 ${description}
 
-This library exposes the following toplevel modules: {!modules:${modules}}
+This library exposes the following toplevel modules:
+{!modules:${modules}}
 |})
   | Program -> Some (subst p {|
 {1 Program ${name}}

@@ -18,19 +18,20 @@ let rec dummy_project =
     package = dummy_package;
     packages = [];
     skeleton = None;
-    edition = "dummy_project.edition";
-    min_edition = "dummy_project.min_edition";
+    edition = Globals.current_ocaml_edition;
+    min_edition = Globals.current_ocaml_edition;
     github_organization = None;
     homepage = None;
-    license = "dummy_project.license";
+    license = Skel_licenses.LGPL2.key;
     copyright = None;
     bug_reports = None;
     dev_repo = None;
     doc_gen = None;
     doc_api = None;
+    generators = [ "ocamllex"; "ocamlyacc" ] ;
     skip = [];
-    version = "dummy_project.version";
-    authors = [ "dummy_project.authors" ];
+    version = "0.1.0";
+    authors = [];
     synopsis = "dummy_project.synopsis ";
     description = "dummy_project.description";
     dependencies = [];
@@ -43,6 +44,7 @@ let rec dummy_project =
     profiles = StringMap.empty;
     skip_dirs = [];
     fields = StringMap.empty;
+    profile = None ;
   }
 
 and dummy_package =
@@ -60,9 +62,11 @@ and dummy_package =
     p_tools = [];
     p_mode = None;
     p_pack_modules = None;
-    p_gen_version = Some "version.ml";
+    p_gen_version = None;
     p_driver_only = None;
     p_fields = StringMap.empty;
+    p_skeleton = None ;
+    p_generators = None ;
   }
 
 let create_package ~name ~dir ~kind = { dummy_package with name; dir; kind }
@@ -96,6 +100,7 @@ let string_of_versions versions =
     (List.map
        (function
          | Version -> "version"
+         | NoVersion -> ""
          | Semantic (major, minor, fix) ->
              Printf.sprintf "%d.%d.%d" major minor fix
          | Lt version -> Printf.sprintf "<%s" version
@@ -108,23 +113,25 @@ let string_of_versions versions =
 let versions_of_string versions =
   List.map
     (fun version ->
-      match Misc.semantic_version version with
-      | Some (major, minor, fix) -> Semantic (major, minor, fix)
-      | None -> (
-          if version = "version" then Version
-          else
-            let len = String.length version in
-            match version.[0] with
-            | '=' -> Eq (String.sub version 1 (len - 1))
-            | '<' ->
-                if len > 1 && version.[1] = '=' then
-                  Le (String.sub version 2 (len - 2))
-                else Lt (String.sub version 1 (len - 1))
-            | '>' ->
-                if len > 1 && version.[1] = '=' then
-                  Ge (String.sub version 2 (len - 2))
-                else Gt (String.sub version 1 (len - 1))
-            | _ -> Ge version ))
+       match Misc.semantic_version version with
+       | Some (major, minor, fix) -> Semantic (major, minor, fix)
+       | None -> (
+           if version = "" then NoVersion
+           else
+           if version = "version" then Version
+           else
+             let len = String.length version in
+             match version.[0] with
+             | '=' -> Eq (String.sub version 1 (len - 1))
+             | '<' ->
+                 if len > 1 && version.[1] = '=' then
+                   Le (String.sub version 2 (len - 2))
+                 else Lt (String.sub version 1 (len - 1))
+             | '>' ->
+                 if len > 1 && version.[1] = '=' then
+                   Ge (String.sub version 2 (len - 2))
+                 else Gt (String.sub version 1 (len - 1))
+             | _ -> Ge version ))
     (EzString.split_simplify versions ' ')
 
 let dependency_encoding =
@@ -276,36 +283,73 @@ let toml_of_package pk =
   |> EzToml.put_encoding dependencies_encoding [ "tools" ] pk.p_tools
   |> EzToml.put_bool_option [ "pack-modules" ] pk.p_pack_modules
   |> EzToml.put_string_option [ "gen-version" ] pk.p_gen_version
+  |> EzToml.put_string_option [ "skeleton" ] pk.p_skeleton
   |> EzToml.put_string_option [ "driver-only" ] pk.p_driver_only
   |> EzToml.put_encoding fields_encoding [ "fields" ] pk.p_fields
+  |> EzToml.put_string_list_option [ "generators" ] pk.p_generators
 
-let package_of_toml table =
+let find_package ?default name =
+  let defaults = match default with
+    | None -> []
+    | Some p -> p.packages in
+  let rec iter defaults =
+    match defaults with
+    | [] -> { dummy_package with name ; dir = "src" // name }
+    | package :: defaults ->
+        if package.name = name then
+          package
+        else
+          iter defaults
+  in
+  iter defaults
+
+let package_of_toml ?default table =
   let name = EzToml.get_string table [ "name" ] in
-  let dir = EzToml.get_string table [ "dir" ] in
+  let default = find_package ?default name in
+  let dir = EzToml.get_string_default table [ "dir" ] default.dir in
   let kind =
-    EzToml.get_encoding_default kind_encoding table [ "kind" ] Library
+    EzToml.get_encoding_default kind_encoding table [ "kind" ]
+      default.kind
   in
   let project = dummy_project in
-  let p_pack = EzToml.get_string_option table [ "pack" ] in
-  let p_version = EzToml.get_string_option table [ "version" ] in
-  let p_authors = EzToml.get_string_list_option table [ "authors" ] in
-  let p_synopsis = EzToml.get_string_option table [ "synopsis" ] in
-  let p_description = EzToml.get_string_option table [ "description" ] in
-  let p_pack_modules = EzToml.get_bool_option table [ "pack-modules" ] in
-  let p_mode = EzToml.get_encoding_option mode_encoding table [ "mode" ] in
+  let p_pack = EzToml.get_string_option table [ "pack" ]
+      ?default:default.p_pack in
+  let p_version = EzToml.get_string_option table [ "version" ]
+      ?default:default.p_version in
+  let p_authors = EzToml.get_string_list_option table [ "authors" ]
+      ?default:default.p_authors in
+  let p_synopsis = EzToml.get_string_option table [ "synopsis" ]
+      ?default:default.p_synopsis in
+  let p_description = EzToml.get_string_option table [ "description" ]
+      ?default:default.p_description in
+  let p_pack_modules = EzToml.get_bool_option table [ "pack-modules" ]
+      ?default:default.p_pack_modules in
+  let p_mode = EzToml.get_encoding_option mode_encoding table [ "mode" ]
+      ?default:default.p_mode in
   let p_dependencies =
     EzToml.get_encoding_default dependencies_encoding table [ "dependencies" ]
-      []
+      default.p_dependencies
   in
   let p_tools =
-    EzToml.get_encoding_default dependencies_encoding table [ "tools" ] []
+    EzToml.get_encoding_default dependencies_encoding table [ "tools" ]
+      default.p_tools
   in
-  let p_gen_version = EzToml.get_string_option table [ "gen-version" ] in
-  let p_driver_only = EzToml.get_string_option table [ "driver-only" ] in
+  let p_gen_version = EzToml.get_string_option table [ "gen-version" ]
+      ?default:default.p_gen_version in
+  let p_driver_only = EzToml.get_string_option table [ "driver-only" ]
+      ?default:default.p_driver_only in
+  let p_skeleton =
+    EzToml.get_string_option table [ "skeleton" ]
+      ?default:default.p_skeleton
+  in
+  let p_generators = EzToml.get_string_list_option table [ "generators" ]
+      ?default:default.p_generators in
   let p_fields =
     EzToml.get_encoding_default fields_encoding table [ "fields" ]
       StringMap.empty
   in
+  let p_fields = StringMap.union (fun _k a1 _a2 -> Some a1) p_fields
+      default.p_fields in
   {
     name;
     dir;
@@ -323,9 +367,11 @@ let package_of_toml table =
     p_gen_version;
     p_driver_only;
     p_fields;
+    p_skeleton;
+    p_generators;
   }
 
-let toml_of_project p =
+let to_string p =
   let version =
     EzToml.empty
     |> EzToml.put_string [ "project"; "drom-version" ] Globals.min_drom_version
@@ -361,6 +407,7 @@ let toml_of_project p =
     |> maybe_package_key "copyright" p.copyright
     |> maybe_package_key "archive" p.archive
     |> maybe_package_key "sphinx-target" p.sphinx_target
+    |> maybe_package_key "build-profile" p.profile
   in
   let package2 =
     EzToml.empty
@@ -404,6 +451,7 @@ let toml_of_project p =
     EzToml.empty
     |> EzToml.put_bool [ "project"; "pack-modules" ] p.pack_modules
     |> EzToml.put_string_option [ "project"; "pack" ] p.package.p_pack
+    |> EzToml.put_string_list [ "project"; "generators" ] p.generators
     |> EzToml.put [ "project"; "skip-dirs" ] (TArray (NodeString p.skip_dirs))
     |> EzToml.put_encoding
          (stringMap_encoding profile_encoding)
@@ -422,47 +470,74 @@ let toml_of_project p =
   Printf.sprintf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" version package
     optionals package2 drom dependencies tools package3 packages
 
-let project_of_toml filename =
-  (*  Printf.eprintf "Loading %s\n%!" filename ; *)
-  let table =
-    match EzToml.from_file filename with
-    | `Ok table -> table
-    | `Error _ -> Error.raise "Could not parse %S" filename
-  in
+
+
+
+
+
+let project_of_toml ?default table =
 
   ( match EzToml.get_string_option table [ "project"; "drom-version" ] with
-  | None -> ()
-  | Some version -> (
-      match VersionCompare.compare version Version.version with
-      | 1 ->
-          Error.raise
-            "You must update `drom` to version %s to work with this project."
-            version
-      | _ -> () ) );
+    | None -> ()
+    | Some version -> (
+        match VersionCompare.compare version Version.version with
+        | 1 ->
+            Error.raise
+              "You must update `drom` to version %s to work with this project."
+              version
+        | _ -> () ) );
 
-  let project_key, packages =
+  let project_key, project_packages =
     match EzToml.get table [ "package" ] with
     | exception _ -> ("project", [])
     | TTable _ -> ("package", [])
     | TArray (NodeTable tables) ->
         let project_key = "project" in
-        let packages = List.map package_of_toml tables in
+        let packages = List.map
+            (package_of_toml ?default) tables in
         (project_key, packages)
     | TArray NodeEmpty -> ("project", [])
     | TArray _ -> Error.raise "Wrong type for field 'package'"
     | _ -> Error.raise "Unparsable field 'package'"
   in
 
-  let name =
-    try EzToml.get_string table [ project_key; "name" ]
-    with Not_found -> Error.raise "Missing project field 'name'"
+  let name, d =
+    try
+      let name = EzToml.get_string table [ project_key; "name" ] in
+      let default = match default with
+        | Some default -> default
+        | None ->
+            { dummy_project with
+              synopsis = Globals.default_synopsis ~name ;
+              description = Globals.default_description ~name ;
+            }
+      in
+      ( name, default )
+    with Not_found ->
+    match default with
+    | None -> Error.raise "Missing project field 'name'"
+    | Some default ->
+        ( default.package.name, default )
   in
+  let authors =
+    match EzToml.get_string_list_option ~default:d.authors
+            table [ project_key; "authors" ] with
+    | Some authors -> authors
+    | None -> []
+  in
+  begin
+    match authors with
+    | [] -> Error.raise "No field 'authors' in drom.toml"
+    | _ -> ()
+  end;
   let version =
-    EzToml.get_string_default table [ project_key; "version" ] "0.1.0"
+    EzToml.get_string_default table [ project_key; "version" ] d.version
   in
-  let edition = EzToml.get_string_option table [ project_key; "edition" ] in
+  let edition = EzToml.get_string_option
+      ~default:d.edition table [ project_key; "edition" ] in
   let min_edition =
-    EzToml.get_string_option table [ project_key; "min-edition" ]
+    EzToml.get_string_option
+      ~default:d.min_edition table [ project_key; "min-edition" ]
   in
   let edition, min_edition =
     let default_version = Globals.current_ocaml_edition in
@@ -476,91 +551,101 @@ let project_of_toml filename =
   in
   let mode =
     EzToml.get_encoding_default mode_encoding table [ project_key; "mode" ]
-      Binary
-  in
-  let authors =
-    match EzToml.get_string_list_option table [ project_key; "authors" ] with
-    | Some authors -> authors
-    | None -> Error.raise "No field 'authors' in drom.toml"
+      d.mode
   in
   let dependencies =
     EzToml.get_encoding_default dependencies_encoding table [ "dependencies" ]
-      []
+      d.dependencies
   in
   let tools =
-    EzToml.get_encoding_default dependencies_encoding table [ "tools" ] []
+    EzToml.get_encoding_default dependencies_encoding table [ "tools" ]
+      d.tools
   in
   let synopsis =
     EzToml.get_string_default table
-      [ project_key; "synopsis" ]
-      (Globals.default_synopsis ~name)
+      [ project_key; "synopsis" ] d.synopsis
   in
   let description =
     EzToml.get_string_default table
       [ project_key; "description" ]
-      (Globals.default_description ~name)
+      d.description
   in
-  let skeleton = EzToml.get_string_option table [ project_key; "skeleton" ] in
+  let skeleton = EzToml.get_string_option table [ project_key; "skeleton" ]
+      ?default:d.skeleton in
   let github_organization =
     EzToml.get_string_option table [ project_key; "github-organization" ]
+      ?default:d.github_organization
   in
-  let doc_api = EzToml.get_string_option table [ project_key; "doc-api" ] in
-  let doc_gen = EzToml.get_string_option table [ project_key; "doc-gen" ] in
-  let homepage = EzToml.get_string_option table [ project_key; "homepage" ] in
+  let doc_api = EzToml.get_string_option table [ project_key; "doc-api" ]
+      ?default:d.doc_api
+  in
+  let doc_gen = EzToml.get_string_option table [ project_key; "doc-gen" ]
+      ?default:d.doc_gen in
+  let homepage = EzToml.get_string_option table [ project_key; "homepage" ]
+      ?default:d.homepage in
   let bug_reports =
     EzToml.get_string_option table [ project_key; "bug-reports" ]
+      ?default:d.bug_reports
   in
-  let dev_repo = EzToml.get_string_option table [ project_key; "dev-repo" ] in
+  let dev_repo = EzToml.get_string_option table [ project_key; "dev-repo" ]
+      ?default:d.dev_repo
+  in
   let license =
-    EzToml.get_string_default table [ project_key; "license" ] License.LGPL2.key
+    EzToml.get_string_default table [ project_key; "license" ] d.license
   in
-  let copyright = EzToml.get_string_option table [ project_key; "copyright" ] in
-  let archive = EzToml.get_string_option table [ project_key; "archive" ] in
+  let copyright = EzToml.get_string_option table [ project_key; "copyright" ]
+      ?default:d.copyright
+  in
+  let archive = EzToml.get_string_option table [ project_key; "archive" ]
+      ?default:d.archive in
   let skip =
-    match EzToml.get_string_option table [ "drom"; "skip" ] with
+    match EzToml.get_string_option table [ "drom"; "skip" ]
+            ~default:(String.concat " " d.skip)
+    with
     | None -> []
     | Some s -> EzString.split s ' '
   in
   let pack_modules =
-    match EzToml.get_bool_option table [ project_key; "pack-modules" ] with
+    match EzToml.get_bool_option table [ project_key; "pack-modules" ]
+    with
     | Some v -> v
     | None -> (
-        match EzToml.get_bool_option table [ project_key; "wrapped" ] with
+        match EzToml.get_bool_option table [ project_key; "wrapped" ]
+                ~default:d.pack_modules
+        with
         | Some v -> v
         | None -> true )
   in
   let sphinx_target =
     EzToml.get_string_option table [ project_key; "sphinx-target" ]
+      ?default:d.sphinx_target
+  in
+  let profile =
+    EzToml.get_string_option table [ project_key; "build-profile" ]
+      ?default:d.profile
   in
 
-  let p_pack = EzToml.get_string_option table [ project_key; "pack" ] in
-  let dir = EzToml.get_string_option table [ project_key; "dir" ] in
   let windows_ci =
-    EzToml.get_bool_default table [ project_key; "windows-ci" ] true
+    EzToml.get_bool_default table [ project_key; "windows-ci" ]
+      d.windows_ci
+  in
+  let generators =
+    EzToml.get_string_list_default table
+      [ project_key; "generators" ]
+      d.generators
   in
   let package, packages =
     let rec iter list =
       match list with
       | [] ->
-          let dir = match dir with None -> "src" // name | Some dir -> dir in
-          let p = { dummy_package with name; dir; p_pack } in
-          (p, p :: packages)
+          let p = find_package ?default name in
+          (p, p :: project_packages)
       | p :: tail ->
-          if p.name = name then (
-            ( match dir with
-            | None -> ()
-            | Some dir ->
-                if dir <> p.dir then
-                  Error.raise "'dir' field differs in project and %S" name );
-            ( match (p_pack, p.p_pack) with
-            | Some v1, Some v2 when v1 <> v2 ->
-                Error.raise "'pack' field differs in project and %S" name
-            | Some p_pack, None -> p.p_pack <- Some p_pack
-            | _ -> () );
-            (p, packages) )
+          if p.name = name then
+            (p, project_packages)
           else iter tail
     in
-    iter packages
+    iter project_packages
   in
 
   let packages =
@@ -598,15 +683,18 @@ let project_of_toml filename =
   let profiles =
     EzToml.get_encoding_default
       (stringMap_encoding profile_encoding)
-      table [ "profile" ] StringMap.empty
+      table [ "profile" ]
+      d.profiles
   in
   let skip_dirs =
-    EzToml.get_string_list_default table [ project_key; "skip-dirs" ] []
+    EzToml.get_string_list_default table [ project_key; "skip-dirs" ]
+      d.skip_dirs
   in
   let fields =
     EzToml.get_encoding_default fields_encoding table [ project_key; "fields" ]
       StringMap.empty
   in
+  let fields = StringMap.union (fun _k a1 _a2 -> Some a1) fields d.fields in
 
   let project =
     {
@@ -623,6 +711,7 @@ let project_of_toml filename =
       github_organization;
       doc_gen;
       doc_api;
+      generators;
       homepage;
       license;
       bug_reports;
@@ -637,6 +726,7 @@ let project_of_toml filename =
       packages;
       profiles;
       skip_dirs;
+      profile ;
       fields;
     }
   in
@@ -644,14 +734,40 @@ let project_of_toml filename =
   List.iter (fun p -> p.project <- project) packages;
   project
 
+
+
+let project_of_filename ?default filename =
+  (*  Printf.eprintf "Loading %s\n%!" filename ; *)
+  let table =
+    match EzToml.from_file filename with
+    | `Ok table -> table
+    | `Error (s, loc) ->
+        Error.raise "Could not parse %S: %s at %s" filename s
+          ( EzToml.string_of_location loc )
+  in
+  project_of_toml ?default table
+
+
+let of_string ~msg ?default content =
+  (*  Printf.eprintf "Loading %s\n%!" filename ; *)
+  let table =
+    match EzToml.from_string content with
+    | `Ok table -> table
+    | `Error (s, loc) ->
+        Error.raise "Could not parse: %s at %s" msg s
+          ( EzToml.string_of_location loc )
+  in
+  project_of_toml ?default table
+
 let find () =
   let dir = Sys.getcwd () in
   let rec iter dir path =
     let drom_file = dir // "drom.toml" in
     if Sys.file_exists drom_file then (
       Unix.chdir dir;
-      Printf.eprintf "drom: Entering directory '%s'\n%!" (Sys.getcwd ());
-      Some (project_of_toml drom_file, path) )
+      if Misc.verbose 1 then
+        Printf.eprintf "drom: Entering directory '%s'\n%!" (Sys.getcwd ());
+      Some (project_of_filename drom_file, path) )
     else
       let updir = Filename.dirname dir in
       if updir <> dir then iter updir (Filename.basename dir // path) else None
@@ -666,4 +782,17 @@ let get () =
          PROJECT' instead"
   | Some (p, inferred_dir) -> (p, inferred_dir)
 
-let read = project_of_toml
+let read = project_of_filename
+
+let package_of_string ~msg content =
+  let table =
+    match EzToml.from_string content with
+    | `Ok table -> table
+    | `Error (s, loc) ->
+        Error.raise "Could not parse: %s at %s" msg s
+          ( EzToml.string_of_location loc )
+  in
+  package_of_toml table
+
+let string_of_package package =
+  EzToml.to_string ( toml_of_package package )

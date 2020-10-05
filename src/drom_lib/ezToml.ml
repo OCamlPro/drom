@@ -29,10 +29,32 @@ module EZ = struct
   let to_string = EzTomlPrinter.string_of_table
 
   let from_file = Toml.Parser.from_filename
+  let from_string = Toml.Parser.from_string
+
+  let string_of_location loc = loc.Toml.Parser.source
+
+  let from_file_exn filename =
+    match Toml.Parser.from_filename filename with
+    | `Ok content -> content
+    | `Error (s, loc) ->
+        Printf.kprintf failwith
+          "Could not parse %S: %s at %s" filename s
+          ( string_of_location loc )
+
+  let from_string_exn content =
+    match Toml.Parser.from_string content with
+    | `Ok content -> content
+    | `Error (s, loc) ->
+        Printf.kprintf failwith "Could not parse toml content: %s at %s" s
+          ( string_of_location loc )
+
 end
 
 open TYPES
 include EZ
+
+let failwith fmt =
+  Printf.kprintf failwith fmt
 
 let key2str key = String.concat "." key
 
@@ -69,21 +91,27 @@ let get_string table keys =
 let get_string_default table keys default =
   match get_string table keys with exception Not_found -> default | s -> s
 
-let get_string_option table keys =
-  match get_string table keys with exception Not_found -> None | s -> Some s
+let get_string_option ?default table keys =
+  match get_string table keys with
+  | exception Not_found -> default
+  | "" -> default
+  | s -> Some s
 
 let get_bool table keys =
-  match get table keys with TBool s -> s | _ -> raise Not_found
+  match get table keys with
+  | TBool s -> s
+  | _ -> raise Not_found
 
 let expecting_type expect keys =
-  Error.raise "Error parsing file: key %s should have type %s" (key2str keys)
+  failwith "Error parsing file: key %s should have type %s" (key2str keys)
     expect
 
-let get_bool_option table keys =
+let get_bool_option ?default table keys =
   match get table keys with
   | TBool s -> Some s
+  | TString "" -> default
   | _ -> expecting_type "bool" keys
-  | exception _ -> None
+  | exception _ -> default
 
 let get_bool_default table keys default =
   match get_bool table keys with exception Not_found -> default | s -> s
@@ -127,24 +155,28 @@ let get_encoding encoding table key = encoding.of_toml ~key (get table key)
 let get_encoding_default encoding table key default =
   match get table key with
   | exception _ -> default
+  | TString "" -> default
   | s -> encoding.of_toml ~key s
 
-let get_encoding_option encoding table key =
+let get_encoding_option ?default encoding table key =
   match get table key with
-  | exception _ -> None
+  | exception _ -> default
+  | TString "" -> default
   | s -> Some (encoding.of_toml ~key s)
 
-let get_string_list_option table key =
+let get_string_list_option ?default table key =
   match get table key with
   | TArray (NodeString v) -> Some v
-  | _ -> Error.raise "Wrong type for field %S" (key2str key)
-  | exception Not_found -> None
+  | TString "" -> default
+  | _ -> failwith "Wrong type for field %S" (key2str key)
+  | exception Not_found -> default
 
 let get_string_list_default table key default =
   match get table key with
   | TArray NodeEmpty -> []
   | TArray (NodeString v) -> v
-  | _ -> Error.raise "Wrong type for field %S" (key2str key)
+  | TString "" -> default
+  | _ -> failwith "Wrong type for field %S" (key2str key)
   | exception Not_found -> default
 
 let put_string_list_option key lo table =
@@ -152,15 +184,18 @@ let put_string_list_option key lo table =
   | None -> table
   | Some l -> put key (TArray (NodeString l)) table
 
+let put_string_list key list table =
+  put key (TArray (NodeString list)) table
+
 let expect_table ~key ~name v =
   match v with
   | TTable table -> table
-  | _ -> Error.raise "wrong type for key %s (%s expected)" (key2str key) name
+  | _ -> failwith "wrong type for key %s (%s expected)" (key2str key) name
 
 let expect_string ~key v =
   match v with
   | TString s -> s
-  | _ -> Error.raise "wrong type for key %s (string expected)" (key2str key)
+  | _ -> failwith "wrong type for key %s (string expected)" (key2str key)
 
 let enum_encoding ~to_string ~of_string =
   encoding
@@ -173,3 +208,40 @@ let string_encoding =
   encoding
     ~to_toml:(fun v -> TString v)
     ~of_toml:(fun ~key v -> expect_string ~key v)
+
+(* [union table1 table2] merges 2 configurations, with a preference
+   for table2 in case of conflict.  Recursive on tables and arrays of
+   similar types.  *)
+
+let rec union table1 table2 =
+  let table = ref table1 in
+  Table.iter (fun key v2 ->
+      let v =
+        match Table.find key table1 with
+        | exception Not_found -> v2
+        | v1 ->
+            match v2, v1 with
+            | TTable t2, TTable t1 -> TTable ( union t1 t2 )
+            | TArray a2, TArray a1 ->
+                TArray ( match a2, a1 with
+                  | NodeEmpty, a1 -> a1
+                  | NodeBool a2, NodeBool a1 -> NodeBool ( a1 @ a2 )
+                  | NodeInt a2, NodeInt a1 -> NodeInt ( a1 @ a2 )
+                  | NodeFloat a2, NodeFloat a1 -> NodeFloat ( a1 @ a2 )
+                  | NodeString a2, NodeString a1 -> NodeString ( a1 @ a2 )
+                  | NodeDate a2, NodeDate a1 -> NodeDate ( a1 @ a2 )
+                  | a2, _ -> a2
+                  )
+            | (
+              TBool _
+            | TInt _
+            | TFloat _
+            | TString _
+            | TDate _
+            | TTable _
+            | TArray _
+            ), _ -> v2
+      in
+      table := Table.add key v !table
+    ) table2;
+  !table
