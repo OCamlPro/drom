@@ -22,6 +22,7 @@ type version =
   | Gt of string
   | Version
   | Semantic of int * int * int
+  | NoVersion
 
 type dependency = {
   depversions : version list;
@@ -83,6 +84,7 @@ and project = {
   generators : string list ;
   skip_dirs : string list;
   profiles : profile StringMap.t;
+  profile : string option ;
   (* default fields *)
   version : string;
   authors : string list;

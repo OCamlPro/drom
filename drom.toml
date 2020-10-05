@@ -60,6 +60,7 @@ dir = "src/drom"
 driver-only = "Drom_lib.Main.main"
 kind = "program"
 name = "drom"
+skeleton = "driver"
 [package.dependencies]
 drom_lib = "version"
 
@@ -76,6 +77,7 @@ ez_file = "0.2.0"
 opam-file-format = "2.0.0"
 toml = "5.0.0"
 [package.fields]
+dune-libraries = ""
 dune-trailer = """
 
 (rule
@@ -83,6 +85,7 @@ dune-trailer = """
   (deps
 skeletons/projects/virtual.toml
 
+skeletons/projects/virtual/dune
 skeletons/projects/virtual/dot_ocp-indent
 skeletons/projects/virtual/dot_ocamlformat-ignore
 skeletons/projects/virtual/LICENSE.md

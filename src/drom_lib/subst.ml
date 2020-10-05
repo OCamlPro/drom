@@ -124,8 +124,8 @@ let project_brace (_, p) v =
   | "make-copy-programs" ->
       List.filter (fun package -> package.kind = Program) p.packages
       |> List.map (fun package ->
-             Printf.sprintf "\n\tcp -f _build/default/%s/main.exe %s"
-               package.dir package.name)
+          Printf.sprintf "\n\tcp -f _build/default/%s/main.exe %s"
+            package.dir package.name)
       |> String.concat ""
   | "badge-ci" -> (
       match p.github_organization with
@@ -179,6 +179,29 @@ let project_brace (_, p) v =
       match Ocpindent.find_global () with
       | None -> ""
       | Some content -> raise (ReplaceContent content) )
+
+  | "dune-profiles" ->
+      let b = Buffer.create 1000 in
+      StringMap.iter
+        (fun name profile ->
+           Printf.bprintf b "  (%s\n" name;
+           StringMap.iter
+             (fun name value ->
+                Printf.bprintf b "    (%s %s%s)\n"
+                  ( match name with
+                    | "ocaml" -> "flags (:standard"
+                    | "odoc" -> "odoc"
+                    | "coq" -> "coq ("
+                    | tool -> tool ^ "_flags" )
+                  value
+                  ( match name with
+                    | "coq" -> ")" (* (coq (flags XXX)) *)
+                    | "ocaml" -> ")"
+                    | _ -> "" ))
+             profile.flags;
+           Printf.bprintf b "  )\n")
+        p.profiles;
+      Buffer.contents b
   | s ->
       Printf.eprintf "Error: no project substitution for %S\n%!" s;
       raise Not_found
@@ -191,16 +214,47 @@ let project_paren (_, p) name =
       ""
   | s -> s
 
-let package_brace (context, p) v =
+let package_brace (context, package) v =
   match v with
-  | "name" | "package-name" -> p.name
-  | "dir" | "package-dir" -> p.dir
-  | "package-dune" -> Dune.package_dune p
-  | "package-dune-files" -> Dune.package_dune_files p
+  | "name" | "package-name" -> package.name
+  | "library-name" -> Misc.library_name package
+  | "dir" | "package-dir" -> package.dir
+  | "pack-modules" -> string_of_bool (Misc.p_pack_modules package)
+  | "dune-libraries" ->
+      let dependencies =
+        List.map
+          (fun (name, d) -> match d.depname with
+               None -> name | Some name -> name)
+          (Misc.p_dependencies package)
+      in
+      let p_mode = Misc.p_mode package in
+      let dependencies =
+        match p_mode with
+        | Binary -> dependencies
+        | Javascript ->
+            if List.mem "js_of_ocaml" dependencies then dependencies
+            else "js_of_ocaml" :: dependencies
+      in
+      String.concat " " dependencies
+  | "dune-stanzas" ->
+      String.concat "\n" (
+        ( match Misc.p_mode package with
+        | Binary -> []
+        | Javascript -> [
+            "";
+            Printf.sprintf "   (modes %sjs)"
+              (match package.kind with
+               | Library
+               | Virtual -> ""
+               | Program -> "exe ");
+            "   (preprocess (pps js_of_ocaml-ppx))" ]
+        )
+      )
+  | "package-dune-files" -> Dune.package_dune_files package
   | _ -> (
       match Misc.EzString.chop_prefix v ~prefix:"project-" with
-      | Some v -> project_brace (context, p.project) v
-      | None -> project_brace (context, p.project) v )
+      | Some v -> project_brace (context, package.project) v
+      | None -> project_brace (context, package.project) v )
 
 let package_paren (context, package) name =
   match Misc.EzString.chop_prefix ~prefix:"project-" name with

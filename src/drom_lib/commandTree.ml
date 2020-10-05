@@ -21,6 +21,7 @@ let string_of_version = function
   | Eq version -> Printf.sprintf "= %s" version
   | Ge version -> Printf.sprintf ">= %s" version
   | Gt version -> Printf.sprintf "> %s" version
+  | NoVersion -> ""
 
 let action () =
   let p, _ = Project.get () in

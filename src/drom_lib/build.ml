@@ -272,5 +272,11 @@ had_switch: %b
     EzFile.write_file drom_opam_deps
       (if need_dev_deps then "dev-deps" else "build-deps") );
 
-  if build then Opam.run [ "exec" ] [ "--"; "dune"; "build"; "@install" ];
+  if build then
+    Opam.run [ "exec" ]
+      ( [ "--"; "dune"; "build"; "@install" ]
+        @
+        match p.profile with
+        | None -> []
+        | Some profile -> [ "--profile" ; profile ]);
   p

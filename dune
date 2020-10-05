@@ -6,5 +6,7 @@
   (release
     (flags (:standard -w -a))
   )
+
 )
-(data_only_dirs drom-test)
+(dirs src vendors )
+

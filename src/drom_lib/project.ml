@@ -44,6 +44,7 @@ let rec dummy_project =
     profiles = StringMap.empty;
     skip_dirs = [];
     fields = StringMap.empty;
+    profile = None ;
   }
 
 and dummy_package =
@@ -99,6 +100,7 @@ let string_of_versions versions =
     (List.map
        (function
          | Version -> "version"
+         | NoVersion -> ""
          | Semantic (major, minor, fix) ->
              Printf.sprintf "%d.%d.%d" major minor fix
          | Lt version -> Printf.sprintf "<%s" version
@@ -111,23 +113,25 @@ let string_of_versions versions =
 let versions_of_string versions =
   List.map
     (fun version ->
-      match Misc.semantic_version version with
-      | Some (major, minor, fix) -> Semantic (major, minor, fix)
-      | None -> (
-          if version = "version" then Version
-          else
-            let len = String.length version in
-            match version.[0] with
-            | '=' -> Eq (String.sub version 1 (len - 1))
-            | '<' ->
-                if len > 1 && version.[1] = '=' then
-                  Le (String.sub version 2 (len - 2))
-                else Lt (String.sub version 1 (len - 1))
-            | '>' ->
-                if len > 1 && version.[1] = '=' then
-                  Ge (String.sub version 2 (len - 2))
-                else Gt (String.sub version 1 (len - 1))
-            | _ -> Ge version ))
+       match Misc.semantic_version version with
+       | Some (major, minor, fix) -> Semantic (major, minor, fix)
+       | None -> (
+           if version = "" then NoVersion
+           else
+           if version = "version" then Version
+           else
+             let len = String.length version in
+             match version.[0] with
+             | '=' -> Eq (String.sub version 1 (len - 1))
+             | '<' ->
+                 if len > 1 && version.[1] = '=' then
+                   Le (String.sub version 2 (len - 2))
+                 else Lt (String.sub version 1 (len - 1))
+             | '>' ->
+                 if len > 1 && version.[1] = '=' then
+                   Ge (String.sub version 2 (len - 2))
+                 else Gt (String.sub version 1 (len - 1))
+             | _ -> Ge version ))
     (EzString.split_simplify versions ' ')
 
 let dependency_encoding =
@@ -403,6 +407,7 @@ let to_string p =
     |> maybe_package_key "copyright" p.copyright
     |> maybe_package_key "archive" p.archive
     |> maybe_package_key "sphinx-target" p.sphinx_target
+    |> maybe_package_key "build-profile" p.profile
   in
   let package2 =
     EzToml.empty
@@ -615,6 +620,10 @@ let project_of_toml ?default table =
     EzToml.get_string_option table [ project_key; "sphinx-target" ]
       ?default:d.sphinx_target
   in
+  let profile =
+    EzToml.get_string_option table [ project_key; "build-profile" ]
+      ?default:d.profile
+  in
 
   let windows_ci =
     EzToml.get_bool_default table [ project_key; "windows-ci" ]
@@ -717,6 +726,7 @@ let project_of_toml ?default table =
       packages;
       profiles;
       skip_dirs;
+      profile ;
       fields;
     }
   in

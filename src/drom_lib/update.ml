@@ -202,8 +202,6 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
         )
       end;
 
-      write_file hashes "dune" (Dune.template_dune p);
-
       write_file hashes "dune-project" (Dune.template_dune_project p);
 
       List.iter

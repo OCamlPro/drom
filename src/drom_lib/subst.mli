@@ -16,3 +16,5 @@ val project :
   'context ->
   ?bracket:('context * Types.project) Ez_subst.t ->
   Types.project -> string -> string
+
+val package_paren : 'a * Types.package -> string -> string
