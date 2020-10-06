@@ -135,7 +135,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
               (* | Unix.S_DIR *)
               | _ -> Unix.getcwd () // "_opam"
             in
-            if Misc.verbose 1 then
+            if !Globals.verbose then
               Printf.eprintf "In opam switch %s\n%!" current_switch;
             match env_switch with
             | None -> ()

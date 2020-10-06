@@ -13,7 +13,8 @@ open Ezcmd.TYPES
 let cmd_name = "run"
 
 let action ~args ~cmd ~package =
-  decr Globals.verbosity; (* By default, `drom run` should be quiet *)
+  (* By default, `drom run` should be quiet *)
+  Globals.verbose := false;
   let p = Build.build ~args () in
   let cmd = !cmd in
   let cmd =

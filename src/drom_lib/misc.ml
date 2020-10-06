@@ -29,10 +29,8 @@ module EzString = struct
     else None
 end
 
-let verbose i = !Globals.verbosity >= i
-
 let call ?(stdout = Unix.stdout) args =
-  if verbose 1 then
+  if !Globals.verbose then
     Printf.eprintf "Calling %s\n%!" (String.concat " " (Array.to_list args));
   let pid = Unix.create_process args.(0) args Unix.stdin stdout Unix.stderr in
   let rec iter () =

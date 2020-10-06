@@ -34,7 +34,7 @@ let main () =
     ]
   in
   let common_args = [
-    [ "v"; "verbose" ], Arg.Unit (fun () -> incr Globals.verbosity),
+    [ "v"; "verbose" ], Arg.Unit (fun () -> Globals.verbose := true),
     Ezcmd.info "Increase verbosity level"
   ] in
   let commands = List.map (fun sub ->

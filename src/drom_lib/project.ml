@@ -765,7 +765,7 @@ let find () =
     let drom_file = dir // "drom.toml" in
     if Sys.file_exists drom_file then (
       Unix.chdir dir;
-      if Misc.verbose 1 then
+      if !Globals.verbose then
         Printf.eprintf "drom: Entering directory '%s'\n%!" (Sys.getcwd ());
       Some (project_of_filename drom_file, path) )
     else
