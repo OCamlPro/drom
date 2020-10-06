@@ -33,11 +33,7 @@ let default_description ~name =
 
 let drom_dir = "_drom"
 
-let xdg_config_dir =
-  match Sys.getenv "XDG_CONFIG_HOME" with
-  | "" -> home_dir // ".config"
-  | exception Not_found -> home_dir // ".config"
-  | x -> x
+let xdg_config_dir = XDGBaseDir.default.config_home
 
 let config_dir = xdg_config_dir // "drom"
 

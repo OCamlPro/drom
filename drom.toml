@@ -76,6 +76,7 @@ ez_config = "0.1.0"
 ez_file = "0.2.0"
 opam-file-format = "2.0.0"
 toml = "5.0.0"
+ocaml-xdg-basedir = "0.0.3"
 [package.fields]
 dune-libraries = ""
 dune-trailer = """
