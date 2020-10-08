@@ -9,8 +9,6 @@
   
   )
 
-(ocamllex configuration_Parser)
-
 (documentation
   (package drom_lib))
 

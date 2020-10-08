@@ -51,6 +51,23 @@ let call ?(stdout = Unix.stdout) args =
   in
   iter ()
 
+(** run a cmd and return the first line of output *)
+let call_get_fst_line cmd =
+  let chan = Unix.open_process_in cmd in
+  try
+    let output = input_line chan in
+    match Unix.close_process_in chan with
+    | WEXITED 0 -> Some output
+    | _err ->
+        Error.raise "Command '%s' exited with error code %s" cmd
+          ( match _err with
+          | WEXITED n -> string_of_int n
+          | WSIGNALED n -> Printf.sprintf "SIGNAL %d" n
+          | WSTOPPED n -> Printf.sprintf "STOPPED %d" n )
+  with
+  | End_of_file -> None
+  | e -> raise e
+
 (* Return a tm with correct year and month *)
 let date () =
   let time = Unix.gettimeofday () in
@@ -269,22 +286,14 @@ let dev_repo p =
 
 let vendor_packages () =
   let vendors_dir = "vendors" in
-  ( try Sys.readdir vendors_dir with _ -> [||] )
+  (try Sys.readdir vendors_dir with _ -> [||])
   |> Array.map (fun dir ->
-      let dir = vendors_dir // dir in
-      ( try Sys.readdir dir with Not_found -> [||] )
-      |> Array.map (fun file ->
-          if Filename.check_suffix file ".opam" then
-            Some ( dir // file )
-          else None
-        )
-      |> Array.to_list
-      |> List.filter (function
-          | None -> false
-          | Some _file -> true)
-      |> List.map (function
-            None -> assert false
-          | Some file -> file)
-    )
-  |> Array.to_list
-  |> List.flatten
+         let dir = vendors_dir // dir in
+         (try Sys.readdir dir with Not_found -> [||])
+         |> Array.map (fun file ->
+                if Filename.check_suffix file ".opam" then Some (dir // file)
+                else None)
+         |> Array.to_list
+         |> List.filter (function None -> false | Some _file -> true)
+         |> List.map (function None -> assert false | Some file -> file))
+  |> Array.to_list |> List.flatten

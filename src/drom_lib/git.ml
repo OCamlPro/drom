@@ -8,56 +8,28 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open EzCompat
-open EzFile.OP
+let user () =
+  match Misc.call_get_fst_line "git config --get user.name" with
+  | Some user -> user
+  | None -> raise Not_found
 
-let config =
-  lazy
-    (Configparser.parse_string
-       (EzFile.read_file (Globals.home_dir // ".gitconfig")))
+let email () =
+  match Misc.call_get_fst_line "git config --get user.email" with
+  | Some email -> email
+  | None -> raise Not_found
 
-let user () = Configparser.get (Lazy.force config) "user" "name"
+let call args = Misc.call (Array.of_list ("git" :: args))
 
-let email () = Configparser.get (Lazy.force config) "user" "email"
-
-
-let call args =
-  Misc.call ( Array.of_list ( "git" :: args ))
-
-let run args =
-  try call args  with _ -> ()
-
-open Configparser
+let run args = try call args with _ -> ()
 
 let update_submodules () =
-
-  if Sys.file_exists ".gitmodules" then
-    let gitmodules =
-      Configparser.parse_string
-        (EzFile.read_file ".gitmodules")
-    in
-    let inited = ref false in
-    let init () =
-      if not !inited then begin
-        run [ "submodule" ; "init" ];
-        inited := true
-      end
-    in
-    StringMap.iter (fun _section_name section ->
-        match StringMap.find "path" section.section_options with
-        | exception Not_found -> ()
-        | path ->
-            if not ( Sys.file_exists path ) then begin
-              init () ;
-              run [ "submodule" ; "update" ; path ]
-            end
-      ) gitmodules.sections
+  run [ "submodule"; "update"; "--init"; "--recursive" ]
 
 let remove dir =
-  Misc.call [| "rm" ; "-rf" ; dir |];
-  run [ "rm" ; "-rf" ; dir ]
+  Misc.call [| "rm"; "-rf"; dir |];
+  run [ "rm"; "-rf"; dir ]
 
 let rename old_dir new_dir =
-  Misc.call [| "mv" ; old_dir ; new_dir |];
-  run [ "rm" ; "-rf" ; old_dir ] ;
-  run [ "add" ; new_dir ]
+  Misc.call [| "mv"; old_dir; new_dir |];
+  run [ "rm"; "-rf"; old_dir ];
+  run [ "add"; new_dir ]
