@@ -244,18 +244,33 @@ let package_brace (context, package) v =
   | "dune-stanzas" ->
       String.concat "\n" (
         ( match Misc.p_mode package with
-        | Binary -> []
-        | Javascript -> [
-            "";
-            Printf.sprintf "   (modes %sjs)"
+          | Binary -> []
+          | Javascript -> [
               (match package.kind with
                | Library
                | Virtual -> ""
-               | Program -> "exe ");
-            "   (preprocess (pps js_of_ocaml-ppx))" ]
+               | Program -> "(modes exe js)"
+              );
+              "   (preprocess (pps js_of_ocaml-ppx))" ]
         )
       )
-  | "package-dune-files" -> Dune.package_dune_files package
+  | "package-dune-files" ->
+      Dune.package_dune_files package
+  | "package-dune-installs" ->
+      begin match Misc.p_mode package, package.kind with
+        | Javascript, Program ->
+            (* We need to create a specific installation rule to force
+               build of the Javascript files when `dune build
+               @install` is called by `drom build` *)
+            String.concat "\n" [
+              "(install";
+              Printf.sprintf
+                " (files (main.bc.js as www/js/%s.js))" package.name;
+              " (section share)";
+              Printf.sprintf " (package %s))" package.name
+            ]
+        | _ -> ""
+      end
   | _ -> (
       match Misc.EzString.chop_prefix v ~prefix:"project-" with
       | Some v -> project_brace (context, package.project) v

@@ -7,9 +7,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Project Description &mdash; drom z-2020-09-11-file-skeletons
- (e57ad67
-) (2020/09/15 21:20) documentation</title>
+  <title>Project Description &mdash; drom z-2020-10-14-LGPL2-license-SPDX
+ (e63b4ed
+) (2020/10/17 12:18) documentation</title>
   
 
   
@@ -65,8 +65,8 @@
             
             
               <div class="version">
-                z-2020-09-11-file-skeletons
- (e57ad67
+                z-2020-10-14-LGPL2-license-SPDX
+ (e63b4ed
 )
               </div>
             
@@ -103,6 +103,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#the-dependencies-table">The <code class="code docutils literal notranslate"><span class="pre">[dependencies]</span></code> table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-tools-table">The <code class="code docutils literal notranslate"><span class="pre">[tools]</span></code> table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-drom-table">The <code class="code docutils literal notranslate"><span class="pre">[drom]</span></code> table</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#skeletons">Skeletons</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#project-skeletons">Project Skeletons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#package-skeletons">Package Skeletons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-specified-skeletons">User-specified skeletons</a></li>
 </ul>
 </li>
 </ul>
@@ -183,7 +189,11 @@
   <div class="section" id="project-description">
 <h1>Project Description<a class="headerlink" href="#project-description" title="Permalink to this headline">¶</a></h1>
 <p>Configuration files used by <code class="code docutils literal notranslate"><span class="pre">drom</span></code> are in <a class="reference external" href="https://toml.io/en/">TOML syntax</a>. See also <a class="reference external" href="https://learnxinyminutes.com/docs/toml/">Learn TOML in Y minutes</a> for a very quick
-introductio.</p>
+introduction.</p>
+<p>A project is composed of the <em>project</em> itself, and a set of <em>packages</em>
+(libraries and executables), among which the main package shares the
+same name as the project. An <code class="code docutils literal notranslate"><span class="pre">opam</span></code> package is generated for
+each package in the project.</p>
 <div class="section" id="the-drom-toml-project-file">
 <h2>The <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> Project File<a class="headerlink" href="#the-drom-toml-project-file" title="Permalink to this headline">¶</a></h2>
 <p>To get a feeling of what is in this file, we can look at the one used for
@@ -196,7 +206,7 @@ introductio.</p>
 <span class="n">github</span><span class="o">-</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;ocamlpro&quot;</span>
 <span class="n">kind</span> <span class="o">=</span> <span class="s2">&quot;program&quot;</span>
 <span class="n">license</span> <span class="o">=</span> <span class="s2">&quot;LGPL2&quot;</span>
-<span class="n">min</span><span class="o">-</span><span class="n">edition</span> <span class="o">=</span> <span class="s2">&quot;4.03.0&quot;</span>
+<span class="n">min</span><span class="o">-</span><span class="n">edition</span> <span class="o">=</span> <span class="s2">&quot;4.10.0&quot;</span>
 <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;binary&quot;</span>
 <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;drom&quot;</span>
 <span class="n">synopsis</span> <span class="o">=</span> <span class="s2">&quot;The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience&quot;</span>
@@ -301,12 +311,36 @@ version compatible with <code class="code docutils literal notranslate"><span cl
 versioning, so it means <code class="code docutils literal notranslate"><span class="pre">version</span> <span class="pre">&gt;=</span> <span class="pre">0.1.0</span></code> and <code class="code docutils literal notranslate"><span class="pre">version</span> <span class="pre">&lt;</span>
 <span class="pre">1.0.0</span></code>. If the version is not formatted as <code class="code docutils literal notranslate"><span class="pre">X.Y.Z</span></code>, <code class="code docutils literal notranslate"><span class="pre">drom</span></code>
 will only generate a constraint <code class="code docutils literal notranslate"><span class="pre">version</span> <span class="pre">&gt;=</span> <span class="pre">V</span></code>.</p>
-<p>It is possible to specify that the package has a different name from
-the library:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">ez</span><span class="o">-</span><span class="n">config</span> <span class="o">=</span> <span class="s2">&quot;0.1.0 ez_config&quot;</span>
+<p>Versions can also be specified with some other formats:</p>
+<ul class="simple">
+<li>Following <code class="code docutils literal notranslate"><span class="pre">opam</span></code> conventions : <code class="code docutils literal notranslate"><span class="pre">&quot;&gt;0.1.0&quot;</span></code> for example</li>
+<li>No constraint specified, with the empty string <code class="code docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+<li>Using the string <code class="code docutils literal notranslate"><span class="pre">&quot;version&quot;</span></code> meaning that the version of the
+dependency should be the same one as the package</li>
+</ul>
+<p>It is possible to specify more information than the version, in which
+case the dependency object should be seen as a record containing the fields:</p>
+<ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">version</span></code> for the version of the dependency</li>
+<li><code class="code docutils literal notranslate"><span class="pre">libname</span></code> for the name of the dependency that should be used
+as a dependency in <code class="code docutils literal notranslate"><span class="pre">dune</span></code> files</li>
+<li><code class="code docutils literal notranslate"><span class="pre">for-test</span></code> for a boolean specifying if the dependency is only
+needed for tests (<code class="code docutils literal notranslate"><span class="pre">with-test</span></code> in <code class="code docutils literal notranslate"><span class="pre">opam</span></code> files)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">for-doc</span></code> for a boolean specifying if the dependency is only
+needed for tests (<code class="code docutils literal notranslate"><span class="pre">with-doc</span></code> in <code class="code docutils literal notranslate"><span class="pre">opam</span></code> files)</li>
+</ul>
+<p>For example:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">[</span><span class="n">dependencies</span><span class="o">]</span>
+<span class="n">ez</span><span class="o">-</span><span class="n">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span><span class="o">,</span> <span class="n">libname</span> <span class="o">=</span> <span class="s2">&quot;ez_config&quot;</span> <span class="o">}</span>
 </pre></div>
 </div>
-<p>means that the project depends on the <code class="code docutils literal notranslate"><span class="pre">opam</span></code> package
+<p>or equivalently:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">[</span><span class="n">dependencies</span><span class="o">.</span><span class="n">ez</span><span class="o">-</span><span class="n">config</span><span class="o">]</span>
+<span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">libanem</span> <span class="o">=</span> <span class="s2">&quot;ez_config&quot;</span>
+</pre></div>
+</div>
+<p>meaning that the project depends on the <code class="code docutils literal notranslate"><span class="pre">opam</span></code> package
 <code class="code docutils literal notranslate"><span class="pre">ez-config</span></code>, and that it should be linked with the corresponding
 library <code class="code docutils literal notranslate"><span class="pre">ez_config</span></code>.</p>
 </div>
@@ -354,6 +388,68 @@ then decide to promote the new file by removing your file and
 restarting <code class="code docutils literal notranslate"><span class="pre">drom</span></code>.</p>
 </li>
 </ul>
+</div>
+</div>
+<div class="section" id="skeletons">
+<h2>Skeletons<a class="headerlink" href="#skeletons" title="Permalink to this headline">¶</a></h2>
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> generates most of the files using template files stored
+in <em>skeletons</em> on which substitutions are applied.</p>
+<p>There are two kinds of skeletons:</p>
+<ul class="simple">
+<li><em>Project skeletons</em> are used to create and update most of the files of
+the project, excluding package specific files.</li>
+<li><em>Package skeletons</em> are used to create and update package specific
+files, mostly <code class="code docutils literal notranslate"><span class="pre">dune</span></code> and sources files</li>
+</ul>
+<p>Every skeleton is composed of a tree of files (possibly empty), a file
+<code class="code docutils literal notranslate"><span class="pre">SKELETON.toml</span></code> and a possible inheritance of another skeleton
+(in which case it inherits the tree of files and toml file).</p>
+<p>When <code class="code docutils literal notranslate"><span class="pre">drom</span></code> is called in a project, it generates a file
+<code class="code docutils literal notranslate"><span class="pre">_drom/known-skeletons.txt</span></code> listing all the skeletons it knows
+about. Beware that, if you create a new skeleton, you will have to
+share it for other users to be able to use <code class="code docutils literal notranslate"><span class="pre">drom</span></code> on the project
+to update generated files.</p>
+<div class="section" id="project-skeletons">
+<h3>Project Skeletons<a class="headerlink" href="#project-skeletons" title="Permalink to this headline">¶</a></h3>
+<p>Default project skeletons are defined in the source tree in:
+<a class="reference external" href="https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/projects">https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/projects</a></p>
+<p>Additionally, the <code class="code docutils literal notranslate"><span class="pre">dune-trailer</span></code> rules in
+<a class="reference external" href="https://github.com/OCamlPro/drom/blob/master/drom.toml">https://github.com/OCamlPro/drom/blob/master/drom.toml</a> specify inheritance between skeletons.</p>
+<p>The following project skeletons are available by default:</p>
+<ul class="simple">
+<li>The <code class="code docutils literal notranslate"><span class="pre">virtual</span></code> skeleton is for a “meta” project, i.e. a project
+containing other packages, but whose main package (with the name of
+the project) does not define a program or library. This skeleton can
+be seen as the root of the inheritance tree between project
+skeletons.</li>
+<li>The <code class="code docutils literal notranslate"><span class="pre">library</span></code> skeleton contains only a library package. It
+inherits from the <code class="code docutils literal notranslate"><span class="pre">virtual</span></code> skeleton.</li>
+<li>The <code class="code docutils literal notranslate"><span class="pre">program</span></code> skeleton contains both a library and a driver
+packages. It inherits from the <code class="code docutils literal notranslate"><span class="pre">virtual</span></code> skeleton. It is the
+default project skeleton used when nothing is specified.</li>
+</ul>
+</div>
+<div class="section" id="package-skeletons">
+<h3>Package Skeletons<a class="headerlink" href="#package-skeletons" title="Permalink to this headline">¶</a></h3>
+<p>Default package skeletons are defined in the source tree in:
+<a class="reference external" href="https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/packages">https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/packages</a></p>
+<p>Additionally, the <code class="code docutils literal notranslate"><span class="pre">dune-trailer</span></code> rules in
+<a class="reference external" href="https://github.com/OCamlPro/drom/blob/master/drom.toml">https://github.com/OCamlPro/drom/blob/master/drom.toml</a> specify inheritance between skeletons.</p>
+<p>The following package skeletons are available by default:</p>
+<ul class="simple">
+<li>The <code class="code docutils literal notranslate"><span class="pre">virtual</span></code> skeleton is an empty skeleton.</li>
+<li>The <code class="code docutils literal notranslate"><span class="pre">library</span></code> skeleton contains a simple library.</li>
+<li>The <code class="code docutils literal notranslate"><span class="pre">program</span></code> skeleton contains a simple program.</li>
+<li>The <code class="code docutils literal notranslate"><span class="pre">driver</span></code> skeleton contains a simple program that only
+calls the main entry point of an associated library.</li>
+</ul>
+<p>Note that the project <code class="code docutils literal notranslate"><span class="pre">program</span></code> skeleton combines a
+<code class="code docutils literal notranslate"><span class="pre">library</span></code> package skeleton with a <code class="code docutils literal notranslate"><span class="pre">driver</span></code> package
+skeleton.</p>
+</div>
+<div class="section" id="user-specified-skeletons">
+<h3>User-specified skeletons<a class="headerlink" href="#user-specified-skeletons" title="Permalink to this headline">¶</a></h3>
+<p>Users can create their own skeleton… Need documentation.</p>
 </div>
 </div>
 </div>

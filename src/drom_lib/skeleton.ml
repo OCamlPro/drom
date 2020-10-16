@@ -97,44 +97,6 @@ let load_skeletons map kind =
       );
   !map
 
-(*
-  if not (Sys.file_exists skeleton_dir) then (
-    Printf.eprintf
-      "Warning: skeleton %s/ not found. Skipping skeleton files.\n%!"
-      skeleton_dir;
-    None )
-  else
-    let rec iter todo ret =
-      match todo with
-      | [] -> ret
-      | (dir, dirname) :: todo -> (
-          match Unix.stat dir with
-          | exception _exn ->
-              (* warning ? *)
-              iter todo ret
-          | st -> (
-              match st.Unix.st_kind with
-              | S_REG ->
-                  let content = EzFile.read_file dir in
-                  iter todo ((dirname, content) :: ret)
-              | S_DIR ->
-                  let files = Sys.readdir dir in
-                  let files =
-                    Array.map (fun file -> (dir // file, dirname // file)) files
-                  in
-                  let files = Array.to_list files in
-                  iter (todo @ files) ret
-              | _ ->
-                  (* warning *)
-                  iter todo ret ) )
-    in
-    Some
-      {
-        project_files = iter [ (skeleton_dir // "project", "") ] [];
-        package_files = iter [ (skeleton_dir // "package", "") ] [];
-      }
-*)
-
 let builtin_project_skeletons = StringMap.of_list [
     "virtual", Skel_project_virtual.project_skeleton ;
     "program", Skel_project_program.project_skeleton ;
@@ -267,3 +229,18 @@ let write_files write_file p =
        write_package_files write_file package
     )
     p.packages
+
+let project_skeletons =
+  Lazy.force project_skeletons
+  |> StringMap.to_list
+  |> List.map fst
+
+let package_skeletons =
+  Lazy.force package_skeletons
+  |> StringMap.to_list
+  |> List.map fst
+
+let known_skeletons () =
+  Printf.sprintf "project skeletons: %s\npackage skeletons: %s\n"
+    ( String.concat " " project_skeletons )
+    ( String.concat " " package_skeletons )
