@@ -176,6 +176,9 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
         let tools, changed = add_dep ppx_tool tools changed in
         ({ p with mode; dependencies; tools }, changed)
   in
+  List.iter (fun package ->
+      package.project <- p
+    ) p.packages;
 
   Hashes.with_ctxt ~git (fun hashes ->
 
@@ -231,6 +234,10 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
       EzFile.write_file
         (Globals.drom_dir // "known-licences.txt")
         (License.known_licenses ());
+
+      EzFile.write_file
+        (Globals.drom_dir // "known-skeletons.txt")
+        (Skeleton.known_skeletons ());
 
       EzFile.write_file (Globals.drom_dir // "header.ml") (License.header_ml p);
       EzFile.write_file (Globals.drom_dir // "header.mll") (License.header_mll p);

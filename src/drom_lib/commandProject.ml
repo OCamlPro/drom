@@ -14,8 +14,7 @@ open Ezcmd.TYPES
 let cmd_name = "project"
 
 (* lookup for "drom.toml" and update it *)
-let action ~skeleton ~mode ~upgrade ~promote_skip
-    ~dir =
+let action ~skeleton ~mode ~upgrade ~promote_skip =
   let project = Project.find () in
   match project with
   | None ->
@@ -32,8 +31,6 @@ let action ~skeleton ~mode ~upgrade ~promote_skip
         end else
           upgrade
       in
-      if dir <> None then
-        Error.raise "Option --dir is not available for update";
       Update.update_files ~create:false ?mode ~upgrade ~promote_skip ~git:true p
 
 let cmd =
@@ -41,22 +38,15 @@ let cmd =
   let upgrade = ref false in
   let promote_skip = ref false in
   let skeleton = ref None in
-  let dir = ref None in
   {
     cmd_name;
     cmd_action =
       (fun () ->
          action ~skeleton:!skeleton ~mode:!mode
-           ~upgrade:!upgrade ~promote_skip:!promote_skip ~dir:!dir
+           ~upgrade:!upgrade ~promote_skip:!promote_skip
            );
     cmd_args =
       [
-        ( [ "dir" ],
-          Arg.String
-            (fun s ->
-               dir := Some s;
-               upgrade := true),
-          Ezcmd.info "Dir where package sources are stored (src by default)" );
         ( [ "library" ],
           Arg.Unit
             (fun () ->

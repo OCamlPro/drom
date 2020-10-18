@@ -11,5 +11,6 @@
 !{package-dune-files}
 (documentation
   (package !{package-name}))
+!{package-dune-installs}
 !(package-dune-trailer)
 

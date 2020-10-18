@@ -17,3 +17,5 @@ val write_files :
 
 val lookup_project : string option -> Types.skeleton
 val lookup_package : string -> Types.skeleton
+
+val known_skeletons : unit -> string

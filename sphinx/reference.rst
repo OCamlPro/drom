@@ -5,7 +5,12 @@ Project Description
 Configuration files used by :code:`drom` are in `TOML syntax
 <https://toml.io/en/>`__. See also `Learn TOML in Y minutes
 <https://learnxinyminutes.com/docs/toml/>`__ for a very quick
-introductio.
+introduction.
+
+A project is composed of the *project* itself, and a set of *packages*
+(libraries and executables), among which the main package shares the
+same name as the project. An :code:`opam` package is generated for
+each package in the project.
 
 The :code:`drom.toml` Project File
 ----------------------------------
@@ -21,7 +26,7 @@ To get a feeling of what is in this file, we can look at the one used for
   github-organization = "ocamlpro"
   kind = "program"
   license = "LGPL2"
-  min-edition = "4.03.0"
+  min-edition = "4.10.0"
   mode = "binary"
   name = "drom"
   synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
@@ -131,12 +136,36 @@ versioning, so it means :code:`version >= 0.1.0` and :code:`version <
 1.0.0`. If the version is not formatted as :code:`X.Y.Z`, :code:`drom`
 will only generate a constraint :code:`version >= V`.
 
-It is possible to specify that the package has a different name from
-the library::
+Versions can also be specified with some other formats:
 
-  ez-config = "0.1.0 ez_config"
+* Following :code:`opam` conventions : :code:`">0.1.0"` for example
+* No constraint specified, with the empty string :code:`""`
+* Using the string :code:`"version"` meaning that the version of the
+  dependency should be the same one as the package
 
-means that the project depends on the :code:`opam` package
+It is possible to specify more information than the version, in which
+case the dependency object should be seen as a record containing the fields:
+
+* :code:`version` for the version of the dependency
+* :code:`libname` for the name of the dependency that should be used
+  as a dependency in :code:`dune` files
+* :code:`for-test` for a boolean specifying if the dependency is only
+  needed for tests (:code:`with-test` in :code:`opam` files)
+* :code:`for-doc` for a boolean specifying if the dependency is only
+  needed for tests (:code:`with-doc` in :code:`opam` files)
+
+For example::
+
+  [dependencies]
+  ez-config = { version = "0.1.0", libname = "ez_config" }
+
+or equivalently::
+
+  [dependencies.ez-config]
+  version = "0.1.0"
+  libanem = "ez_config"
+  
+meaning that the project depends on the :code:`opam` package
 :code:`ez-config`, and that it should be linked with the corresponding
 library :code:`ez_config`.
 
@@ -189,4 +218,77 @@ this project.
   then decide to promote the new file by removing your file and
   restarting :code:`drom`.
 
+Skeletons
+---------
 
+:code:`drom` generates most of the files using template files stored
+in *skeletons* on which substitutions are applied.
+
+There are two kinds of skeletons:
+
+* *Project skeletons* are used to create and update most of the files of
+  the project, excluding package specific files.
+
+* *Package skeletons* are used to create and update package specific
+  files, mostly :code:`dune` and sources files
+
+Every skeleton is composed of a tree of files (possibly empty), a file
+:code:`SKELETON.toml` and a possible inheritance of another skeleton
+(in which case it inherits the tree of files and toml file).
+
+When :code:`drom` is called in a project, it generates a file
+:code:`_drom/known-skeletons.txt` listing all the skeletons it knows
+about. Beware that, if you create a new skeleton, you will have to
+share it for other users to be able to use :code:`drom` on the project
+to update generated files.
+
+Project Skeletons
+~~~~~~~~~~~~~~~~~
+
+Default project skeletons are defined in the source tree in:
+`https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/projects <https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/projects>`__
+
+Additionally, the :code:`dune-trailer` rules in
+`https://github.com/OCamlPro/drom/blob/master/drom.toml <https://github.com/OCamlPro/drom/blob/master/drom.toml>`__ specify inheritance between skeletons.
+
+The following project skeletons are available by default:
+
+* The :code:`virtual` skeleton is for a "meta" project, i.e. a project
+  containing other packages, but whose main package (with the name of
+  the project) does not define a program or library. This skeleton can
+  be seen as the root of the inheritance tree between project
+  skeletons.
+
+* The :code:`library` skeleton contains only a library package. It
+  inherits from the :code:`virtual` skeleton.
+
+* The :code:`program` skeleton contains both a library and a driver
+  packages. It inherits from the :code:`virtual` skeleton. It is the
+  default project skeleton used when nothing is specified.
+
+
+Package Skeletons
+~~~~~~~~~~~~~~~~~
+
+Default package skeletons are defined in the source tree in:
+`https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/packages <https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/packages>`__
+
+Additionally, the :code:`dune-trailer` rules in
+`https://github.com/OCamlPro/drom/blob/master/drom.toml <https://github.com/OCamlPro/drom/blob/master/drom.toml>`__ specify inheritance between skeletons.
+
+The following package skeletons are available by default:
+
+* The :code:`virtual` skeleton is an empty skeleton.
+* The :code:`library` skeleton contains a simple library.
+* The :code:`program` skeleton contains a simple program.
+* The :code:`driver` skeleton contains a simple program that only
+  calls the main entry point of an associated library.
+
+Note that the project :code:`program` skeleton combines a
+:code:`library` package skeleton with a :code:`driver` package
+skeleton.
+
+User-specified skeletons
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Users can create their own skeleton... Need documentation.
