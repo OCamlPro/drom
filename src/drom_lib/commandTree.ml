@@ -33,9 +33,10 @@ let action () =
   let add_dep (name, d) =
     try
       match d.depversions with
-      | [] | [ Version ] ->
-          let _, counter, _ = Hashtbl.find h name in
-          incr counter
+      | []
+      | [ Version ] ->
+        let _, counter, _ = Hashtbl.find h name in
+        incr counter
       | _ -> ()
     with Not_found -> ()
   in
@@ -48,12 +49,14 @@ let action () =
   let rec tree_of_dep kind (name, d) =
     try
       match d.depversions with
-      | [] | [ Version ] ->
-          let package, counter, printed = Hashtbl.find h name in
-          if (not !printed) && !counter = 1 then (
-            printed := true;
-            tree_of_package package )
-          else raise Not_found
+      | []
+      | [ Version ] ->
+        let package, counter, printed = Hashtbl.find h name in
+        if (not !printed) && !counter = 1 then (
+          printed := true;
+          tree_of_package package
+        ) else
+          raise Not_found
       | _ -> raise Not_found
     with Not_found ->
       let dep_descr =
@@ -73,7 +76,8 @@ let action () =
     let _package, counter, printed = Hashtbl.find h p.name in
     if (not !printed) && !counter <> 1 then (
       printed := true;
-      EzPrintTree.print_tree indent (tree_of_package p) )
+      EzPrintTree.print_tree indent (tree_of_package p)
+    )
   in
   print "" p.package;
   List.iter
@@ -83,23 +87,22 @@ let action () =
     match list with
     | [] -> ()
     | _ ->
-        Printf.printf "%s[%s]\n" indent kind;
-        let indent = indent ^ "\226\148\148\226\148\128\226\148\128" in
-        List.iter
-          (fun (name, d) ->
-            Printf.printf "%s %s %s\n" indent name
-              (String.concat " " (List.map string_of_version d.depversions)))
-          list
+      Printf.printf "%s[%s]\n" indent kind;
+      let indent = indent ^ "\226\148\148\226\148\128\226\148\128" in
+      List.iter
+        (fun (name, d) ->
+          Printf.printf "%s %s %s\n" indent name
+            (String.concat " " (List.map string_of_version d.depversions)))
+        list
   in
   print_deps "" "dependencies" p.dependencies;
   print_deps "" "tools" p.tools;
   ()
 
 let cmd =
-  {
-    cmd_name;
+  { cmd_name;
     cmd_action = (fun () -> action ());
     cmd_args = [];
     cmd_man = [];
-    cmd_doc = "Display a tree of dependencies";
+    cmd_doc = "Display a tree of dependencies"
   }

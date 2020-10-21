@@ -14,7 +14,7 @@ let buffer b s =
     | c
       when c >= ' ' && c <= '~' && c <> '\\' && c <> '"' && c <> '\n'
            && c <> '\r' && c <> '\t' ->
-        Buffer.add_char b c
+      Buffer.add_char b c
     | c -> Printf.bprintf b "&#%d;" (int_of_char c)
   done
 

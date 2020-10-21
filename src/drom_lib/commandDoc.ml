@@ -25,16 +25,14 @@ let action ~args ~open_www () =
 let cmd =
   let args, specs = Build.build_args () in
   let open_www = ref false in
-  {
-    cmd_name;
+  { cmd_name;
     cmd_action = (fun () -> action ~args ~open_www ());
     cmd_args =
-      [
-        ( [ "view" ],
+      [ ( [ "view" ],
           Arg.Set open_www,
-          Ezcmd.info "Open a browser on the documentation" );
+          Ezcmd.info "Open a browser on the documentation" )
       ]
       @ specs;
     cmd_man = [];
-    cmd_doc = "Generate API documentation using odoc in the docs/doc directory";
+    cmd_doc = "Generate API documentation using odoc in the docs/doc directory"
   }

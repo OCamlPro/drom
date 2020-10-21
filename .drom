@@ -30,7 +30,6 @@ cf3f86e8f7d8e90e663c3cb7e438057d:sphinx/license.rst
 2419e839da9c8966115d696fd368c0ce:src/drom/dune
 c46773d55a9a80e19cd0e807cb36262e:src/drom/main.ml
 00b79dbd13da838bdaebbc4a4bdea002:src/drom_lib/dune
-5995081f731bcce4893801234419852a:src/drom_lib/dune2
 f15fedac6f43c154bcd0348b776ac08c:test/expect-tests/dune
 16aa6d750c44bb58dc22a8c2a06d1534:test/expect-tests/test.ml
 75d7504f9c8002ec5ccdd2458f01da09:test/inline-tests/dune

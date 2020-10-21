@@ -19,10 +19,9 @@ let action ~args () =
 
 let cmd =
   let args, specs = Build.build_args () in
-  {
-    cmd_name;
+  { cmd_name;
     cmd_action = (fun () -> action ~args ());
     cmd_args = [] @ specs;
     cmd_man = [];
-    cmd_doc = "Uninstall the project from the project opam switch";
+    cmd_doc = "Uninstall the project from the project opam switch"
   }

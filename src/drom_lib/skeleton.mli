@@ -10,12 +10,17 @@
 
 val write_files :
   (string ->
-   create:bool ->
-   skips:string list ->
-   content:string -> record:bool -> skip:bool -> unit) ->
-  Types.project -> unit
+  create:bool ->
+  skips:string list ->
+  content:string ->
+  record:bool ->
+  skip:bool ->
+  unit) ->
+  Types.project ->
+  unit
 
 val lookup_project : string option -> Types.skeleton
+
 val lookup_package : string -> Types.skeleton
 
 val known_skeletons : unit -> string

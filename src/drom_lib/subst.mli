@@ -11,10 +11,15 @@
 val package :
   'context ->
   ?bracket:('context * Types.package) Ez_subst.t ->
-  Types.package -> string -> string
+  Types.package ->
+  string ->
+  string
+
 val project :
   'context ->
   ?bracket:('context * Types.project) Ez_subst.t ->
-  Types.project -> string -> string
+  Types.project ->
+  string ->
+  string
 
 val package_paren : 'a * Types.package -> string -> string

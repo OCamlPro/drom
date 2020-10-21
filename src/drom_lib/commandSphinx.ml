@@ -19,17 +19,18 @@ let action () =
   in
 
   let sphinx_target =
-    match p.sphinx_target with None -> "docs/sphinx" | Some dir -> dir
+    match p.sphinx_target with
+    | None -> "docs/sphinx"
+    | Some dir -> dir
   in
   Misc.call [| "sphinx-build"; "sphinx"; sphinx_target |];
   if not (List.mem "git-add-sphinx" p.skip) then
     Misc.call [| "git"; "add"; sphinx_target |]
 
 let cmd =
-  {
-    cmd_name;
+  { cmd_name;
     cmd_action = (fun () -> action ());
     cmd_args = [];
     cmd_man = [];
-    cmd_doc = "Generate general documentation using sphinx";
+    cmd_doc = "Generate general documentation using sphinx"
   }

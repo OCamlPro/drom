@@ -22,42 +22,39 @@ to completely disable formatting of dune files.
 
 let package_dune_files package =
   let b = Buffer.create 1000 in
-  let p_generators = match package.p_generators with
+  let p_generators =
+    match package.p_generators with
     | None -> []
-    | Some generators -> generators in
+    | Some generators -> generators
+  in
   ( match Sys.readdir package.dir with
-    | exception _ -> ()
-    | files ->
-        Array.iter
-          (fun file ->
-             if Filename.check_suffix file ".mll" then begin
-               if List.mem "ocamllex" package.project.generators ||
-                  List.mem "ocamllex" p_generators
-               then
-                 Printf.bprintf b "(ocamllex %s)\n"
-                   (Filename.chop_suffix file ".mll")
-             end
-             else
-             if Filename.check_suffix file ".mly" then begin
-               if List.mem "ocamlyacc" p_generators then
-                 Printf.bprintf b "(ocamlyacc %s)\n"
-                   (Filename.chop_suffix file ".mly")
-               else
-               if List.mem "menhir" p_generators then
-                 Printf.bprintf b "(menhir (modules %s))\n"
-                   (Filename.chop_suffix file ".mly")
-               else
-               if List.mem "ocamlyacc" package.project.generators then
-                 Printf.bprintf b "(ocamlyacc %s)\n"
-                   (Filename.chop_suffix file ".mly")
-               else
-               if List.mem "menhir" package.project.generators then
-                 Printf.bprintf b "(menhir (modules %s))\n"
-                   (Filename.chop_suffix file ".mly")
-               else
-                 Printf.eprintf "no generator for %s\n%!" file
-             end)
-          files );
+  | exception _ -> ()
+  | files ->
+    Array.iter
+      (fun file ->
+        if Filename.check_suffix file ".mll" then begin
+          if
+            List.mem "ocamllex" package.project.generators
+            || List.mem "ocamllex" p_generators
+          then
+            Printf.bprintf b "(ocamllex %s)\n"
+              (Filename.chop_suffix file ".mll")
+        end else if Filename.check_suffix file ".mly" then
+          if List.mem "ocamlyacc" p_generators then
+            Printf.bprintf b "(ocamlyacc %s)\n"
+              (Filename.chop_suffix file ".mly")
+          else if List.mem "menhir" p_generators then
+            Printf.bprintf b "(menhir (modules %s))\n"
+              (Filename.chop_suffix file ".mly")
+          else if List.mem "ocamlyacc" package.project.generators then
+            Printf.bprintf b "(ocamlyacc %s)\n"
+              (Filename.chop_suffix file ".mly")
+          else if List.mem "menhir" package.project.generators then
+            Printf.bprintf b "(menhir (modules %s))\n"
+              (Filename.chop_suffix file ".mly")
+          else
+            Printf.eprintf "no generator for %s\n%!" file)
+      files );
   Buffer.contents b
 
 let template_dune_project p =
@@ -89,30 +86,30 @@ let template_dune_project p =
       match d.depversions with
       | [] -> Printf.bprintf b "   %s\n" name
       | _ ->
-          Printf.bprintf b "   (%s " name;
-          let rec iter versions =
-            match versions with
-            | [] -> ()
-            | [ version ] -> (
-                match version with
-                | Version -> Printf.bprintf b "(= version)"
-                | NoVersion -> ()
-                | Semantic (major, minor, fix) ->
-                    Printf.bprintf b "(and (>= %d.%d.%d) (< %d.0.0))" major
-                      minor fix (major + 1)
-                | Lt version -> Printf.bprintf b "( < %s )" version
-                | Le version -> Printf.bprintf b "( <= %s )" version
-                | Eq version -> Printf.bprintf b "( = %s )" version
-                | Ge version -> Printf.bprintf b "( > %s )" version
-                | Gt version -> Printf.bprintf b "( >= %s )" version )
-            | version :: tail ->
-                Printf.bprintf b "(and ";
-                iter [ version ];
-                iter tail;
-                Printf.bprintf b ")"
-          in
-          iter d.depversions;
-          Printf.bprintf b ")\n"
+        Printf.bprintf b "   (%s " name;
+        let rec iter versions =
+          match versions with
+          | [] -> ()
+          | [ version ] -> (
+            match version with
+            | Version -> Printf.bprintf b "(= version)"
+            | NoVersion -> ()
+            | Semantic (major, minor, fix) ->
+              Printf.bprintf b "(and (>= %d.%d.%d) (< %d.0.0))" major minor fix
+                (major + 1)
+            | Lt version -> Printf.bprintf b "( < %s )" version
+            | Le version -> Printf.bprintf b "( <= %s )" version
+            | Eq version -> Printf.bprintf b "( = %s )" version
+            | Ge version -> Printf.bprintf b "( > %s )" version
+            | Gt version -> Printf.bprintf b "( >= %s )" version )
+          | version :: tail ->
+            Printf.bprintf b "(and ";
+            iter [ version ];
+            iter tail;
+            Printf.bprintf b ")"
+        in
+        iter d.depversions;
+        Printf.bprintf b ")\n"
     in
     List.iter
       (fun (name, d) -> depend_of_dep name d)
