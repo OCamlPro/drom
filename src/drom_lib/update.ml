@@ -16,24 +16,32 @@ let library_name p =
   match p.p_pack with
   | Some name -> String.uncapitalize_ascii name
   | None ->
-      let s = Bytes.of_string p.name in
-      for i = 1 to String.length p.name - 2 do
-        let c = p.name.[i] in
-        match c with 'a' .. 'z' | '0' .. '9' -> () | _ -> Bytes.set s i '_'
-      done;
-      Bytes.to_string s
+    let s = Bytes.of_string p.name in
+    for i = 1 to String.length p.name - 2 do
+      let c = p.name.[i] in
+      match c with
+      | 'a' .. 'z'
+      | '0' .. '9' ->
+        ()
+      | _ -> Bytes.set s i '_'
+    done;
+    Bytes.to_string s
 
 let library_module p =
   match p.p_pack with
   | Some name -> name
   | None ->
-      let s = Bytes.of_string p.name in
-      Bytes.set s 0 (Char.uppercase p.name.[0]);
-      for i = 1 to String.length p.name - 2 do
-        let c = p.name.[i] in
-        match c with 'a' .. 'z' | '0' .. '9' -> () | _ -> Bytes.set s i '_'
-      done;
-      Bytes.to_string s
+    let s = Bytes.of_string p.name in
+    Bytes.set s 0 (Char.uppercase p.name.[0]);
+    for i = 1 to String.length p.name - 2 do
+      let c = p.name.[i] in
+      match c with
+      | 'a' .. 'z'
+      | '0' .. '9' ->
+        ()
+      | _ -> Bytes.set s i '_'
+    done;
+    Bytes.to_string s
 
 (*
 let template_src_main_ml ~header_ml p =
@@ -77,50 +85,55 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
     let dirname = Filename.dirname filename in
     EzFile.make_dir ~p:true dirname;
     EzFile.write_file filename content;
-    if record then
-      Hashes.update hashes filename (Hashes.digest_string content);
+    if record then Hashes.update hashes filename (Hashes.digest_string content)
   in
   let can_update ~filename hashes content =
     let old_content = EzFile.read_file filename in
-    if content = old_content then false
+    if content = old_content then
+      false
     else
       let hash = Hashes.digest_string old_content in
       match Hashes.get hashes filename with
       | exception Not_found ->
-          skipped := filename :: !skipped;
-          Printf.eprintf "Skipping existing file %s\n%!" filename;
-          false
+        skipped := filename :: !skipped;
+        Printf.eprintf "Skipping existing file %s\n%!" filename;
+        false
       | former_hash ->
-          let not_modified = former_hash = hash in
-          if not not_modified then (
-            skipped := filename :: !skipped;
-            Printf.eprintf "Skipping modified file %s\n%!" filename );
-          not_modified
+        let not_modified = former_hash = hash in
+        if not not_modified then (
+          skipped := filename :: !skipped;
+          Printf.eprintf "Skipping modified file %s\n%!" filename
+        );
+        not_modified
   in
 
   let write_file ?(record = true) ?((* add to git *)
-      create = false)
+                                  create = false)
       ?((* only create, never update *)
       skip = false) ?((* force to skip *)
-      force = false) ?((* force to write *)
-      skips = []) (* tests for skipping *)
-      hashes filename content =
+                    force = false) ?((* force to write *)
+                                   skips = []) (* tests for skipping *)
+                                                 hashes filename content =
     try
       if skip then raise Skip;
       if force then (
         Printf.eprintf "Forced Update of file %s\n%!" filename;
-        write_file hashes filename content )
-      else if not_skipped filename && List.for_all not_skipped skips then
-        if not record then write_file ~record:false hashes filename content
+        write_file hashes filename content
+      ) else if not_skipped filename && List.for_all not_skipped skips then
+        if not record then
+          write_file ~record:false hashes filename content
         else if not (Sys.file_exists filename) then (
           Printf.eprintf "Creating file %s\n%!" filename;
-          write_file hashes filename content )
-        else if create then raise Skip
+          write_file hashes filename content
+        ) else if create then
+          raise Skip
         else if can_update ~filename hashes content then (
           Printf.eprintf "Updating file %s\n%!" filename;
-          write_file hashes filename content )
-        else raise Skip
-      else raise Skip
+          write_file hashes filename content
+        ) else
+          raise Skip
+      else
+        raise Skip
     with Skip ->
       let filename = "_drom" // "skipped" // filename in
       EzFile.make_dir ~p:true (Filename.dirname filename);
@@ -148,85 +161,83 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
         | _ -> (p, changed)
       in
       (p, changed)
-    else (p, changed)
+    else
+      (p, changed)
   in
   let p, changed =
     match mode with
     | None -> (p, changed)
     | Some mode ->
-        let js_dep = ("js_of_ocaml", [ Semantic (3, 6, 0) ]) in
-        let js_tool = ("js_of_ocaml", [ Semantic (3, 6, 0) ]) in
-        let ppx_tool = ("js_of_ocaml-ppx", [ Semantic (3, 6, 0) ]) in
-        let add_dep (name, depversions) deps changed =
-          let dep =
-            ( name,
-              { depversions; depname = None; deptest = false; depdoc = false }
-            )
-          in
-          match mode with
-          | Binary ->
-              if List.mem dep deps then (EzList.remove dep deps, true)
-              else (deps, changed)
-          | Javascript ->
-              if not (List.mem_assoc (fst dep) deps) then (dep :: deps, true)
-              else (deps, changed)
+      let js_dep = ("js_of_ocaml", [ Semantic (3, 6, 0) ]) in
+      let js_tool = ("js_of_ocaml", [ Semantic (3, 6, 0) ]) in
+      let ppx_tool = ("js_of_ocaml-ppx", [ Semantic (3, 6, 0) ]) in
+      let add_dep (name, depversions) deps changed =
+        let dep =
+          ( name,
+            { depversions; depname = None; deptest = false; depdoc = false } )
         in
-        let dependencies, changed = add_dep js_dep p.dependencies changed in
-        let tools, changed = add_dep js_tool p.tools changed in
-        let tools, changed = add_dep ppx_tool tools changed in
-        ({ p with mode; dependencies; tools }, changed)
+        match mode with
+        | Binary ->
+          if List.mem dep deps then
+            (EzList.remove dep deps, true)
+          else
+            (deps, changed)
+        | Javascript ->
+          if not (List.mem_assoc (fst dep) deps) then
+            (dep :: deps, true)
+          else
+            (deps, changed)
+      in
+      let dependencies, changed = add_dep js_dep p.dependencies changed in
+      let tools, changed = add_dep js_tool p.tools changed in
+      let tools, changed = add_dep ppx_tool tools changed in
+      ({ p with mode; dependencies; tools }, changed)
   in
-  List.iter (fun package ->
-      package.project <- p
-    ) p.packages;
+  List.iter (fun package -> package.project <- p) p.packages;
 
   Hashes.with_ctxt ~git (fun hashes ->
-
-      if create then begin
+      if create then
         if git && not (Sys.file_exists ".git") then (
           Git.call [ "init" ];
           match config.config_github_organization with
           | None -> ()
           | Some organization ->
-              Git.call [
-                "remote";
+            Git.call
+              [ "remote";
                 "add";
                 "origin";
                 Printf.sprintf "git@github.com:%s/%s" organization
-                  p.package.name;
+                  p.package.name
               ];
-              let keep_readme = Sys.file_exists "README.md" in
-              if not keep_readme then
-                Misc.call [| "touch"; "README.md" |];
-              Git.call [ "add"; "README.md" ];
-              Git.call [ "commit"; "-m"; "Initial commit" ] ;
-              if not keep_readme then
-                Misc.call [| "rm"; "-f" ; "README.md" |];
-        )
-      end;
+            let keep_readme = Sys.file_exists "README.md" in
+            if not keep_readme then Misc.call [| "touch"; "README.md" |];
+            Git.call [ "add"; "README.md" ];
+            Git.call [ "commit"; "-m"; "Initial commit" ];
+            if not keep_readme then Misc.call [| "rm"; "-f"; "README.md" |]
+        );
 
       write_file hashes "dune-project" (Dune.template_dune_project p);
 
       List.iter
         (fun package ->
-           match package.kind with
-           | Virtual -> ()
-           | _ ->
-               ( match package.p_gen_version with
-                 | None -> ()
-                 | Some file ->
-                     (* TODO : we should put info in this file *)
-                     write_file hashes (package.dir // file)
-                       (Printf.sprintf "let version = \"%s\"\n"
-                          (Misc.p_version package)) );
-               ( match Odoc.template_src_index_mld package with
-                 | None -> ()
-                 | Some content ->
-                     write_file hashes (package.dir // "index.mld") content );
+          match package.kind with
+          | Virtual -> ()
+          | _ ->
+            ( match package.p_gen_version with
+            | None -> ()
+            | Some file ->
+              (* TODO : we should put info in this file *)
+              write_file hashes (package.dir // file)
+                (Printf.sprintf "let version = \"%s\"\n"
+                   (Misc.p_version package)) );
+            ( match Odoc.template_src_index_mld package with
+            | None -> ()
+            | Some content ->
+              write_file hashes (package.dir // "index.mld") content );
 
-               let opam_filename = package.name ^ ".opam" in
-               write_file hashes opam_filename
-                 (Opam.opam_of_project Single package))
+            let opam_filename = package.name ^ ".opam" in
+            write_file hashes opam_filename
+              (Opam.opam_of_project Single package))
         p.packages;
 
       EzFile.make_dir ~p:true Globals.drom_dir;
@@ -240,8 +251,12 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
         (Skeleton.known_skeletons ());
 
       EzFile.write_file (Globals.drom_dir // "header.ml") (License.header_ml p);
-      EzFile.write_file (Globals.drom_dir // "header.mll") (License.header_mll p);
-      EzFile.write_file (Globals.drom_dir // "header.mly") (License.header_mly p);
+      EzFile.write_file
+        (Globals.drom_dir // "header.mll")
+        (License.header_mll p);
+      EzFile.write_file
+        (Globals.drom_dir // "header.mly")
+        (License.header_mly p);
 
       EzFile.write_file
         (Globals.drom_dir // "maximum-skip-field.txt")
@@ -250,7 +265,7 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
       (* Most of the files are created using Skeleton *)
       Skeleton.write_files
         (fun file ~create ~skips ~content ~record ~skip ->
-           write_file hashes file ~create ~skips ~record ~skip content)
+          write_file hashes file ~create ~skips ~record ~skip content)
         p;
 
       let p, changed =
@@ -258,12 +273,14 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
           let skip = p.skip @ !skipped in
           Printf.eprintf "skip field promotion: %s\n%!"
             (String.concat " " !skipped);
-          ({ p with skip }, true) )
-        else (p, changed)
+          ({ p with skip }, true)
+        ) else
+          (p, changed)
       in
 
       let skip =
-        not (upgrade || changed || not (Sys.file_exists "drom.toml")) in
+        not (upgrade || changed || not (Sys.file_exists "drom.toml"))
+      in
       let content = Project.to_string p in
       write_file ~skip ~force:upgrade hashes "drom.toml" content;
 
@@ -271,7 +288,6 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
          file that was used to generate all other files, to be able to
          detect need for update. We use '.' for the associated name,
          because it must be an existent file, otherwise `Hashes.save`
-         will discard it.  *)
-      Hashes.update hashes "." ( Hashes.digest_file "drom.toml" )
-    );
+         will discard it. *)
+      Hashes.update hashes "." (Hashes.digest_file "drom.toml"));
   ()

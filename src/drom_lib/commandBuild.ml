@@ -23,27 +23,31 @@ let action ~args () =
       | Library -> ()
       | Virtual -> ()
       | Program ->
-          if Sys.file_exists package.name then Sys.remove package.name;
-          let src = "_build/default" // package.dir // "main.exe" in
-          if Sys.file_exists src then (
-            let s = EzFile.read_file src in
-            EzFile.write_file package.name s;
-            incr n;
-            Unix.chmod package.name 0o755 )
-          else Printf.eprintf "Warning: target %s not found.\n%!" src)
+        if Sys.file_exists package.name then Sys.remove package.name;
+        let src = "_build/default" // package.dir // "main.exe" in
+        if Sys.file_exists src then (
+          let s = EzFile.read_file src in
+          EzFile.write_file package.name s;
+          incr n;
+          Unix.chmod package.name 0o755
+        ) else
+          Printf.eprintf "Warning: target %s not found.\n%!" src)
     p.packages;
   Printf.eprintf "\nBuild OK%s\n%!"
     ( if !n > 0 then
       Printf.sprintf " ( %d command%s generated )" !n
-        (if !n > 1 then "s" else "")
-    else "" )
+        ( if !n > 1 then
+          "s"
+        else
+          "" )
+    else
+      "" )
 
 let cmd =
   let args, specs = Build.build_args () in
-  {
-    cmd_name;
+  { cmd_name;
     cmd_action = (fun () -> action ~args ());
     cmd_args = [] @ specs;
     cmd_man = [];
-    cmd_doc = "Build a project";
+    cmd_doc = "Build a project"
   }

@@ -48,8 +48,10 @@ let name p =
     M.name
   with Not_found ->
     let maybe_file = Globals.config_dir // "licenses" // license // "NAME" in
-    if Sys.file_exists maybe_file then String.trim (EzFile.read_file maybe_file)
-    else license
+    if Sys.file_exists maybe_file then
+      String.trim (EzFile.read_file maybe_file)
+    else
+      license
 
 let c_sep = ("/*", '*', "*/")
 
@@ -75,9 +77,8 @@ let header ?(sep = ml_sep) p =
       if Sys.file_exists maybe_file then
         List.map String.trim (EzFile.read_lines maybe_file |> Array.to_list)
       else
-        [
-          "This file is distributed under the terms of the";
-          Printf.sprintf "%s license." license;
+        [ "This file is distributed under the terms of the";
+          Printf.sprintf "%s license." license
         ]
   in
   let starline = Printf.sprintf "%s%s%s" boc (String.make 72 sec) eoc in
@@ -87,11 +88,10 @@ let header ?(sep = ml_sep) p =
     @ ( match p.copyright with
       | None -> []
       | Some copyright ->
-          [
-            Printf.kprintf line "Copyright (c) %d %s"
-              (Misc.date ()).Unix.tm_year copyright;
-            line "";
-          ] )
+        [ Printf.kprintf line "Copyright (c) %d %s" (Misc.date ()).Unix.tm_year
+            copyright;
+          line ""
+        ] )
     @ [ line "All rights reserved." ]
     @ List.map line lines @ [ line ""; starline; "" ] )
 
@@ -109,7 +109,8 @@ let license p =
     M.license
   with Not_found ->
     let maybe_file = Globals.config_dir // "licenses" // key // "LICENSE.md" in
-    if Sys.file_exists maybe_file then EzFile.read_file maybe_file
+    if Sys.file_exists maybe_file then
+      EzFile.read_file maybe_file
     else (
       Printf.eprintf
         "Warning: unknown license %S. You can fix this problem by either:\n" key;
@@ -118,4 +119,5 @@ let license p =
       Printf.eprintf "* Adding 'licence' to the 'skip' field in 'drom.toml'\n%!";
       Printf.eprintf "* Adding a file %s and NAME\n%!" maybe_file;
 
-      Printf.sprintf "This software is distributed under license %S.\n%!" key )
+      Printf.sprintf "This software is distributed under license %S.\n%!" key
+    )

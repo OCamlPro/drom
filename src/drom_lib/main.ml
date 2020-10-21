@@ -12,8 +12,7 @@ open Ezcmd.TYPES
 
 let main () =
   let commands =
-    [
-      CommandNew.cmd;
+    [ CommandNew.cmd;
       CommandProject.cmd;
       CommandPackage.cmd;
       CommandBuild.cmd;
@@ -30,33 +29,36 @@ let main () =
       CommandPublish.cmd;
       CommandUpdate.cmd;
       CommandTree.cmd;
-      CommandPromote.cmd;
+      CommandPromote.cmd
     ]
   in
-  let common_args = [
-    [ "v"; "verbose" ], Arg.Unit (fun () -> incr Globals.verbosity),
-    Ezcmd.info "Increase verbosity level"
-  ] in
-  let commands = List.map (fun sub ->
-      { sub with cmd_args = common_args @ sub.cmd_args }) commands
+  let common_args =
+    [ ( [ "v"; "verbose" ],
+        Arg.Unit (fun () -> incr Globals.verbosity),
+        Ezcmd.info "Increase verbosity level" )
+    ]
+  in
+  let commands =
+    List.map
+      (fun sub -> { sub with cmd_args = common_args @ sub.cmd_args })
+      commands
   in
   Printexc.record_backtrace true;
   match Sys.argv with
   | [| _; "--version" |] -> Printf.printf "%s\n%!" Version.version
   | [| _; "--about" |] -> Printf.printf "%s\n%!" Globals.about
   | _ -> (
-      (* OpambinMisc.global_log "args: %s"
-         (String.concat " " (Array.to_list Sys.argv)); *)
-      try
-        Ezcmd.main_with_subcommands ~name:Globals.command
-          ~version:Version.version ~doc:"Create and manage an OCaml project"
-          ~man:[] commands
-      with
-      | Error.Error s ->
-          Printf.eprintf "Error: %s\n%!" s;
-          exit 2
-      | exn ->
-          let bt = Printexc.get_backtrace () in
-          let error = Printexc.to_string exn in
-          Printf.eprintf "fatal exception %s\n%s\n%!" error bt;
-          exit 2 )
+    (* OpambinMisc.global_log "args: %s"
+       (String.concat " " (Array.to_list Sys.argv)); *)
+    try
+      Ezcmd.main_with_subcommands ~name:Globals.command ~version:Version.version
+        ~doc:"Create and manage an OCaml project" ~man:[] commands
+    with
+    | Error.Error s ->
+      Printf.eprintf "Error: %s\n%!" s;
+      exit 2
+    | exn ->
+      let bt = Printexc.get_backtrace () in
+      let error = Printexc.to_string exn in
+      Printf.eprintf "fatal exception %s\n%s\n%!" error bt;
+      exit 2 )

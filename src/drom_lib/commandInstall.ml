@@ -13,7 +13,6 @@ open Ezcmd.TYPES
 let cmd_name = "install"
 
 let action ~args () =
-
   if Misc.vendor_packages () <> [] then
     Error.raise "Cannot install project if the project has vendors/ packages";
 
@@ -44,10 +43,9 @@ let action ~args () =
 
 let cmd =
   let args, specs = Build.build_args () in
-  {
-    cmd_name;
+  { cmd_name;
     cmd_action = (fun () -> action ~args ());
     cmd_args = [] @ specs;
     cmd_man = [];
-    cmd_doc = "Build & install the project in the project opam switch";
+    cmd_doc = "Build & install the project in the project opam switch"
   }

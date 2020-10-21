@@ -16,26 +16,23 @@ let config_of_toml filename =
   match EzToml.from_file filename with
   | `Error _ -> Error.raise "Could not parse config file %S" filename
   | `Ok table ->
-      let config_author = EzToml.get_string_option table [ "user"; "author" ] in
-      let config_github_organization =
-        EzToml.get_string_option table [ "user"; "github-organization" ]
-      in
-      let config_license =
-        EzToml.get_string_option table [ "user"; "license" ]
-      in
-      let config_copyright =
-        EzToml.get_string_option table [ "user"; "copyright" ]
-      in
-      let config_opam_repo =
-        EzToml.get_string_option table [ "user"; "opam-repo" ]
-      in
-      {
-        config_author;
-        config_github_organization;
-        config_license;
-        config_copyright;
-        config_opam_repo;
-      }
+    let config_author = EzToml.get_string_option table [ "user"; "author" ] in
+    let config_github_organization =
+      EzToml.get_string_option table [ "user"; "github-organization" ]
+    in
+    let config_license = EzToml.get_string_option table [ "user"; "license" ] in
+    let config_copyright =
+      EzToml.get_string_option table [ "user"; "copyright" ]
+    in
+    let config_opam_repo =
+      EzToml.get_string_option table [ "user"; "opam-repo" ]
+    in
+    { config_author;
+      config_github_organization;
+      config_license;
+      config_copyright;
+      config_opam_repo
+    }
 
 let config_template =
   {|
@@ -59,12 +56,15 @@ let load () =
       if alternate_filename_ok then
         Error.raise "Duplicate configuration in\n- %s\n- %s" filename
           alternate_filename
-      else filename
-    else if alternate_filename_ok then alternate_filename
+      else
+        filename
+    else if alternate_filename_ok then
+      alternate_filename
     else (
       EzFile.make_dir ~p:true Globals.config_dir;
       EzFile.write_file filename config_template;
-      filename )
+      filename
+    )
   in
 
   let config = config_of_toml filename in

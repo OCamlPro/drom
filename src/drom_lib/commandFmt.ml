@@ -17,21 +17,23 @@ let action ~args ~auto_promote () =
   Misc.call
     (Array.of_list
        ( [ "opam"; "exec"; "--"; "dune"; "build"; "@fmt" ]
-       @ if auto_promote then [ "--auto-promote" ] else [] ))
+       @
+       if auto_promote then
+         [ "--auto-promote" ]
+       else
+         [] ))
 
 let cmd =
   let auto_promote = ref false in
   let args, specs = Build.build_args () in
-  {
-    cmd_name;
+  { cmd_name;
     cmd_action = (fun () -> action ~args ~auto_promote:!auto_promote ());
     cmd_args =
-      [
-        ( [ "auto-promote" ],
+      [ ( [ "auto-promote" ],
           Arg.Set auto_promote,
-          Ezcmd.info "Promote detected changes immediately" );
+          Ezcmd.info "Promote detected changes immediately" )
       ]
       @ specs;
     cmd_man = [];
-    cmd_doc = "Format sources with ocamlformat";
+    cmd_doc = "Format sources with ocamlformat"
   }

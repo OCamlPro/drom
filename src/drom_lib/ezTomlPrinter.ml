@@ -7,9 +7,11 @@ let maybe_escape_char formatter ch =
   | '\n' -> Format.pp_print_string formatter "\\n"
   | '\t' -> Format.pp_print_string formatter "\\t"
   | _ ->
-      let code = Char.code ch in
-      if code <= 31 then Format.fprintf formatter "\\u%04x" code
-      else Format.pp_print_char formatter ch
+    let code = Char.code ch in
+    if code <= 31 then
+      Format.fprintf formatter "\\u%04x" code
+    else
+      Format.pp_print_char formatter ch
 
 let print_bool formatter value = Format.pp_print_bool formatter value
 
@@ -18,8 +20,10 @@ let print_int formatter value = Format.pp_print_int formatter value
 let print_float formatter value =
   let fractional = abs_float (value -. floor value) in
   (* Even 1.'s fractional value is not equal to 0. *)
-  if fractional <= epsilon_float then Format.fprintf formatter "%.1f" value
-  else Format.pp_print_float formatter value
+  if fractional <= epsilon_float then
+    Format.fprintf formatter "%.1f" value
+  else
+    Format.pp_print_float formatter value
 
 let print_string formatter value =
   let has_newline = ref false in
@@ -33,22 +37,23 @@ let print_string formatter value =
     | _ -> ()
   done;
   match (!has_newline, !has_doublequote, !has_quote) with
-  | true, false, false | true, false, true ->
-      Format.pp_print_string formatter "\"\"\"\n";
-      String.iter
-        (function
-          | '\n' -> Format.pp_print_char formatter '\n'
-          | c -> maybe_escape_char formatter c)
-        value;
-      Format.pp_print_string formatter "\"\"\""
+  | true, false, false
+  | true, false, true ->
+    Format.pp_print_string formatter "\"\"\"\n";
+    String.iter
+      (function
+        | '\n' -> Format.pp_print_char formatter '\n'
+        | c -> maybe_escape_char formatter c)
+      value;
+    Format.pp_print_string formatter "\"\"\""
   | true, true, false ->
-      Format.pp_print_string formatter "'''\n";
-      Format.pp_print_string formatter value;
-      Format.pp_print_string formatter "'''"
+    Format.pp_print_string formatter "'''\n";
+    Format.pp_print_string formatter value;
+    Format.pp_print_string formatter "'''"
   | _ ->
-      Format.pp_print_char formatter '"';
-      String.iter (maybe_escape_char formatter) value;
-      Format.pp_print_char formatter '"'
+    Format.pp_print_char formatter '"';
+    String.iter (maybe_escape_char formatter) value;
+    Format.pp_print_char formatter '"'
 
 let print_date fmt d = ISO8601.Permissive.pp_datetimezone fmt (d, 0.)
 
@@ -58,19 +63,21 @@ let pp_print_list ~pp_sep print_item_func formatter values =
   | [] -> ()
   | [ e ] -> print_item_func formatter e
   | e :: l ->
-      print_item_func formatter e;
-      List.iter
-        (fun v ->
-          pp_sep formatter ();
-          print_item_func formatter v)
-        l
+    print_item_func formatter e;
+    List.iter
+      (fun v ->
+        pp_sep formatter ();
+        print_item_func formatter v)
+      l
 
 let is_table _ = function
   | TTable _ -> true
   | TArray (NodeTable _) -> true
   | _ -> false
 
-let is_array_of_table _ = function TArray (NodeTable _) -> true | _ -> false
+let is_array_of_table _ = function
+  | TArray (NodeTable _) -> true
+  | _ -> false
 
 let rec print_array formatter toml_array sections =
   let print_list values ~f:print_item_func =
@@ -86,22 +93,22 @@ let rec print_array formatter toml_array sections =
   | NodeString values -> print_list values ~f:print_string
   | NodeDate values -> print_list values ~f:print_date
   | NodeArray values ->
-      print_list values ~f:(fun formatter arr ->
-          print_array formatter arr sections)
+    print_list values ~f:(fun formatter arr ->
+        print_array formatter arr sections)
   | NodeTable values ->
-      List.iter
-        (fun tbl ->
-          (*
-           * Don't print the intermediate sections, if all values are arrays of tables,
-           * print [[x.y.z]] as appropriate instead of [[x]][[y]][[z]]
-           *)
-          if not (TomlTypes.Table.for_all is_array_of_table tbl) then
-            Format.fprintf formatter "\n[[%s]]\n"
-              ( sections
-              |> List.map TomlTypes.Table.Key.to_string
-              |> String.concat "." );
-          print_table formatter tbl sections)
-        values
+    List.iter
+      (fun tbl ->
+        (*
+         * Don't print the intermediate sections, if all values are arrays of tables,
+         * print [[x.y.z]] as appropriate instead of [[x]][[y]][[z]]
+         *)
+        if not (TomlTypes.Table.for_all is_array_of_table tbl) then
+          Format.fprintf formatter "\n[[%s]]\n"
+            ( sections
+            |> List.map TomlTypes.Table.Key.to_string
+            |> String.concat "." );
+        print_table formatter tbl sections)
+      values
   | NodeEmpty -> Format.pp_print_string formatter "[]"
 
 and print_table formatter toml_table sections =
@@ -133,23 +140,23 @@ and print_value_with_key formatter key toml_value sections =
   let sections', add_linebreak =
     match toml_value with
     | TTable value ->
-        let sections_with_key = sections @ [ key ] in
-        (*
-         * Don't print the intermediate sections, if all values are tables,
-         * print [x.y.z] as appropriate instead of [x][y][z]
-         *)
-        if not (TomlTypes.Table.for_all is_table value) then
-          Format.fprintf formatter "[%s]\n"
-            ( sections_with_key
-            |> List.map TomlTypes.Table.Key.to_string
-            |> String.concat "." );
-        (sections_with_key, false)
+      let sections_with_key = sections @ [ key ] in
+      (*
+       * Don't print the intermediate sections, if all values are tables,
+       * print [x.y.z] as appropriate instead of [x][y][z]
+       *)
+      if not (TomlTypes.Table.for_all is_table value) then
+        Format.fprintf formatter "[%s]\n"
+          ( sections_with_key
+          |> List.map TomlTypes.Table.Key.to_string
+          |> String.concat "." );
+      (sections_with_key, false)
     | TArray (NodeTable _tables) ->
-        let sections_with_key = sections @ [ key ] in
-        (sections_with_key, false)
+      let sections_with_key = sections @ [ key ] in
+      (sections_with_key, false)
     | _ ->
-        Format.fprintf formatter "%s = " (TomlTypes.Table.Key.to_string key);
-        (sections, true)
+      Format.fprintf formatter "%s = " (TomlTypes.Table.Key.to_string key);
+      (sections, true)
   in
   print_value formatter toml_value sections';
   if add_linebreak then Format.pp_print_char formatter '\n'
@@ -161,12 +168,12 @@ let value formatter toml_value =
 let array formatter toml_array =
   match toml_array with
   | NodeTable _t ->
-      (* We need the parent section for printing an array of table correctly,
-         otheriwise the header contains [[]] *)
-      invalid_arg "Cannot format array of tables, use Toml.Printer.table"
+    (* We need the parent section for printing an array of table correctly,
+       otheriwise the header contains [[]] *)
+    invalid_arg "Cannot format array of tables, use Toml.Printer.table"
   | _ ->
-      print_array formatter toml_array [];
-      Format.pp_print_flush formatter ()
+    print_array formatter toml_array [];
+    Format.pp_print_flush formatter ()
 
 let table formatter toml_table =
   print_table formatter toml_table [];

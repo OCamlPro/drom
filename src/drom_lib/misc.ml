@@ -19,14 +19,16 @@ module EzString = struct
       let prefix_len = String.length prefix in
       let len = String.length s in
       Some (String.sub s prefix_len (len - prefix_len))
-    else None
+    else
+      None
 
   let chop_suffix s ~suffix =
     if EzString.ends_with s ~suffix then
       let suffix_len = String.length suffix in
       let len = String.length s in
       Some (String.sub s 0 (len - suffix_len))
-    else None
+    else
+      None
 end
 
 let verbose i = !Globals.verbosity >= i
@@ -39,15 +41,15 @@ let call ?(stdout = Unix.stdout) args =
     match Unix.waitpid [] pid with
     | exception Unix.Unix_error (EINTR, _, _) -> iter ()
     | _pid, status -> (
-        match status with
-        | WEXITED 0 -> ()
-        | _ ->
-            Error.raise "Command '%s' exited with error code %s"
-              (String.concat " " (Array.to_list args))
-              ( match status with
-              | WEXITED n -> string_of_int n
-              | WSIGNALED n -> Printf.sprintf "SIGNAL %d" n
-              | WSTOPPED n -> Printf.sprintf "STOPPED %d" n ) )
+      match status with
+      | WEXITED 0 -> ()
+      | _ ->
+        Error.raise "Command '%s' exited with error code %s"
+          (String.concat " " (Array.to_list args))
+          ( match status with
+          | WEXITED n -> string_of_int n
+          | WSIGNALED n -> Printf.sprintf "SIGNAL %d" n
+          | WSTOPPED n -> Printf.sprintf "STOPPED %d" n ) )
   in
   iter ()
 
@@ -59,11 +61,11 @@ let call_get_fst_line cmd =
     match Unix.close_process_in chan with
     | WEXITED 0 -> Some output
     | _err ->
-        Error.raise "Command '%s' exited with error code %s" cmd
-          ( match _err with
-          | WEXITED n -> string_of_int n
-          | WSIGNALED n -> Printf.sprintf "SIGNAL %d" n
-          | WSTOPPED n -> Printf.sprintf "STOPPED %d" n )
+      Error.raise "Command '%s' exited with error code %s" cmd
+        ( match _err with
+        | WEXITED n -> string_of_int n
+        | WSIGNALED n -> Printf.sprintf "SIGNAL %d" n
+        | WSTOPPED n -> Printf.sprintf "STOPPED %d" n )
   with
   | End_of_file -> None
   | e -> raise e
@@ -80,47 +82,48 @@ let homepage p =
   match p.homepage with
   | Some s -> Some s
   | None -> (
-      match p.github_organization with
-      | Some organization ->
-          Some
-            (Printf.sprintf "https://%s.github.io/%s" organization
-               p.package.name)
-      | None -> None )
+    match p.github_organization with
+    | Some organization ->
+      Some
+        (Printf.sprintf "https://%s.github.io/%s" organization p.package.name)
+    | None -> None )
 
 let doc_api p =
   match p.doc_api with
   | Some s -> Some s
   | None -> (
-      match p.github_organization with
-      | Some organization ->
-          Some
-            (Printf.sprintf "https://%s.github.io/%s/doc" organization
-               p.package.name)
-      | None -> None )
+    match p.github_organization with
+    | Some organization ->
+      Some
+        (Printf.sprintf "https://%s.github.io/%s/doc" organization
+           p.package.name)
+    | None -> None )
 
 let doc_gen p =
   match p.doc_gen with
   | Some s -> Some s
   | None -> (
-      match
-        match p.sphinx_target with
-        | Some dir -> EzString.chop_prefix dir ~prefix:"docs"
-        | None -> Some "/sphinx"
-      with
-      | None -> None
-      | Some subdir -> (
-          match p.github_organization with
-          | Some organization ->
-              Some
-                (Printf.sprintf "https://%s.github.io/%s%s" organization
-                   p.package.name subdir)
-          | None -> None ) )
+    match
+      match p.sphinx_target with
+      | Some dir -> EzString.chop_prefix dir ~prefix:"docs"
+      | None -> Some "/sphinx"
+    with
+    | None -> None
+    | Some subdir -> (
+      match p.github_organization with
+      | Some organization ->
+        Some
+          (Printf.sprintf "https://%s.github.io/%s%s" organization
+             p.package.name subdir)
+      | None -> None ) )
 
 let p_dependencies package =
   package.p_dependencies @ package.project.dependencies
 
 let p_mode package =
-  match package.p_mode with Some deps -> deps | None -> package.project.mode
+  match package.p_mode with
+  | Some deps -> deps
+  | None -> package.project.mode
 
 let p_pack_modules package =
   match package.p_pack_modules with
@@ -153,32 +156,31 @@ let wget ~url ~output =
   let dirname = Filename.dirname output in
   if not (Sys.file_exists dirname) then EzFile.make_dir ~p:true dirname;
   call
-    [|
-      "curl";
-      "--write-out";
-      "%{http_code}\\n";
-      "--retry";
-      "3";
-      "--retry-delay";
-      "2";
-      "--user-agent";
-      "opam-bin/2.0.5";
-      "-L";
-      "-o";
-      output;
-      url;
+    [| "curl";
+       "--write-out";
+       "%{http_code}\\n";
+       "--retry";
+       "3";
+       "--retry-delay";
+       "2";
+       "--user-agent";
+       "opam-bin/2.0.5";
+       "-L";
+       "-o";
+       output;
+       url
     |]
 
 let bug_reports p =
   match p.bug_reports with
   | Some s -> Some s
   | None -> (
-      match p.github_organization with
-      | Some organization ->
-          Some
-            (Printf.sprintf "https://github.com/%s/%s/issues" organization
-               p.package.name)
-      | None -> None )
+    match p.github_organization with
+    | Some organization ->
+      Some
+        (Printf.sprintf "https://github.com/%s/%s/issues" organization
+           p.package.name)
+    | None -> None )
 
 let subst s f =
   let b = Buffer.create (2 * String.length s) in
@@ -188,7 +190,9 @@ let subst s f =
 let list_opam_packages dir =
   let packages = ref [] in
   let files =
-    match Sys.readdir dir with exception _ -> [||] | files -> files
+    match Sys.readdir dir with
+    | exception _ -> [||]
+    | files -> files
   in
   Array.iter
     (fun file ->
@@ -201,8 +205,8 @@ let list_opam_packages dir =
 let semantic_version version =
   match EzString.split version '.' with
   | [ major; minor; fix ] -> (
-      try Some (int_of_string major, int_of_string minor, int_of_string fix)
-      with Not_found -> None )
+    try Some (int_of_string major, int_of_string minor, int_of_string fix)
+    with Not_found -> None )
   | _ -> None
 
 let underscorify s =
@@ -210,7 +214,10 @@ let underscorify s =
   for i = 1 to String.length s - 2 do
     let c = s.[i] in
     match c with
-    | 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' -> ()
+    | 'a' .. 'z'
+    | 'A' .. 'Z'
+    | '0' .. '9' ->
+      ()
     | _ -> Bytes.set b i '_'
   done;
   Bytes.to_string b
@@ -239,12 +246,11 @@ let deps_package p =
   let p_tools =
     List.filter (fun (name, _d) -> not (StringSet.mem name !packages)) p_tools
   in
-  {
-    p.package with
+  { p.package with
     name = p.package.name ^ "-deps";
     p_synopsis = Some (p.synopsis ^ " (all deps)");
     p_dependencies;
-    p_tools;
+    p_tools
   }
 
 let modules package =
@@ -259,12 +265,12 @@ let modules package =
       match EzString.chop_suffix file ~suffix:".ml" with
       | Some file -> add_module file
       | None -> (
-          match EzString.chop_suffix file ~suffix:".mll" with
+        match EzString.chop_suffix file ~suffix:".mll" with
+        | Some file -> add_module file
+        | None -> (
+          match EzString.chop_suffix file ~suffix:".mly" with
           | Some file -> add_module file
-          | None -> (
-              match EzString.chop_suffix file ~suffix:".mly" with
-              | Some file -> add_module file
-              | None -> () ) ))
+          | None -> () ) ))
     files;
   StringSet.to_list !set
 
@@ -277,12 +283,11 @@ let dev_repo p =
   match p.dev_repo with
   | Some s -> Some s
   | None -> (
-      match p.github_organization with
-      | Some organization ->
-          Some
-            (Printf.sprintf "https://github.com/%s/%s" organization
-               p.package.name)
-      | None -> None )
+    match p.github_organization with
+    | Some organization ->
+      Some
+        (Printf.sprintf "https://github.com/%s/%s" organization p.package.name)
+    | None -> None )
 
 let vendor_packages () =
   let vendors_dir = "vendors" in
@@ -291,9 +296,15 @@ let vendor_packages () =
          let dir = vendors_dir // dir in
          (try Sys.readdir dir with Not_found -> [||])
          |> Array.map (fun file ->
-                if Filename.check_suffix file ".opam" then Some (dir // file)
-                else None)
+                if Filename.check_suffix file ".opam" then
+                  Some (dir // file)
+                else
+                  None)
          |> Array.to_list
-         |> List.filter (function None -> false | Some _file -> true)
-         |> List.map (function None -> assert false | Some file -> file))
+         |> List.filter (function
+              | None -> false
+              | Some _file -> true)
+         |> List.map (function
+              | None -> assert false
+              | Some file -> file))
   |> Array.to_list |> List.flatten

@@ -17,22 +17,35 @@ let middle_indent = "\226\148\160\226\148\128\226\148\128"
 let print_tree indent tree =
   let rec iter indent ~last = function
     | Branch (s, branches) -> (
-        match branches with
-        | [] ->
-            Printf.printf "%s%s%s\n" indent
-              (if last then last_indent else middle_indent)
-              s
-        | branches ->
-            Printf.printf "%s%s%s\n" indent
-              (if last then last_indent else middle_indent)
-              s;
-            let indent = indent ^ if last then "   " else "\226\148\160  " in
-            iter_branches indent branches )
+      match branches with
+      | [] ->
+        Printf.printf "%s%s%s\n" indent
+          ( if last then
+            last_indent
+          else
+            middle_indent )
+          s
+      | branches ->
+        Printf.printf "%s%s%s\n" indent
+          ( if last then
+            last_indent
+          else
+            middle_indent )
+          s;
+        let indent =
+          indent
+          ^
+          if last then
+            "   "
+          else
+            "\226\148\160  "
+        in
+        iter_branches indent branches )
   and iter_branches indent = function
     | [] -> assert false
     | [ branch ] -> iter indent ~last:true branch
     | branch :: (_ :: _ as branches) ->
-        iter indent ~last:true branch;
-        iter_branches indent branches
+      iter indent ~last:true branch;
+      iter_branches indent branches
   in
   iter indent ~last:true tree

@@ -13,38 +13,38 @@ open Ezcmd.TYPES
 let cmd_name = "run"
 
 let action ~args ~cmd ~package =
-  decr Globals.verbosity; (* By default, `drom run` should be quiet *)
+  decr Globals.verbosity;
+  (* By default, `drom run` should be quiet *)
   let p = Build.build ~args () in
   let cmd = !cmd in
   let cmd =
     match package with
     | Some package -> package :: cmd
-    | None ->
-        match p.package.kind with
-        | Library -> cmd
-        | Program -> p.package.name :: cmd
-        | Virtual -> cmd
+    | None -> (
+      match p.package.kind with
+      | Library -> cmd
+      | Program -> p.package.name :: cmd
+      | Virtual -> cmd )
   in
   Misc.call
     (Array.of_list
-       ( "opam" :: "exec" :: "--" :: "dune" :: "exec" :: "--" :: cmd ))
+       ("opam" :: "exec" :: "--" :: "dune" :: "exec" :: "--" :: cmd))
 
 let cmd =
   let cmd = ref [] in
   let package = ref None in
   let args, specs = Build.build_args () in
-  {
-    cmd_name;
+  { cmd_name;
     cmd_action = (fun () -> action ~args ~cmd ~package:!package);
     cmd_args =
-      [
-        ( ["p"], Arg.String (fun s -> package := Some s),
+      [ ( [ "p" ],
+          Arg.String (fun s -> package := Some s),
           Ezcmd.info "Package to run" );
         ( [],
           Arg.Anons (fun list -> cmd := list),
-          Ezcmd.info "Arguments to the command" );
+          Ezcmd.info "Arguments to the command" )
       ]
       @ specs;
     cmd_man = [];
-    cmd_doc = "Execute the project";
+    cmd_doc = "Execute the project"
   }

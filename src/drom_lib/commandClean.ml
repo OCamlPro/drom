@@ -18,19 +18,18 @@ let action ~opam =
   ignore (Sys.command "rm -rf _build");
   if !opam then (
     ignore (Sys.command "rm -rf _drom");
-    ignore (Sys.command "rm -rf _opam") )
+    ignore (Sys.command "rm -rf _opam")
+  )
 
 let cmd =
   let opam = ref false in
-  {
-    cmd_name;
+  { cmd_name;
     cmd_action = (fun () -> action ~opam);
     cmd_args =
-      [
-        ( [ "opam" ],
+      [ ( [ "opam" ],
           Arg.Set opam,
-          Ezcmd.info "Also remove the local opam switch" );
+          Ezcmd.info "Also remove the local opam switch" )
       ];
     cmd_man = [];
-    cmd_doc = "Clean the project from build files";
+    cmd_doc = "Clean the project from build files"
   }
