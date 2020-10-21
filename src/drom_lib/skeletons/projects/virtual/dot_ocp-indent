@@ -1,4 +1,4 @@
-![skip:ocpindent]![file:.ocp-indent]!{global-ocpindent}
+![skip:ocpindent]![file:.ocp-indent]
 # -*- conf -*-
 # This is an example configuration file for ocp-indent
 #
