@@ -16,7 +16,7 @@ let subst ?(more = fun v -> Printf.sprintf "${%s}" v) package s =
   Buffer.add_substitute b
     (function
       | "name" -> package.name
-      | "pack" -> String.capitalize (Misc.library_name package)
+      | "pack" -> Misc.library_module package
       | "synopsis" -> Misc.p_synopsis package
       | "description" -> Misc.p_description package
       | "modules" -> String.concat " " (Misc.modules package)

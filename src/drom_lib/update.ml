@@ -12,65 +12,6 @@ open Types
 open EzFile.OP
 open EzCompat
 
-let library_name p =
-  match p.p_pack with
-  | Some name -> String.uncapitalize_ascii name
-  | None ->
-    let s = Bytes.of_string p.name in
-    for i = 1 to String.length p.name - 2 do
-      let c = p.name.[i] in
-      match c with
-      | 'a' .. 'z'
-      | '0' .. '9' ->
-        ()
-      | _ -> Bytes.set s i '_'
-    done;
-    Bytes.to_string s
-
-let library_module p =
-  match p.p_pack with
-  | Some name -> name
-  | None ->
-    let s = Bytes.of_string p.name in
-    Bytes.set s 0 (Char.uppercase p.name.[0]);
-    for i = 1 to String.length p.name - 2 do
-      let c = p.name.[i] in
-      match c with
-      | 'a' .. 'z'
-      | '0' .. '9' ->
-        ()
-      | _ -> Bytes.set s i '_'
-    done;
-    Bytes.to_string s
-
-(*
-let template_src_main_ml ~header_ml p =
-  match p.kind with
-  | Virtual -> assert false
-  | Library ->
-      Printf.sprintf
-        {|%s
-(* If you delete or rename this file, you should add '%s/main.ml' to the 'skip' field in "drom.toml" *)
-
-let main () = Printf.printf "Hello world!\n%!"
-|}
-        header_ml p.dir
-  | Program -> (
-      match p.p_driver_only with
-      | Some library_module ->
-          Printf.sprintf {|%s
-let () = %s ()
-|} header_ml library_module
-      | _ ->
-          Printf.sprintf
-            {|%s
-(* If you rename this file, you should add '%s/main.ml' to the 'skip' field in "drom.toml" *)
-
-let () = Printf.printf "Hello world!\n%!"
-|}
-            header_ml p.dir )
-      *)
-
 exception Skip
 
 let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)

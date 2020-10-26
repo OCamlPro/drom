@@ -15,6 +15,7 @@ version = "0.1.0"
 windows-ci = false
 
 # keys that you could also define:
+# build-profile = "...build-profile..."
 # sphinx-target = "...sphinx-target..."
 # archive = "...archive..."
 # dev-repo = "...dev-repo..."
@@ -57,7 +58,6 @@ skip-dirs = ["drom-test"]
 
 [[package]]
 dir = "src/drom"
-driver-only = "Drom_lib.Main.main"
 kind = "program"
 name = "drom"
 skeleton = "driver"

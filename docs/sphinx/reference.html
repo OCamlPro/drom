@@ -7,9 +7,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Project Description &mdash; drom z-2020-10-14-LGPL2-license-SPDX
- (e63b4ed
-) (2020/10/17 12:18) documentation</title>
+  <title>Project Description &mdash; drom master
+ (07c58aa
+) (2020/10/26 17:21) documentation</title>
   
 
   
@@ -65,8 +65,8 @@
             
             
               <div class="version">
-                z-2020-10-14-LGPL2-license-SPDX
- (e63b4ed
+                master
+ (07c58aa
 )
               </div>
             
@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#the-project-table">The <code class="code docutils literal notranslate"><span class="pre">[project]</span></code> table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-dependencies-table">The <code class="code docutils literal notranslate"><span class="pre">[dependencies]</span></code> table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-tools-table">The <code class="code docutils literal notranslate"><span class="pre">[tools]</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-package-table">The <code class="code docutils literal notranslate"><span class="pre">[package]</span></code> table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-drom-table">The <code class="code docutils literal notranslate"><span class="pre">[drom]</span></code> table</a></li>
 </ul>
 </li>
@@ -199,18 +200,21 @@ each package in the project.</p>
 <p>To get a feeling of what is in this file, we can look at the one used for
 <code class="code docutils literal notranslate"><span class="pre">drom</span></code> itself:</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">[</span><span class="n">project</span><span class="o">]</span>
+<span class="n">drom</span><span class="o">-</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+
+<span class="o">[</span><span class="n">project</span><span class="o">]</span>
 <span class="n">authors</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;Fabrice Le Fessant &lt;fabrice.le_fessant@origin-labs.com&gt;&quot;</span><span class="o">]</span>
 <span class="n">copyright</span> <span class="o">=</span> <span class="s2">&quot;OCamlPro SAS &amp; Origin Labs SAS&quot;</span>
-<span class="n">dir</span> <span class="o">=</span> <span class="s2">&quot;src&quot;</span>
 <span class="n">edition</span> <span class="o">=</span> <span class="s2">&quot;4.10.0&quot;</span>
 <span class="n">github</span><span class="o">-</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;ocamlpro&quot;</span>
-<span class="n">kind</span> <span class="o">=</span> <span class="s2">&quot;program&quot;</span>
+<span class="n">skeleton</span> <span class="o">=</span> <span class="s2">&quot;program&quot;</span>
 <span class="n">license</span> <span class="o">=</span> <span class="s2">&quot;LGPL2&quot;</span>
-<span class="n">min</span><span class="o">-</span><span class="n">edition</span> <span class="o">=</span> <span class="s2">&quot;4.10.0&quot;</span>
+<span class="n">min</span><span class="o">-</span><span class="n">edition</span> <span class="o">=</span> <span class="s2">&quot;4.07.0&quot;</span>
 <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;binary&quot;</span>
 <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;drom&quot;</span>
 <span class="n">synopsis</span> <span class="o">=</span> <span class="s2">&quot;The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience&quot;</span>
 <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">windows</span><span class="o">-</span><span class="n">ci</span> <span class="o">=</span> <span class="bp">false</span>
 
 <span class="o">#</span> <span class="n">keys</span> <span class="n">that</span> <span class="n">you</span> <span class="n">could</span> <span class="n">also</span> <span class="n">define</span><span class="o">:</span>
 <span class="o">#</span> <span class="n">archive</span> <span class="o">=</span> <span class="s2">&quot;...archive...&quot;</span>
@@ -241,8 +245,27 @@ each package in the project.</p>
 <span class="o">[</span><span class="n">tools</span><span class="o">]</span>
 <span class="n">dune</span> <span class="o">=</span> <span class="s2">&quot;2.6.0&quot;</span>
 
-<span class="o">[</span><span class="n">project</span><span class="o">]</span>
+<span class="o">[[</span><span class="n">package</span><span class="o">]]</span>
+<span class="n">dir</span> <span class="o">=</span> <span class="s2">&quot;src/drom&quot;</span>
+<span class="n">driver</span><span class="o">-</span><span class="n">only</span> <span class="o">=</span> <span class="s2">&quot;Drom_lib.Main.main&quot;</span>
+<span class="n">kind</span> <span class="o">=</span> <span class="s2">&quot;program&quot;</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;drom&quot;</span>
+<span class="n">skeleton</span> <span class="o">=</span> <span class="s2">&quot;driver&quot;</span>
+<span class="o">[</span><span class="n">package</span><span class="o">.</span><span class="n">dependencies</span><span class="o">]</span>
+<span class="n">drom_lib</span> <span class="o">=</span> <span class="s2">&quot;version&quot;</span>
+
+<span class="o">[[</span><span class="n">package</span><span class="o">]]</span>
+<span class="n">dir</span> <span class="o">=</span> <span class="s2">&quot;src/drom_lib&quot;</span>
+<span class="n">gen</span><span class="o">-</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;version.ml&quot;</span>
+<span class="n">kind</span> <span class="o">=</span> <span class="s2">&quot;library&quot;</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;drom_lib&quot;</span>
 <span class="n">pack</span><span class="o">-</span><span class="n">modules</span> <span class="o">=</span> <span class="bp">true</span>
+<span class="o">[</span><span class="n">package</span><span class="o">.</span><span class="n">dependencies</span><span class="o">]</span>
+<span class="n">ez_cmdliner</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">ez_config</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">ez_file</span> <span class="o">=</span> <span class="s2">&quot;0.2.0&quot;</span>
+<span class="n">opam</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;2.0.0&quot;</span>
+<span class="n">toml</span> <span class="o">=</span> <span class="s2">&quot;5.0.0&quot;</span>
 </pre></div>
 </div>
 <div class="section" id="the-project-table">
@@ -257,14 +280,12 @@ specified in sub-packages.</p>
 <li><code class="code docutils literal notranslate"><span class="pre">authors</span></code>: the list of authors of the project, to display in
 opam files and in the documentation</li>
 <li><code class="code docutils literal notranslate"><span class="pre">copyright</span></code>: the name of the copyright holder for the project</li>
-<li><code class="code docutils literal notranslate"><span class="pre">dir</span></code>: the directory containing the source files of the main
-package (<code class="code docutils literal notranslate"><span class="pre">&quot;src&quot;</span></code> by default)</li>
 <li><code class="code docutils literal notranslate"><span class="pre">edition</span></code>: the version of OCaml to be used by default, when
 building locally or on the CI</li>
 <li><code class="code docutils literal notranslate"><span class="pre">github-organization</span></code>: the organization owning the project on Github.
 This field is used to compute the URLs for the documentation.</li>
-<li><code class="code docutils literal notranslate"><span class="pre">kind</span></code>: specify whether the main package is a program
-(<code class="code docutils literal notranslate"><span class="pre">&quot;program&quot;</span></code>) or a library (<code class="code docutils literal notranslate"><span class="pre">&quot;library&quot;</span></code>).</li>
+<li><code class="code docutils literal notranslate"><span class="pre">kind</span></code>: specify whether packages should be programs
+(<code class="code docutils literal notranslate"><span class="pre">&quot;program&quot;</span></code>) or libraries (<code class="code docutils literal notranslate"><span class="pre">&quot;library&quot;</span></code>) by default.</li>
 <li><code class="code docutils literal notranslate"><span class="pre">license</span></code>: the identifier of the license. See the section
 about licenses. <code class="code docutils literal notranslate"><span class="pre">drom</span></code> knows a few license and may
 automatically generate the corresponding files.</li>
@@ -281,8 +302,6 @@ letter and not end with a dot.</li>
 <li><code class="code docutils literal notranslate"><span class="pre">pack-modules</span></code>: a bool indicating whether modules should be
 packed. <code class="code docutils literal notranslate"><span class="pre">true</span></code> by default. It corresponds to the
 <code class="code docutils literal notranslate"><span class="pre">wrapped</span></code> field of <code class="code docutils literal notranslate"><span class="pre">dune</span></code>.</li>
-<li><code class="code docutils literal notranslate"><span class="pre">pack</span></code>: the name of the module to use, instead of the value of
-<code class="code docutils literal notranslate"><span class="pre">name</span></code>, when <code class="code docutils literal notranslate"><span class="pre">pack-modules</span></code> is <code class="code docutils literal notranslate"><span class="pre">true</span></code>.</li>
 </ul>
 <p>Some fields are computed automatically if <code class="code docutils literal notranslate"><span class="pre">github-organization</span></code>
 is specified, but can be overriden:</p>
@@ -348,6 +367,57 @@ library <code class="code docutils literal notranslate"><span class="pre">ez_con
 <h3>The <code class="code docutils literal notranslate"><span class="pre">[tools]</span></code> table<a class="headerlink" href="#the-tools-table" title="Permalink to this headline">¶</a></h3>
 <p>This section contains dependencies that will appear in the
 <code class="code docutils literal notranslate"><span class="pre">opam</span></code> files, but not as libraries in the <code class="code docutils literal notranslate"><span class="pre">dune</span></code> files.</p>
+</div>
+<div class="section" id="the-package-table">
+<h3>The <code class="code docutils literal notranslate"><span class="pre">[package]</span></code> table<a class="headerlink" href="#the-package-table" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="code docutils literal notranslate"><span class="pre">package</span></code> table has one entry per package (library or
+program) included in the project. One of the packages must have the
+same name as the project.</p>
+<p>The following fields are allowed in a package definition:</p>
+<ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">dependencies</span></code>: the <code class="code docutils literal notranslate"><span class="pre">opam</span></code> <em>library</em> dependencies of
+this package</li>
+<li><code class="code docutils literal notranslate"><span class="pre">dir</span></code>: the directory of the package sources (defaults to
+<code class="code docutils literal notranslate"><span class="pre">src/${name}/</span></code></li>
+<li><code class="code docutils literal notranslate"><span class="pre">generators</span></code>: the list of program for which specific
+<code class="code docutils literal notranslate"><span class="pre">dune</span></code> targets should be generated. Defaults to an empty list,
+but the project can define its own list (<code class="code docutils literal notranslate"><span class="pre">[</span> <span class="pre">&quot;ocamllex&quot;</span> <span class="pre">;</span>
+<span class="pre">&quot;ocamlyacc&quot;</span> <span class="pre">]</span></code> by default). The generator <code class="code docutils literal notranslate"><span class="pre">menhir</span></code> is also available.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">gen-version</span></code>: whether a <code class="code docutils literal notranslate"><span class="pre">version.ml</span></code> file should be
+created</li>
+<li><code class="code docutils literal notranslate"><span class="pre">kind</span></code>: the kind of the package (<code class="code docutils literal notranslate"><span class="pre">library</span></code> or
+<code class="code docutils literal notranslate"><span class="pre">program</span></code>)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">name</span></code>: the name of the package (under which it will be
+published in <code class="code docutils literal notranslate"><span class="pre">opam</span></code></li>
+<li><code class="code docutils literal notranslate"><span class="pre">pack</span></code>: if modules should be wrapped, the name of the wrapper
+module (defaults to the capitalized name of the library otherwise)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">skeleton</span></code>: the skeleton to be used to generate the files of this
+project (defaults to <code class="code docutils literal notranslate"><span class="pre">&quot;program&quot;</span></code>). See the section on skeletons
+for more info.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">tools</span></code>: the <code class="code docutils literal notranslate"><span class="pre">opam</span></code> <em>tools</em> dependencies of this package</li>
+</ul>
+<p>The following fields are also allowed, and default to the project ones
+if not specified:</p>
+<ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">authors</span></code>: the authors of the package</li>
+<li><code class="code docutils literal notranslate"><span class="pre">description</span></code>: the full description of the package</li>
+<li><code class="code docutils literal notranslate"><span class="pre">mode</span></code>: the mode of the package (<code class="code docutils literal notranslate"><span class="pre">binary</span></code> or
+<code class="code docutils literal notranslate"><span class="pre">javascript</span></code>)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">pack-modules</span></code>: whether modules should be wrapped or not</li>
+<li><code class="code docutils literal notranslate"><span class="pre">synopsis</span></code>: the one-line description of the package</li>
+<li><code class="code docutils literal notranslate"><span class="pre">version</span></code>: the version of this package</li>
+</ul>
+<p>Finally, there is a table <code class="code docutils literal notranslate"><span class="pre">[package.fields]</span></code> within a
+package. Currently, the following fields can be used by skeletons:</p>
+<ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">dune-libraries</span></code>: extra libraries that can be added in the
+<code class="code docutils literal notranslate"><span class="pre">libraries</span></code> field of <code class="code docutils literal notranslate"><span class="pre">dune</span></code>. Typically for internal libraries.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">dune-stanzas</span></code>: extra <code class="code docutils literal notranslate"><span class="pre">dune</span></code> stanzas in the description</li>
+<li><code class="code docutils literal notranslate"><span class="pre">dune-trailer</span></code>: a string that is added at the end of the
+<code class="code docutils literal notranslate"><span class="pre">dune</span></code> file.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">opam-trailer</span></code>: a string that is added at the end of the
+<code class="code docutils literal notranslate"><span class="pre">opam</span></code> file for the package.</li>
+</ul>
 </div>
 <div class="section" id="the-drom-table">
 <h3>The <code class="code docutils literal notranslate"><span class="pre">[drom]</span></code> table<a class="headerlink" href="#the-drom-table" title="Permalink to this headline">¶</a></h3>

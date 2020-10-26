@@ -16,7 +16,3 @@ val update_files :
   ?promote_skip:bool ->
   Types.project ->
   unit
-
-val library_name : Types.package -> string
-
-val library_module : Types.package -> string

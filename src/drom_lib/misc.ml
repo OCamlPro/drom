@@ -308,3 +308,9 @@ let vendor_packages () =
               | None -> assert false
               | Some file -> file))
   |> Array.to_list |> List.flatten
+
+let library_module p =
+  match p.p_pack with
+  | Some name -> name
+  | None ->
+      String.capitalize (underscorify p.name)
