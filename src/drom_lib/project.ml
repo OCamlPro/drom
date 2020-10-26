@@ -119,8 +119,8 @@ let string_of_versions versions =
          | Lt version -> Printf.sprintf "<%s" version
          | Le version -> Printf.sprintf "<=%s" version
          | Eq version -> Printf.sprintf "=%s" version
-         | Ge version -> Printf.sprintf ">%s" version
-         | Gt version -> Printf.sprintf ">=%s" version)
+         | Ge version -> Printf.sprintf ">=%s" version
+         | Gt version -> Printf.sprintf ">%s" version)
        versions)
 
 let versions_of_string versions =
