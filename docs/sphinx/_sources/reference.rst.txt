@@ -19,18 +19,21 @@ To get a feeling of what is in this file, we can look at the one used for
 :code:`drom` itself::
   
   [project]
+  drom-version = "0.1.0"
+
+  [project]
   authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
   copyright = "OCamlPro SAS & Origin Labs SAS"
-  dir = "src"
   edition = "4.10.0"
   github-organization = "ocamlpro"
-  kind = "program"
+  skeleton = "program"
   license = "LGPL2"
-  min-edition = "4.10.0"
+  min-edition = "4.07.0"
   mode = "binary"
   name = "drom"
   synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
   version = "0.1.0"
+  windows-ci = false
   
   # keys that you could also define:
   # archive = "...archive..."
@@ -61,8 +64,28 @@ To get a feeling of what is in this file, we can look at the one used for
   [tools]
   dune = "2.6.0"
   
-  [project]
+  [[package]]
+  dir = "src/drom"
+  driver-only = "Drom_lib.Main.main"
+  kind = "program"
+  name = "drom"
+  skeleton = "driver"
+  [package.dependencies]
+  drom_lib = "version"
+  
+  [[package]]
+  dir = "src/drom_lib"
+  gen-version = "version.ml"
+  kind = "library"
+  name = "drom_lib"
   pack-modules = true
+  [package.dependencies]
+  ez_cmdliner = "0.1.0"
+  ez_config = "0.1.0"
+  ez_file = "0.2.0"
+  opam-file-format = "2.0.0"
+  toml = "5.0.0"
+
 
 The :code:`[project]` table
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -78,14 +101,12 @@ Here is a short description of the fields:
 * :code:`authors`: the list of authors of the project, to display in
   opam files and in the documentation
 * :code:`copyright`: the name of the copyright holder for the project
-* :code:`dir`: the directory containing the source files of the main
-  package (:code:`"src"` by default)
 * :code:`edition`: the version of OCaml to be used by default, when
   building locally or on the CI
 * :code:`github-organization`: the organization owning the project on Github.
   This field is used to compute the URLs for the documentation.
-* :code:`kind`: specify whether the main package is a program
-  (:code:`"program"`) or a library (:code:`"library"`).
+* :code:`kind`: specify whether packages should be programs
+  (:code:`"program"`) or libraries (:code:`"library"`) by default.
 * :code:`license`: the identifier of the license. See the section
   about licenses. :code:`drom` knows a few license and may
   automatically generate the corresponding files.
@@ -102,8 +123,6 @@ Here is a short description of the fields:
 * :code:`pack-modules`: a bool indicating whether modules should be
   packed. :code:`true` by default. It corresponds to the
   :code:`wrapped` field of :code:`dune`.
-* :code:`pack`: the name of the module to use, instead of the value of
-  :code:`name`, when :code:`pack-modules` is :code:`true`.
 
 Some fields are computed automatically if :code:`github-organization`
 is specified, but can be overriden:
@@ -175,6 +194,58 @@ The :code:`[tools]` table
 This section contains dependencies that will appear in the
 :code:`opam` files, but not as libraries in the :code:`dune` files.
 
+The :code:`[package]` table
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The :code:`package` table has one entry per package (library or
+program) included in the project. One of the packages must have the
+same name as the project.
+
+The following fields are allowed in a package definition:
+
+* :code:`dependencies`: the :code:`opam` *library* dependencies of
+  this package
+* :code:`dir`: the directory of the package sources (defaults to
+  :code:`src/${name}/`
+* :code:`generators`: the list of program for which specific
+  :code:`dune` targets should be generated. Defaults to an empty list,
+  but the project can define its own list (:code:`[ "ocamllex" ;
+  "ocamlyacc" ]` by default). The generator :code:`menhir` is also available.
+* :code:`gen-version`: whether a :code:`version.ml` file should be
+  created
+* :code:`kind`: the kind of the package (:code:`library` or
+  :code:`program`)
+* :code:`name`: the name of the package (under which it will be
+  published in :code:`opam`
+* :code:`pack`: if modules should be wrapped, the name of the wrapper
+  module (defaults to the capitalized name of the library otherwise)
+* :code:`skeleton`: the skeleton to be used to generate the files of this
+  project (defaults to :code:`"program"`). See the section on skeletons
+  for more info.
+* :code:`tools`: the :code:`opam` *tools* dependencies of this package
+
+The following fields are also allowed, and default to the project ones
+if not specified:
+
+* :code:`authors`: the authors of the package
+* :code:`description`: the full description of the package
+* :code:`mode`: the mode of the package (:code:`binary` or
+  :code:`javascript`)
+* :code:`pack-modules`: whether modules should be wrapped or not
+* :code:`synopsis`: the one-line description of the package
+* :code:`version`: the version of this package
+
+Finally, there is a table :code:`[package.fields]` within a
+package. Currently, the following fields can be used by skeletons:
+
+* :code:`dune-libraries`: extra libraries that can be added in the
+  :code:`libraries` field of :code:`dune`. Typically for internal libraries.
+* :code:`dune-stanzas`: extra :code:`dune` stanzas in the description
+* :code:`dune-trailer`: a string that is added at the end of the
+  :code:`dune` file.
+* :code:`opam-trailer`: a string that is added at the end of the
+  :code:`opam` file for the package.
+  
 The :code:`[drom]` table
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

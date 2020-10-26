@@ -1,6 +1,6 @@
 var DOCUMENTATION_OPTIONS = {
     URL_ROOT: document.getElementById("documentation_options").getAttribute('data-url_root'),
-    VERSION: 'z-2020-10-14-LGPL2-license-SPDX (e63b4ed) (2020/10/17 12:18)',
+    VERSION: 'master (07c58aa) (2020/10/26 17:21)',
     LANGUAGE: 'None',
     COLLAPSE_INDEX: false,
     FILE_SUFFIX: '.html',

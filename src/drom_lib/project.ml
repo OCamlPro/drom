@@ -61,7 +61,6 @@ and dummy_package =
     p_mode = None;
     p_pack_modules = None;
     p_gen_version = None;
-    p_driver_only = None;
     p_fields = StringMap.empty;
     p_skeleton = None;
     p_generators = None
@@ -292,21 +291,22 @@ let toml_of_package pk =
   |> EzToml.put_string [ "name" ] pk.name
   |> EzToml.put_string [ "dir" ] pk.dir
   |> EzToml.put_string_option [ "pack" ] pk.p_pack
-  |> EzToml.put_string_option [ "version" ] pk.p_version
   |> EzToml.put_encoding kind_encoding [ "kind" ] pk.kind
   |> EzToml.put_string_list_option [ "authors" ] pk.p_authors
-  |> EzToml.put_string_option [ "synopsis" ] pk.p_synopsis
-  |> EzToml.put_string_option [ "description" ] pk.p_description
-  |> EzToml.put_encoding_option mode_encoding [ "mode" ] pk.p_mode
   |> EzToml.put_encoding dependencies_encoding [ "dependencies" ]
        pk.p_dependencies
   |> EzToml.put_encoding dependencies_encoding [ "tools" ] pk.p_tools
-  |> EzToml.put_bool_option [ "pack-modules" ] pk.p_pack_modules
   |> EzToml.put_string_option [ "gen-version" ] pk.p_gen_version
   |> EzToml.put_string_option [ "skeleton" ] pk.p_skeleton
-  |> EzToml.put_string_option [ "driver-only" ] pk.p_driver_only
   |> EzToml.put_encoding fields_encoding [ "fields" ] pk.p_fields
   |> EzToml.put_string_list_option [ "generators" ] pk.p_generators
+(* default to project ones *)
+  |> EzToml.put_string_option [ "version" ] pk.p_version
+  |> EzToml.put_bool_option [ "pack-modules" ] pk.p_pack_modules
+  |> EzToml.put_encoding_option mode_encoding [ "mode" ] pk.p_mode
+  |> EzToml.put_string_option [ "synopsis" ] pk.p_synopsis
+  |> EzToml.put_string_option [ "description" ] pk.p_description
+
 
 let find_package ?default name =
   let defaults =
@@ -369,10 +369,6 @@ let package_of_toml ?default table =
     EzToml.get_string_option table [ "gen-version" ]
       ?default:default.p_gen_version
   in
-  let p_driver_only =
-    EzToml.get_string_option table [ "driver-only" ]
-      ?default:default.p_driver_only
-  in
   let p_skeleton =
     EzToml.get_string_option table [ "skeleton" ] ?default:default.p_skeleton
   in
@@ -401,7 +397,6 @@ let package_of_toml ?default table =
     p_mode;
     p_pack_modules;
     p_gen_version;
-    p_driver_only;
     p_fields;
     p_skeleton;
     p_generators
@@ -700,10 +695,6 @@ let project_of_toml ?default table =
     | Some "both" ->
       package.dir <- "main";
       package.kind <- Program;
-      let driver_only =
-        String.capitalize (Misc.package_lib package) ^ ".Main.main"
-      in
-      package.p_driver_only <- Some driver_only;
       package.p_dependencies <-
         ( Misc.package_lib package,
           { depname = None;
