@@ -8,13 +8,21 @@
 (*                                                                        *)
 (**************************************************************************)
 
+type update_args = {
+  mutable arg_upgrade : bool ;
+  mutable arg_force : bool ;
+  mutable arg_diff : bool ;
+  mutable arg_skip : ( bool * string ) list ;
+}
+
+val update_args : unit ->
+  update_args * (string list * Ezcmd.TYPES.Arg.spec * Ezcmd.TYPES.info) list
+
 val update_files :
+  ?args:update_args ->
   ?mode:Types.mode ->
-  ?upgrade:bool ->
   ?git:bool ->
   ?create:bool ->
   ?promote_skip:bool ->
-  ?force:bool ->
-  ?diff:bool ->
   Types.project ->
   unit
