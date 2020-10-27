@@ -14,7 +14,7 @@ open Ezcmd.TYPES
 let cmd_name = "project"
 
 (* lookup for "drom.toml" and update it *)
-let action ~skeleton ~mode ~upgrade ~promote_skip =
+let action ~skeleton ~mode ~upgrade ~promote_skip ~force ~diff =
   let project = Project.find () in
   match project with
   | None ->
@@ -32,17 +32,22 @@ let action ~skeleton ~mode ~upgrade ~promote_skip =
         upgrade
     in
     Update.update_files ~create:false ?mode ~upgrade ~promote_skip ~git:true p
+      ~force ~diff
 
 let cmd =
   let mode = ref None in
   let upgrade = ref false in
   let promote_skip = ref false in
   let skeleton = ref None in
+  let force = ref false in
+  let diff = ref false in
   { cmd_name;
     cmd_action =
       (fun () ->
         action ~skeleton:!skeleton ~mode:!mode ~upgrade:!upgrade
-          ~promote_skip:!promote_skip);
+          ~promote_skip:!promote_skip
+          ~force:!force ~diff:!diff
+      );
     cmd_args =
       [ ( [ "library" ],
           Arg.Unit
@@ -56,6 +61,12 @@ let cmd =
               skeleton := Some "program";
               upgrade := true),
           Ezcmd.info "Project contains only a program" );
+        ( [ "force" ],
+          Arg.Unit (fun () -> force := true),
+          Ezcmd.info "Force overwriting files" );
+        ( [ "diff" ],
+          Arg.Unit (fun () -> diff := true),
+          Ezcmd.info "Print a diff of skipped files" );
         ( [ "virtual" ],
           Arg.Unit
             (fun () ->

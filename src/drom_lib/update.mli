@@ -14,5 +14,7 @@ val update_files :
   ?git:bool ->
   ?create:bool ->
   ?promote_skip:bool ->
+  ?force:bool ->
+  ?diff:bool ->
   Types.project ->
   unit
