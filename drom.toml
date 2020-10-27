@@ -77,7 +77,7 @@ ez_file = "0.2.0"
 opam-file-format = "2.0.0"
 toml = "5.0.0"
 [package.fields]
-dune-libraries = ""
+dune-libraries = "bigarray"
 dune-trailer = """
 
 (rule
