@@ -70,7 +70,7 @@ let rename_package hashes package new_name =
   { package with dir = new_dir; name = new_name }
 
 let action ~package_name ~kind ~mode ~promote_skip ~dir ?create ?remove ?rename
-    () =
+    ~force ~diff  () =
   let p, inferred_dir = Project.get () in
   let name =
     match package_name with
@@ -192,6 +192,7 @@ let action ~package_name ~kind ~mode ~promote_skip ~dir ?create ?remove ?rename
           !upgrade)
   in
   Update.update_files ~create:false ?mode ~upgrade ~promote_skip ~git:true p
+    ~force ~diff
 
 let cmd =
   let package_name = ref None in
@@ -202,17 +203,25 @@ let cmd =
   let create = ref None in
   let remove = ref None in
   let rename = ref None in
+  let force = ref false in
+  let diff = ref false in
   { cmd_name;
     cmd_action =
       (fun () ->
         action ~package_name:!package_name ~mode:!mode ~kind:!kind
           ~promote_skip:!promote_skip ~dir:!dir ?create:!create ?remove:!remove
-          ?rename:!rename ());
+          ?rename:!rename  ~force:!force ~diff:!diff ());
     cmd_args =
       [ ( [ "new" ],
           Arg.String (fun s -> create := Some s),
           Ezcmd.info "Add a new package to the project with skeleton NAME" );
-        ( [ "remove" ],
+       ( [ "force" ],
+          Arg.Unit (fun () -> force := true),
+          Ezcmd.info "Force overwriting files" );
+        ( [ "diff" ],
+          Arg.Unit (fun () -> diff := true),
+          Ezcmd.info "Print a diff of skipped files" );
+         ( [ "remove" ],
           Arg.String (fun s -> remove := Some s),
           Ezcmd.info "Remove a package from the project" );
         ( [ "dir" ],
