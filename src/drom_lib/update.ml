@@ -9,15 +9,79 @@
 (**************************************************************************)
 
 open Types
+open Ezcmd.TYPES
 open EzFile.OP
 open EzCompat
 
 exception Skip
 
-let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
+type update_args = {
+  mutable arg_upgrade : bool ;
+  mutable arg_force : bool ;
+  mutable arg_diff : bool ;
+  mutable arg_skip : ( bool * string ) list ;
+}
+
+let update_args () =
+  let args = {
+    arg_upgrade = false;
+    arg_force = false;
+    arg_diff = false;
+    arg_skip = [];
+  }
+  in
+  let specs = [
+    ( [ "force" ],
+      Arg.Unit (fun () -> args.arg_force <- true),
+      Ezcmd.info "Force overwriting files" );
+    ( [ "skip" ],
+      Arg.String (fun s ->
+          args.arg_skip <- (true, s) :: args.arg_skip;
+          args.arg_upgrade <- true),
+      Ezcmd.info "Add to skip list" );
+    ( [ "unskip" ],
+      Arg.String (fun s ->
+          args.arg_skip <- (false, s) :: args.arg_skip;
+          args.arg_upgrade <- true),
+      Ezcmd.info "Remove from skip list" );
+    ( [ "diff" ],
+      Arg.Unit (fun () -> args.arg_diff <- true),
+      Ezcmd.info "Print a diff of skipped files" );
+  ]
+  in
+  ( args, specs )
+
+let update_files
+    ?args ?mode ?(git = false) ?(create = false)
     ?(promote_skip = false)
-    ?(force = false)
-    ?(diff= false) p =
+    p =
+  let (force,upgrade,skip,diff) =
+    match args with
+    | None -> (false, false, [], false)
+    | Some args ->
+        (args.arg_force,
+         args.arg_upgrade,
+         args.arg_skip,
+         args.arg_diff)
+  in
+
+  let changed = false in
+  let (p, changed) =
+    match skip with
+    | [] -> (p, changed)
+    | skip ->
+        let skip =
+          List.fold_left (fun skips (bool, elem) ->
+              if bool then
+                elem :: skips
+              else
+                EzList.remove elem skips
+            ) p.skip skip
+        in
+        let p = { p with skip } in
+        (p, true)
+  in
+
   let can_skip = ref [] in
   let not_skipped s =
     can_skip := s :: !can_skip;
@@ -101,7 +165,6 @@ let update_files ?mode ?(upgrade = false) ?(git = false) ?(create = false)
 
   let config = Lazy.force Config.config in
 
-  let changed = false in
   let p, changed =
     if upgrade then
       let p, changed =

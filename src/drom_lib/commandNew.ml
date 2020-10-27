@@ -15,7 +15,7 @@ open EzFile.OP
 
 let cmd_name = "new"
 
-let create_project ~config ~name ~skeleton ~mode ~dir ~inplace =
+let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
   let license =
     match config.config_license with
     | None -> Skel_licenses.LGPL2.key
@@ -99,18 +99,18 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace =
 
   let skeleton = Skeleton.lookup_project skeleton in
   let p = iter_skeleton skeleton.skeleton_toml in
-  Update.update_files ~create:true ?mode ~upgrade:true ~promote_skip:false
-    ~git:true p
+  Update.update_files ~create:true ?mode ~promote_skip:false
+    ~git:true ~args p
 
 (* lookup for "drom.toml" and update it *)
-let action ~skeleton ~name ~mode ~inplace ~dir =
+let action ~skeleton ~name ~mode ~inplace ~dir ~args =
   match name with
   | None -> Error.raise "You must specify the name of the project to create"
   | Some name -> (
     let config = Lazy.force Config.config in
     let project = Project.find () in
     match project with
-    | None -> create_project ~config ~name ~skeleton ~mode ~dir ~inplace
+    | None -> create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args
     | Some (p, _) ->
       Error.raise
         "Cannot create a project within another project %S. Maybe you want to \
@@ -123,12 +123,15 @@ let cmd =
   let inplace = ref false in
   let skeleton = ref None in
   let dir = ref None in
+  let ( args, specs ) = Update.update_args () in
+  args.arg_upgrade <- true;
   { cmd_name;
     cmd_action =
       (fun () ->
-        action ~name:!project_name ~skeleton:!skeleton ~mode:!mode ~dir:!dir
-          ~inplace:!inplace);
+         action ~name:!project_name ~skeleton:!skeleton ~mode:!mode ~dir:!dir
+           ~inplace:!inplace ~args);
     cmd_args =
+      specs @
       [ ( [ "dir" ],
           Arg.String (fun s -> dir := Some s),
           Ezcmd.info "Dir where package sources are stored (src by default)" );
