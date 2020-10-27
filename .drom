@@ -1,5 +1,5 @@
 # Keep this file in your GIT repo to help drom track generated files
-28398c84b5df1cb8173038050d18722b:.
+e7c7c4706bc68c8e0a575cc61b7861aa:.
 20a7ac507806f2258bdf8c72d25f19d7:.github/workflows/workflow.yml
 4545d6f4a7e1902e0f4f56112134548b:.gitignore
 258c081be13e794a822d6bf9650f29bc:.ocamlformat
@@ -16,7 +16,7 @@ c352caa74812a7a09cdd3e52031d6033:docs/index.html
 a95f1ab7d178b468eff6188a527535d9:docs/style.css
 30281c0f416f7fa965c21b066d27eb2c:drom-opam.deps
 081f9286075c859cb9c26e4e35d811dd:drom.opam
-28398c84b5df1cb8173038050d18722b:drom.toml
+94fae8fd20a48e12df5707243840eb9d:drom.toml
 01af7a7a1a29ddb898eb28d8d2b613a6:drom_lib.opam
 f6605103c821fa25c591105e30d67c2f:dune
 e4c401c332554eaf0cf522d3dbed4735:dune-project
@@ -29,8 +29,10 @@ cf3f86e8f7d8e90e663c3cb7e438057d:sphinx/license.rst
 442ce58a26064594fbb32b24da38bd15:src/drom/dune
 d947d2a8c369bc5ff232874cc3b568ac:src/drom/index.mld
 c46773d55a9a80e19cd0e807cb36262e:src/drom/main.ml
-285fb30b4644d192d22668a876225eed:src/drom_lib/dune
+678589819c18b4a6921f290a4c9760ed:src/drom/package.toml
+33352f7db99a7f07cc4c594c83f5e37f:src/drom_lib/dune
 dfda02aaec08f18742582243e9cd6748:src/drom_lib/index.mld
+f1acc8b5b50b0e1037b5bc8243d72a58:src/drom_lib/package.toml
 fab8224b1866cef1103bca89068b73fe:src/drom_lib/version.ml
 f15fedac6f43c154bcd0348b776ac08c:test/expect-tests/dune
 16aa6d750c44bb58dc22a8c2a06d1534:test/expect-tests/test.ml

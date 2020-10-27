@@ -56,9 +56,9 @@ let write t ~record file content =
 
 let get t file = StringMap.find file t.hashes
 
-let update t file hash =
+let update ?(git=true) t file hash =
   t.hashes <- StringMap.add file hash t.hashes;
-  t.to_add <- StringSet.add file t.to_add;
+  if git then t.to_add <- StringSet.add file t.to_add;
   t.modified <- true
 
 let remove t file =
