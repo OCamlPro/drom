@@ -7,3 +7,6 @@ _build
 /_opam
 /_build
 
+docs/doc/
+docs/sphinx/
+
