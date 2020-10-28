@@ -99,7 +99,10 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
                    | None -> assert false
                    | Some file -> file) p.packages)
             in
-            old_hash <> Update.compute_config_hash files
+            old_hash <>
+            Update.compute_config_hash
+              (List.map (fun file ->
+                   file, EzFile.read_file file) files)
       then
         Printf.eprintf
           "Warning: 'drom.toml' changed since last update,\n\

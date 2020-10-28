@@ -53,7 +53,8 @@ let update_args () =
 
 let compute_config_hash files =
   let files = List.sort compare files in
-  let files = List.map (fun file -> file, Hashes.digest_file file) files in
+  let files = List.map (fun (file, content) ->
+      file, Hashes.digest_string content) files in
   let to_hash = String.concat "?"
       (List.map (fun (file, hash) ->
            Printf.sprintf "%s^%s" file hash) files) in
@@ -138,16 +139,16 @@ let update_files
       end
   in
 
-  let write_file ?(record = true) ?((* add to git *)
-      create = false)
-      ?((* only create, never update *)
-      skip = false) ?((* force to skip *)
-      immediate = false) ?((* force to write *)
-      skips = []) (* tests for skipping *)
+  let write_file
+      (* add to git/.drom *)          ?(record = true)
+      (* only create, never update *) ?(create = false)
+      (* force to skip *)             ?(skip = false)
+      (* force to write *)            ?(force = false)
+      (* tests for skipping *)       ?(skips = [])
       hashes filename content =
     try
       if skip then raise Skip;
-      if immediate then (
+      if force then (
         Printf.eprintf "Forced Update of file %s\n%!" filename;
         write_file hashes filename content
       ) else if not_skipped filename && List.for_all not_skipped skips then
@@ -313,9 +314,9 @@ let update_files
       in
       let files = Project.to_files p in
       List.iter (fun (file, content) ->
-          write_file ~skip ~immediate:upgrade hashes file content) files;
+          write_file ~skip ~force:upgrade hashes file content) files;
 
-      let hash = compute_config_hash (List.map fst files) in
+      let hash = compute_config_hash files in
 
       (* Save the "hash of all files", i.e. the hash of the drom.toml
          file that was used to generate all other files, to be able to

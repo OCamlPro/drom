@@ -27,4 +27,4 @@ val update_files :
   Types.project ->
   unit
 
-val compute_config_hash : string list -> string
+val compute_config_hash : ( string * string ) list -> string
