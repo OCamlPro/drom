@@ -26,3 +26,5 @@ val update_files :
   ?promote_skip:bool ->
   Types.project ->
   unit
+
+val compute_config_hash : ( string * string ) list -> string

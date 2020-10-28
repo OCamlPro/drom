@@ -1,0 +1,5 @@
+kind = "program"
+name = "drom"
+skeleton = "driver"
+[dependencies]
+drom_lib = "version"

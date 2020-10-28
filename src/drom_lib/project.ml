@@ -43,13 +43,15 @@ let rec dummy_project =
     profiles = StringMap.empty;
     skip_dirs = [];
     fields = StringMap.empty;
-    profile = None
+    profile = None ;
+    file = None ;
   }
 
 and dummy_package =
   { name = "dummy_package";
     dir = "dummy_package.dir";
     project = dummy_project;
+    p_file = None ;
     p_pack = None;
     kind = Library;
     p_version = None;
@@ -289,7 +291,6 @@ let find_author config =
 let toml_of_package pk =
   EzToml.empty
   |> EzToml.put_string [ "name" ] pk.name
-  |> EzToml.put_string [ "dir" ] pk.dir
   |> EzToml.put_string_option [ "pack" ] pk.p_pack
   |> EzToml.put_encoding kind_encoding [ "kind" ] pk.kind
   |> EzToml.put_string_list_option [ "authors" ] pk.p_authors
@@ -326,9 +327,32 @@ let find_package ?default name =
   iter defaults
 
 let package_of_toml ?default table =
+  let dir = EzToml.get_string_option table [ "dir" ] in
+  let table, p_file = match dir with
+    | None -> table, None
+    | Some dir ->
+        let filename = dir // "package.toml" in
+        if Sys.file_exists filename then
+          let package_table =
+            match EzToml.from_file filename with
+            | `Ok table -> table
+            | `Error (s, loc) ->
+                Error.raise "Could not parse %S: %s at %s" filename s
+                  (EzToml.string_of_location loc)
+          in
+          let table =
+            TomlTypes.Table.union (fun _key _ v -> Some v) package_table table
+          in
+          table, Some filename
+        else
+          table, None
+  in
   let name = EzToml.get_string table [ "name" ] in
   let default = find_package ?default name in
-  let dir = EzToml.get_string_default table [ "dir" ] default.dir in
+  let dir = match dir with
+    | None -> default.dir
+    | Some dir -> dir
+  in
   let kind =
     EzToml.get_encoding_default kind_encoding table [ "kind" ] default.kind
   in
@@ -387,6 +411,7 @@ let package_of_toml ?default table =
     dir;
     project;
     p_pack;
+    p_file;
     kind;
     p_version;
     p_authors;
@@ -402,7 +427,8 @@ let package_of_toml ?default table =
     p_generators
   }
 
-let to_string p =
+
+let to_files p =
   let version =
     EzToml.empty
     |> EzToml.put_string [ "project"; "drom-version" ] Globals.min_drom_version
@@ -491,17 +517,29 @@ let to_string p =
     |> EzToml.to_string
   in
 
+  let files = ref [] in
+  let packages =
+    List.map (fun package ->
+        let toml = toml_of_package package in
+        files := (package.dir // "package.toml",
+                  EzToml.to_string toml) :: !files;
+        EzToml.empty
+        |> EzToml.put_string [ "dir" ] package.dir
+      ) p.packages
+  in
   let packages =
     EzToml.empty
-    |> EzToml.put [ "package" ]
-         (TArray (NodeTable (List.map toml_of_package p.packages)))
+    |> EzToml.put [ "package" ] (TArray (NodeTable packages))
     |> EzToml.to_string
   in
 
-  Printf.sprintf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" version package
-    optionals package2 drom dependencies tools package3 packages
+  let content =
+    Printf.sprintf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" version package
+      optionals package2 drom dependencies tools package3 packages
+  in
+  ( "drom.toml", content) :: !files
 
-let project_of_toml ?default table =
+let project_of_toml ?file ?default table =
   ( match EzToml.get_string_option table [ "project"; "drom-version" ] with
   | None -> ()
   | Some version -> (
@@ -736,6 +774,7 @@ let project_of_toml ?default table =
 
   let project =
     { package;
+      file;
       version;
       skeleton;
       edition;
@@ -764,23 +803,12 @@ let project_of_toml ?default table =
       profiles;
       skip_dirs;
       profile;
-      fields
+      fields;
     }
   in
   package.project <- project;
   List.iter (fun p -> p.project <- project) packages;
   project
-
-let project_of_filename ?default filename =
-  (*  Printf.eprintf "Loading %s\n%!" filename ; *)
-  let table =
-    match EzToml.from_file filename with
-    | `Ok table -> table
-    | `Error (s, loc) ->
-      Error.raise "Could not parse %S: %s at %s" filename s
-        (EzToml.string_of_location loc)
-  in
-  project_of_toml ?default table
 
 let of_string ~msg ?default content =
   (*  Printf.eprintf "Loading %s\n%!" filename ; *)
@@ -793,15 +821,25 @@ let of_string ~msg ?default content =
   in
   project_of_toml ?default table
 
+let project_of_filename ?default file =
+  let table =
+    match EzToml.from_file file with
+    | `Ok table -> table
+    | `Error (s, loc) ->
+      Error.raise "Could not parse %S: %s at %s" file s
+        (EzToml.string_of_location loc)
+  in
+  project_of_toml ~file ?default table
+
 let find () =
   let dir = Sys.getcwd () in
   let rec iter dir path =
-    let drom_file = dir // "drom.toml" in
+    let drom_file = dir // Globals.drom_file in
     if Sys.file_exists drom_file then (
       Unix.chdir dir;
       if Misc.verbose 1 then
         Printf.eprintf "drom: Entering directory '%s'\n%!" (Sys.getcwd ());
-      Some (project_of_filename drom_file, path)
+      Some (project_of_filename Globals.drom_file, path)
     ) else
       let updir = Filename.dirname dir in
       if updir <> dir then

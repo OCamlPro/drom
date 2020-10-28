@@ -56,9 +56,9 @@ let write t ~record file content =
 
 let get t file = StringMap.find file t.hashes
 
-let update t file hash =
+let update ?(git=true) t file hash =
   t.hashes <- StringMap.add file hash t.hashes;
-  t.to_add <- StringSet.add file t.to_add;
+  if git then t.to_add <- StringSet.add file t.to_add;
   t.modified <- true
 
 let remove t file =
@@ -94,8 +94,18 @@ let save ?(git = true) t =
       "# Keep this file in your GIT repo to help drom track generated files\n";
     StringMap.iter
       (fun filename hash ->
-        if Sys.file_exists filename then
-          Printf.bprintf b "%s:%s\n" (Digest.to_hex hash) filename)
+         if Sys.file_exists filename then begin
+           if filename = "." then begin
+             Printf.bprintf b "\n# hash of toml configuration files\n";
+             Printf.bprintf b "# used for generation of all files\n";
+           end else begin
+             Printf.bprintf b "\n# begin context for %s\n" filename;
+             Printf.bprintf b "# file %s\n" filename;
+           end;
+           Printf.bprintf b "%s:%s\n" (Digest.to_hex hash) filename;
+           Printf.bprintf b "# end context for %s\n" filename;
+         end
+      )
       t.hashes;
     EzFile.write_file ".drom" (Buffer.contents b);
 
@@ -103,7 +113,7 @@ let save ?(git = true) t =
       let to_remove = ref [] in
       StringSet.iter
         (fun file ->
-          if not (Sys.file_exists file) then to_remove := file :: !to_remove)
+           if not (Sys.file_exists file) then to_remove := file :: !to_remove)
         t.to_remove;
       if !to_remove <> [] then Git.run ("rm" :: "-f" :: !to_remove);
 

@@ -42,11 +42,11 @@ type dependency =
 
 type package =
   { name : string;
-    mutable p_skeleton : string option;
     mutable dir : string;
     mutable project : project;
-    mutable p_pack : string option;
     mutable kind : kind;
+    mutable p_skeleton : string option;
+    mutable p_pack : string option;
     p_version : string option;
     p_authors : string list option;
     p_synopsis : string option;
@@ -57,12 +57,15 @@ type package =
     p_pack_modules : bool option;
     mutable p_gen_version : string option;
     mutable p_fields : string StringMap.t;
-    mutable p_generators : string list option
+    mutable p_generators : string list option;
+
+    mutable p_file : string option ;
   }
 
 and project =
   { package : package;
     mutable packages : package list;
+    mutable file : string option ; (* name of the file *)
     (* sub-packages *)
 
     (* common fields *)

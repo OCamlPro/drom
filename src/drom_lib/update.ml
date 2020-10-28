@@ -51,6 +51,15 @@ let update_args () =
   in
   ( args, specs )
 
+let compute_config_hash files =
+  let files = List.sort compare files in
+  let files = List.map (fun (file, content) ->
+      file, Hashes.digest_string content) files in
+  let to_hash = String.concat "?"
+      (List.map (fun (file, hash) ->
+           Printf.sprintf "%s^%s" file hash) files) in
+  Hashes.digest_string to_hash
+
 let update_files
     ?args ?mode ?(git = false) ?(create = false)
     ?(promote_skip = false)
@@ -130,16 +139,16 @@ let update_files
       end
   in
 
-  let write_file ?(record = true) ?((* add to git *)
-      create = false)
-      ?((* only create, never update *)
-      skip = false) ?((* force to skip *)
-      immediate = false) ?((* force to write *)
-      skips = []) (* tests for skipping *)
+  let write_file
+      (* add to git/.drom *)          ?(record = true)
+      (* only create, never update *) ?(create = false)
+      (* force to skip *)             ?(skip = false)
+      (* force to write *)            ?(force = false)
+      (* tests for skipping *)       ?(skips = [])
       hashes filename content =
     try
       if skip then raise Skip;
-      if immediate then (
+      if force then (
         Printf.eprintf "Forced Update of file %s\n%!" filename;
         write_file hashes filename content
       ) else if not_skipped filename && List.for_all not_skipped skips then
@@ -303,13 +312,16 @@ let update_files
       let skip =
         not (upgrade || changed || not (Sys.file_exists "drom.toml"))
       in
-      let content = Project.to_string p in
-      write_file ~skip ~immediate:upgrade hashes "drom.toml" content;
+      let files = Project.to_files p in
+      List.iter (fun (file, content) ->
+          write_file ~skip ~force:upgrade hashes file content) files;
+
+      let hash = compute_config_hash files in
 
       (* Save the "hash of all files", i.e. the hash of the drom.toml
          file that was used to generate all other files, to be able to
          detect need for update. We use '.' for the associated name,
          because it must be an existent file, otherwise `Hashes.save`
          will discard it. *)
-      Hashes.update hashes "." (Hashes.digest_file "drom.toml"));
+      Hashes.update ~git:false hashes "." hash);
   ()
