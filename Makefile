@@ -45,3 +45,9 @@ dev-deps:
 
 test:
 	opam exec -- dune build @runtest
+
+clean:
+	rm -rf _build
+
+distclean: clean
+	rm -rf _opam _drom

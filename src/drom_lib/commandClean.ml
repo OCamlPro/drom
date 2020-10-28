@@ -13,7 +13,7 @@ open Ezcmd.TYPES
 let cmd_name = "clean"
 
 let action ~opam =
-  let _ = Project.get () in
+  let _p,_ = Project.get () in
   Printf.eprintf "Removing _build...\n%!";
   ignore (Sys.command "rm -rf _build");
   if !opam then (
@@ -28,7 +28,7 @@ let cmd =
     cmd_args =
       [ ( [ "opam" ],
           Arg.Set opam,
-          Ezcmd.info "Also remove the local opam switch" )
+          Ezcmd.info "Also remove the local opam switch (_opam/ and _drom/)" )
       ];
     cmd_man = [];
     cmd_doc = "Clean the project from build files"
