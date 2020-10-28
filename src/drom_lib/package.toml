@@ -1,6 +1,6 @@
 gen-version = "version.ml"
-name = "drom_lib"
 kind = "library"
+name = "drom_lib"
 pack-modules = true
 [dependencies]
 ez_cmdliner = "0.1.0"
