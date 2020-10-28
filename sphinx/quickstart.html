@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Quickstart &mdash; drom master
+ (07c58aa
+) (2020/10/26 17:21) documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Project Description" href="reference.html" />
+    <link rel="prev" title="About" href="about.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> drom
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                master
+ (07c58aa
+)
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://ocamlpro.github.io/drom">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-project">Creating a Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-a-project">Building a Project</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-locally">Building locally</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-with-a-global-opam-switch">Building with a global <code class="code docutils literal notranslate"><span class="pre">opam</span></code> switch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-the-project">Installing the Project</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#building-documentation">Building Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Project Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Sub-commands and Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">User Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="github.html">Github Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Managing Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">How to install</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ocamlpro.github.io/drom/doc">API doc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Copyright and License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ocamlpro/drom">Devel and Issues on Github</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">drom</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Quickstart</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/quickstart.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> has two purposes:</p>
+<ul class="simple">
+<li>It’s a tool to easily create OCaml projects: <code class="code docutils literal notranslate"><span class="pre">drom</span> <span class="pre">new</span>
+<span class="pre">PROJECT</span></code> will create a complete OCaml project, with all the required
+files for <code class="code docutils literal notranslate"><span class="pre">opam</span></code> and <code class="code docutils literal notranslate"><span class="pre">dune</span></code>, plus additional files for
+project management on Github, documentation (Sphinx and Github
+Pages) and CI (Github Actions).</li>
+<li>It’s a tool to build and install the project, combining calls to
+<cite>opam</cite> and <cite>dune</cite> to create a local switch, install dependencies,
+build the project and its documentation</li>
+</ul>
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> uses subcommands:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span>
+<span class="nc">DROM</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>                           <span class="nc">Drom</span> <span class="nc">Manual</span>                          <span class="nc">DROM</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+
+
+
+<span class="nc">NAME</span>
+       <span class="n">drom</span> <span class="o">-</span> <span class="nc">Create</span> <span class="ow">and</span> <span class="n">manage</span> <span class="n">an</span> <span class="nc">OCaml</span> <span class="n">project</span>
+
+<span class="nc">SYNOPSIS</span>
+       <span class="n">drom</span> <span class="nn">COMMAND</span> <span class="p">...</span>
+
+<span class="nc">COMMANDS</span>
+       <span class="n">build</span>
+           <span class="nc">Build</span> <span class="n">a</span> <span class="n">project</span>
+
+       <span class="n">build</span><span class="o">-</span><span class="n">deps</span>
+           <span class="nc">Install</span> <span class="n">build</span> <span class="n">dependencies</span> <span class="n">only</span>
+
+       <span class="n">clean</span>
+           <span class="nc">Clean</span> <span class="n">the</span> <span class="n">project</span> <span class="n">from</span> <span class="n">build</span> <span class="n">files</span>
+
+       <span class="n">dev</span><span class="o">-</span><span class="n">deps</span>
+           <span class="nc">Install</span> <span class="n">dev</span> <span class="n">dependencies</span> <span class="o">(</span><span class="n">odoc</span><span class="o">,</span> <span class="n">ocamlformat</span><span class="o">,</span> <span class="n">merlin</span><span class="o">,</span> <span class="n">etc</span><span class="o">.)</span>
+
+       <span class="n">doc</span> <span class="nc">Generate</span> <span class="n">library</span> <span class="nc">API</span> <span class="n">documentation</span> <span class="n">using</span> <span class="n">odoc</span> <span class="k">in</span> <span class="n">the</span> <span class="n">docs</span><span class="o">/</span><span class="n">doc</span>
+           <span class="n">directory</span>
+
+       <span class="n">fmt</span> <span class="nc">Format</span> <span class="n">sources</span> <span class="k">with</span> <span class="n">ocamlformat</span>
+
+       <span class="n">help</span>
+           <span class="n">display</span> <span class="n">help</span> <span class="n">about</span> <span class="n">drom</span> <span class="ow">and</span> <span class="n">drom</span> <span class="n">commands</span>
+
+       <span class="n">install</span>
+           <span class="nc">Build</span> <span class="o">&amp;</span> <span class="n">install</span> <span class="n">the</span> <span class="n">project</span> <span class="k">in</span> <span class="n">the</span> <span class="n">project</span> <span class="n">opam</span> <span class="n">switch</span>
+
+       <span class="n">package</span>
+           <span class="nc">Create</span> <span class="ow">or</span> <span class="n">update</span> <span class="n">a</span> <span class="n">package</span> <span class="n">within</span> <span class="n">a</span> <span class="n">project</span>
+
+       <span class="n">project</span>
+           <span class="nc">Create</span> <span class="ow">or</span> <span class="n">update</span> <span class="n">a</span> <span class="n">project</span>
+
+       <span class="n">publish</span>
+           <span class="nc">Generate</span> <span class="n">a</span> <span class="n">set</span> <span class="k">of</span> <span class="n">packages</span> <span class="n">from</span> <span class="n">all</span> <span class="n">found</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span> <span class="n">files</span>
+
+       <span class="n">run</span>
+           <span class="nc">Execute</span> <span class="n">the</span> <span class="n">project</span>
+
+       <span class="n">sphinx</span>
+           <span class="nc">Generate</span> <span class="n">general</span> <span class="n">documentation</span> <span class="n">using</span> <span class="n">sphinx</span>
+
+       <span class="n">test</span>
+           <span class="nc">Run</span> <span class="n">tests</span>
+
+       <span class="n">tree</span>
+           <span class="nc">Display</span> <span class="n">dependencies</span> <span class="k">in</span> <span class="n">the</span> <span class="n">project</span> <span class="k">as</span> <span class="n">a</span> <span class="n">tree</span>
+
+       <span class="n">uninstall</span>
+           <span class="nc">Uninstall</span> <span class="n">the</span> <span class="n">project</span> <span class="n">from</span> <span class="n">the</span> <span class="n">project</span> <span class="n">opam</span> <span class="n">switch</span>
+
+       <span class="n">update</span>
+           <span class="nc">Update</span> <span class="n">packages</span> <span class="k">in</span> <span class="n">the</span> <span class="n">project</span> <span class="n">opam</span> <span class="n">switch</span>
+
+<span class="nc">COMMON</span> <span class="nc">OPTIONS</span>
+       <span class="o">--</span><span class="n">help</span><span class="o">[=</span><span class="nc">FMT</span><span class="o">]</span> <span class="o">(</span><span class="n">default</span><span class="o">=</span><span class="n">auto</span><span class="o">)</span>
+           <span class="nc">Show</span> <span class="n">this</span> <span class="n">help</span> <span class="k">in</span> <span class="n">format</span> <span class="nn">FMT</span><span class="p">.</span> <span class="nc">The</span> <span class="k">value</span> <span class="nc">FMT</span> <span class="n">must</span> <span class="n">be</span> <span class="n">one</span> <span class="k">of</span> <span class="o">`</span><span class="n">auto&#39;</span><span class="o">,</span>
+           <span class="o">`</span><span class="n">pager&#39;</span><span class="o">,</span> <span class="o">`</span><span class="n">groff&#39;</span> <span class="ow">or</span> <span class="o">`</span><span class="n">plain&#39;</span><span class="o">.</span> <span class="nc">With</span> <span class="o">`</span><span class="n">auto&#39;</span><span class="o">,</span> <span class="n">the</span> <span class="n">format</span> <span class="n">is</span> <span class="o">`</span><span class="n">pager</span><span class="o">`</span> <span class="ow">or</span>
+           <span class="o">`</span><span class="n">plain&#39;</span> <span class="n">whenever</span> <span class="n">the</span> <span class="nc">TERM</span> <span class="n">env</span> <span class="n">var</span> <span class="n">is</span> <span class="o">`</span><span class="n">dumb&#39;</span> <span class="ow">or</span> <span class="n">undefined</span><span class="o">.</span>
+
+       <span class="o">--</span><span class="n">version</span>
+           <span class="nc">Show</span> <span class="n">version</span> <span class="n">information</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-a-project">
+<h2>Creating a Project<a class="headerlink" href="#creating-a-project" title="Permalink to this headline">¶</a></h2>
+<p>Let’s suppose we want to create a new project <code class="code docutils literal notranslate"><span class="pre">hello_world</span></code>. We
+can use <cite>drom</cite> to create almost everything we need for that!</p>
+<p>Let’s create the project:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="k">new</span> <span class="n">hello_world</span>
+<span class="nc">Creating</span> <span class="n">directory</span> <span class="n">hello_world</span>
+<span class="nc">Calling</span> <span class="n">git</span> <span class="n">init</span>
+<span class="nc">Initialized</span> <span class="n">empty</span> <span class="nc">Git</span> <span class="n">repository</span> <span class="k">in</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/.</span><span class="n">git</span><span class="o">/</span>
+<span class="nc">Calling</span> <span class="n">git</span> <span class="n">remote</span> <span class="n">add</span> <span class="n">origin</span> <span class="n">git</span><span class="o">@</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">:</span><span class="n">ocamlpro</span><span class="o">/</span><span class="n">hello_world</span>
+<span class="nc">Calling</span> <span class="n">touch</span> <span class="nn">README</span><span class="p">.</span><span class="n">md</span>
+<span class="nc">Calling</span> <span class="n">git</span> <span class="n">add</span> <span class="nn">README</span><span class="p">.</span><span class="n">md</span>
+<span class="nc">Calling</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="nc">Initial</span> <span class="n">commit</span>
+<span class="o">[</span><span class="n">master</span> <span class="o">(</span><span class="n">root</span><span class="o">-</span><span class="n">commit</span><span class="o">)</span> <span class="mi">532</span><span class="n">fc94</span><span class="o">]</span> <span class="nc">Initial</span> <span class="n">commit</span>
+ <span class="mi">1</span> <span class="n">file</span> <span class="n">changed</span><span class="o">,</span> <span class="mi">0</span> <span class="n">insertions</span><span class="o">(+),</span> <span class="mi">0</span> <span class="n">deletions</span><span class="o">(-)</span>
+ <span class="n">create</span> <span class="n">mode</span> <span class="mi">100644</span> <span class="nn">README</span><span class="p">.</span><span class="n">md</span>
+<span class="nc">Calling</span> <span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="nn">README</span><span class="p">.</span><span class="n">md</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">dune</span><span class="o">-</span><span class="n">project</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">mld</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">hello_world</span><span class="o">.</span><span class="n">opam</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world_lib</span><span class="o">/</span><span class="n">version</span><span class="o">.</span><span class="n">ml</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world_lib</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">mld</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">hello_world_lib</span><span class="o">.</span><span class="n">opam</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="nn">CHANGES</span><span class="p">.</span><span class="n">md</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="nn">LICENSE</span><span class="p">.</span><span class="n">md</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="nc">Makefile</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="nn">README</span><span class="p">.</span><span class="n">md</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">docs</span><span class="o">/</span><span class="n">doc</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">docs</span><span class="o">/.</span><span class="n">nojekyll</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">docs</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">docs</span><span class="o">/</span><span class="n">sphinx</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">docs</span><span class="o">/</span><span class="n">style</span><span class="o">.</span><span class="n">css</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="o">.</span><span class="n">github</span><span class="o">/</span><span class="n">workflows</span><span class="o">/</span><span class="n">workflow</span><span class="o">.</span><span class="n">yml</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="o">.</span><span class="n">gitignore</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="o">.</span><span class="n">ocamlformat</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="o">.</span><span class="n">ocamlformat</span><span class="o">-</span><span class="n">ignore</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="o">.</span><span class="n">ocp</span><span class="o">-</span><span class="n">indent</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">dune</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">sphinx</span><span class="o">/</span><span class="n">about</span><span class="o">.</span><span class="n">rst</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">sphinx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">py</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">sphinx</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">rst</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">sphinx</span><span class="o">/</span><span class="n">install</span><span class="o">.</span><span class="n">rst</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">sphinx</span><span class="o">/</span><span class="n">license</span><span class="o">.</span><span class="n">rst</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">sphinx</span><span class="o">/_</span><span class="n">static</span><span class="o">/</span><span class="n">css</span><span class="o">/</span><span class="n">fixes</span><span class="o">.</span><span class="n">css</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">test</span><span class="o">/</span><span class="n">expect</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">dune</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">test</span><span class="o">/</span><span class="n">expect</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">test</span><span class="o">.</span><span class="n">ml</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">test</span><span class="o">/</span><span class="n">inline</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">dune</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">test</span><span class="o">/</span><span class="n">inline</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">test</span><span class="o">.</span><span class="n">ml</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">test</span><span class="o">/</span><span class="n">output</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">dune</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">test</span><span class="o">/</span><span class="n">output</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">test1</span><span class="o">.</span><span class="n">expected</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">test</span><span class="o">/</span><span class="n">output</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">test2</span><span class="o">.</span><span class="n">expected</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">test</span><span class="o">/</span><span class="n">output</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">test2</span><span class="o">.</span><span class="n">ml</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/</span><span class="n">dune</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">ml</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world_lib</span><span class="o">/</span><span class="n">dune</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world_lib</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">ml</span>
+<span class="nc">Forced</span> <span class="nc">Update</span> <span class="k">of</span> <span class="n">file</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
+<span class="nc">Calling</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span><span class="n">drom</span> <span class="n">test</span><span class="o">/</span><span class="n">output</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">test2</span><span class="o">.</span><span class="n">ml</span> <span class="n">test</span><span class="o">/</span><span class="n">output</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">test2</span><span class="o">.</span><span class="n">expected</span> <span class="n">test</span><span class="o">/</span><span class="n">output</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">test1</span><span class="o">.</span><span class="n">expected</span> <span class="n">test</span><span class="o">/</span><span class="n">output</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">dune</span> <span class="n">test</span><span class="o">/</span><span class="n">inline</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">test</span><span class="o">.</span><span class="n">ml</span> <span class="n">test</span><span class="o">/</span><span class="n">inline</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">dune</span> <span class="n">test</span><span class="o">/</span><span class="n">expect</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">test</span><span class="o">.</span><span class="n">ml</span> <span class="n">test</span><span class="o">/</span><span class="n">expect</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span><span class="n">dune</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world_lib</span><span class="o">/</span><span class="n">version</span><span class="o">.</span><span class="n">ml</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world_lib</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">ml</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world_lib</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">mld</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world_lib</span><span class="o">/</span><span class="n">dune</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">ml</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">mld</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/</span><span class="n">dune</span> <span class="n">sphinx</span><span class="o">/</span><span class="n">license</span><span class="o">.</span><span class="n">rst</span> <span class="n">sphinx</span><span class="o">/</span><span class="n">install</span><span class="o">.</span><span class="n">rst</span> <span class="n">sphinx</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">rst</span> <span class="n">sphinx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">py</span> <span class="n">sphinx</span><span class="o">/</span><span class="n">about</span><span class="o">.</span><span class="n">rst</span> <span class="n">sphinx</span><span class="o">/_</span><span class="n">static</span><span class="o">/</span><span class="n">css</span><span class="o">/</span><span class="n">fixes</span><span class="o">.</span><span class="n">css</span> <span class="n">hello_world_lib</span><span class="o">.</span><span class="n">opam</span> <span class="n">hello_world</span><span class="o">.</span><span class="n">opam</span> <span class="n">dune</span><span class="o">-</span><span class="n">project</span> <span class="n">dune</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span> <span class="n">docs</span><span class="o">/</span><span class="n">style</span><span class="o">.</span><span class="n">css</span> <span class="n">docs</span><span class="o">/</span><span class="n">sphinx</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span> <span class="n">docs</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span> <span class="n">docs</span><span class="o">/</span><span class="n">doc</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span> <span class="n">docs</span><span class="o">/.</span><span class="n">nojekyll</span> <span class="nn">README</span><span class="p">.</span><span class="n">md</span> <span class="nc">Makefile</span> <span class="nn">LICENSE</span><span class="p">.</span><span class="n">md</span> <span class="nn">CHANGES</span><span class="p">.</span><span class="n">md</span> <span class="o">.</span><span class="n">ocp</span><span class="o">-</span><span class="n">indent</span> <span class="o">.</span><span class="n">ocamlformat</span><span class="o">-</span><span class="n">ignore</span> <span class="o">.</span><span class="n">ocamlformat</span> <span class="o">.</span><span class="n">gitignore</span> <span class="o">.</span><span class="n">github</span><span class="o">/</span><span class="n">workflows</span><span class="o">/</span><span class="n">workflow</span><span class="o">.</span><span class="n">yml</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>As you can see, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> created a directory <code class="code docutils literal notranslate"><span class="pre">hello_world</span></code>
+with the following files:</p>
+<ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> for project management by <code class="code docutils literal notranslate"><span class="pre">drom</span></code></li>
+<li>Source files for the project, composed of an <code class="code docutils literal notranslate"><span class="pre">hello_world_lib</span></code>
+library in <code class="code docutils literal notranslate"><span class="pre">src/hello_world_lib/</span></code> and a driver executable in
+<code class="code docutils literal notranslate"><span class="pre">src/hello_world/main.ml</span></code></li>
+<li><code class="code docutils literal notranslate"><span class="pre">git</span></code> source version management files: <code class="code docutils literal notranslate"><span class="pre">.gitignore</span></code> and
+<code class="code docutils literal notranslate"><span class="pre">.git/</span></code> for the <code class="code docutils literal notranslate"><span class="pre">git</span></code> revision control tool</li>
+<li>Documentation files: <code class="code docutils literal notranslate"><span class="pre">docs/index.html</span></code> and
+<code class="code docutils literal notranslate"><span class="pre">docs/style.css</span></code> for the project homepage</li>
+<li><code class="code docutils literal notranslate"><span class="pre">sphinx/</span></code> directory for the Sphinx documentation formatter</li>
+<li><code class="code docutils literal notranslate"><span class="pre">README.md</span></code>, <code class="code docutils literal notranslate"><span class="pre">CHANGES.md</span></code> and <code class="code docutils literal notranslate"><span class="pre">LICENSE.md</span></code> project files</li>
+<li>Specific files for <code class="code docutils literal notranslate"><span class="pre">opam</span></code> and <code class="code docutils literal notranslate"><span class="pre">dune</span></code>:
+<code class="code docutils literal notranslate"><span class="pre">dune-project</span></code>, <code class="code docutils literal notranslate"><span class="pre">hello_world.opam</span></code> and
+<cite>src/hello_world/dune</cite> for example</li>
+<li><code class="code docutils literal notranslate"><span class="pre">.github/</span></code> for Github Actions CI</li>
+<li><code class="code docutils literal notranslate"><span class="pre">.ocamlformat</span></code> for the <code class="code docutils literal notranslate"><span class="pre">ocamlformat</span></code> code formatting
+tool and <code class="code docutils literal notranslate"><span class="pre">.ocp-index</span></code> for source lookups</li>
+<li>Examples of test files in the <code class="code docutils literal notranslate"><span class="pre">test/</span></code> directory</li>
+</ul>
+<p>At this point, you may decide that <code class="code docutils literal notranslate"><span class="pre">drom</span></code> has done enough for
+you, and you can go back to using <code class="code docutils literal notranslate"><span class="pre">opam</span></code> and <code class="code docutils literal notranslate"><span class="pre">dune</span></code> to
+work on your project.</p>
+<p>The <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> file has a particular importance, it can be used
+by <code class="code docutils literal notranslate"><span class="pre">drom</span></code> to update all the generated files with this
+information. It contains information on the project, such as its name,
+license, description, dependencies, etc.</p>
+<p>Everytime you modify <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code>, you should call <code class="code docutils literal notranslate"><span class="pre">drom</span>
+<span class="pre">project</span></code> again to update the project:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">cd</span> <span class="n">hello_world</span>
+<span class="o">$</span> <span class="n">emacs</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
+<span class="o">$</span> <span class="n">drom</span> <span class="n">project</span>
+<span class="n">drom</span><span class="o">:</span> <span class="nc">Entering</span> <span class="n">directory</span> <span class="k">&#39;</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world&#39;</span>
+<span class="nc">Updating</span> <span class="n">file</span> <span class="n">dune</span><span class="o">-</span><span class="n">project</span>
+<span class="nc">Updating</span> <span class="n">file</span> <span class="n">hello_world</span><span class="o">.</span><span class="n">opam</span>
+<span class="nc">Updating</span> <span class="n">file</span> <span class="n">hello_world_lib</span><span class="o">.</span><span class="n">opam</span>
+<span class="nc">Updating</span> <span class="n">file</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/</span><span class="n">dune</span>
+<span class="nc">Updating</span> <span class="n">file</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world_lib</span><span class="o">/</span><span class="n">dune</span>
+<span class="nc">Calling</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span><span class="n">drom</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world_lib</span><span class="o">/</span><span class="n">dune</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/</span><span class="n">dune</span> <span class="n">hello_world_lib</span><span class="o">.</span><span class="n">opam</span> <span class="n">hello_world</span><span class="o">.</span><span class="n">opam</span> <span class="n">dune</span><span class="o">-</span><span class="n">project</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>Here, we added a dependency in the <cite>drom.toml</cite> file:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="o">[</span><span class="n">dependencies</span><span class="o">]</span>
+<span class="n">ez_file</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>And we see that <code class="code docutils literal notranslate"><span class="pre">drom</span></code> updated the files for <code class="code docutils literal notranslate"><span class="pre">dune</span></code> and
+<code class="code docutils literal notranslate"><span class="pre">opam</span></code>.</p>
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span> <span class="pre">project</span></code> also takes a few command line options that can be
+used to modify the <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> file:</p>
+<ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">--skeleton</span> <span class="pre">SKELETON</span></code> can be used to change the skeleton used
+to manage files. <code class="code docutils literal notranslate"><span class="pre">drom</span></code> knows about 3 differents skeletons by
+default: <code class="code docutils literal notranslate"><span class="pre">library</span></code> (a simple library), <code class="code docutils literal notranslate"><span class="pre">program</span></code> (a
+driver calling a library, the default skeleton used when nothing is
+specified) and <code class="code docutils literal notranslate"><span class="pre">virtual</span></code> (no default package).  An up-to-date
+list of project skeletons can be found in the generated file
+<code class="code docutils literal notranslate"><span class="pre">_drom/known-skeletons.txt</span></code>.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code> can be used to upgrade the <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> file
+when you are using a more recent version of <code class="code docutils literal notranslate"><span class="pre">drom</span></code></li>
+<li><code class="code docutils literal notranslate"><span class="pre">--binary</span></code> and <code class="code docutils literal notranslate"><span class="pre">--javascript</span></code> can be used to switch
+between generating binaries and generating Javascript using
+<code class="code docutils literal notranslate"><span class="pre">js_of_ocaml</span></code> by default.</li>
+</ul>
+<p>Notice that, just after creating the project, you should be able to
+build it and run it with no error!</p>
+</div>
+<div class="section" id="building-a-project">
+<h2>Building a Project<a class="headerlink" href="#building-a-project" title="Permalink to this headline">¶</a></h2>
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> can be used to build a project. In this case, it will use
+<code class="code docutils literal notranslate"><span class="pre">opam</span></code> to manage the environment (dependencies) and <code class="code docutils literal notranslate"><span class="pre">dune</span></code>
+to build the project. You don’t need to know these tools for basic
+usage of <code class="code docutils literal notranslate"><span class="pre">drom</span></code>.</p>
+<p>Because <code class="code docutils literal notranslate"><span class="pre">drom</span></code> makes extensive use of local <code class="code docutils literal notranslate"><span class="pre">opam</span></code>
+switches, it is a good idea to use it from <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> to benefit
+from binary caching of packages, to speedup creation of local
+switches.</p>
+<div class="section" id="building-locally">
+<h3>Building locally<a class="headerlink" href="#building-locally" title="Permalink to this headline">¶</a></h3>
+<p>By default, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will try to build the project in its directory:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ cd hello_world
+$ drom build -y
+Loading drom.toml
+Loading .drom
+Loading config from /home/user/.config/drom/config
+Calling opam switch create -y . --empty
+Calling opam install -y ocaml.4.10.0
+The following actions will be performed:
+  ∗ install base-bigarray       base
+  ∗ install base-threads        base
+  ∗ install base-unix           base
+  ∗ install ocaml-base-compiler 4.10.0                     [required by ocaml]
+  ∗ install ocaml-config        1                          [required by ocaml]
+  ∗ install ocaml               4.10.0
+===== ∗ 6 =====
+
+&lt;&gt;&lt;&gt; Gathering sources &gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+[ocaml-base-compiler.4.10.0] found in cache
+
+&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+∗ installed base-bigarray.base
+∗ installed base-threads.base
+∗ installed base-unix.base
+∗ installed ocaml-base-compiler.4.10.0
+∗ installed ocaml-config.1
+∗ installed ocaml.4.10.0
+Done.
+# Run eval $(opam env) to update the current shell environment
+Calling opam switch set-base ocaml
+Calling opam install -y --deps-only ./_drom/new.opam
+The following actions will be performed:
+∗ install dune 2.7.0
+
+&lt;&gt;&lt;&gt; Gathering sources &gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+[dune.2.7.0] found in cache
+
+&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+∗ installed dune.2.7.0
+Done.
+# Run eval $(opam env) to update the current shell environment
+Calling opam exec -- dune build
+Done: 40/46 (jobs: 1)
+Build OK
+</pre></div>
+</div>
+<p>During this build, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> performed the following operations:</p>
+<ul class="simple">
+<li>It loads the project definition file <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code></li>
+<li>It creates a local <code class="code docutils literal notranslate"><span class="pre">opam</span></code> switch (directory <code class="code docutils literal notranslate"><span class="pre">_opam</span></code>)
+where it installs the version of OCaml specified in the
+<code class="code docutils literal notranslate"><span class="pre">edition</span></code> field of the project definition</li>
+<li>It installs all the dependencies of the package. In our simple example,
+it is only the <code class="code docutils literal notranslate"><span class="pre">dune</span></code> build tool.</li>
+<li>Once the environment is ok, it builds the project using <code class="code docutils literal notranslate"><span class="pre">dune</span></code>.</li>
+</ul>
+<p>Since building the environment can take some time, it is important to
+know that it is only done the first time. It will also be upgraded
+only if the dependencies are changed.</p>
+<p>We can now run the program:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">run</span>
+<span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
+<span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
+<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
+<span class="nc">In</span> <span class="n">opam</span> <span class="n">switch</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/_</span><span class="n">opam</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">build</span>
+<span class="nc">Done</span><span class="o">:</span> <span class="mi">0</span><span class="o">/</span><span class="mi">0</span> <span class="o">(</span><span class="n">jobs</span><span class="o">:</span> <span class="mi">0</span><span class="o">)</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">exec</span> <span class="o">-</span><span class="n">p</span> <span class="n">hello_world</span> <span class="o">--</span> <span class="n">hello_world</span>
+<span class="nc">Hello</span> <span class="n">world</span><span class="o">!</span>
+</pre></div>
+</div>
+<p>It’s a bit verbose, but the last line <code class="code docutils literal notranslate"><span class="pre">Hello</span> <span class="pre">world!</span></code> was printed
+by our project!</p>
+</div>
+<div class="section" id="building-with-a-global-opam-switch">
+<h3>Building with a global <code class="code docutils literal notranslate"><span class="pre">opam</span></code> switch<a class="headerlink" href="#building-with-a-global-opam-switch" title="Permalink to this headline">¶</a></h3>
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> can use global switches also. For example, if you want to
+install the project in that switch:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">build</span> <span class="o">--</span><span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
+<span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
+<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
+<span class="nc">Error</span><span class="o">:</span> <span class="nc">You</span> <span class="n">must</span> <span class="n">remove</span> <span class="n">the</span> <span class="n">local</span> <span class="n">switch</span> <span class="o">`_</span><span class="n">opam</span><span class="o">`</span> <span class="n">before</span> <span class="n">using</span> <span class="n">option</span> <span class="o">--</span><span class="n">switch</span>
+</pre></div>
+</div>
+<p>Since we previously built the project locally, we have a local
+<code class="code docutils literal notranslate"><span class="pre">_opam</span></code> switch. <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will not remove this switch
+automatically, because it is often long to rebuild. So, you will have
+to do it yourself (or backup it if you are not using
+<code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code>):</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">_</span><span class="n">opam</span>
+<span class="o">$</span> <span class="n">drom</span> <span class="n">build</span> <span class="o">--</span><span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
+<span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
+<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">switch</span> <span class="n">link</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">Directory</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span> <span class="n">set</span> <span class="k">to</span> <span class="n">use</span> <span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span>
+<span class="nc">Just</span> <span class="n">remove</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/_</span><span class="n">opam</span> <span class="k">to</span> <span class="n">unlink</span><span class="o">.</span>
+<span class="nc">In</span> <span class="n">opam</span> <span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">install</span> <span class="o">--</span><span class="n">deps</span><span class="o">-</span><span class="n">only</span> <span class="o">./_</span><span class="n">drom</span><span class="o">/</span><span class="k">new</span><span class="o">.</span><span class="n">opam</span>
+<span class="nc">Nothing</span> <span class="k">to</span> <span class="k">do</span><span class="o">.</span>
+<span class="o">#</span> <span class="nc">Run</span> <span class="n">eval</span> <span class="o">$(</span><span class="n">opam</span> <span class="n">env</span><span class="o">)</span> <span class="k">to</span> <span class="n">update</span> <span class="n">the</span> <span class="n">current</span> <span class="n">shell</span> <span class="n">environment</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">build</span>
+<span class="nc">Build</span> <span class="nc">OK</span>
+</pre></div>
+</div>
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> performed exactly the same steps as for a local build.
+In our case, the <code class="code docutils literal notranslate"><span class="pre">opam</span></code> switch <code class="code docutils literal notranslate"><span class="pre">4.10.0</span></code> already existed on
+our computer, and the dependencies were already installed, so it only
+built the project.</p>
+<p>However, if the switch specified by <code class="code docutils literal notranslate"><span class="pre">--switch</span></code> does not exist
+globally, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will call <code class="code docutils literal notranslate"><span class="pre">opam</span></code> to create it.</p>
+</div>
+<div class="section" id="installing-the-project">
+<h3>Installing the Project<a class="headerlink" href="#installing-the-project" title="Permalink to this headline">¶</a></h3>
+<p>Now that we have tested that our project correctly builds in a local
+switch and in a global switch, we can ask <code class="code docutils literal notranslate"><span class="pre">drom</span></code> to install it
+in the switch:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom install
+Loading drom.toml
+Loading .drom
+Loading config from /home/user/.config/drom/config
+Directory /tmp/hello_world set to use switch 4.07.0.
+Just remove /tmp/hello_world/_opam to unlink.
+In opam switch 4.07.0
+Calling opam install --deps-only ./_drom/new.opam
+Nothing to do.
+Calling opam exec -- dune build
+Calling opam uninstall -y hello_world
+The following actions will be performed:
+  ⊘ remove hello_world 0.1.0
+
+&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+  ⊘ removed   hello_world.0.1.0
+Done.
+Calling opam pin -y --no-action -k path .
+Package hello_world does not exist, create as a NEW package? [Y/n] y
+[hello_world.~dev] synchronised from file:///tmp/hello_world
+hello_world is now pinned to file:///tmp/hello_world (version 0.1.0)
+Calling opam install -y hello_world
+
+&lt;&gt;&lt;&gt; Synchronising pinned packages &gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+[hello_world.0.1.0] no changes from file:///tmp/hello_world
+
+The following actions will be performed:
+  ∗ install hello_world 0.1.0*
+
+&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+∗ installed hello_world.0.1.0
+Done.
+Calling opam unpin -n hello_world
+Ok, hello_world is no longer pinned to file:///tmp/hello_world (version 0.1.0)
+Installation OK
+</pre></div>
+</div>
+<p>As we can see in this example, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> performed the following steps:</p>
+<ul class="simple">
+<li>Building the project, as in the previous sections</li>
+<li>Removing all the packages of the project that may already be installed</li>
+<li>Pinning all the packages for <code class="code docutils literal notranslate"><span class="pre">opam</span></code></li>
+<li>Installing the pinned packages (rebuilding them in <code class="code docutils literal notranslate"><span class="pre">opam</span></code>)</li>
+<li>Unpinning all the packages</li>
+</ul>
+</div>
+</div>
+<div class="section" id="building-documentation">
+<h2>Building Documentation<a class="headerlink" href="#building-documentation" title="Permalink to this headline">¶</a></h2>
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> generates a web-site for your project with 2 parts that
+you need to generate: a documentation of the library API automatically
+generated by <code class="code docutils literal notranslate"><span class="pre">odoc</span></code> and a general documentation that you can
+modify, generated by the <a class="reference external" href="https://www.sphinx-doc.org/en/master/">sphinx-doc tool</a>, with the <a class="reference external" href="https://readthedocs.org/">Read-the-doc
+theme</a> . You will need to install them,
+it’s usually something like:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">sphinx</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">sphinx_rtd_theme</span>
+</pre></div>
+</div>
+<p>The documentation is generated in the <code class="code docutils literal notranslate"><span class="pre">docs/</span></code> directory, so that
+you can use Github Pages to publish it automatically (there, you will
+need to activate them, choose the <code class="code docutils literal notranslate"><span class="pre">master</span></code> branch and the
+<code class="code docutils literal notranslate"><span class="pre">docs</span></code> sub-directory).</p>
+<p>The main webpage is created as <code class="code docutils literal notranslate"><span class="pre">docs/index.html</span></code>, and the Sphinx
+files used to generate the documentation are in <code class="code docutils literal notranslate"><span class="pre">sphinx</span></code>.</p>
+<p>To generate the documentation, you must call two commands:</p>
+<ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">drom</span> <span class="pre">doc</span></code>, each time you want to generate the documentation
+of the API</li>
+<li><code class="code docutils literal notranslate"><span class="pre">drom</span> <span class="pre">sphinx</span></code>, each time you want to compile the Sphinx files</li>
+</ul>
+<p>Since generating the API documentation requires to use <code class="code docutils literal notranslate"><span class="pre">odoc</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">drom</span></code> will automatically install the Development dependencies
+of your project. They are usually tools like <code class="code docutils literal notranslate"><span class="pre">merlin</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">odoc</span></code> or <code class="code docutils literal notranslate"><span class="pre">ocamlformat</span></code> that only developers will need.</p>
+<p>Still, you can trigger directly their installation using:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom dev-deps
+Loading drom.toml
+Loading .drom
+Loading config from /home/user/.config/drom/config
+In opam switch 4.10.0
+Calling opam install odoc ocamlformat
+The following actions will be performed:
+  ∗ install odoc        1.5.1
+  ∗ install ocamlformat 0.15.0
+===== ∗ 2 =====
+
+&lt;&gt;&lt;&gt; Gathering sources &gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+[ocamlformat.0.15.0] found in cache
+[odoc.1.5.1] found in cache
+
+&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
+∗ installed odoc.1.5.1
+∗ installed ocamlformat.0.15.0
+Done.
+</pre></div>
+</div>
+<p>In our case, only <code class="code docutils literal notranslate"><span class="pre">odoc</span></code> and <code class="code docutils literal notranslate"><span class="pre">ocamlformat</span></code> have been
+detected as missing, so they are installed.</p>
+<p>Let’s now generate the API documentation:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">doc</span>
+<span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
+<span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
+<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
+<span class="nc">In</span> <span class="n">opam</span> <span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">build</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">build</span> <span class="o">@</span><span class="n">doc</span>
+<span class="nc">Calling</span> <span class="n">rsync</span> <span class="o">-</span><span class="n">auv</span> <span class="o">--</span><span class="n">delete</span> <span class="o">_</span><span class="n">build</span><span class="o">/</span><span class="n">default</span><span class="o">/_</span><span class="n">doc</span><span class="o">/_</span><span class="n">html</span><span class="o">/.</span> <span class="n">docs</span><span class="o">/</span><span class="n">doc</span>
+<span class="n">sending</span> <span class="n">incremental</span> <span class="n">file</span> <span class="kt">list</span>
+<span class="o">./</span>
+<span class="n">highlight</span><span class="o">.</span><span class="n">pack</span><span class="o">.</span><span class="n">js</span>
+<span class="n">index</span><span class="o">.</span><span class="n">html</span>
+<span class="n">odoc</span><span class="o">.</span><span class="n">css</span>
+<span class="n">hello_world</span><span class="o">/</span>
+<span class="n">hello_world</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>
+
+<span class="n">sent</span> <span class="mi">26</span><span class="o">,</span><span class="mi">886</span> <span class="n">bytes</span>  <span class="n">received</span> <span class="mi">103</span> <span class="n">bytes</span>  <span class="mi">53</span><span class="o">,</span><span class="mi">978</span><span class="o">.</span><span class="mi">00</span> <span class="n">bytes</span><span class="o">/</span><span class="n">sec</span>
+<span class="n">total</span> <span class="n">size</span> <span class="n">is</span> <span class="mi">26</span><span class="o">,</span><span class="mi">507</span>  <span class="n">speedup</span> <span class="n">is</span> <span class="mi">0</span><span class="o">.</span><span class="mi">98</span>
+<span class="nc">Calling</span> <span class="n">git</span> <span class="n">add</span> <span class="n">docs</span><span class="o">/</span><span class="n">doc</span>
+</pre></div>
+</div>
+<p>The API documentation has been generated and copied into <code class="code docutils literal notranslate"><span class="pre">docs/doc</span></code>.</p>
+<p>Let’s now generate the Sphinx documentation:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">sphinx</span>
+<span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
+<span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
+<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
+<span class="nc">Creating</span> <span class="n">file</span> <span class="n">docs</span><span class="o">/</span><span class="n">sphinx</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>
+<span class="nc">Calling</span> <span class="n">sphinx</span><span class="o">-</span><span class="n">build</span> <span class="n">sphinx</span> <span class="n">docs</span><span class="o">/</span><span class="n">sphinx</span>
+<span class="nc">Running</span> <span class="nc">Sphinx</span> <span class="n">v1</span><span class="o">.</span><span class="mi">8</span><span class="o">.</span><span class="mi">5</span>
+<span class="n">building</span> <span class="o">[</span><span class="n">mo</span><span class="o">]:</span> <span class="n">targets</span> <span class="k">for</span> <span class="mi">0</span> <span class="n">po</span> <span class="n">files</span> <span class="n">that</span> <span class="n">are</span> <span class="n">out</span> <span class="k">of</span> <span class="n">date</span>
+<span class="n">building</span> <span class="o">[</span><span class="n">html</span><span class="o">]:</span> <span class="n">targets</span> <span class="k">for</span> <span class="mi">4</span> <span class="n">source</span> <span class="n">files</span> <span class="n">that</span> <span class="n">are</span> <span class="n">out</span> <span class="k">of</span> <span class="n">date</span>
+<span class="n">updating</span> <span class="n">environment</span><span class="o">:</span> <span class="mi">4</span> <span class="n">added</span><span class="o">,</span> <span class="mi">0</span> <span class="n">changed</span><span class="o">,</span> <span class="mi">0</span> <span class="n">removed</span>
+
+<span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/</span><span class="n">sphinx</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">rst</span><span class="o">:</span><span class="mi">8</span><span class="o">:</span> <span class="nc">WARNING</span><span class="o">:</span> <span class="nc">Title</span> <span class="n">underline</span> <span class="n">too</span> <span class="n">short</span><span class="o">.</span>
+
+<span class="nc">Welcome</span> <span class="k">to</span> <span class="n">hello_world</span> <span class="n">doc</span>
+<span class="o">=================</span>
+<span class="n">looking</span> <span class="k">for</span> <span class="n">now</span><span class="o">-</span><span class="n">outdated</span> <span class="n">files</span><span class="o">...</span> <span class="n">none</span> <span class="n">found</span>
+<span class="n">pickling</span> <span class="n">environment</span><span class="o">...</span> <span class="k">done</span>
+<span class="n">checking</span> <span class="n">consistency</span><span class="o">...</span> <span class="k">done</span>
+<span class="n">preparing</span> <span class="n">documents</span><span class="o">...</span> <span class="k">done</span>
+<span class="n">writing</span> <span class="n">output</span><span class="o">...</span> <span class="o">[</span><span class="mi">100</span><span class="o">%]</span> <span class="n">license</span>
+<span class="n">generating</span> <span class="n">indices</span><span class="o">...</span> <span class="n">genindex</span>
+<span class="n">writing</span> <span class="n">additional</span> <span class="n">pages</span><span class="o">...</span> <span class="n">search</span>
+<span class="n">copying</span> <span class="n">static</span> <span class="n">files</span><span class="o">...</span> <span class="k">done</span>
+<span class="n">copying</span> <span class="n">extra</span> <span class="n">files</span><span class="o">...</span> <span class="k">done</span>
+<span class="n">dumping</span> <span class="n">search</span> <span class="n">index</span> <span class="k">in</span> <span class="nc">English</span> <span class="o">(</span><span class="n">code</span><span class="o">:</span> <span class="n">en</span><span class="o">)</span> <span class="o">...</span> <span class="k">done</span>
+<span class="n">dumping</span> <span class="k">object</span> <span class="n">inventory</span><span class="o">...</span> <span class="k">done</span>
+<span class="n">build</span> <span class="n">succeeded</span><span class="o">,</span> <span class="mi">1</span> <span class="n">warning</span><span class="o">.</span>
+
+<span class="nc">The</span> <span class="nc">HTML</span> <span class="n">pages</span> <span class="n">are</span> <span class="k">in</span> <span class="n">docs</span><span class="o">/</span><span class="n">sphinx</span><span class="o">.</span>
+<span class="nc">Calling</span> <span class="n">git</span> <span class="n">add</span> <span class="n">docs</span><span class="o">/</span><span class="n">sphinx</span>
+</pre></div>
+</div>
+<p>We can now check how it looks like:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">xdg</span><span class="o">-</span><span class="k">open</span> <span class="o">./</span><span class="n">docs</span><span class="o">/</span><span class="n">sphinx</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="reference.html" class="btn btn-neutral float-right" title="Project Description" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="about.html" class="btn btn-neutral float-left" title="About" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright OCamlPro SAS &amp; Origin Labs SAS
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
