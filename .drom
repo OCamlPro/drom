@@ -5,6 +5,11 @@
 069c00660d1c67208d40e1c19b82a250:.
 # end context for .
 
+# begin context for .github/workflows/doc-deploy.yml
+# file .github/workflows/doc-deploy.yml
+b6f9b2d10964e8e60eb6513c2aa8459b:.github/workflows/doc-deploy.yml
+# end context for .github/workflows/doc-deploy.yml
+
 # begin context for .github/workflows/workflow.yml
 # file .github/workflows/workflow.yml
 20a7ac507806f2258bdf8c72d25f19d7:.github/workflows/workflow.yml
@@ -12,7 +17,7 @@
 
 # begin context for .gitignore
 # file .gitignore
-4545d6f4a7e1902e0f4f56112134548b:.gitignore
+aac3cd6afc2ca8c47c0d5f0a8fd1c8c5:.gitignore
 # end context for .gitignore
 
 # begin context for .ocamlformat
@@ -42,7 +47,7 @@ c4217a22064a4a18f9587b930b250fbe:LICENSE.md
 
 # begin context for Makefile
 # file Makefile
-118525fb5ba6186eedb505bbc7cd9a9c:Makefile
+74bb4672a8ca4756cabd173bcc857d93:Makefile
 # end context for Makefile
 
 # begin context for README.md
@@ -55,24 +60,14 @@ b091dd96e8b553dd7a7df285279d7d9e:README.md
 68b329da9893e34099c7d8ad5cb9c940:docs/.nojekyll
 # end context for docs/.nojekyll
 
-# begin context for docs/doc/index.html
-# file docs/doc/index.html
-8c90147085379063e18134a7f18f079b:docs/doc/index.html
-# end context for docs/doc/index.html
-
 # begin context for docs/index.html
 # file docs/index.html
 c352caa74812a7a09cdd3e52031d6033:docs/index.html
 # end context for docs/index.html
 
-# begin context for docs/sphinx/index.html
-# file docs/sphinx/index.html
-8a2ddf0ce1706457ec54652cf0f5ffac:docs/sphinx/index.html
-# end context for docs/sphinx/index.html
-
 # begin context for docs/style.css
 # file docs/style.css
-a95f1ab7d178b468eff6188a527535d9:docs/style.css
+42e9a35df53b46338c20e484a27eab26:docs/style.css
 # end context for docs/style.css
 
 # begin context for drom-opam.deps
