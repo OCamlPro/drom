@@ -5,6 +5,11 @@
 069c00660d1c67208d40e1c19b82a250:.
 # end context for .
 
+# begin context for .github/workflows/doc-deploy.yml
+# file .github/workflows/doc-deploy.yml
+b6f9b2d10964e8e60eb6513c2aa8459b:.github/workflows/doc-deploy.yml
+# end context for .github/workflows/doc-deploy.yml
+
 # begin context for .github/workflows/workflow.yml
 # file .github/workflows/workflow.yml
 20a7ac507806f2258bdf8c72d25f19d7:.github/workflows/workflow.yml
@@ -12,7 +17,7 @@
 
 # begin context for .gitignore
 # file .gitignore
-4545d6f4a7e1902e0f4f56112134548b:.gitignore
+aac3cd6afc2ca8c47c0d5f0a8fd1c8c5:.gitignore
 # end context for .gitignore
 
 # begin context for .ocamlformat
@@ -72,7 +77,7 @@ c352caa74812a7a09cdd3e52031d6033:docs/index.html
 
 # begin context for docs/style.css
 # file docs/style.css
-a95f1ab7d178b468eff6188a527535d9:docs/style.css
+42e9a35df53b46338c20e484a27eab26:docs/style.css
 # end context for docs/style.css
 
 # begin context for drom-opam.deps
