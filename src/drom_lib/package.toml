@@ -40,12 +40,11 @@ skeletons/projects/virtual/test/expect-tests/dune
 skeletons/projects/virtual/test/expect-tests/test.ml
 skeletons/projects/virtual/test/inline-tests/dune
 skeletons/projects/virtual/test/inline-tests/test.ml
-skeletons/projects/virtual/docs/doc/index.html
 skeletons/projects/virtual/docs/dot_nojekyll
 skeletons/projects/virtual/docs/index.html
-skeletons/projects/virtual/docs/sphinx/index.html
 skeletons/projects/virtual/docs/style.css
 skeletons/projects/virtual/dot_github/workflows/workflow.yml
+skeletons/projects/virtual/dot_github/workflows/doc-deploy.yml
      )
   (action
     (with-stdout-to %{targets}

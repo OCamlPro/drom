@@ -7,3 +7,6 @@ _build
 /_opam
 /_build
 !(dot-gitignore-trailer)
+docs/doc/
+docs/sphinx/
+
