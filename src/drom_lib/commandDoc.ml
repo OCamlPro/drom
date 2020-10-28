@@ -13,12 +13,10 @@ open Ezcmd.TYPES
 let cmd_name = "doc"
 
 let action ~args ~open_www () =
-  let (p : Types.project) = Build.build ~dev_deps:true ~args () in
+  let (_p : Types.project) = Build.build ~dev_deps:true ~args () in
   Misc.call [| "opam"; "exec"; "--"; "dune"; "build"; "@doc" |];
   Misc.call
     [| "rsync"; "-auv"; "--delete"; "_build/default/_doc/_html/."; "docs/doc" |];
-  if not (List.mem "git-add-doc" p.skip) then
-    Misc.call [| "git"; "add"; "docs/doc" |];
   if !open_www then
     Misc.call [| "xdg-open"; "_build/default/_doc/_html/index.html" |]
 

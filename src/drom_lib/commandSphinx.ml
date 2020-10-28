@@ -23,9 +23,7 @@ let action () =
     | None -> "docs/sphinx"
     | Some dir -> dir
   in
-  Misc.call [| "sphinx-build"; "sphinx"; sphinx_target |];
-  if not (List.mem "git-add-sphinx" p.skip) then
-    Misc.call [| "git"; "add"; sphinx_target |]
+  Misc.call [| "sphinx-build"; "sphinx"; sphinx_target |]
 
 let cmd =
   { cmd_name;
