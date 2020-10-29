@@ -312,5 +312,9 @@ let vendor_packages () =
 let library_module p =
   match p.p_pack with
   | Some name -> name
-  | None ->
-      String.capitalize (underscorify p.name)
+  | None -> String.capitalize (underscorify p.name)
+
+let option_value o ~default =
+  match o with
+  | None -> default
+  | Some v -> v

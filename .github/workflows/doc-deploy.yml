@@ -7,25 +7,42 @@ on:
 jobs:
   doc-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: checkout
         uses: actions/checkout@v2
         with:
           submodules: recursive
           persist-credentials: false
+      - name: retrieve-opam-cache
+        uses: actions/cache@v2
+        id: cache-opam
+        with:
+          path: ~/.opam
+          key: v1-Linux-drom-4.10.0-${{ hashFiles('*.opam') }}
       - name: setup-ocaml
         uses: avsm/setup-ocaml@v1
         with:
-          ocaml-version: 4.11.1
+          ocaml-version: 4.10.0
       - name: setup-doc
         run: |
           sudo apt install -yqq python3-sphinx python3-sphinx-rtd-theme
           opam install -y dune odoc
+      - run: opam pin add . -y --no-action
+      - run: opam depext -y drom drom_lib
+        if: steps.cache-opam.outputs.cache-hit != 'true'
+      - run: opam install -y ./*.opam --deps-only --with-test
+        if: steps.cache-opam.outputs.cache-hit != 'true'
+      - run: opam upgrade --fixup
+        if: steps.cache-opam.outputs.cache-hit == 'true'
       - name: build-doc
         run: |
-          eval "$(opam env)" && dune build @doc
+          opam exec -- dune build @doc
           mv _build/default/_doc/_html/ docs/doc
           sphinx-build sphinx docs/sphinx
+          touch docs/.nojekyll
+          touch docs/sphinx/.nojekyll
+          touch docs/doc/.nojekyll
       - name: deploy-doc
         uses: JamesIves/github-pages-deploy-action@3.6.2
         with:

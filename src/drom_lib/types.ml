@@ -58,14 +58,14 @@ type package =
     mutable p_gen_version : string option;
     mutable p_fields : string StringMap.t;
     mutable p_generators : string list option;
-
-    mutable p_file : string option ;
+    mutable p_file : string option
   }
 
 and project =
   { package : package;
     mutable packages : package list;
-    mutable file : string option ; (* name of the file *)
+    mutable file : string option;
+    (* name of the file *)
     (* sub-packages *)
 
     (* common fields *)
@@ -86,6 +86,8 @@ and project =
     archive : string option;
     (* sphinx options *)
     sphinx_target : string option;
+    (* odoc options *)
+    odoc_target : string option;
     (* CI options *)
     windows_ci : bool;
     generators : string list;
