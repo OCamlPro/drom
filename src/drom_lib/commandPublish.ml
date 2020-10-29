@@ -71,7 +71,7 @@ let action ~opam_repo ~use_md5 () =
       let checksum =
         if use_md5 then
           let md5 = Digest.file output in
-          Printf.sprintf "md5=%s" ( Digest.to_hex md5 )
+          Printf.sprintf "md5=%s" (Digest.to_hex md5)
         else
           let sha256 = OpamSHA.sha256_file output in
           Printf.sprintf "sha256=%s" sha256
@@ -136,10 +136,10 @@ let cmd =
     cmd_args =
       [ ( [ "opam-repo" ],
           Arg.String (fun s -> opam_repo := Some s),
-          Ezcmd.info "Path to local opam-repository" ) ;
+          Ezcmd.info "Path to local opam-repository" );
         ( [ "md5" ],
           Arg.Unit (fun () -> use_md5 := true),
-          Ezcmd.info "Use md5 instead of sha256 for checksums" ) ;
+          Ezcmd.info "Use md5 instead of sha256 for checksums" )
       ];
     cmd_man = [];
     cmd_doc = "Generate a set of packages from all found drom.toml files"
