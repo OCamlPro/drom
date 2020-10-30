@@ -71,7 +71,7 @@ let rename_package hashes package new_name =
   { package with dir = new_dir; name = new_name }
 
 let action ~package_name ~kind ~mode ~promote_skip ~dir ?create ?remove ?rename
-    ~args  () =
+    ~args () =
   let p, inferred_dir = Project.get () in
   let name =
     match package_name with
@@ -193,8 +193,7 @@ let action ~package_name ~kind ~mode ~promote_skip ~dir ?create ?remove ?rename
           !upgrade)
   in
   let args = { args with arg_upgrade = upgrade } in
-  Update.update_files ~create:false ?mode ~promote_skip ~git:true p
-    ~args
+  Update.update_files ~create:false ?mode ~promote_skip ~git:true p ~args
 
 let cmd =
   let package_name = ref None in
@@ -205,49 +204,50 @@ let cmd =
   let create = ref None in
   let remove = ref None in
   let rename = ref None in
-  let ( args, specs ) = Update.update_args () in
+  let args, specs = Update.update_args () in
   { cmd_name;
     cmd_action =
       (fun () ->
         action ~package_name:!package_name ~mode:!mode ~kind:!kind
           ~promote_skip:!promote_skip ~dir:!dir ?create:!create ?remove:!remove
-          ?rename:!rename  ~args ());
+          ?rename:!rename ~args ());
     cmd_args =
-      specs @
-      [ ( [ "new" ],
-          Arg.String (fun s -> create := Some s),
-          Ezcmd.info "Add a new package to the project with skeleton NAME" );
-         ( [ "remove" ],
-          Arg.String (fun s -> remove := Some s),
-          Ezcmd.info "Remove a package from the project" );
-        ( [ "dir" ],
-          Arg.String (fun s -> dir := Some s),
-          Ezcmd.info "Dir where package sources are stored (src by default)" );
-        ( [ "rename" ],
-          Arg.String (fun s -> rename := Some s),
-          Ezcmd.info "Rename secondary package to a new name" );
-        ( [ "library" ],
-          Arg.Unit (fun () -> kind := Some Library),
-          Ezcmd.info "Package is a library" );
-        ( [ "program" ],
-          Arg.Unit (fun () -> kind := Some Program),
-          Ezcmd.info "Package is a program" );
-        ( [ "virtual" ],
-          Arg.Unit (fun () -> kind := Some Virtual),
-          Ezcmd.info "Package is virtual, i.e. no code" );
-        ( [ "binary" ],
-          Arg.Unit (fun () -> mode := Some Binary),
-          Ezcmd.info "Compile to binary" );
-        ( [ "javascript" ],
-          Arg.Unit (fun () -> mode := Some Javascript),
-          Ezcmd.info "Compile to javascript" );
-        ( [ "promote-skip" ],
-          Arg.Unit (fun () -> promote_skip := true),
-          Ezcmd.info "Promote skipped files to skip field" );
-        ( [],
-          Arg.Anon (0, fun name -> package_name := Some name),
-          Ezcmd.info "Name of the package" )
-      ];
+      specs
+      @ [ ( [ "new" ],
+            Arg.String (fun s -> create := Some s),
+            Ezcmd.info "Add a new package to the project with skeleton NAME" );
+          ( [ "remove" ],
+            Arg.String (fun s -> remove := Some s),
+            Ezcmd.info "Remove a package from the project" );
+          ( [ "dir" ],
+            Arg.String (fun s -> dir := Some s),
+            Ezcmd.info "Dir where package sources are stored (src by default)"
+          );
+          ( [ "rename" ],
+            Arg.String (fun s -> rename := Some s),
+            Ezcmd.info "Rename secondary package to a new name" );
+          ( [ "library" ],
+            Arg.Unit (fun () -> kind := Some Library),
+            Ezcmd.info "Package is a library" );
+          ( [ "program" ],
+            Arg.Unit (fun () -> kind := Some Program),
+            Ezcmd.info "Package is a program" );
+          ( [ "virtual" ],
+            Arg.Unit (fun () -> kind := Some Virtual),
+            Ezcmd.info "Package is virtual, i.e. no code" );
+          ( [ "binary" ],
+            Arg.Unit (fun () -> mode := Some Binary),
+            Ezcmd.info "Compile to binary" );
+          ( [ "javascript" ],
+            Arg.Unit (fun () -> mode := Some Javascript),
+            Ezcmd.info "Compile to javascript" );
+          ( [ "promote-skip" ],
+            Arg.Unit (fun () -> promote_skip := true),
+            Ezcmd.info "Promote skipped files to skip field" );
+          ( [],
+            Arg.Anon (0, fun name -> package_name := Some name),
+            Ezcmd.info "Name of the package" )
+        ];
     cmd_man = [];
     cmd_doc = "Manage a package within a project"
   }

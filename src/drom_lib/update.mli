@@ -8,14 +8,15 @@
 (*                                                                        *)
 (**************************************************************************)
 
-type update_args = {
-  mutable arg_upgrade : bool ;
-  mutable arg_force : bool ;
-  mutable arg_diff : bool ;
-  mutable arg_skip : ( bool * string ) list ;
-}
+type update_args =
+  { mutable arg_upgrade : bool;
+    mutable arg_force : bool;
+    mutable arg_diff : bool;
+    mutable arg_skip : (bool * string) list
+  }
 
-val update_args : unit ->
+val update_args :
+  unit ->
   update_args * (string list * Ezcmd.TYPES.Arg.spec * Ezcmd.TYPES.info) list
 
 val update_files :
@@ -27,4 +28,4 @@ val update_files :
   Types.project ->
   unit
 
-val compute_config_hash : ( string * string ) list -> string
+val compute_config_hash : (string * string) list -> string

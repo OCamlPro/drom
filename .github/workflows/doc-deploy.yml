@@ -1,4 +1,4 @@
-![skip:github]![skip:workflows]![file:.github/workflows/doc-deploy.yml]
+
 name: doc-deploy
 on:
   push:
@@ -38,11 +38,11 @@ jobs:
       - name: build-doc
         run: |
           opam exec -- dune build @doc
-          mv _build/default/_doc/_html/ !{odoc-target}
-          sphinx-build sphinx !{sphinx-target}
+          mv _build/default/_doc/_html/ docs/doc
+          sphinx-build sphinx docs/sphinx
           touch docs/.nojekyll
-          touch !{sphinx-target}/.nojekyll
-          touch !{odoc-target}/.nojekyll
+          touch docs/sphinx/.nojekyll
+          touch docs/doc/.nojekyll
       - name: deploy-doc
         uses: JamesIves/github-pages-deploy-action@3.6.2
         with:

@@ -39,19 +39,20 @@ let rec dummy_project =
     pack_modules = true;
     archive = None;
     sphinx_target = None;
+    odoc_target = None;
     windows_ci = true;
     profiles = StringMap.empty;
     skip_dirs = [];
     fields = StringMap.empty;
-    profile = None ;
-    file = None ;
+    profile = None;
+    file = None
   }
 
 and dummy_package =
   { name = "dummy_package";
     dir = "dummy_package.dir";
     project = dummy_project;
-    p_file = None ;
+    p_file = None;
     p_pack = None;
     kind = Library;
     p_version = None;
@@ -301,13 +302,12 @@ let toml_of_package pk =
   |> EzToml.put_string_option [ "skeleton" ] pk.p_skeleton
   |> EzToml.put_encoding fields_encoding [ "fields" ] pk.p_fields
   |> EzToml.put_string_list_option [ "generators" ] pk.p_generators
-(* default to project ones *)
+  (* default to project ones *)
   |> EzToml.put_string_option [ "version" ] pk.p_version
   |> EzToml.put_bool_option [ "pack-modules" ] pk.p_pack_modules
   |> EzToml.put_encoding_option mode_encoding [ "mode" ] pk.p_mode
   |> EzToml.put_string_option [ "synopsis" ] pk.p_synopsis
   |> EzToml.put_string_option [ "description" ] pk.p_description
-
 
 let find_package ?default name =
   let defaults =
@@ -328,31 +328,29 @@ let find_package ?default name =
 
 let package_of_toml ?default table =
   let dir = EzToml.get_string_option table [ "dir" ] in
-  let table, p_file = match dir with
-    | None -> table, None
+  let table, p_file =
+    match dir with
+    | None -> (table, None)
     | Some dir ->
-        let filename = dir // "package.toml" in
-        if Sys.file_exists filename then
-          let package_table =
-            match EzToml.from_file filename with
-            | `Ok table -> table
-            | `Error (s, loc) ->
-                Error.raise "Could not parse %S: %s at %s" filename s
-                  (EzToml.string_of_location loc)
-          in
-          let table =
-            TomlTypes.Table.union (fun _key _ v -> Some v) package_table table
-          in
-          table, Some filename
-        else
-          table, None
+      let filename = dir // "package.toml" in
+      if Sys.file_exists filename then
+        let package_table =
+          match EzToml.from_file filename with
+          | `Ok table -> table
+          | `Error (s, loc) ->
+            Error.raise "Could not parse %S: %s at %s" filename s
+              (EzToml.string_of_location loc)
+        in
+        let table =
+          TomlTypes.Table.union (fun _key _ v -> Some v) package_table table
+        in
+        (table, Some filename)
+      else
+        (table, None)
   in
   let name = EzToml.get_string table [ "name" ] in
   let default = find_package ?default name in
-  let dir = match dir with
-    | None -> default.dir
-    | Some dir -> dir
-  in
+  let dir = Misc.option_value dir ~default:default.dir in
   let kind =
     EzToml.get_encoding_default kind_encoding table [ "kind" ] default.kind
   in
@@ -427,7 +425,6 @@ let package_of_toml ?default table =
     p_generators
   }
 
-
 let to_files p =
   let version =
     EzToml.empty
@@ -464,6 +461,7 @@ let to_files p =
     |> maybe_package_key "copyright" p.copyright
     |> maybe_package_key "archive" p.archive
     |> maybe_package_key "sphinx-target" p.sphinx_target
+    |> maybe_package_key "odoc-target" p.odoc_target
     |> maybe_package_key "build-profile" p.profile
   in
   let package2 =
@@ -519,13 +517,13 @@ let to_files p =
 
   let files = ref [] in
   let packages =
-    List.map (fun package ->
+    List.map
+      (fun package ->
         let toml = toml_of_package package in
-        files := (package.dir // "package.toml",
-                  EzToml.to_string toml) :: !files;
-        EzToml.empty
-        |> EzToml.put_string [ "dir" ] package.dir
-      ) p.packages
+        files :=
+          (package.dir // "package.toml", EzToml.to_string toml) :: !files;
+        EzToml.empty |> EzToml.put_string [ "dir" ] package.dir)
+      p.packages
   in
   let packages =
     EzToml.empty
@@ -537,7 +535,7 @@ let to_files p =
     Printf.sprintf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" version package
       optionals package2 drom dependencies tools package3 packages
   in
-  ( "drom.toml", content) :: !files
+  ("drom.toml", content) :: !files
 
 let project_of_toml ?file ?default table =
   ( match EzToml.get_string_option table [ "project"; "drom-version" ] with
@@ -699,6 +697,11 @@ let project_of_toml ?file ?default table =
       [ project_key; "sphinx-target" ]
       ?default:d.sphinx_target
   in
+  let odoc_target =
+    EzToml.get_string_option table
+      [ project_key; "odoc-target" ]
+      ?default:d.odoc_target
+  in
   let profile =
     EzToml.get_string_option table
       [ project_key; "build-profile" ]
@@ -798,12 +801,13 @@ let project_of_toml ?file ?default table =
       pack_modules;
       archive;
       sphinx_target;
+      odoc_target;
       windows_ci;
       packages;
       profiles;
       skip_dirs;
       profile;
-      fields;
+      fields
     }
   in
   package.project <- project;

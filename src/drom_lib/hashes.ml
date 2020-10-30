@@ -15,7 +15,7 @@ open EzCompat
 type t =
   { mutable hashes : string StringMap.t;
     mutable modified : bool;
-    mutable files : ( bool * string * string ) list ;
+    mutable files : (bool * string * string) list;
     (* for git *)
     mutable to_add : StringSet.t;
     mutable to_remove : StringSet.t
@@ -44,19 +44,19 @@ let load () =
       StringMap.empty
   in
   { hashes;
-    files = [] ;
+    files = [];
     modified = false;
     to_add = StringSet.empty;
     to_remove = StringSet.empty
   }
 
 let write t ~record file content =
-  t.files <- (record, file, content) :: t.files ;
+  t.files <- (record, file, content) :: t.files;
   t.modified <- true
 
 let get t file = StringMap.find file t.hashes
 
-let update ?(git=true) t file hash =
+let update ?(git = true) t file hash =
   t.hashes <- StringMap.add file hash t.hashes;
   if git then t.to_add <- StringSet.add file t.to_add;
   t.modified <- true
@@ -79,33 +79,30 @@ let digest_string content = Digest.string content
 
 let save ?(git = true) t =
   if t.modified then begin
-
-    List.iter (fun (record, file, content) ->
+    List.iter
+      (fun (record, file, content) ->
         let dirname = Filename.dirname file in
-        if not ( Sys.file_exists dirname ) then
-          EzFile.make_dir ~p:true dirname;
+        if not (Sys.file_exists dirname) then EzFile.make_dir ~p:true dirname;
         EzFile.write_file file content;
-        if record then
-          update t file (digest_string content)
-      ) t.files;
+        if record then update t file (digest_string content))
+      t.files;
 
     let b = Buffer.create 1000 in
     Printf.bprintf b
       "# Keep this file in your GIT repo to help drom track generated files\n";
     StringMap.iter
       (fun filename hash ->
-         if Sys.file_exists filename then begin
-           if filename = "." then begin
-             Printf.bprintf b "\n# hash of toml configuration files\n";
-             Printf.bprintf b "# used for generation of all files\n";
-           end else begin
-             Printf.bprintf b "\n# begin context for %s\n" filename;
-             Printf.bprintf b "# file %s\n" filename;
-           end;
-           Printf.bprintf b "%s:%s\n" (Digest.to_hex hash) filename;
-           Printf.bprintf b "# end context for %s\n" filename;
-         end
-      )
+        if Sys.file_exists filename then begin
+          if filename = "." then begin
+            Printf.bprintf b "\n# hash of toml configuration files\n";
+            Printf.bprintf b "# used for generation of all files\n"
+          end else begin
+            Printf.bprintf b "\n# begin context for %s\n" filename;
+            Printf.bprintf b "# file %s\n" filename
+          end;
+          Printf.bprintf b "%s:%s\n" (Digest.to_hex hash) filename;
+          Printf.bprintf b "# end context for %s\n" filename
+        end)
       t.hashes;
     EzFile.write_file ".drom" (Buffer.contents b);
 
@@ -113,7 +110,7 @@ let save ?(git = true) t =
       let to_remove = ref [] in
       StringSet.iter
         (fun file ->
-           if not (Sys.file_exists file) then to_remove := file :: !to_remove)
+          if not (Sys.file_exists file) then to_remove := file :: !to_remove)
         t.to_remove;
       if !to_remove <> [] then Git.run ("rm" :: "-f" :: !to_remove);
 

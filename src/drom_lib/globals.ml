@@ -32,6 +32,7 @@ let default_description ~name =
   Printf.sprintf "This is the description\nof the %s OCaml project\n" name
 
 let drom_dir = "_drom"
+
 let drom_file = "drom.toml"
 
 let xdg_config_dir =
