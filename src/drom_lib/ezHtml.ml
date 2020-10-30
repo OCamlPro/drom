@@ -18,11 +18,8 @@ let buffer b s =
     | '\'' -> add "&apos;"
     | '\"' -> add "&quot;"
     | '@' -> add "&commat;"
-    | c
-      when c >= ' ' && c <= '~' && c <> '\\' && c <> '"' && c <> '\n'
-           && c <> '\r' && c <> '\t' ->
-      Buffer.add_char b c
-    | c -> Printf.bprintf b "&#%d;" (int_of_char c)
+    | c ->
+        Buffer.add_char b c
   done
 
 let string s =
