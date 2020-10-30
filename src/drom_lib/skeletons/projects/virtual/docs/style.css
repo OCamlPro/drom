@@ -10,5 +10,12 @@ body {
   margin-left: 100px;
   margin-top: 100px;
   font-family: sans-serif;
- }
+}
+a:link{
+  color:#5bf
+}
+a:visited{
+  color:#55f
+}
+
 
