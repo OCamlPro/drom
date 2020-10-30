@@ -2,7 +2,7 @@
 
 # hash of toml configuration files
 # used for generation of all files
-8a49b26972b07a5b0d2d8961a4787779:.
+b3d2eb858e4d01c721fa35cb9a195cb9:.
 # end context for .
 
 # begin context for .github/workflows/doc-deploy.yml
@@ -19,16 +19,6 @@ ba3ca4f7035dde72567d859832709963:.github/workflows/doc-deploy.yml
 # file .gitignore
 5ebe27adbafe9f8c36e6a5996887150e:.gitignore
 # end context for .gitignore
-
-# begin context for .ocamlformat
-# file .ocamlformat
-258c081be13e794a822d6bf9650f29bc:.ocamlformat
-# end context for .ocamlformat
-
-# begin context for .ocamlformat-ignore
-# file .ocamlformat-ignore
-5574462426a3706b11f5cbdbb0d4ad91:.ocamlformat-ignore
-# end context for .ocamlformat-ignore
 
 # begin context for .ocp-indent
 # file .ocp-indent
@@ -62,7 +52,7 @@ b091dd96e8b553dd7a7df285279d7d9e:README.md
 
 # begin context for docs/index.html
 # file docs/index.html
-48c65576fa1eeec6f13a8342053b06dc:docs/index.html
+2708c903acc0a7439acf2d0f54edc58e:docs/index.html
 # end context for docs/index.html
 
 # begin context for docs/style.css
@@ -77,7 +67,7 @@ b091dd96e8b553dd7a7df285279d7d9e:README.md
 
 # begin context for drom.opam
 # file drom.opam
-081f9286075c859cb9c26e4e35d811dd:drom.opam
+ee64c3075a8538db8e430a1e1ad14d3d:drom.opam
 # end context for drom.opam
 
 # begin context for drom.toml
@@ -87,7 +77,7 @@ b091dd96e8b553dd7a7df285279d7d9e:README.md
 
 # begin context for drom_lib.opam
 # file drom_lib.opam
-01af7a7a1a29ddb898eb28d8d2b613a6:drom_lib.opam
+9e83344c8df00c1e8ad946fb569ea4e1:drom_lib.opam
 # end context for drom_lib.opam
 
 # begin context for dune
@@ -112,7 +102,7 @@ a44c87f3a364dd95f55427fe40b2c5d1:sphinx/about.rst
 
 # begin context for sphinx/conf.py
 # file sphinx/conf.py
-a27d8599880dce8b4833c38f89ccd6cf:sphinx/conf.py
+38bd7d44a9d086cc3e76743118ef4b5e:sphinx/conf.py
 # end context for sphinx/conf.py
 
 # begin context for sphinx/index.rst

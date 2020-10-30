@@ -26,18 +26,25 @@ let load () =
     if Sys.file_exists ".drom" then (
       let map = ref StringMap.empty in
       (* Printf.eprintf "Loading .drom\n%!"; *)
-      Array.iter
-        (fun line ->
-          if line <> "" && line.[0] <> '#' then
-            let digest, filename =
-              if String.contains line ':' then
-                EzString.cut_at line ':'
-              else
-                EzString.cut_at line ' '
-              (* only for backward compat *)
-            in
-            let digest = Digest.from_hex digest in
-            map := StringMap.add filename digest !map)
+      Array.iteri
+        (fun i line ->
+           try
+             if line <> "" && line.[0] <> '#' then
+               let digest, filename =
+                 if String.contains line ':' then
+                   EzString.cut_at line ':'
+                 else
+                   EzString.cut_at line ' '
+                   (* only for backward compat *)
+               in
+               let digest = Digest.from_hex digest in
+               map := StringMap.add filename digest !map
+           with exn ->
+             Printf.eprintf "Error loading .drom at line %d: %s\n%!"
+               (i+1) (Printexc.to_string exn);
+             Printf.eprintf " on line: %s\n%!" line;
+             exit 2
+        )
         (EzFile.read_lines ".drom");
       !map
     ) else

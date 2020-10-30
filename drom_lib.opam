@@ -12,8 +12,14 @@ user experience. It can be used to create full OCaml projects with
 sphinx and odoc documentation. It has specific knowledge of Github and
 will generate files for Github Actions CI and Github pages.
 """
-authors: ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
-maintainer: ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
+authors: [
+  "Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"
+  "Léo Andrès <leo.andres@ocamlpro.com>"
+]
+maintainer: [
+  "Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"
+  "Léo Andrès <leo.andres@ocamlpro.com>"
+]
 homepage: "https://ocamlpro.github.io/drom"
 doc: "https://ocamlpro.github.io/drom/sphinx"
 bug-reports: "https://github.com/ocamlpro/drom/issues"
