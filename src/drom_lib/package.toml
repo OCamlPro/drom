@@ -42,6 +42,7 @@ skeletons/projects/virtual/test/inline-tests/dune
 skeletons/projects/virtual/test/inline-tests/test.ml
 skeletons/projects/virtual/docs/index.html
 skeletons/projects/virtual/docs/style.css
+skeletons/projects/virtual/docs/favicon.png
 skeletons/projects/virtual/dot_github/workflows/workflow.yml
 skeletons/projects/virtual/dot_github/workflows/doc-deploy.yml
      )

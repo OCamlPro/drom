@@ -9,8 +9,15 @@
 (**************************************************************************)
 
 let buffer b s =
+  let add = Printf.bprintf b in
   for i = 0 to String.length s - 1 do
     match s.[i] with
+    | '&' -> add "&amp;"
+    | '<' -> add "&lt;"
+    | '>' -> add "&gt;"
+    | '\'' -> add "&apos;"
+    | '\"' -> add "&quot;"
+    | '@' -> add "&commat;"
     | c
       when c >= ' ' && c <= '~' && c <> '\\' && c <> '"' && c <> '\n'
            && c <> '\r' && c <> '\t' ->
