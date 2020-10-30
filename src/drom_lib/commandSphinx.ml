@@ -17,11 +17,9 @@ let action () =
   let (p : Types.project) =
     Build.build ~setup_opam:false ~build_deps:false ~build:false ~args ()
   in
-  let dir = Misc.option_value p.sphinx_target ~default:"sphinx" in
+  let dir = Misc.sphinx_target p in
   let sphinx_target = Format.sprintf "docs/%s" dir in
-  Misc.call [| "sphinx-build"; "sphinx"; sphinx_target |];
-  if not (List.mem "git-add-sphinx" p.skip) then
-    Misc.call [| "git"; "add"; sphinx_target |]
+  Misc.call [| "sphinx-build"; "sphinx"; sphinx_target |]
 
 let cmd =
   { cmd_name;

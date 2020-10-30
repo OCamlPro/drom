@@ -125,10 +125,10 @@ let project_brace (_, p) v =
 |}
         github_organization p.package.name )
   | "sphinx-target" ->
-    let dir = Misc.option_value p.sphinx_target ~default:"sphinx" in
+    let dir = Misc.sphinx_target p in
     Format.sprintf "docs/%s" dir
   | "odoc-target" ->
-    let dir = Misc.option_value p.odoc_target ~default:"doc" in
+    let dir = Misc.odoc_target p in
     Format.sprintf "docs/%s" dir
   | "make-copy-programs" ->
     List.filter (fun package -> package.kind = Program) p.packages

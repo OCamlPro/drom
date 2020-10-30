@@ -31,6 +31,11 @@ module EzString = struct
       None
 end
 
+let option_value o ~default =
+  match o with
+  | None -> default
+  | Some v -> v
+
 let verbose i = !Globals.verbosity >= i
 
 let call ?(stdout = Unix.stdout) args =
@@ -88,6 +93,12 @@ let homepage p =
         (Printf.sprintf "https://%s.github.io/%s" organization p.package.name)
     | None -> None )
 
+let sphinx_target p =
+  option_value p.sphinx_target ~default:"sphinx"
+
+let odoc_target p =
+  option_value p.odoc_target ~default:"doc"
+
 let doc_api p =
   match p.doc_api with
   | Some s -> Some s
@@ -95,27 +106,20 @@ let doc_api p =
     match p.github_organization with
     | Some organization ->
       Some
-        (Printf.sprintf "https://%s.github.io/%s/doc" organization
-           p.package.name)
+        (Printf.sprintf "https://%s.github.io/%s/%s" organization
+           p.package.name (odoc_target p))
     | None -> None )
 
 let doc_gen p =
   match p.doc_gen with
   | Some s -> Some s
-  | None -> (
-    match
-      match p.sphinx_target with
-      | Some dir -> EzString.chop_prefix dir ~prefix:"docs"
-      | None -> Some "/sphinx"
-    with
-    | None -> None
-    | Some subdir -> (
+  | None ->
       match p.github_organization with
       | Some organization ->
-        Some
-          (Printf.sprintf "https://%s.github.io/%s%s" organization
-             p.package.name subdir)
-      | None -> None ) )
+          Some
+            (Printf.sprintf "https://%s.github.io/%s/%s" organization
+               p.package.name (sphinx_target p))
+      | None -> None
 
 let p_dependencies package =
   package.p_dependencies @ package.project.dependencies
@@ -313,8 +317,3 @@ let library_module p =
   match p.p_pack with
   | Some name -> name
   | None -> String.capitalize (underscorify p.name)
-
-let option_value o ~default =
-  match o with
-  | None -> default
-  | Some v -> v

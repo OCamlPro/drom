@@ -6,7 +6,8 @@ _build
 /_drom
 /_opam
 /_build
+/docs/docs/doc
+/docs/docs/sphinx
 
-docs/doc/
-docs/sphinx/
+
 
