@@ -19,17 +19,17 @@ jobs:
         id: cache-opam
         with:
           path: ~/.opam
-          key: v1-Linux-drom-4.10.0-${{ hashFiles('*.opam') }}
+          key: v1-Linux-!{name}-!{edition}-${{ hashFiles('*.opam') }}
       - name: setup-ocaml
         uses: avsm/setup-ocaml@v1
         with:
-          ocaml-version: 4.10.0
+          ocaml-version: !{edition}
       - name: setup-doc
         run: |
           sudo apt install -yqq python3-sphinx python3-sphinx-rtd-theme
           opam install -y dune odoc
       - run: opam pin add . -y --no-action
-      - run: opam depext -y drom drom_lib
+      - run: opam depext -y !{packages}
         if: steps.cache-opam.outputs.cache-hit != 'true'
       - run: opam install -y ./*.opam --deps-only --with-test
         if: steps.cache-opam.outputs.cache-hit != 'true'
@@ -37,16 +37,19 @@ jobs:
         if: steps.cache-opam.outputs.cache-hit == 'true'
       - name: build-doc
         run: |
+          mkdir -p _drom/docs
+          rsync -auv docs/. _drom/docs/.
           opam exec -- dune build @doc
-          mv _build/default/_doc/_html/ !{odoc-target}
-          sphinx-build sphinx !{sphinx-target}
-          touch docs/.nojekyll
-          touch !{sphinx-target}/.nojekyll
-          touch !{odoc-target}/.nojekyll
+          mkdir -p _drom/docs/doc
+          rsync -auv _build/default/_doc/_html/. _drom/docs/!{odoc-target}/.
+          sphinx-build sphinx _drom/docs/!{sphinx-target}
+          touch _drom/docs/.nojekyll
+          touch _drom/docs/!{sphinx-target}/.nojekyll
+          touch _drom/docs/!{odoc-target}/.nojekyll
       - name: deploy-doc
         uses: JamesIves/github-pages-deploy-action@3.6.2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: docs/
+          FOLDER: _drom/docs/
           CLEAN: true

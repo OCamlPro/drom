@@ -129,12 +129,8 @@ let project_brace (_, p) v =
    Devel and Issues on Github <https://github.com/%s/%s>
 |}
         github_organization p.package.name )
-  | "sphinx-target" ->
-    let dir = Misc.sphinx_target p in
-    Format.sprintf "docs/%s" dir
-  | "odoc-target" ->
-    let dir = Misc.odoc_target p in
-    Format.sprintf "docs/%s" dir
+  | "sphinx-target" -> Misc.sphinx_target p
+  | "odoc-target" -> Misc.odoc_target p
   | "make-copy-programs" ->
     List.filter (fun package -> package.kind = Program) p.packages
     |> List.map (fun package ->

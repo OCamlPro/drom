@@ -2,12 +2,12 @@
 
 # hash of toml configuration files
 # used for generation of all files
-2c02bfdd94b9fdab0f239c4f33afbc35:.
+a4a03b1d4dddf49306eaa50de4b3cc9e:.
 # end context for .
 
 # begin context for .github/workflows/doc-deploy.yml
 # file .github/workflows/doc-deploy.yml
-ba3ca4f7035dde72567d859832709963:.github/workflows/doc-deploy.yml
+fa97e8d29135d03ad98579323218d9ce:.github/workflows/doc-deploy.yml
 # end context for .github/workflows/doc-deploy.yml
 
 # begin context for .github/workflows/workflow.yml
@@ -17,7 +17,7 @@ ba3ca4f7035dde72567d859832709963:.github/workflows/doc-deploy.yml
 
 # begin context for .gitignore
 # file .gitignore
-5ebe27adbafe9f8c36e6a5996887150e:.gitignore
+90b89e761e8cfd2fe1661deaa20fa115:.gitignore
 # end context for .gitignore
 
 # begin context for .ocp-indent
@@ -37,13 +37,18 @@ c4217a22064a4a18f9587b930b250fbe:LICENSE.md
 
 # begin context for Makefile
 # file Makefile
-dd70c20d38acc09bf50f4d4050ce3ca2:Makefile
+b98fe7a68ada47e150fb75f72b159d1a:Makefile
 # end context for Makefile
 
 # begin context for README.md
 # file README.md
 b091dd96e8b553dd7a7df285279d7d9e:README.md
 # end context for README.md
+
+# begin context for docs/README.txt
+# file docs/README.txt
+17799aeb2a3684b565725290ec32e65b:docs/README.txt
+# end context for docs/README.txt
 
 # begin context for docs/favicon.png
 # file docs/favicon.png
@@ -72,7 +77,7 @@ ee64c3075a8538db8e430a1e1ad14d3d:drom.opam
 
 # begin context for drom.toml
 # file drom.toml
-94fae8fd20a48e12df5707243840eb9d:drom.toml
+2afa01dc1f6a341ecc564e088f1a02c7:drom.toml
 # end context for drom.toml
 
 # begin context for drom_lib.opam
@@ -142,7 +147,7 @@ c46773d55a9a80e19cd0e807cb36262e:src/drom/main.ml
 
 # begin context for src/drom_lib/dune
 # file src/drom_lib/dune
-3be3987b8c16fe3e90df7ffb5a20e96e:src/drom_lib/dune
+fc700e110c6baedcbe5dc8e8e7a97c51:src/drom_lib/dune
 # end context for src/drom_lib/dune
 
 # begin context for src/drom_lib/index.mld
@@ -152,7 +157,7 @@ dfda02aaec08f18742582243e9cd6748:src/drom_lib/index.mld
 
 # begin context for src/drom_lib/package.toml
 # file src/drom_lib/package.toml
-f1acc8b5b50b0e1037b5bc8243d72a58:src/drom_lib/package.toml
+64d58257fd54aa53658e76f0212b8c7d:src/drom_lib/package.toml
 # end context for src/drom_lib/package.toml
 
 # begin context for src/drom_lib/version.ml

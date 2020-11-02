@@ -14,13 +14,10 @@ let cmd_name = "doc"
 
 let action ~args ~open_www () =
   let (p : Types.project) = Build.build ~dev_deps:true ~args () in
-  Misc.call [| "opam"; "exec"; "--"; "dune"; "build"; "@doc" |];
-  let dir = Misc.odoc_target p in
-  let odoc_target = Format.sprintf "docs/%s" dir in
-  Misc.call
-    [| "rsync"; "-auv"; "--delete"; "_build/default/_doc/_html/."; odoc_target |];
+  let (_odoc_target : string ) = CommandOdoc.make_odoc p in
+  let (_sphinx_target : string ) = CommandSphinx.make_sphinx p in
   if !open_www then
-    Misc.call [| "xdg-open"; "_build/default/_doc/_html/index.html" |]
+    Misc.call [| "xdg-open"; "_drom/docs/index.html" |]
 
 let cmd =
   let args, specs = Build.build_args () in
@@ -34,5 +31,5 @@ let cmd =
       ]
       @ specs;
     cmd_man = [];
-    cmd_doc = "Generate API documentation using odoc in the docs/doc directory"
+    cmd_doc = "Generate all documentation (API and Sphinx)"
   }

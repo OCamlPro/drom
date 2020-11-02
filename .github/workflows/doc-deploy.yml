@@ -37,16 +37,19 @@ jobs:
         if: steps.cache-opam.outputs.cache-hit == 'true'
       - name: build-doc
         run: |
+          mkdir -p _drom/docs
+          rsync -auv docs/. _drom/docs/.
           opam exec -- dune build @doc
-          mv _build/default/_doc/_html/ docs/doc
-          sphinx-build sphinx docs/sphinx
-          touch docs/.nojekyll
-          touch docs/sphinx/.nojekyll
-          touch docs/doc/.nojekyll
+          mkdir -p _drom/docs/doc
+          rsync -auv _build/default/_doc/_html/. _drom/docs/doc/.
+          sphinx-build sphinx _drom/docs/sphinx
+          touch _drom/docs/.nojekyll
+          touch _drom/docs/sphinx/.nojekyll
+          touch _drom/docs/doc/.nojekyll
       - name: deploy-doc
         uses: JamesIves/github-pages-deploy-action@3.6.2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: docs/
+          FOLDER: _drom/docs/
           CLEAN: true
