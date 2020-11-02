@@ -231,11 +231,8 @@ let update_files ?args ?mode ?(git = false) ?(create = false)
                   Printf.sprintf "git@github.com:%s/%s" organization
                     p.package.name
                 ];
-              let keep_readme = Sys.file_exists "README.md" in
-              if not keep_readme then Misc.call [| "touch"; "README.md" |];
-              Git.call [ "add"; "README.md" ];
-              Git.call [ "commit"; "-m"; "Initial commit" ];
-              if not keep_readme then Misc.call [| "rm"; "-f"; "README.md" |]
+              if Sys.file_exists "README.md" then Git.call [ "add"; "README.md" ];
+              Git.call [ "commit"; "--allow-empty"; "-m"; "Initial commit" ];
         );
 
       write_file hashes "dune-project" (Dune.template_dune_project p);
