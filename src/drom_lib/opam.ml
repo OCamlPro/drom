@@ -49,8 +49,9 @@ let opam_of_project kind package =
       Some (Printf.sprintf "org:%s" github_organization) );
 
   let build_commands =
-    match kind with
-    | Deps -> []
+    match kind, package.kind with
+    | Deps, _
+    | _, Virtual -> []
     | _ ->
       [ Variable
           ( pos,
