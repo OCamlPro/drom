@@ -8,5 +8,5 @@
   )
 
 )
-(dirs src vendors )
+(dirs src test vendors )
 

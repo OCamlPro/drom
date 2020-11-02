@@ -2,5 +2,5 @@
 (env
 !{dune-profiles}
 )
-(dirs src vendors !(project-dune-dirs))
+(dirs !{dune-dirs} !(dune-dirs))
 

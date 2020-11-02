@@ -55,7 +55,6 @@ generators = ["ocamllex", "menhir"]
 pack-modules = true
 skip-dirs = ["drom-test"]
 
-
 [[package]]
 dir = "src/drom"
 

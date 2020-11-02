@@ -13,6 +13,11 @@ open EzCompat
 
 exception ReplaceContent of string
 
+let rec find_top_dir dir =
+  match Filename.dirname dir with
+  | "" | "." -> dir
+  | dirname -> find_top_dir dirname
+
 let verbose_subst =
   try
     ignore (Sys.getenv "DROM_VERBOSE_SUBST");
@@ -223,6 +228,15 @@ let project_brace (_, p) v =
         Printf.bprintf b "  )\n")
       p.profiles;
     Buffer.contents b
+  | "dune-dirs" -> begin
+      let set = StringSet.of_list [ "src"; "test" ; "vendors" ] in
+      let set = List.fold_left (fun set package ->
+          let dir = find_top_dir package.dir in
+          StringSet.add dir set
+        ) set p.packages
+      in
+      String.concat " " (StringSet.to_list set)
+    end
   | s ->
     Printf.eprintf "Error: no project substitution for %S\n%!" s;
     raise Not_found
