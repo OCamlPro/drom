@@ -23,6 +23,7 @@ let main () =
       CommandFmt.cmd;
       CommandDevDeps.cmd;
       CommandBuildDeps.cmd;
+      CommandOdoc.cmd;
       CommandDoc.cmd;
       CommandSphinx.cmd;
       CommandTest.cmd;

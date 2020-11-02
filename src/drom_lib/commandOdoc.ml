@@ -10,20 +10,22 @@
 
 open Ezcmd.TYPES
 
-let cmd_name = "sphinx"
+let cmd_name = "odoc"
 
-let make_sphinx p =
-  let dir = Misc.sphinx_target p in
-  let sphinx_target = Format.sprintf "_drom/docs/%s" dir in
-  Misc.call [| "sphinx-build"; "sphinx"; sphinx_target |];
-  sphinx_target
+let make_odoc p =
+  Misc.call [| "opam"; "exec"; "--"; "dune"; "build"; "@doc" |];
+  let dir = Misc.odoc_target p in
+  let odoc_target = Format.sprintf "_drom/docs/%s" dir in
+  EzFile.make_dir ~p:true odoc_target;
+  Misc.call
+    [| "rsync"; "-auv"; "--delete"; "_build/default/_doc/_html/."; odoc_target |];
+  odoc_target
 
 let action ~args ~open_www () =
   let (p : Types.project) = Build.build ~dev_deps:true ~args () in
-  let sphinx_target = make_sphinx p in
+  let odoc_target = make_odoc p in
   if !open_www then
-    Misc.call [| "xdg-open";
-                 Filename.concat sphinx_target "index.html" |]
+    Misc.call [| "xdg-open"; odoc_target |]
 
 let cmd =
   let args, specs = Build.build_args () in
@@ -33,9 +35,9 @@ let cmd =
     cmd_args =
       [ ( [ "view" ],
           Arg.Set open_www,
-          Ezcmd.info "Open a browser on the sphinx documentation" )
+          Ezcmd.info "Open a browser on the documentation" )
       ]
       @ specs;
     cmd_man = [];
-    cmd_doc = "Generate documentation using sphinx"
+    cmd_doc = "Generate API documentation using odoc in the _drom/docs/doc directory"
   }

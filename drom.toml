@@ -2,7 +2,7 @@
 drom-version = "0.1.0"
 
 [project]
-authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>" , "Léo Andrès <leo.andres@ocamlpro.com>" ]
+authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>", "Léo Andrès <leo.andres@ocamlpro.com>"]
 copyright = "OCamlPro SAS & Origin Labs SAS"
 edition = "4.10.0"
 github-organization = "ocamlpro"
@@ -16,6 +16,7 @@ windows-ci = false
 
 # keys that you could also define:
 # build-profile = "...build-profile..."
+# odoc-target = "...odoc-target..."
 # sphinx-target = "...sphinx-target..."
 # archive = "...archive..."
 # dev-repo = "...dev-repo..."
@@ -54,6 +55,7 @@ ocaml-flags = "-w -a"
 generators = ["ocamllex", "menhir"]
 pack-modules = true
 skip-dirs = ["drom-test"]
+
 
 [[package]]
 dir = "src/drom"

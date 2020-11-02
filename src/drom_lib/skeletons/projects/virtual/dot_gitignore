@@ -6,8 +6,6 @@ _build
 /_drom
 /_opam
 /_build
-/docs/!{odoc-target}
-/docs/!{sphinx-target}
 
 !(dot-gitignore-trailer)
 
