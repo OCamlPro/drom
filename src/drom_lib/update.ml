@@ -308,8 +308,9 @@ let update_files ?args ?mode ?(git = false) ?(create = false)
                if upgrade then begin
                  write_file ~skip ~force:upgrade hashes file content;
                  content
-               end else
-                 EzFile.read_file file
+               end else try
+                   EzFile.read_file file
+                 with Sys_error _ -> ""
              in
              (file, content)
           )
