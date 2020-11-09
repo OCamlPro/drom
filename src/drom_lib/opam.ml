@@ -11,13 +11,11 @@
 open Types
 open EzFile.OP
 
-module OpamParser = struct
-  let value_from_string s f =
-    try OpamParser.value_from_string s f
-    with exn ->
-      Printf.eprintf "Error with [%s]:\n" s;
-      raise exn
-end
+let opam_file_value_from_string s f =
+  try OpamParser.value_from_string s f
+  with exn ->
+    Printf.eprintf "Error with [%s]:\n" s;
+    raise exn
 
 let dev_repo p =
   match Misc.dev_repo p with
@@ -56,7 +54,7 @@ let opam_of_project kind package =
       [ Variable
           ( pos,
             "build",
-            OpamParser.value_from_string
+            opam_file_value_from_string
               {|
 [
   ["dune" "subst"] {pinned}
@@ -91,7 +89,7 @@ let opam_of_project kind package =
     if d.depdoc then Printf.bprintf b " with-doc ";
     Printf.bprintf b "}\n";
     (*  Printf.eprintf "parse: %s\n%!" s; *)
-    OpamParser.value_from_string (Buffer.contents b) file_name
+    opam_file_value_from_string (Buffer.contents b) file_name
   in
   let depends =
     [ Variable
@@ -101,7 +99,7 @@ let opam_of_project kind package =
           | ProgramPart ->
             List
               ( pos,
-                [ OpamParser.value_from_string
+                [ opam_file_value_from_string
                     (Printf.sprintf
                        {|
                                 "%s" { = version }
@@ -114,10 +112,10 @@ let opam_of_project kind package =
           | Deps ->
             List
               ( pos,
-                OpamParser.value_from_string
+                opam_file_value_from_string
                   (Printf.sprintf {| "ocaml" { >= "%s" } |} p.min_edition)
                   file_name
-                :: OpamParser.value_from_string
+                :: opam_file_value_from_string
                      (Printf.sprintf {| "dune" { >= "%s" } |}
                         Globals.current_dune_version)
                      file_name
@@ -208,3 +206,13 @@ let run ?y ?error ?switch ?edition cmd args =
   match error with
   | None -> exec ?y cmd args
   | Some error -> ( try exec ?y cmd args with exn -> error := Some exn )
+
+let rec get_field fld =
+  let open OpamParserTypes in function
+  | [] -> None
+  | Variable (_, f, v) :: _ when f = fld -> Some v
+  | _ :: r -> get_field fld r
+
+let get_files () =
+  let files = Sys.readdir @@ Sys.getcwd () in
+  List.filter (fun f -> Filename.check_suffix f ".opam") (Array.to_list files)

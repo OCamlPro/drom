@@ -30,6 +30,13 @@ open EzFile.OP
 
 let licenses = StringMap.of_list Skel_licenses.licenses
 
+let key_from_name name =
+  try
+    let m = StringMap.find name licenses in
+    let module M : LICENSE = (val m : LICENSE) in
+    Some (M.key)
+  with Not_found -> None
+
 let known_licenses () =
   let b = Buffer.create 100 in
   Printf.bprintf b "Licenses known by drom:\n";
@@ -114,3 +121,5 @@ let license p =
       Printf.eprintf "* Adding a file %s and NAME\n%!" maybe_file;
       Printf.sprintf "This software is distributed under license %S.\n%!" key
     end
+
+let default = Skel_licenses.LGPL2.key
