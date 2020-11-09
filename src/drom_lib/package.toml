@@ -3,6 +3,7 @@ kind = "library"
 name = "drom_lib"
 pack-modules = true
 [dependencies]
+directories = "0.2"
 ez_cmdliner = "0.1.0"
 ez_config = "0.1.0"
 ez_file = "0.2.0"

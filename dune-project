@@ -30,6 +30,7 @@
    (ez_file (and (>= 0.2.0) (< 1.0.0)))
    (ez_config (and (>= 0.1.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.1.0) (< 1.0.0)))
+   (directories ( > 0.2 ))
    ppx_inline_test
    ppx_expect
    odoc

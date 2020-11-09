@@ -180,8 +180,12 @@ let exec ?(y = false) cmd args =
        @ args ))
 
 let init ?y ?switch ?edition () =
-  let opam_dir = Globals.home_dir // ".opam" in
-  if not (Sys.file_exists opam_dir) then
+  let opam_root =
+    try Sys.getenv "OPAMROOT"
+    with Not_found -> Globals.home_dir // ".opam"
+  in
+
+  if not (Sys.file_exists opam_root) then
     let args =
       match switch with
       | None -> [ "--bare" ]
@@ -193,7 +197,7 @@ let init ?y ?switch ?edition () =
     | None -> ()
     | Some switch ->
       if Filename.is_relative switch then
-        if not (Sys.file_exists (opam_dir // switch)) then
+        if not (Sys.file_exists (opam_root // switch)) then
           exec ?y [ "switch"; "create" ]
             ( match edition with
             | None -> [ switch ]
