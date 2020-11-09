@@ -82,16 +82,19 @@ let load_skeleton ~dir ~toml ~kind =
   (name, { skeleton_toml; skeleton_inherits; skeleton_files })
 
 let load_skeletons map kind =
-  let map = ref map in
   let skeletons_dir = Globals.config_dir // "skeletons" // kind in
-  if Sys.file_exists skeletons_dir then
+  if Sys.file_exists skeletons_dir then begin
+    let map = ref map in
     EzFile.iter_dir skeletons_dir ~f:(fun file ->
-        let dir = skeletons_dir // file in
-        let toml = dir // "skeleton.toml" in
-        if Sys.file_exists toml then
-          let name, skeleton = load_skeleton ~dir ~toml ~kind in
-          map := StringMap.add name skeleton !map);
-  !map
+      let dir = skeletons_dir // file in
+      let toml = dir // "skeleton.toml" in
+      if Sys.file_exists toml then
+        let name, skeleton = load_skeleton ~dir ~toml ~kind in
+        map := StringMap.add name skeleton !map
+    );
+    !map
+  end else
+    map
 
 let builtin_project_skeletons =
   StringMap.of_list

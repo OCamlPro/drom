@@ -185,23 +185,26 @@ let project_brace (_, p) v =
     |> String.concat " "
   (* for ocamlformat *)
   | "global-ocamlformat" -> (
-    let open EzFile.OP in
-    match EzFile.read_file (Globals.xdg_config_dir // "ocamlformat") with
-    | exception _e -> ""
-    | content -> raise (ReplaceContent content) )
+    match Globals.Base_dirs.config_dir with
+    | None -> ""
+    | Some config_dir ->
+      let open EzFile.OP in
+      begin match EzFile.read_file (config_dir // "ocamlformat") with
+      | exception _e -> ""
+      | content -> raise (ReplaceContent content)
+      end
+    )
   (* for ocpindent *)
   | "global-ocpindent" -> (
-    let open EzFile.OP in
-    match
-      EzFile.read_file (Globals.xdg_config_dir // "ocp" // "ocp-indent.conf")
-    with
-    | exception _e -> (
-      match
-        EzFile.read_file (Globals.home_dir // ".ocp" // "ocp-indent.conf")
-      with
+    match Globals.Base_dirs.config_dir with
+    | None -> ""
+    | Some config_dir ->
+      let open EzFile.OP in
+      begin match EzFile.read_file (config_dir // "ocp" // "ocp-indent.conf") with
       | exception _e -> ""
-      | content -> raise (ReplaceContent content) )
-    | content -> raise (ReplaceContent content) )
+      | content -> raise (ReplaceContent content)
+      end
+    )
   | "dune-profiles" ->
     let b = Buffer.create 1000 in
     StringMap.iter

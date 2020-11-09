@@ -8,8 +8,6 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open EzFile.OP
-
 let command = "drom"
 
 let about =
@@ -20,12 +18,6 @@ let current_ocaml_edition = "4.10.0"
 
 let current_dune_version = "2.6.0"
 
-let home_dir =
-  try Sys.getenv "HOME"
-  with Not_found ->
-    Printf.eprintf "Error: HOME variable not defined\n%!";
-    exit 2
-
 let default_synopsis ~name = Printf.sprintf "The %s project" name
 
 let default_description ~name =
@@ -35,13 +27,27 @@ let drom_dir = "_drom"
 
 let drom_file = "drom.toml"
 
-let xdg_config_dir =
-  match Sys.getenv "XDG_CONFIG_HOME" with
-  | "" -> home_dir // ".config"
-  | exception Not_found -> home_dir // ".config"
-  | x -> x
+module App_id = struct
+  let qualifier = "com"
+  let organization = "OCamlPro"
+  let application = "drom"
+end
+module Base_dirs = Directories.Base_dirs ()
+module Project_dirs = Directories.Project_dirs (App_id)
 
-let config_dir = xdg_config_dir // "drom"
+let home_dir =
+  match Base_dirs.home_dir with
+  | None ->
+      Format.eprintf "Error: can't compute HOME path, make sure it is well defined !@.";
+      exit 2
+  | Some home_dir -> home_dir
+
+let config_dir =
+  match Project_dirs.config_dir with
+  | None ->
+      Format.eprintf "Error: can't compute configuration path, make sure your HOME and other environment variables are well defined !@.";
+      exit 2
+  | Some config_dir -> config_dir
 
 let min_drom_version = "0.1.0"
 

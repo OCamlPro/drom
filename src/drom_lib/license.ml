@@ -71,15 +71,11 @@ let header ?(sep = ml_sep) p =
       let module M : LICENSE = (val m : LICENSE) in
       M.header
     with Not_found ->
-      let maybe_file =
-        Globals.config_dir // "licenses" // license // "HEADER"
-      in
+      let maybe_file = Globals.config_dir // "licences" // license // "HEADER" in
       if Sys.file_exists maybe_file then
         List.map String.trim (EzFile.read_lines maybe_file |> Array.to_list)
       else
-        [ "This file is distributed under the terms of the";
-          Printf.sprintf "%s license." license
-        ]
+        ["This file is distributed under the terms of the"; Printf.sprintf "%s license." license]
   in
   let starline = Printf.sprintf "%s%s%s" boc (String.make 72 sec) eoc in
   let line s = Printf.sprintf "%s  %-70s%s" boc s eoc in
@@ -111,13 +107,10 @@ let license p =
     let maybe_file = Globals.config_dir // "licenses" // key // "LICENSE.md" in
     if Sys.file_exists maybe_file then
       EzFile.read_file maybe_file
-    else (
-      Printf.eprintf
-        "Warning: unknown license %S. You can fix this problem by either:\n" key;
-      Printf.eprintf
-        "* Choosing one of the known licenses in '_drom/known-licences.txt'\n";
+    else begin
+      Printf.eprintf "Warning: unknown license %S. You can fix this problem by either:\n" key;
+      Printf.eprintf "* Choosing one of the known licenses in '_drom/known-licences.txt'\n";
       Printf.eprintf "* Adding 'licence' to the 'skip' field in 'drom.toml'\n%!";
       Printf.eprintf "* Adding a file %s and NAME\n%!" maybe_file;
-
       Printf.sprintf "This software is distributed under license %S.\n%!" key
-    )
+    end
