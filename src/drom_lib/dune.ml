@@ -100,8 +100,8 @@ let template_dune_project p =
             | Lt version -> Printf.bprintf b "( < %s )" version
             | Le version -> Printf.bprintf b "( <= %s )" version
             | Eq version -> Printf.bprintf b "( = %s )" version
-            | Ge version -> Printf.bprintf b "( > %s )" version
-            | Gt version -> Printf.bprintf b "( >= %s )" version )
+            | Ge version -> Printf.bprintf b "( >= %s )" version
+            | Gt version -> Printf.bprintf b "( > %s )" version )
           | version :: tail ->
             Printf.bprintf b "(and ";
             iter [ version ];
