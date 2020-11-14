@@ -210,7 +210,7 @@ let semantic_version version =
   match EzString.split version '.' with
   | [ major; minor; fix ] -> (
     try Some (int_of_string major, int_of_string minor, int_of_string fix)
-    with Not_found -> None )
+    with Failure _ -> None )
   | _ -> None
 
 let underscorify s =
