@@ -13,26 +13,74 @@ open Ezcmd.TYPES
 open EzCompat
 open EzFile.OP
 
-let cmd_name = "new"
+let cmd_name = "init"
 
-let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
-  let license = Misc.option_value config.config_license ~default:License.default in
+let init_project ~config ~name ~skeleton ~mode ~dir ~args =
+
+  (* all opam files we found *)
+  let opam_files = Opam.get_files () in
+
+  (* try to extract the field `field` using the function `f` from one opam file, if it fails, then use the next opam file. If there's no more opam file, use `default` *)
+  let find_in_opam_files f field default =
+    let rec aux = function
+    | [] -> default
+    | file::files ->
+      let file = OpamParser.file file in
+      let file = file.file_contents in
+      begin match Misc.option_bind (Opam.get_field field file) f with
+      | None -> aux files
+      | Some v -> v
+      end
+    in aux opam_files
+  in
+
+  let extract_string = function
+    | OpamParserTypes.String (_pos, s) -> Some s
+    | _v -> None
+  in
+
+  let wrap_extract_string = function
+    | OpamParserTypes.String (_pos, s) -> Some (Some s)
+    | _v -> None
+  in
+
+  let wrap_extract_string_list = function
+    | OpamParserTypes.List (_pos, l) ->
+        begin try Some (List.map (function | OpamParserTypes.String (_pos, s) -> s | _v -> raise Exit) l)
+        with Exit -> None end
+    | _v -> None
+  in
+
   let dir = Misc.option_value dir ~default:("src" // name) in
   let package, packages =
     let package = Project.create_package ~kind:Virtual ~name ~dir in
     (package, [ package ])
   in
-  let author = Project.find_author config in
-  let copyright = Misc.option_value config.config_copyright ~default:author in
+  let license =
+    let default = Misc.option_value config.config_license ~default:License.default in
+    find_in_opam_files
+    (fun x -> Misc.option_bind (extract_string x) License.key_from_name)
+    "license" default
+  in
+  let authors = find_in_opam_files wrap_extract_string_list "authors" [Project.find_author config] in
+  let copyright =  Some (Misc.option_value config.config_copyright ~default:(String.concat ", " authors)) in
   let generators = [ "ocamllex"; "ocamlyacc" ] in
+  let synopsis = find_in_opam_files extract_string "synopsis" (Globals.default_synopsis ~name) in
+  let description = find_in_opam_files extract_string "description" (Globals.default_description ~name) in
+  let homepage = find_in_opam_files wrap_extract_string "homepage" None in
+  let bug_reports = find_in_opam_files wrap_extract_string "bug-reports" None in
+  let dev_repo = find_in_opam_files wrap_extract_string "dev-repo" None in
+  let archive = find_in_opam_files wrap_extract_string "archive" None in
+  let doc_gen = find_in_opam_files wrap_extract_string "doc" None in
+
   let p =
     { Project.dummy_project with
       package;
       packages;
       skeleton;
-      authors = [ author ];
-      synopsis = Globals.default_synopsis ~name;
-      description = Globals.default_description ~name;
+      authors;
+      synopsis;
+      description;
       generators;
       tools =
         [ ( "ocamlformat",
@@ -49,16 +97,16 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
           )
         ];
       github_organization = config.config_github_organization;
-      homepage = None;
+      homepage;
       doc_api = None;
-      doc_gen = None;
-      bug_reports = None;
+      doc_gen;
+      bug_reports;
       license;
-      dev_repo = None;
-      copyright = Some copyright;
+      dev_repo;
+      copyright;
       pack_modules = true;
       skip = [];
-      archive = None;
+      archive;
       sphinx_target = None;
       odoc_target = None;
       windows_ci = true;
@@ -69,46 +117,34 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
   in
   package.project <- p;
 
-  if not inplace then (
-    if Sys.file_exists name then
-      Error.raise "A directory %s already exists" name;
-    Printf.eprintf "Creating directory %s\n%!" name;
-    EzFile.make_dir ~p:true name;
-    Unix.chdir name
-  );
-
   let rec iter_skeleton list =
     match list with
     | [] -> p
     | content :: super ->
       let p = iter_skeleton super in
       let content = Subst.project () p content in
-      Project.of_string ~msg:"toml template" ~default:p content
+      let res = Project.of_string ~msg:"toml template" ~default:p content in
+      res
   in
-
   let skeleton = Skeleton.lookup_project skeleton in
   let p = iter_skeleton skeleton.skeleton_toml in
   Update.update_files ~create:true ?mode ~promote_skip:false ~git:true ~args p
 
-(* lookup for "drom.toml" and update it *)
-let action ~skeleton ~name ~mode ~inplace ~dir ~args =
-  match name with
-  | None -> Error.raise "You must specify the name of the project to create"
-  | Some name -> (
+(* init the project if "drom.toml" doesn't alreay exist, fail otherwise *)
+let action ~skeleton ~name ~mode ~dir ~args =
     let config = Lazy.force Config.config in
     let project = Project.find () in
     match project with
-    | None -> create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args
+    | None -> init_project ~config ~name ~skeleton ~mode ~dir ~args
     | Some (p, _) ->
       Error.raise
         "Cannot create a project within another project %S. Maybe you want to \
          use 'drom package PACKAGE --new' instead?"
-        p.package.name )
+        p.package.name
 
 let cmd =
-  let project_name = ref None in
+  let project_name = Filename.basename @@ Sys.getcwd () in
   let mode = ref None in
-  let inplace = ref false in
   let skeleton = ref None in
   let dir = ref None in
   let args, specs = Update.update_args () in
@@ -116,8 +152,8 @@ let cmd =
   { cmd_name;
     cmd_action =
       (fun () ->
-        action ~name:!project_name ~skeleton:!skeleton ~mode:!mode ~dir:!dir
-          ~inplace:!inplace ~args);
+        action ~name:project_name ~skeleton:!skeleton ~mode:!mode ~dir:!dir
+           ~args);
     cmd_args =
       specs
       @ [ ( [ "dir" ],
@@ -142,15 +178,9 @@ let cmd =
           ( [ "skeleton" ],
             Arg.String (fun s -> skeleton := Some s),
             Ezcmd.info
-              "Create project using a predefined skeleton or one specified in \
-               ~/.config/drom/skeletons/" );
-          ( [ "inplace" ],
-            Arg.Set inplace,
-            Ezcmd.info "Create project in the the current directory" );
-          ( [],
-            Arg.Anon (0, fun name -> project_name := Some name),
-            Ezcmd.info "Name of the project" )
+              (Format.sprintf "Create project using a predefined skeleton or one specified in \
+               %s/skeletons/" Globals.config_dir))
         ];
     cmd_man = [];
-    cmd_doc = "Create a new project"
+    cmd_doc = "Create a new drom project in an existing directory"
   }

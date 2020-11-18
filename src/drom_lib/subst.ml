@@ -38,7 +38,7 @@ let project_brace (_, p) v =
   | "min-edition" -> p.min_edition
   | "github-organization" -> maybe_string p.github_organization
   | "authors-as-strings" ->
-    String.concat " " (List.map (Printf.sprintf "%S") p.authors)
+    String.concat ", " (List.map (Printf.sprintf "%S") p.authors)
   | "copyright" -> (
     match p.copyright with
     | Some copyright -> copyright

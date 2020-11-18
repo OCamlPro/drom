@@ -36,6 +36,15 @@ let option_value o ~default =
   | None -> default
   | Some v -> v
 
+let option_bind o f =
+  match o with
+  | None -> None
+  | Some v -> f v
+
+let option_map f = function
+  | None -> None
+  | Some v -> Some (f v)
+
 let verbose i = !Globals.verbosity >= i
 
 let call ?(stdout = Unix.stdout) args =
