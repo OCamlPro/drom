@@ -1,0 +1,9 @@
+![file:test/inline-tests/dune]![skip:test]; if you modify this file, add 'test' to the 'skip' field in drom.toml
+
+(library
+ (name lib_inline_tests)
+ (preprocess
+  (pps ppx_inline_test))
+ (inline_tests
+  (modes best)) ; add js for testing with nodejs
+ (libraries !{libraries}))

@@ -103,6 +103,7 @@ and project =
     tools : (string * dependency) list;
     mode : mode;
     pack_modules : bool;
+    share_dirs : string list ;
     mutable fields : string StringMap.t
   }
 
@@ -141,3 +142,10 @@ module type LICENSE = sig
 
   val license : string
 end
+
+type license = {
+  license_key : string ;
+  license_name : string ;
+  license_header : string list ;
+  license_contents : string ;
+}

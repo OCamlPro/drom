@@ -28,24 +28,71 @@ open EzFile.OP
    2785 license: "MIT"
 *)
 
-let licenses = StringMap.of_list Skel_licenses.licenses
+let key_LGPL2 = "LGPL2"
+
+let load_licenses_dir map dir =
+  if Sys.file_exists dir then
+    let map = ref map in
+    EzFile.make_select EzFile.iter_dir ~deep:true dir ~kinds:[ S_REG; S_LNK ]
+      ~f:(fun path ->
+          if Filename.check_suffix path ".toml" then
+            let file = dir // path in
+            match EzToml.from_file file with
+            | `Error _ ->
+                Printf.eprintf "Warning: could not read file %s\n%!" file
+            | `Ok table ->
+                let license_key =
+                  EzToml.get_string table [ "license"; "key" ] in
+                let license_name =
+                  EzToml.get_string table [ "license"; "name" ] in
+                let license_header =
+                  EzToml.get_string table [ "license"; "header" ] in
+                let license_header =
+                  EzString.split license_header '\n' in
+                let license_contents =
+                  EzToml.get_string table [ "license"; "contents" ] in
+                let license = {
+                  license_name ;
+                  license_key ;
+                  license_header ;
+                  license_contents ;
+                } in
+                map := StringMap.add license_key license !map
+        );
+    !map
+  else
+    map
+
+let licenses = lazy (
+  let map = StringMap.empty in
+  let map =
+    match Globals.share_dir () with
+    | Some dir ->
+        let global_licenses_dir = dir // "licenses" in
+        load_licenses_dir map global_licenses_dir
+    | None ->
+        Printf.eprintf
+          "Warning: could not load licenses from share/%s/licenses\n%!" Globals.command;
+        map
+  in
+  let user_licenses_dir = Globals.config_dir // "licenses" in
+  load_licenses_dir map user_licenses_dir
+)
 
 let known_licenses () =
   let b = Buffer.create 100 in
   Printf.bprintf b "Licenses known by drom:\n";
   StringMap.iter
-    (fun name m ->
-      let module M = (val m : LICENSE) in
-      Printf.bprintf b "* %s -> %s\n" name M.name)
-    licenses;
+    (fun key m ->
+      Printf.bprintf b "* %s -> %s\n" key m.license_name)
+    ( Lazy.force licenses );
   Buffer.contents b
 
 let name p =
   let license = p.license in
   try
-    let m = StringMap.find license licenses in
-    let module M : LICENSE = (val m : LICENSE) in
-    M.name
+    let m = StringMap.find license ( Lazy.force licenses ) in
+    m.license_name
   with Not_found ->
     let maybe_file = Globals.config_dir // "licenses" // license // "NAME" in
     if Sys.file_exists maybe_file then
@@ -67,9 +114,8 @@ let header ?(sep = ml_sep) p =
   let lines =
     let license = p.license in
     try
-      let m = StringMap.find license licenses in
-      let module M : LICENSE = (val m : LICENSE) in
-      M.header
+      let m = StringMap.find license ( Lazy.force licenses ) in
+      m.license_header
     with Not_found ->
       let maybe_file = Globals.config_dir // "licences" // license // "HEADER" in
       if Sys.file_exists maybe_file then
@@ -100,9 +146,8 @@ let header_mly p = header ~sep:c_sep p
 let license p =
   let key = p.license in
   try
-    let m = StringMap.find key licenses in
-    let module M = (val m : LICENSE) in
-    M.license
+    let m = StringMap.find key ( Lazy.force licenses ) in
+    m.license_contents
   with Not_found ->
     let maybe_file = Globals.config_dir // "licenses" // key // "LICENSE.md" in
     if Sys.file_exists maybe_file then

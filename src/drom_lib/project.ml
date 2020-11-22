@@ -21,7 +21,7 @@ let rec dummy_project =
     min_edition = Globals.current_ocaml_edition;
     github_organization = None;
     homepage = None;
-    license = Skel_licenses.LGPL2.key;
+    license = License.key_LGPL2;
     copyright = None;
     bug_reports = None;
     dev_repo = None;
@@ -45,7 +45,8 @@ let rec dummy_project =
     skip_dirs = [];
     fields = StringMap.empty;
     profile = None;
-    file = None
+    file = None ;
+    share_dirs = [ "share" ] ;
   }
 
 and dummy_package =
@@ -508,6 +509,7 @@ let to_files p =
     |> EzToml.put_string_option [ "project"; "pack" ] p.package.p_pack
     |> EzToml.put_string_list [ "project"; "generators" ] p.generators
     |> EzToml.put [ "project"; "skip-dirs" ] (TArray (NodeString p.skip_dirs))
+    |> EzToml.put [ "project"; "share-dirs" ] (TArray (NodeString p.share_dirs))
     |> EzToml.put_encoding
          (stringMap_encoding profile_encoding)
          [ "profile" ] p.profiles
@@ -769,6 +771,11 @@ let project_of_toml ?file ?default table =
       [ project_key; "skip-dirs" ]
       d.skip_dirs
   in
+  let share_dirs =
+    EzToml.get_string_list_default table
+      [ project_key; "share-dirs" ]
+      d.share_dirs
+  in
   let fields =
     EzToml.get_encoding_default fields_encoding table [ project_key; "fields" ]
       StringMap.empty
@@ -806,6 +813,7 @@ let project_of_toml ?file ?default table =
       packages;
       profiles;
       skip_dirs;
+      share_dirs ;
       profile;
       fields
     }
@@ -836,22 +844,13 @@ let project_of_filename ?default file =
   project_of_toml ~file ?default table
 
 let find () =
-  let dir = Sys.getcwd () in
-  let rec iter dir path =
-    let drom_file = dir // Globals.drom_file in
-    if Sys.file_exists drom_file then (
-      Unix.chdir dir;
-      if Misc.verbose 1 then
-        Printf.eprintf "drom: Entering directory '%s'\n%!" (Sys.getcwd ());
-      Some (project_of_filename Globals.drom_file, path)
-    ) else
-      let updir = Filename.dirname dir in
-      if updir <> dir then
-        iter updir (Filename.basename dir // path)
-      else
-        None
-  in
-  iter dir ""
+  Globals.find_ancestor_file Globals.drom_file
+    (fun ~dir ~path ->
+       Unix.chdir dir;
+       if Misc.verbose 1 then
+         Printf.eprintf "drom: Entering directory '%s'\n%!" (Sys.getcwd ());
+       ( project_of_filename Globals.drom_file, path )
+    )
 
 let get () =
   match find () with

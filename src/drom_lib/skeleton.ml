@@ -72,44 +72,54 @@ let load_skeleton ~dir ~toml ~kind =
   in
   let skeleton_files =
     let dir = dir // "files" in
-    let files = ref [] in
-    EzFile.make_select EzFile.iter_dir ~deep:true dir ~kinds:[ S_REG; S_LNK ]
-      ~f:(fun path ->
-        let content = EzFile.read_file (dir // path) in
-        files := (path, content) :: !files);
-    !files
+    if not ( Sys.file_exists dir ) then begin
+      if !Globals.verbosity > 1 then
+        Printf.eprintf "Warning: missing files dir %s\n%!" dir;
+      []
+    end else
+      let files = ref [] in
+      EzFile.make_select EzFile.iter_dir ~deep:true dir ~kinds:[ S_REG; S_LNK ]
+        ~f:(fun path ->
+            if not ( Filename.check_suffix path "~" ) then
+              let content = EzFile.read_file (dir // path) in
+              files := (path, content) :: !files);
+      !files
   in
+  (*  Printf.eprintf "Loaded %s skeleton %s\n%!" kind name; *)
   (name, { skeleton_toml; skeleton_inherits; skeleton_files })
 
-let load_skeletons map kind =
-  let skeletons_dir = Globals.config_dir // "skeletons" // kind in
-  if Sys.file_exists skeletons_dir then begin
+let load_dir_skeletons map kind dir =
+  if Sys.file_exists dir then begin
     let map = ref map in
-    EzFile.iter_dir skeletons_dir ~f:(fun file ->
-      let dir = skeletons_dir // file in
-      let toml = dir // "skeleton.toml" in
-      if Sys.file_exists toml then
-        let name, skeleton = load_skeleton ~dir ~toml ~kind in
-        map := StringMap.add name skeleton !map
-    );
+    EzFile.iter_dir dir ~f:(fun file ->
+        let dir = dir // file in
+        let toml = dir // "skeleton.toml" in
+        if Sys.file_exists toml then
+          let name, skeleton = load_skeleton ~dir ~toml ~kind in
+          if StringMap.mem name !map then
+            Printf.eprintf "Warning: %s skeleton %S overwritten in %s\n%!"
+              kind name dir;
+          map := StringMap.add name skeleton !map
+      );
     !map
   end else
     map
 
-let builtin_project_skeletons =
-  StringMap.of_list
-    [ ("virtual", Skel_project_virtual.project_skeleton);
-      ("program", Skel_project_program.project_skeleton);
-      ("library", Skel_project_library.project_skeleton)
-    ]
+let load_skeletons map kind =
+  let map =
+    match Globals.share_dir () with
+    | Some dir ->
+        let global_skeletons_dir = dir // "skeletons" // kind in
+        load_dir_skeletons map kind global_skeletons_dir
+    | None ->
+        Printf.eprintf "Warning: could not load skeletons from share/%s/skeletons/%s\n%!" Globals.command kind;
+        map
+  in
+  let user_skeletons_dir = Globals.config_dir // "skeletons" // kind in
+  load_dir_skeletons map kind user_skeletons_dir
 
-let builtin_package_skeletons =
-  StringMap.of_list
-    [ ("virtual", Skel_package_virtual.package_skeleton);
-      ("library", Skel_package_library.package_skeleton);
-      ("program", Skel_package_program.package_skeleton);
-      ("driver", Skel_package_driver.package_skeleton)
-    ]
+let builtin_project_skeletons = StringMap.of_list []
+let builtin_package_skeletons = StringMap.of_list []
 
 let project_skeletons =
   lazy (load_skeletons builtin_project_skeletons "projects")
@@ -195,7 +205,6 @@ let write_package_files write_file package =
 
   List.iter
     (fun (file, content) ->
-      let file = package.dir // file in
       backup_skeleton file content;
       let flags, bracket = bracket (Subst.package () package file) in
       let content =
@@ -205,6 +214,7 @@ let write_package_files write_file package =
           exit 2
       in
       let { file; create; skips; record; skip } = flags in
+      let file = package.dir // file in
       write_file file ~create ~skips ~content ~record ~skip)
     skeleton.skeleton_files
 

@@ -1,0 +1,3 @@
+[skeleton]
+name = "library"
+inherits = "virtual"

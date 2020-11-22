@@ -8,6 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open EzFile.OP
+
 let command = "drom"
 
 let about =
@@ -52,3 +54,60 @@ let config_dir =
 let min_drom_version = "0.1.0"
 
 let verbosity = ref 1
+
+let opam_switch_prefix =
+  match Sys.getenv "OPAM_SWITCH_PREFIX" with
+  | exception Not_found -> None
+  | switch_dir -> Some switch_dir
+
+let find_ancestor_file file f =
+  let dir = Sys.getcwd () in
+  let rec iter dir path =
+    let drom_file = dir // file in
+    if Sys.file_exists drom_file then
+      Some ( f ~dir ~path )
+    else
+      let updir = Filename.dirname dir in
+      if updir <> dir then
+        iter updir (Filename.basename dir // path)
+      else
+        None
+  in
+  iter dir ""
+
+let share_dir =
+  lazy (
+    match
+      match
+        find_ancestor_file "share"
+          (fun ~dir ~path:_ -> dir)
+      with
+      | None -> None
+      | Some dir ->
+          let local_dir = dir // "share" // command in
+          if Sys.file_exists ( local_dir // "skeletons" ) then begin
+            Printf.eprintf "Warning: using local share dir: %s\n%!" local_dir;
+            Some local_dir
+          end else
+            None
+    with
+      Some share_dir -> Some share_dir
+    | None ->
+        match opam_switch_prefix with
+        | Some opam_switch_prefix ->
+            let share_dir = opam_switch_prefix // "share" // command in
+            let skeletons_dir = share_dir // "skeletons" in
+            if Sys.file_exists share_dir then
+              Some share_dir
+            else begin
+              Printf.eprintf
+                "Warning: drom is not correctly installed in this switch:\n";
+              Printf.eprintf "%s is missing\n%!" skeletons_dir;
+              None
+            end
+        | None ->
+            Printf.eprintf "Warning: drom is not correctly configured, missing opam switch\n%!";
+            None
+  )
+
+let share_dir () = Lazy.force share_dir
