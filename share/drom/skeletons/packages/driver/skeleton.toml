@@ -1,0 +1,3 @@
+[skeleton]
+name = "driver"
+inherits = "virtual"

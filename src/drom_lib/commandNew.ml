@@ -18,7 +18,7 @@ let cmd_name = "new"
 let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
   let license =
     match config.config_license with
-    | None -> Skel_licenses.LGPL2.key
+    | None -> License.key_LGPL2
     | Some license -> license
   in
   let dir =
