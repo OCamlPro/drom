@@ -161,6 +161,7 @@ let wget ~url ~output =
   if not (Sys.file_exists dirname) then EzFile.make_dir ~p:true dirname;
   call
     [| "curl";
+       "-f";
        "--write-out";
        "%{http_code}\\n";
        "--retry";
