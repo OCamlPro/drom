@@ -67,8 +67,10 @@ let load_skeleton ~dir ~toml ~kind =
     let file = dir // (kind ^ ".toml") in
     if Sys.file_exists file then
       [ EzFile.read_file file ]
-    else
+    else begin
+      Printf.eprintf "Warning: file %s does not exist\n%!" file;
       []
+    end
   in
   let skeleton_files =
     let dir = dir // "files" in
@@ -105,27 +107,29 @@ let load_dir_skeletons map kind dir =
   end else
     map
 
+let kind_dir ~kind = "skeletons" // kind ^ "s"
+
 let load_skeletons map kind =
   let map =
     match Globals.share_dir () with
     | Some dir ->
-        let global_skeletons_dir = dir // "skeletons" // kind in
+        let global_skeletons_dir = dir // kind_dir ~kind in
         load_dir_skeletons map kind global_skeletons_dir
     | None ->
         Printf.eprintf "Warning: could not load skeletons from share/%s/skeletons/%s\n%!" Globals.command kind;
         map
   in
-  let user_skeletons_dir = Globals.config_dir // "skeletons" // kind in
+  let user_skeletons_dir = Globals.config_dir // kind_dir ~kind in
   load_dir_skeletons map kind user_skeletons_dir
 
 let builtin_project_skeletons = StringMap.of_list []
 let builtin_package_skeletons = StringMap.of_list []
 
 let project_skeletons =
-  lazy (load_skeletons builtin_project_skeletons "projects")
+  lazy (load_skeletons builtin_project_skeletons "project")
 
 let package_skeletons =
-  lazy (load_skeletons builtin_package_skeletons "packages")
+  lazy (load_skeletons builtin_package_skeletons "package")
 
 let rec inherit_files self_files super_files =
   match (self_files, super_files) with
