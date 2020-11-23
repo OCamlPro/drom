@@ -16,6 +16,10 @@ open EzFile.OP
 let cmd_name = "new"
 
 let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
+  let skeleton = match skeleton with
+    | None -> "program"
+    | Some skeleton -> skeleton
+  in
   let license =
     match config.config_license with
     | None -> License.key_LGPL2
@@ -26,6 +30,10 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
     | None -> "src" // name
     | Some dir -> dir
   in
+  Printf.eprintf
+    "Creating project %S with skeleton %S, license %S\n" name skeleton license;
+  Printf.eprintf
+    "  and sources in %s:\n%!" dir;
   let package, packages =
     let package = Project.create_package ~kind:Virtual ~name ~dir in
     (package, [ package ])
@@ -41,7 +49,7 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
     { Project.dummy_project with
       package;
       packages;
-      skeleton;
+      skeleton = Some skeleton;
       authors = [ author ];
       synopsis = Globals.default_synopsis ~name;
       description = Globals.default_description ~name;
@@ -98,7 +106,7 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
       Project.of_string ~msg:"toml template" ~default:p content
   in
 
-  let skeleton = Skeleton.lookup_project skeleton in
+  let skeleton = Skeleton.lookup_project ( Some skeleton ) in
   let p = iter_skeleton skeleton.skeleton_toml in
   Update.update_files ~create:true ?mode ~promote_skip:false ~git:true ~args p
 

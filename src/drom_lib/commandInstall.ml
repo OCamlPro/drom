@@ -24,7 +24,7 @@ let action ~args () =
       match Opam.run [ "uninstall" ] [ "-y"; package ] with
       | exception Error.Error _ -> ()
       | () -> ())
-    packages;
+     packages;
   (* (2) pin packages of this directory as they are *)
   Opam.run [ "pin" ] [ "-y"; "--no-action"; "-k"; "path"; "." ];
   (* (3) install packages *)
@@ -33,10 +33,10 @@ let action ~args () =
     | () -> None
     | exception exn -> Some exn
   in
-  (* (4) unpin packages to clean the state *)
+  (* (4) unpin packages to clean the state
   List.iter
     (fun package -> Opam.run ~error:(ref None) [ "unpin" ] [ "-n"; package ])
-    packages;
+     packages; *)
   match exn with
   | None -> Printf.eprintf "\nInstallation OK\n%!"
   | Some exn -> raise exn

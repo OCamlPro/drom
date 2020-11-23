@@ -823,7 +823,8 @@ let project_of_toml ?file ?default table =
   project
 
 let of_string ~msg ?default content =
-  (*  Printf.eprintf "Loading %s\n%!" filename ; *)
+  if !Globals.verbosity > 1 then
+    Printf.eprintf "Loading project from:\n<<<<\n%s\n>>>>>\n%!" content ;
   let table =
     match EzToml.from_string content with
     | `Ok table -> table
