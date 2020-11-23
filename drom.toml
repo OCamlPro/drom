@@ -11,8 +11,8 @@ min-edition = "4.07.0"
 mode = "binary"
 name = "drom"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
-version = "0.1.0"
-windows-ci = false
+version = "0.2.0"
+windows-ci = true
 
 # keys that you could also define:
 # build-profile = "...build-profile..."

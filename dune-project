@@ -3,7 +3,7 @@
 (name drom)
 (allow_approximate_merlin)
 (generate_opam_files false)
-(version 0.1.0)
+(version 0.2.0)
 (formatting (enabled_for ocaml reason))
 
 (package
@@ -26,7 +26,7 @@
  (depends
    (ocaml (>= 4.07.0))
    (toml (and (>= 5.0.0) (< 6.0.0)))
-   (opam-file-format (and (>= 2.0.0) (< 3.0.0)))
+   (opam-file-format (and (>= 2.1.1) (< 3.0.0)))
    (ez_file (and (>= 0.2.0) (< 1.0.0)))
    (ez_config (and (>= 0.1.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.1.0) (< 1.0.0)))
