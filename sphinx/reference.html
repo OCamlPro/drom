@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Project Description &mdash; drom master
- (649ed68
-) (2020/11/23 23:02) documentation</title>
+ (b482921
+) (2020/11/25 12:59) documentation</title>
   
 
   
@@ -42,8 +42,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="drom master
- (649ed68
-) (2020/11/23 23:02) documentation" href="index.html"/>
+ (b482921
+) (2020/11/25 12:59) documentation" href="index.html"/>
         <link rel="next" title="Sub-commands and Arguments" href="commands.html"/>
         <link rel="prev" title="Quickstart" href="quickstart.html"/> 
 
@@ -75,7 +75,7 @@
             
               <div class="version">
                 master
- (649ed68
+ (b482921
 )
               </div>
             
@@ -114,6 +114,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#the-drom-table">The <code class="code docutils literal"><span class="pre">[drom]</span></code> table</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#the-package-toml-files">The <code class="code docutils literal"><span class="pre">package.toml</span></code> Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#skeletons">Skeletons</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#project-skeletons">Project Skeletons</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#package-skeletons">Package Skeletons</a></li>
@@ -209,20 +210,25 @@ each package in the project.</p>
 <span class="n">drom</span><span class="o">-</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
 
 <span class="o">[</span><span class="n">project</span><span class="o">]</span>
-<span class="n">authors</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;Fabrice Le Fessant &lt;fabrice.le_fessant@origin-labs.com&gt;&quot;</span><span class="o">]</span>
+<span class="n">drom</span><span class="o">-</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+
+<span class="o">[</span><span class="n">project</span><span class="o">]</span>
+<span class="n">authors</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;Fabrice Le Fessant &lt;fabrice.le_fessant@origin-labs.com&gt;&quot;</span><span class="o">,</span> <span class="s2">&quot;Léo Andrès &lt;leo.andres@ocamlpro.com&gt;&quot;</span><span class="o">]</span>
 <span class="n">copyright</span> <span class="o">=</span> <span class="s2">&quot;OCamlPro SAS &amp; Origin Labs SAS&quot;</span>
 <span class="n">edition</span> <span class="o">=</span> <span class="s2">&quot;4.10.0&quot;</span>
 <span class="n">github</span><span class="o">-</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;ocamlpro&quot;</span>
-<span class="n">skeleton</span> <span class="o">=</span> <span class="s2">&quot;program&quot;</span>
 <span class="n">license</span> <span class="o">=</span> <span class="s2">&quot;LGPL2&quot;</span>
 <span class="n">min</span><span class="o">-</span><span class="n">edition</span> <span class="o">=</span> <span class="s2">&quot;4.07.0&quot;</span>
 <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;binary&quot;</span>
 <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;drom&quot;</span>
 <span class="n">synopsis</span> <span class="o">=</span> <span class="s2">&quot;The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience&quot;</span>
-<span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
-<span class="n">windows</span><span class="o">-</span><span class="n">ci</span> <span class="o">=</span> <span class="bp">false</span>
+<span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.2.0&quot;</span>
+<span class="n">windows</span><span class="o">-</span><span class="n">ci</span> <span class="o">=</span> <span class="bp">true</span>
 
 <span class="o">#</span> <span class="n">keys</span> <span class="n">that</span> <span class="n">you</span> <span class="n">could</span> <span class="n">also</span> <span class="n">define</span><span class="o">:</span>
+<span class="o">#</span> <span class="n">build</span><span class="o">-</span><span class="n">profile</span> <span class="o">=</span> <span class="s2">&quot;...build-profile...&quot;</span>
+<span class="o">#</span> <span class="n">odoc</span><span class="o">-</span><span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;...odoc-target...&quot;</span>
+<span class="o">#</span> <span class="n">sphinx</span><span class="o">-</span><span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;...sphinx-target...&quot;</span>
 <span class="o">#</span> <span class="n">archive</span> <span class="o">=</span> <span class="s2">&quot;...archive...&quot;</span>
 <span class="o">#</span> <span class="n">dev</span><span class="o">-</span><span class="n">repo</span> <span class="o">=</span> <span class="s2">&quot;...dev-repo...&quot;</span>
 <span class="o">#</span> <span class="n">bug</span><span class="o">-</span><span class="n">reports</span> <span class="o">=</span> <span class="s2">&quot;...bug-reports...&quot;</span>
@@ -239,41 +245,37 @@ each package in the project.</p>
 <span class="s2">&quot;&quot;&quot;</span>
 
 <span class="o">[</span><span class="n">drom</span><span class="o">]</span>
-<span class="n">skip</span> <span class="o">=</span> <span class="s2">&quot;src/main.ml main/main.ml sphinx/index.rst CHANGES.md&quot;</span>
+<span class="n">skip</span> <span class="o">=</span> <span class="s2">&quot;sphinx/about.rst src/drom_lib/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml ocamlformat&quot;</span>
 
 <span class="o">[</span><span class="n">dependencies</span><span class="o">]</span>
-<span class="n">ez_cmdliner</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
-<span class="n">ez_config</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
-<span class="n">ez_file</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
-<span class="n">opam</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;2.0.0&quot;</span>
-<span class="n">toml</span> <span class="o">=</span> <span class="s2">&quot;5.0.0&quot;</span>
 
-<span class="o">[</span><span class="n">tools</span><span class="o">]</span>
-<span class="n">dune</span> <span class="o">=</span> <span class="s2">&quot;2.6.0&quot;</span>
+<span class="o">[</span><span class="n">tools</span><span class="o">.</span><span class="n">ocamlformat</span><span class="o">]</span>
+<span class="k">for</span><span class="o">-</span><span class="n">test</span> <span class="o">=</span> <span class="bp">true</span>
+<span class="o">[</span><span class="n">tools</span><span class="o">.</span><span class="n">odoc</span><span class="o">]</span>
+<span class="k">for</span><span class="o">-</span><span class="n">doc</span> <span class="o">=</span> <span class="bp">true</span>
+<span class="o">[</span><span class="n">tools</span><span class="o">.</span><span class="n">ppx_expect</span><span class="o">]</span>
+<span class="k">for</span><span class="o">-</span><span class="n">test</span> <span class="o">=</span> <span class="bp">true</span>
+<span class="o">[</span><span class="n">tools</span><span class="o">.</span><span class="n">ppx_inline_test</span><span class="o">]</span>
+<span class="k">for</span><span class="o">-</span><span class="n">test</span> <span class="o">=</span> <span class="bp">true</span>
+
+<span class="o">[</span><span class="n">profile</span><span class="o">.</span><span class="n">dev</span><span class="o">]</span>
+<span class="n">ocaml</span><span class="o">-</span><span class="n">flags</span> <span class="o">=</span> <span class="s2">&quot;-w +a-4-40-41-42-44&quot;</span>
+<span class="o">[</span><span class="n">profile</span><span class="o">.</span><span class="n">release</span><span class="o">]</span>
+<span class="n">ocaml</span><span class="o">-</span><span class="n">flags</span> <span class="o">=</span> <span class="s2">&quot;-w -a&quot;</span>
+<span class="o">[</span><span class="n">project</span><span class="o">]</span>
+<span class="n">generators</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;ocamllex&quot;</span><span class="o">,</span> <span class="s2">&quot;menhir&quot;</span><span class="o">]</span>
+<span class="n">pack</span><span class="o">-</span><span class="n">modules</span> <span class="o">=</span> <span class="bp">true</span>
+<span class="n">skip</span><span class="o">-</span><span class="n">dirs</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;drom-test&quot;</span><span class="o">]</span>
 
 <span class="o">[[</span><span class="n">package</span><span class="o">]]</span>
 <span class="n">dir</span> <span class="o">=</span> <span class="s2">&quot;src/drom&quot;</span>
-<span class="n">driver</span><span class="o">-</span><span class="n">only</span> <span class="o">=</span> <span class="s2">&quot;Drom_lib.Main.main&quot;</span>
-<span class="n">kind</span> <span class="o">=</span> <span class="s2">&quot;program&quot;</span>
-<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;drom&quot;</span>
-<span class="n">skeleton</span> <span class="o">=</span> <span class="s2">&quot;driver&quot;</span>
-<span class="o">[</span><span class="n">package</span><span class="o">.</span><span class="n">dependencies</span><span class="o">]</span>
-<span class="n">drom_lib</span> <span class="o">=</span> <span class="s2">&quot;version&quot;</span>
 
 <span class="o">[[</span><span class="n">package</span><span class="o">]]</span>
 <span class="n">dir</span> <span class="o">=</span> <span class="s2">&quot;src/drom_lib&quot;</span>
-<span class="n">gen</span><span class="o">-</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;version.ml&quot;</span>
-<span class="n">kind</span> <span class="o">=</span> <span class="s2">&quot;library&quot;</span>
-<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;drom_lib&quot;</span>
-<span class="n">pack</span><span class="o">-</span><span class="n">modules</span> <span class="o">=</span> <span class="bp">true</span>
-<span class="o">[</span><span class="n">package</span><span class="o">.</span><span class="n">dependencies</span><span class="o">]</span>
-<span class="n">ez_cmdliner</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
-<span class="n">ez_config</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
-<span class="n">ez_file</span> <span class="o">=</span> <span class="s2">&quot;0.2.0&quot;</span>
-<span class="n">opam</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;2.0.0&quot;</span>
-<span class="n">toml</span> <span class="o">=</span> <span class="s2">&quot;5.0.0&quot;</span>
 </pre></div>
 </div>
+<p>Notice that every package contains only the directory where the
+sources are located, in which <code class="code docutils literal"><span class="pre">drom</span></code> expects to find a file <code class="code docutils literal"><span class="pre">package.toml</span></code> describing the package itself.</p>
 <div class="section" id="the-project-table">
 <h3>The <code class="code docutils literal"><span class="pre">[project]</span></code> table<a class="headerlink" href="#the-project-table" title="Permalink to this headline">¶</a></h3>
 <p>This table describes the main project. For multi-package projects,
@@ -379,51 +381,15 @@ library <code class="code docutils literal"><span class="pre">ez_config</span></
 <p>The <code class="code docutils literal"><span class="pre">package</span></code> table has one entry per package (library or
 program) included in the project. One of the packages must have the
 same name as the project.</p>
-<p>The following fields are allowed in a package definition:</p>
-<ul class="simple">
-<li><code class="code docutils literal"><span class="pre">dependencies</span></code>: the <code class="code docutils literal"><span class="pre">opam</span></code> <em>library</em> dependencies of
-this package</li>
-<li><code class="code docutils literal"><span class="pre">dir</span></code>: the directory of the package sources (defaults to
-<code class="code docutils literal"><span class="pre">src/${name}/</span></code></li>
-<li><code class="code docutils literal"><span class="pre">generators</span></code>: the list of program for which specific
-<code class="code docutils literal"><span class="pre">dune</span></code> targets should be generated. Defaults to an empty list,
-but the project can define its own list (<code class="code docutils literal"><span class="pre">[</span> <span class="pre">&quot;ocamllex&quot;</span> <span class="pre">;</span>
-<span class="pre">&quot;ocamlyacc&quot;</span> <span class="pre">]</span></code> by default). The generator <code class="code docutils literal"><span class="pre">menhir</span></code> is also available.</li>
-<li><code class="code docutils literal"><span class="pre">gen-version</span></code>: whether a <code class="code docutils literal"><span class="pre">version.ml</span></code> file should be
-created</li>
-<li><code class="code docutils literal"><span class="pre">kind</span></code>: the kind of the package (<code class="code docutils literal"><span class="pre">library</span></code> or
-<code class="code docutils literal"><span class="pre">program</span></code>)</li>
-<li><code class="code docutils literal"><span class="pre">name</span></code>: the name of the package (under which it will be
-published in <code class="code docutils literal"><span class="pre">opam</span></code></li>
-<li><code class="code docutils literal"><span class="pre">pack</span></code>: if modules should be wrapped, the name of the wrapper
-module (defaults to the capitalized name of the library otherwise)</li>
-<li><code class="code docutils literal"><span class="pre">skeleton</span></code>: the skeleton to be used to generate the files of this
-project (defaults to <code class="code docutils literal"><span class="pre">&quot;program&quot;</span></code>). See the section on skeletons
-for more info.</li>
-<li><code class="code docutils literal"><span class="pre">tools</span></code>: the <code class="code docutils literal"><span class="pre">opam</span></code> <em>tools</em> dependencies of this package</li>
-</ul>
-<p>The following fields are also allowed, and default to the project ones
-if not specified:</p>
-<ul class="simple">
-<li><code class="code docutils literal"><span class="pre">authors</span></code>: the authors of the package</li>
-<li><code class="code docutils literal"><span class="pre">description</span></code>: the full description of the package</li>
-<li><code class="code docutils literal"><span class="pre">mode</span></code>: the mode of the package (<code class="code docutils literal"><span class="pre">binary</span></code> or
-<code class="code docutils literal"><span class="pre">javascript</span></code>)</li>
-<li><code class="code docutils literal"><span class="pre">pack-modules</span></code>: whether modules should be wrapped or not</li>
-<li><code class="code docutils literal"><span class="pre">synopsis</span></code>: the one-line description of the package</li>
-<li><code class="code docutils literal"><span class="pre">version</span></code>: the version of this package</li>
-</ul>
-<p>Finally, there is a table <code class="code docutils literal"><span class="pre">[package.fields]</span></code> within a
-package. Currently, the following fields can be used by skeletons:</p>
-<ul class="simple">
-<li><code class="code docutils literal"><span class="pre">dune-libraries</span></code>: extra libraries that can be added in the
-<code class="code docutils literal"><span class="pre">libraries</span></code> field of <code class="code docutils literal"><span class="pre">dune</span></code>. Typically for internal libraries.</li>
-<li><code class="code docutils literal"><span class="pre">dune-stanzas</span></code>: extra <code class="code docutils literal"><span class="pre">dune</span></code> stanzas in the description</li>
-<li><code class="code docutils literal"><span class="pre">dune-trailer</span></code>: a string that is added at the end of the
-<code class="code docutils literal"><span class="pre">dune</span></code> file.</li>
-<li><code class="code docutils literal"><span class="pre">opam-trailer</span></code>: a string that is added at the end of the
-<code class="code docutils literal"><span class="pre">opam</span></code> file for the package.</li>
-</ul>
+<p>The most important field of the package description in the
+<code class="code docutils literal"><span class="pre">drom.toml</span></code> file is the <code class="code docutils literal"><span class="pre">dir</span></code> field. <code class="code docutils literal"><span class="pre">drom</span></code> expects
+to find a <code class="code docutils literal"><span class="pre">package.toml</span></code> file in that directory with more
+information on the packages.</p>
+<p>Yet, it is possible to inline these fields also in the
+<code class="code docutils literal"><span class="pre">drom.toml</span></code> file, but <code class="code docutils literal"><span class="pre">drom.toml</span></code> will move them to their
+<code class="code docutils literal"><span class="pre">package.toml</span></code> file if you ask it to upgrade the file (using
+<code class="code docutils literal"><span class="pre">drom</span> <span class="pre">project</span> <span class="pre">--upgrade</span></code>). You can check the list of available
+fields in the documentation of <code class="code docutils literal"><span class="pre">package.toml</span></code>.</p>
 </div>
 <div class="section" id="the-drom-table">
 <h3>The <code class="code docutils literal"><span class="pre">[drom]</span></code> table<a class="headerlink" href="#the-drom-table" title="Permalink to this headline">¶</a></h3>
@@ -465,6 +431,76 @@ restarting <code class="code docutils literal"><span class="pre">drom</span></co
 </li>
 </ul>
 </div>
+</div>
+<div class="section" id="the-package-toml-files">
+<h2>The <code class="code docutils literal"><span class="pre">package.toml</span></code> Files<a class="headerlink" href="#the-package-toml-files" title="Permalink to this headline">¶</a></h2>
+<p>Every package source directory (as specified by the <code class="code docutils literal"><span class="pre">dir</span></code> field
+of each <code class="code docutils literal"><span class="pre">[[package]]</span></code> entry in the <code class="code docutils literal"><span class="pre">drom.toml</span></code> file) can
+contain a <code class="code docutils literal"><span class="pre">package.toml</span></code> file.</p>
+<p>For example:</p>
+<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">less</span> <span class="n">src</span><span class="o">/</span><span class="n">drom_lib</span><span class="o">/</span><span class="n">package</span><span class="o">.</span><span class="n">toml</span>
+<span class="n">gen</span><span class="o">-</span><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;version.ml&quot;</span>
+<span class="n">kind</span> <span class="o">=</span> <span class="s2">&quot;library&quot;</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;drom_lib&quot;</span>
+<span class="n">pack</span><span class="o">-</span><span class="n">modules</span> <span class="o">=</span> <span class="bp">true</span>
+
+<span class="o">[</span><span class="n">dependencies</span><span class="o">]</span>
+<span class="n">directories</span> <span class="o">=</span> <span class="s2">&quot;0.2&quot;</span>
+<span class="n">ez_cmdliner</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">ez_config</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">ez_file</span> <span class="o">=</span> <span class="s2">&quot;0.2.0&quot;</span>
+<span class="n">opam</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;2.1.1&quot;</span>
+<span class="n">toml</span> <span class="o">=</span> <span class="s2">&quot;5.0.0&quot;</span>
+
+<span class="o">[</span><span class="n">fields</span><span class="o">]</span>
+<span class="n">dune</span><span class="o">-</span><span class="n">libraries</span> <span class="o">=</span> <span class="s2">&quot;bigarray&quot;</span>
+</pre></div>
+</div>
+<p>The following fields are allowed in a package definition:</p>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">dir</span></code>: the directory of the package sources (defaults to
+<code class="code docutils literal"><span class="pre">src/${name}/</span></code></li>
+<li><code class="code docutils literal"><span class="pre">dependencies</span></code>: the <code class="code docutils literal"><span class="pre">opam</span></code> <em>library</em> dependencies of
+this package</li>
+<li><code class="code docutils literal"><span class="pre">generators</span></code>: the list of program for which specific
+<code class="code docutils literal"><span class="pre">dune</span></code> targets should be generated. Defaults to an empty list,
+but the project can define its own list (<code class="code docutils literal"><span class="pre">[</span> <span class="pre">&quot;ocamllex&quot;</span> <span class="pre">;</span>
+<span class="pre">&quot;ocamlyacc&quot;</span> <span class="pre">]</span></code> by default). The generator <code class="code docutils literal"><span class="pre">menhir</span></code> is also available.</li>
+<li><code class="code docutils literal"><span class="pre">gen-version</span></code>: whether a <code class="code docutils literal"><span class="pre">version.ml</span></code> file should be
+created</li>
+<li><code class="code docutils literal"><span class="pre">kind</span></code>: the kind of the package (<code class="code docutils literal"><span class="pre">library</span></code> or
+<code class="code docutils literal"><span class="pre">program</span></code>)</li>
+<li><code class="code docutils literal"><span class="pre">name</span></code>: the name of the package (under which it will be
+published in <code class="code docutils literal"><span class="pre">opam</span></code></li>
+<li><code class="code docutils literal"><span class="pre">pack</span></code>: if modules should be wrapped, the name of the wrapper
+module (defaults to the capitalized name of the library otherwise)</li>
+<li><code class="code docutils literal"><span class="pre">skeleton</span></code>: the skeleton to be used to generate the files of this
+project (defaults to <code class="code docutils literal"><span class="pre">&quot;program&quot;</span></code>). See the section on skeletons
+for more info.</li>
+<li><code class="code docutils literal"><span class="pre">tools</span></code>: the <code class="code docutils literal"><span class="pre">opam</span></code> <em>tools</em> dependencies of this package</li>
+</ul>
+<p>The following fields are also allowed, and default to the project ones
+if not specified:</p>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">authors</span></code>: the authors of the package</li>
+<li><code class="code docutils literal"><span class="pre">description</span></code>: the full description of the package</li>
+<li><code class="code docutils literal"><span class="pre">mode</span></code>: the mode of the package (<code class="code docutils literal"><span class="pre">binary</span></code> or
+<code class="code docutils literal"><span class="pre">javascript</span></code>)</li>
+<li><code class="code docutils literal"><span class="pre">pack-modules</span></code>: whether modules should be wrapped or not</li>
+<li><code class="code docutils literal"><span class="pre">synopsis</span></code>: the one-line description of the package</li>
+<li><code class="code docutils literal"><span class="pre">version</span></code>: the version of this package</li>
+</ul>
+<p>Finally, there is a table <code class="code docutils literal"><span class="pre">[package.fields]</span></code> within a
+package. Currently, the following fields can be used by skeletons:</p>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">dune-libraries</span></code>: extra libraries that can be added in the
+<code class="code docutils literal"><span class="pre">libraries</span></code> field of <code class="code docutils literal"><span class="pre">dune</span></code>. Typically for internal libraries.</li>
+<li><code class="code docutils literal"><span class="pre">dune-stanzas</span></code>: extra <code class="code docutils literal"><span class="pre">dune</span></code> stanzas in the description</li>
+<li><code class="code docutils literal"><span class="pre">dune-trailer</span></code>: a string that is added at the end of the
+<code class="code docutils literal"><span class="pre">dune</span></code> file.</li>
+<li><code class="code docutils literal"><span class="pre">opam-trailer</span></code>: a string that is added at the end of the
+<code class="code docutils literal"><span class="pre">opam</span></code> file for the package.</li>
+</ul>
 </div>
 <div class="section" id="skeletons">
 <h2>Skeletons<a class="headerlink" href="#skeletons" title="Permalink to this headline">¶</a></h2>
@@ -574,7 +610,7 @@ skeleton.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'master (649ed68) (2020/11/23 23:02)',
+            VERSION:'master (b482921) (2020/11/25 12:59)',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

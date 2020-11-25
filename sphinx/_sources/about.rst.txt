@@ -12,13 +12,14 @@ files for Github Actions CI and Github pages.
 Authors
 -------
 
-:code:`drom` is a common project between
+:code:`drom` is a collaborative project between
 `OCamlPro <https://www.ocamlpro.com/>`__ and
 `Origin Labs <https://www.origin-labs.com/>`__.
 
 Main contributors:
 
 * Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>
+* Léo Andres <leo.andres@ocamlpro.com>
 
 With help and advises from:
 

@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Github Projects &mdash; drom master
- (649ed68
-) (2020/11/23 23:02) documentation</title>
+ (b482921
+) (2020/11/25 12:59) documentation</title>
   
 
   
@@ -42,8 +42,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="drom master
- (649ed68
-) (2020/11/23 23:02) documentation" href="index.html"/>
+ (b482921
+) (2020/11/25 12:59) documentation" href="index.html"/>
         <link rel="next" title="Managing Licenses" href="licenses.html"/>
         <link rel="prev" title="User Configuration" href="config.html"/> 
 
@@ -75,7 +75,7 @@
             
               <div class="version">
                 master
- (649ed68
+ (b482921
 )
               </div>
             
@@ -193,9 +193,6 @@ may also edit it directly.</p>
 description, and you set it in your account configuration, you can use
 the following command to update it:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">project</span> <span class="o">--</span><span class="n">upgrade</span>
-<span class="nc">Loading</span> <span class="n">config</span> <span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">drom</span><span class="o">/</span><span class="n">config</span>
-<span class="nc">Loading</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
-<span class="nn">Loading</span> <span class="p">.</span><span class="n">drom</span>
 <span class="nc">Updating</span> <span class="n">file</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
 <span class="nc">Calling</span> <span class="n">git</span> <span class="n">add</span> <span class="o">.</span><span class="n">drom</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>
 </pre></div>
@@ -206,7 +203,8 @@ the following command to update it:</p>
 <li>Infer most links, i.e. documentation on Github Pages, development
 repository, issue tracker, release archives, to put in <code class="code docutils literal"><span class="pre">opam</span></code>
 files and in the documentation</li>
-<li>Generate documentation in a <code class="code docutils literal"><span class="pre">docs</span></code> folder compatible with Github Pages</li>
+<li>Use Github Actions to generate documentation and copy it in the
+<code class="code docutils literal"><span class="pre">gh-pages</span></code> branch, compatible with Github Pages</li>
 <li>Configure the project to use Github Actions for the CI,
 i.e. <code class="code docutils literal"><span class="pre">.github/workflows</span></code> files</li>
 </ul>
@@ -215,8 +213,8 @@ necessary step is to activate Github Pages. For that:</p>
 <ul class="simple">
 <li>go in your project settings on Github</li>
 <li>scroll down to the Github Pages section</li>
-<li>For the Source field, select the <code class="code docutils literal"><span class="pre">master</span></code> branch</li>
-<li>A selector “/ (root)” should appear, select “/docs” instead</li>
+<li>For the Source field, select the <code class="code docutils literal"><span class="pre">gh-pages</span></code> branch</li>
+<li>Keep  the “/ (root)” directory</li>
 <li>Click on the Save button</li>
 </ul>
 <p>Your project should appear a few minutes later on Github Pages.</p>
@@ -266,7 +264,7 @@ necessary step is to activate Github Pages. For that:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'master (649ed68) (2020/11/23 23:02)',
+            VERSION:'master (b482921) (2020/11/25 12:59)',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

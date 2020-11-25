@@ -20,9 +20,6 @@ description, and you set it in your account configuration, you can use
 the following command to update it::
 
   $ drom project --upgrade
-  Loading config from /home/user/.config/drom/config
-  Loading drom.toml
-  Loading .drom
   Updating file drom.toml
   Calling git add .drom drom.toml
 
@@ -32,7 +29,8 @@ For Github projects, :code:`drom` will automatically:
 * Infer most links, i.e. documentation on Github Pages, development
   repository, issue tracker, release archives, to put in :code:`opam`
   files and in the documentation
-* Generate documentation in a :code:`docs` folder compatible with Github Pages
+* Use Github Actions to generate documentation and copy it in the
+  :code:`gh-pages` branch, compatible with Github Pages
 * Configure the project to use Github Actions for the CI,
   i.e. :code:`.github/workflows` files
 
@@ -41,8 +39,8 @@ necessary step is to activate Github Pages. For that:
 
 * go in your project settings on Github
 * scroll down to the Github Pages section
-* For the Source field, select the :code:`master` branch
-* A selector "/ (root)" should appear, select "/docs" instead
+* For the Source field, select the :code:`gh-pages` branch
+* Keep  the "/ (root)" directory
 * Click on the Save button
 
 Your project should appear a few minutes later on Github Pages.
