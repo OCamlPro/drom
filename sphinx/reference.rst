@@ -20,22 +20,27 @@ To get a feeling of what is in this file, we can look at the one used for
   
   [project]
   drom-version = "0.1.0"
-
+  
   [project]
-  authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
+  drom-version = "0.1.0"
+  
+  [project]
+  authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>", "Léo Andrès <leo.andres@ocamlpro.com>"]
   copyright = "OCamlPro SAS & Origin Labs SAS"
   edition = "4.10.0"
   github-organization = "ocamlpro"
-  skeleton = "program"
   license = "LGPL2"
   min-edition = "4.07.0"
   mode = "binary"
   name = "drom"
   synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
-  version = "0.1.0"
-  windows-ci = false
+  version = "0.2.0"
+  windows-ci = true
   
   # keys that you could also define:
+  # build-profile = "...build-profile..."
+  # odoc-target = "...odoc-target..."
+  # sphinx-target = "...sphinx-target..."
   # archive = "...archive..."
   # dev-repo = "...dev-repo..."
   # bug-reports = "...bug-reports..."
@@ -50,42 +55,39 @@ To get a feeling of what is in this file, we can look at the one used for
   sphinx and odoc documentation. It has specific knowledge of Github and
   will generate files for Github Actions CI and Github pages.
   """
-
+  
   [drom]
-  skip = "src/main.ml main/main.ml sphinx/index.rst CHANGES.md"
+  skip = "sphinx/about.rst src/drom_lib/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml ocamlformat"
   
   [dependencies]
-  ez_cmdliner = "0.1.0"
-  ez_config = "0.1.0"
-  ez_file = "0.1.0"
-  opam-file-format = "2.0.0"
-  toml = "5.0.0"
   
-  [tools]
-  dune = "2.6.0"
+  [tools.ocamlformat]
+  for-test = true
+  [tools.odoc]
+  for-doc = true
+  [tools.ppx_expect]
+  for-test = true
+  [tools.ppx_inline_test]
+  for-test = true
+  
+  [profile.dev]
+  ocaml-flags = "-w +a-4-40-41-42-44"
+  [profile.release]
+  ocaml-flags = "-w -a"
+  [project]
+  generators = ["ocamllex", "menhir"]
+  pack-modules = true
+  skip-dirs = ["drom-test"]
   
   [[package]]
   dir = "src/drom"
-  driver-only = "Drom_lib.Main.main"
-  kind = "program"
-  name = "drom"
-  skeleton = "driver"
-  [package.dependencies]
-  drom_lib = "version"
   
   [[package]]
   dir = "src/drom_lib"
-  gen-version = "version.ml"
-  kind = "library"
-  name = "drom_lib"
-  pack-modules = true
-  [package.dependencies]
-  ez_cmdliner = "0.1.0"
-  ez_config = "0.1.0"
-  ez_file = "0.2.0"
-  opam-file-format = "2.0.0"
-  toml = "5.0.0"
 
+Notice that every package contains only the directory where the
+sources are located, in which :code:`drom` expects to find a file \
+:code:`package.toml` describing the package itself.
 
 The :code:`[project]` table
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -201,51 +203,19 @@ The :code:`package` table has one entry per package (library or
 program) included in the project. One of the packages must have the
 same name as the project.
 
-The following fields are allowed in a package definition:
+The most important field of the package description in the
+:code:`drom.toml` file is the :code:`dir` field. :code:`drom` expects
+to find a :code:`package.toml` file in that directory with more
+information on the packages.
 
-* :code:`dependencies`: the :code:`opam` *library* dependencies of
-  this package
-* :code:`dir`: the directory of the package sources (defaults to
-  :code:`src/${name}/`
-* :code:`generators`: the list of program for which specific
-  :code:`dune` targets should be generated. Defaults to an empty list,
-  but the project can define its own list (:code:`[ "ocamllex" ;
-  "ocamlyacc" ]` by default). The generator :code:`menhir` is also available.
-* :code:`gen-version`: whether a :code:`version.ml` file should be
-  created
-* :code:`kind`: the kind of the package (:code:`library` or
-  :code:`program`)
-* :code:`name`: the name of the package (under which it will be
-  published in :code:`opam`
-* :code:`pack`: if modules should be wrapped, the name of the wrapper
-  module (defaults to the capitalized name of the library otherwise)
-* :code:`skeleton`: the skeleton to be used to generate the files of this
-  project (defaults to :code:`"program"`). See the section on skeletons
-  for more info.
-* :code:`tools`: the :code:`opam` *tools* dependencies of this package
+Yet, it is possible to inline these fields also in the
+:code:`drom.toml` file, but :code:`drom.toml` will move them to their
+:code:`package.toml` file if you ask it to upgrade the file (using
+:code:`drom project --upgrade`). You can check the list of available
+fields in the documentation of :code:`package.toml`.
 
-The following fields are also allowed, and default to the project ones
-if not specified:
 
-* :code:`authors`: the authors of the package
-* :code:`description`: the full description of the package
-* :code:`mode`: the mode of the package (:code:`binary` or
-  :code:`javascript`)
-* :code:`pack-modules`: whether modules should be wrapped or not
-* :code:`synopsis`: the one-line description of the package
-* :code:`version`: the version of this package
 
-Finally, there is a table :code:`[package.fields]` within a
-package. Currently, the following fields can be used by skeletons:
-
-* :code:`dune-libraries`: extra libraries that can be added in the
-  :code:`libraries` field of :code:`dune`. Typically for internal libraries.
-* :code:`dune-stanzas`: extra :code:`dune` stanzas in the description
-* :code:`dune-trailer`: a string that is added at the end of the
-  :code:`dune` file.
-* :code:`opam-trailer`: a string that is added at the end of the
-  :code:`opam` file for the package.
-  
 The :code:`[drom]` table
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -289,6 +259,78 @@ this project.
   then decide to promote the new file by removing your file and
   restarting :code:`drom`.
 
+The :code:`package.toml` Files
+------------------------------
+
+Every package source directory (as specified by the :code:`dir` field
+of each :code:`[[package]]` entry in the :code:`drom.toml` file) can
+contain a :code:`package.toml` file.
+
+For example::
+  
+  $ less src/drom_lib/package.toml
+  gen-version = "version.ml"
+  kind = "library"
+  name = "drom_lib"
+  pack-modules = true
+  
+  [dependencies]
+  directories = "0.2"
+  ez_cmdliner = "0.1.0"
+  ez_config = "0.1.0"
+  ez_file = "0.2.0"
+  opam-file-format = "2.1.1"
+  toml = "5.0.0"
+  
+  [fields]
+  dune-libraries = "bigarray"
+
+
+The following fields are allowed in a package definition:
+
+* :code:`dir`: the directory of the package sources (defaults to
+  :code:`src/${name}/`
+* :code:`dependencies`: the :code:`opam` *library* dependencies of
+  this package
+* :code:`generators`: the list of program for which specific
+  :code:`dune` targets should be generated. Defaults to an empty list,
+  but the project can define its own list (:code:`[ "ocamllex" ;
+  "ocamlyacc" ]` by default). The generator :code:`menhir` is also available.
+* :code:`gen-version`: whether a :code:`version.ml` file should be
+  created
+* :code:`kind`: the kind of the package (:code:`library` or
+  :code:`program`)
+* :code:`name`: the name of the package (under which it will be
+  published in :code:`opam`
+* :code:`pack`: if modules should be wrapped, the name of the wrapper
+  module (defaults to the capitalized name of the library otherwise)
+* :code:`skeleton`: the skeleton to be used to generate the files of this
+  project (defaults to :code:`"program"`). See the section on skeletons
+  for more info.
+* :code:`tools`: the :code:`opam` *tools* dependencies of this package
+
+The following fields are also allowed, and default to the project ones
+if not specified:
+
+* :code:`authors`: the authors of the package
+* :code:`description`: the full description of the package
+* :code:`mode`: the mode of the package (:code:`binary` or
+  :code:`javascript`)
+* :code:`pack-modules`: whether modules should be wrapped or not
+* :code:`synopsis`: the one-line description of the package
+* :code:`version`: the version of this package
+
+Finally, there is a table :code:`[package.fields]` within a
+package. Currently, the following fields can be used by skeletons:
+
+* :code:`dune-libraries`: extra libraries that can be added in the
+  :code:`libraries` field of :code:`dune`. Typically for internal libraries.
+* :code:`dune-stanzas`: extra :code:`dune` stanzas in the description
+* :code:`dune-trailer`: a string that is added at the end of the
+  :code:`dune` file.
+* :code:`opam-trailer`: a string that is added at the end of the
+  :code:`opam` file for the package.
+  
 Skeletons
 ---------
 

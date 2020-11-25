@@ -15,7 +15,7 @@ Sub-commands and Arguments
            Install dev dependencies (odoc, ocamlformat, merlin, etc.)
 
        doc
-           Generate API documentation using odoc
+           Generate documentation using odoc and sphinx
 
        fmt
            Format sources with ocamlformat
@@ -28,6 +28,9 @@ Sub-commands and Arguments
 
        new
            Create a new project
+
+       odoc
+           Generate API documentation using odoc
 
        package
            Create or update a package within a project
