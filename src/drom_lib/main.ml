@@ -30,7 +30,8 @@ let main () =
       CommandPublish.cmd;
       CommandUpdate.cmd;
       CommandTree.cmd;
-      CommandPromote.cmd
+      CommandPromote.cmd;
+      CommandLock.cmd;
     ]
   in
   let common_args =

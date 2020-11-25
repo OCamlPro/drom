@@ -133,19 +133,14 @@ type skeleton =
     skeleton_files : (string * string) list
   }
 
-module type LICENSE = sig
-  val key : string
-
-  val name : string
-
-  val header : string list
-
-  val license : string
-end
-
 type license = {
   license_key : string ;
   license_name : string ;
   license_header : string list ;
   license_contents : string ;
 }
+
+type deps_status =
+  | Deps_build
+  | Deps_devel
+  | Deps_locked

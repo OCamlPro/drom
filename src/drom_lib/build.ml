@@ -17,7 +17,8 @@ type build_args =
   { mutable arg_switch : switch_arg option;
     mutable arg_yes : bool;
     mutable arg_edition : string option;
-    mutable arg_upgrade : bool
+    mutable arg_upgrade : bool;
+    mutable arg_locked : bool ;
   }
 
 let build_args () =
@@ -25,7 +26,8 @@ let build_args () =
     { arg_switch = None;
       arg_yes = false;
       arg_edition = None;
-      arg_upgrade = false
+      arg_upgrade = false;
+      arg_locked = false;
     }
   in
   let specs =
@@ -44,7 +46,10 @@ let build_args () =
         Ezcmd.info "Reply yes to all questions" );
       ( [ "upgrade" ],
         Arg.Unit (fun () -> args.arg_upgrade <- true),
-        Ezcmd.info "Upgrade project files from drom.toml" )
+        Ezcmd.info "Upgrade project files from drom.toml" );
+      ( [ "locked" ],
+        Arg.Unit (fun () -> args.arg_locked <- true),
+        Ezcmd.info "Use .locked file if it exists" );
     ]
   in
   (args, specs)
@@ -57,7 +62,10 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
     build = true) () =
   let p, _inferred_dir = Project.get () in
 
-  let { arg_switch; arg_yes = y; arg_edition = edition; arg_upgrade } = args in
+  let { arg_switch; arg_yes = y;
+        arg_edition = edition;
+        arg_upgrade;
+        arg_locked; } = args in
   ( match edition with
     | None -> ()
     | Some edition -> (
@@ -237,26 +245,49 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
 
   let drom_opam_filename = "_drom/opam.current" in
   let drom_opam_deps = "_drom/opam.deps" in
+  let former_deps_status =
+    match EzFile.read_file drom_opam_deps with
+    | exception _ -> Deps_build
+    | "devel-deps" -> Deps_devel
+    | "build-deps" -> Deps_build
+    | "locked-deps" ->
+        Deps_locked
+    | _ -> Deps_build
+  in
   let former_opam_file =
     if Sys.file_exists drom_opam_filename then
       Some (EzFile.read_file drom_opam_filename)
     else
       None
   in
-  let new_opam_file = EzFile.read_file opam_filename in
-  let has_dev_deps =
-    try EzFile.read_file drom_opam_deps = "dev-deps" with _ -> false
+  let locked_opam_filename = p.package.name ^ "-deps.opam.locked" in
+  let new_deps_status =
+    if dev_deps then Deps_devel else
+    if arg_locked then Deps_locked else
+      match former_deps_status with
+      | Deps_locked when not ( Sys.file_exists locked_opam_filename ) ->
+          Deps_build
+      | _ -> former_deps_status
+  in
+  let new_opam_file =
+    match new_deps_status with
+    | Deps_locked ->
+        if not ( Sys.file_exists locked_opam_filename ) then
+          Error.raise "File %s required by --locked does not exist\n%!"
+            locked_opam_filename;
+        EzFile.read_file locked_opam_filename
+    | _ -> EzFile.read_file opam_filename
   in
   let need_update =
     force_build_deps || force_dev_deps
     || (build_deps || dev_deps)
        && (former_opam_file <> Some new_opam_file || not had_switch)
-    || (dev_deps && not has_dev_deps)
+    || ( former_deps_status <> new_deps_status )
   in
   let need_dev_deps =
-    dev_deps || force_dev_deps || (has_dev_deps && not force_build_deps)
+    dev_deps || force_dev_deps ||
+    ( former_deps_status = Deps_devel && not force_build_deps)
   in
-
   (*
   Printf.eprintf
     {|need_update :%b
@@ -294,10 +325,11 @@ had_switch: %b
     (try Sys.remove drom_opam_filename with _ -> ());
     Sys.rename tmp_opam_filename drom_opam_filename;
     EzFile.write_file drom_opam_deps
-      ( if need_dev_deps then
-          "dev-deps"
-        else
-          "build-deps" )
+      ( match new_deps_status with
+        | Deps_devel -> "devel-deps"
+        | Deps_build -> "build-deps"
+        | Deps_locked -> "locked-deps"
+      )
   );
 
   if build then
