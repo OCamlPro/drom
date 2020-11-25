@@ -8,27 +8,28 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ezcmd.TYPES
+open EzFile.OP
 open Types
 
-type build_args =
-  { mutable arg_switch : switch_arg option;
-    mutable arg_yes : bool;
-    mutable arg_edition : string option;
-    mutable arg_upgrade : bool;
-    mutable arg_locked : bool;
+let cmd_name = "lock"
+
+let action ~args () =
+  let (p : Types.project) = Build.build ~args () in
+
+  let opam_basename = p.package.name ^ "-deps.opam" in
+  let opam_filename = Globals.drom_dir // opam_basename in
+  Misc.call [| "opam" ; "lock" ; opam_filename |];
+  Misc.call [| "git" ; "add" ; opam_basename ^ ".locked" |];
+  ()
+
+
+
+let cmd =
+  let args, specs = Build.build_args () in
+  { cmd_name;
+    cmd_action = (fun () -> action ~args ());
+    cmd_args = [] @ specs;
+    cmd_man = [];
+    cmd_doc = "Generate a .locked file for the project"
   }
-
-val build_args :
-  unit ->
-  build_args * (string list * Ezcmd.TYPES.Arg.spec * Ezcmd.TYPES.info) list
-
-val build :
-  args:build_args ->
-  ?setup_opam:bool ->
-  ?build_deps:bool ->
-  ?force_build_deps:bool ->
-  ?dev_deps:bool ->
-  ?force_dev_deps:bool ->
-  ?build:bool ->
-  unit ->
-  Types.project
