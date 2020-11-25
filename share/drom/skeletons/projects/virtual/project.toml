@@ -2,7 +2,7 @@
 drom-version = "0.1.0"
 
 [project]
-authors = [!{authors-as-strings}]
+authors = [!{authors-for-toml}]
 copyright = "!{copyright}"
 edition = "!{edition}"
 github-organization = "!{github-organization}"
