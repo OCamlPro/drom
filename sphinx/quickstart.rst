@@ -99,63 +99,65 @@ can use `drom` to create almost everything we need for that!
 Let's create the project::
 
   $ drom new hello_world
+  Creating project "hello_world" with skeleton "program", license "LGPL2"
+    and sources in src/hello_world:
   Creating directory hello_world
   Calling git init
-  Initialized empty Git repository in /tmp/hello_world/.git/
+  Initialized empty Git repository in /home/lefessan/tmp/hello_world/.git/
   Calling git remote add origin git@github.com:ocamlpro/hello_world
-  Calling touch README.md
-  Calling git add README.md
-  Calling git commit -m Initial commit
-  [master (root-commit) 532fc94] Initial commit
-   1 file changed, 0 insertions(+), 0 deletions(-)
-   create mode 100644 README.md
-  Calling rm -f README.md
+  Calling git commit --allow-empty -m Initial commit
+  [master (root-commit) 732c93c] Initial commit
   Creating file dune-project
   Creating file src/hello_world/index.mld
   Creating file hello_world.opam
   Creating file src/hello_world_lib/version.ml
   Creating file src/hello_world_lib/index.mld
   Creating file hello_world_lib.opam
-  Creating file CHANGES.md
-  Creating file LICENSE.md
-  Creating file Makefile
-  Creating file README.md
-  Creating file docs/doc/index.html
-  Creating file docs/.nojekyll
-  Creating file docs/index.html
-  Creating file docs/sphinx/index.html
-  Creating file docs/style.css
-  Creating file .github/workflows/workflow.yml
-  Creating file .gitignore
-  Creating file .ocamlformat
-  Creating file .ocamlformat-ignore
-  Creating file .ocp-indent
-  Creating file dune
-  Creating file sphinx/about.rst
-  Creating file sphinx/conf.py
-  Creating file sphinx/index.rst
-  Creating file sphinx/install.rst
-  Creating file sphinx/license.rst
   Creating file sphinx/_static/css/fixes.css
-  Creating file test/expect-tests/dune
-  Creating file test/expect-tests/test.ml
-  Creating file test/inline-tests/dune
-  Creating file test/inline-tests/test.ml
-  Creating file test/output-tests/dune
-  Creating file test/output-tests/test1.expected
-  Creating file test/output-tests/test2.expected
   Creating file test/output-tests/test2.ml
-  Creating file src/hello_world/dune
+  Creating file test/output-tests/test2.expected
+  Creating file test/output-tests/test1.expected
+  Creating file test/output-tests/dune
+  Creating file test/inline-tests/test.ml
+  Creating file test/inline-tests/dune
+  Creating file test/expect-tests/test.ml
+  Creating file test/expect-tests/dune
+  Creating file .github/workflows/workflow.yml
+  Creating file .github/workflows/doc-deploy.yml
+  Creating file docs/sphinx/index.html
+  Creating file docs/doc/index.html
+  Creating file sphinx/license.rst
+  Creating file sphinx/install.rst
+  Creating file sphinx/index.rst
+  Creating file sphinx/conf.py
+  Creating file sphinx/about.rst
+  Creating file docs/style.css
+  Creating file docs/index.html
+  Creating file docs/favicon.png
+  Creating file docs/README.txt
+  Creating file dune
+  Creating file .ocp-indent
+  Creating file .ocamlformat-ignore
+  Creating file .ocamlformat
+  Creating file .gitignore
+  Creating file README.md
+  Creating file Makefile
+  Creating file LICENSE.md
+  Creating file CHANGES.md
   Creating file src/hello_world/main.ml
-  Creating file src/hello_world_lib/dune
+  Creating file src/hello_world/dune
   Creating file src/hello_world_lib/main.ml
+  Creating file src/hello_world_lib/dune
   Forced Update of file drom.toml
-  Calling git add .drom test/output-tests/test2.ml test/output-tests/test2.expected test/output-tests/test1.expected test/output-tests/dune test/inline-tests/test.ml test/inline-tests/dune test/expect-tests/test.ml test/expect-tests/dune src/hello_world_lib/version.ml src/hello_world_lib/main.ml src/hello_world_lib/index.mld src/hello_world_lib/dune src/hello_world/main.ml src/hello_world/index.mld src/hello_world/dune sphinx/license.rst sphinx/install.rst sphinx/index.rst sphinx/conf.py sphinx/about.rst sphinx/_static/css/fixes.css hello_world_lib.opam hello_world.opam dune-project dune drom.toml docs/style.css docs/sphinx/index.html docs/index.html docs/doc/index.html docs/.nojekyll README.md Makefile LICENSE.md CHANGES.md .ocp-indent .ocamlformat-ignore .ocamlformat .gitignore .github/workflows/workflow.yml .
-  
+  Forced Update of file src/hello_world_lib/package.toml
+  Forced Update of file src/hello_world/package.toml
+  Calling git add .drom test/output-tests/test2.ml test/output-tests/test2.expected test/output-tests/test1.expected test/output-tests/dune test/inline-tests/test.ml test/inline-tests/dune test/expect-tests/test.ml test/expect-tests/dune src/hello_world_lib/version.ml src/hello_world_lib/package.toml src/hello_world_lib/main.ml src/hello_world_lib/index.mld src/hello_world_lib/dune src/hello_world/package.toml src/hello_world/main.ml src/hello_world/index.mld src/hello_world/dune sphinx/license.rst sphinx/install.rst sphinx/index.rst sphinx/conf.py sphinx/about.rst sphinx/_static/css/fixes.css hello_world_lib.opam hello_world.opam dune-project dune drom.toml docs/style.css docs/sphinx/index.html docs/index.html docs/favicon.png docs/doc/index.html docs/README.txt README.md Makefile LICENSE.md CHANGES.md .ocp-indent .ocamlformat-ignore .ocamlformat .gitignore .github/workflows/workflow.yml .github/workflows/doc-deploy.yml
+
 As you can see, :code:`drom` created a directory :code:`hello_world`
 with the following files:
 
-* :code:`drom.toml` for project management by :code:`drom`
+* :code:`drom.toml` for project management by :code:`drom`, and two files
+  :code:`package.toml` for each sub-package in their sources.
 * Source files for the project, composed of an :code:`hello_world_lib`
   library in :code:`src/hello_world_lib/` and a driver executable in
   :code:`src/hello_world/main.ml`
@@ -245,9 +247,6 @@ By default, :code:`drom` will try to build the project in its directory::
 
   $ cd hello_world
   $ drom build -y
-  Loading drom.toml
-  Loading .drom
-  Loading config from /home/user/.config/drom/config
   Calling opam switch create -y . --empty
   Calling opam install -y ocaml.4.10.0
   The following actions will be performed:
@@ -304,9 +303,6 @@ only if the dependencies are changed.
 We can now run the program::
   
   $ drom run
-  Loading drom.toml
-  Loading .drom
-  Loading config from /home/user/.config/drom/config
   In opam switch /tmp/hello_world/_opam
   Calling opam exec -- dune build
   Done: 0/0 (jobs: 0)
@@ -323,9 +319,6 @@ Building with a global :code:`opam` switch
 install the project in that switch::
 
   $ drom build --switch 4.10.0
-  Loading drom.toml
-  Loading .drom
-  Loading config from /home/user/.config/drom/config
   Error: You must remove the local switch `_opam` before using option --switch
 
 Since we previously built the project locally, we have a local
@@ -336,9 +329,6 @@ to do it yourself (or backup it if you are not using
 
   $ rm -rf _opam
   $ drom build --switch 4.10.0
-  Loading drom.toml
-  Loading .drom
-  Loading config from /home/user/.config/drom/config
   Calling opam switch link 4.10.0
   Directory /tmp/hello_world set to use switch 4.10.0.
   Just remove /tmp/hello_world/_opam to unlink.
@@ -365,9 +355,6 @@ switch and in a global switch, we can ask :code:`drom` to install it
 in the switch::
   
   $ drom install
-  Loading drom.toml
-  Loading .drom
-  Loading config from /home/user/.config/drom/config
   Directory /tmp/hello_world set to use switch 4.07.0.
   Just remove /tmp/hello_world/_opam to unlink.
   In opam switch 4.07.0
@@ -412,9 +399,9 @@ Building Documentation
 ----------------------
 
 :code:`drom` generates a web-site for your project with 2 parts that
-you need to generate: a documentation of the library API automatically
-generated by :code:`odoc` and a general documentation that you can
-modify, generated by the `sphinx-doc tool
+you need to generate separately: a documentation of the library API
+automatically generated by :code:`odoc` and a general documentation
+that you can modify, generated by the `sphinx-doc tool
 <https://www.sphinx-doc.org/en/master/>`__, with the `Read-the-doc
 theme <https://readthedocs.org/>`__ . You will need to install them,
 it's usually something like::
@@ -422,19 +409,25 @@ it's usually something like::
   pip install sphinx
   pip install sphinx_rtd_theme
 
-The documentation is generated in the :code:`docs/` directory, so that
-you can use Github Pages to publish it automatically (there, you will
-need to activate them, choose the :code:`master` branch and the
-:code:`docs` sub-directory).
+The documentation is generated in the :code:`_drom/docs/` directory.
+If you are on Github, `drom` generates a Github action that will
+automatically merge this directory into the :code:`gh-pages` branch after
+every merge/push in the :code:`master` branch, so that you can easily use
+Github Pages to host your project documentation.
 
-The main webpage is created as :code:`docs/index.html`, and the Sphinx
-files used to generate the documentation are in :code:`sphinx`.
+The main webpage is created from :code:`docs/index.html`, and the Sphinx
+files used to generate the documentation are in :code:`sphinx/`. You
+can edit these files before generating the documentation.
 
 To generate the documentation, you must call two commands:
 
-* :code:`drom doc`, each time you want to generate the documentation
+* :code:`drom odoc`, each time you want to generate the documentation
   of the API
 * :code:`drom sphinx`, each time you want to compile the Sphinx files
+
+The command :code:`drom doc` can be used to generate everything.  You
+can use these commands with an extra argument :code:`--view` to open a
+local browser on the documentation.
 
 Since generating the API documentation requires to use :code:`odoc`,
 :code:`drom` will automatically install the Development dependencies
@@ -444,9 +437,6 @@ of your project. They are usually tools like :code:`merlin`,
 Still, you can trigger directly their installation using::
 
   $ drom dev-deps
-  Loading drom.toml
-  Loading .drom
-  Loading config from /home/user/.config/drom/config
   In opam switch 4.10.0
   Calling opam install odoc ocamlformat
   The following actions will be performed:
@@ -468,14 +458,11 @@ detected as missing, so they are installed.
 
 Let's now generate the API documentation::
 
-  $ drom doc
-  Loading drom.toml
-  Loading .drom
-  Loading config from /home/user/.config/drom/config
+  $ drom odoc
   In opam switch 4.10.0
   Calling opam exec -- dune build
   Calling opam exec -- dune build @doc
-  Calling rsync -auv --delete _build/default/_doc/_html/. docs/doc
+  Calling rsync -auv --delete _build/default/_doc/_html/. _drom/docs/doc
   sending incremental file list
   ./
   highlight.pack.js
@@ -486,18 +473,14 @@ Let's now generate the API documentation::
   
   sent 26,886 bytes  received 103 bytes  53,978.00 bytes/sec
   total size is 26,507  speedup is 0.98
-  Calling git add docs/doc
 
-The API documentation has been generated and copied into :code:`docs/doc`.
+The API documentation has been generated and copied into
+:code:`_drom/docs/doc`.
 
 Let's now generate the Sphinx documentation::
 
   $ drom sphinx
-  Loading drom.toml
-  Loading .drom
-  Loading config from /home/user/.config/drom/config
-  Creating file docs/sphinx/index.html
-  Calling sphinx-build sphinx docs/sphinx
+  Calling sphinx-build sphinx _drom/docs/sphinx
   Running Sphinx v1.8.5
   building [mo]: targets for 0 po files that are out of date
   building [html]: targets for 4 source files that are out of date
@@ -520,12 +503,9 @@ Let's now generate the Sphinx documentation::
   dumping object inventory... done
   build succeeded, 1 warning.
 
-  The HTML pages are in docs/sphinx.
-  Calling git add docs/sphinx
+  The HTML pages are in _drom/docs/sphinx.
 
 We can now check how it looks like::
 
-  $ xdg-open ./docs/sphinx/index.html
+  $ xdg-open ./_drom/docs/sphinx/index.html
 
-
-  

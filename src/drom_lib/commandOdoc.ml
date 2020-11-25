@@ -9,6 +9,7 @@
 (**************************************************************************)
 
 open Ezcmd.TYPES
+open EzFile.OP
 
 let cmd_name = "odoc"
 
@@ -25,7 +26,7 @@ let action ~args ~open_www () =
   let (p : Types.project) = Build.build ~dev_deps:true ~args () in
   let odoc_target = make_odoc p in
   if !open_www then
-    Misc.call [| "xdg-open"; odoc_target |]
+    Misc.call [| "xdg-open"; odoc_target // "index.html" |]
 
 let cmd =
   let args, specs = Build.build_args () in
