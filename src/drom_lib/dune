@@ -10,6 +10,11 @@
   )
 
 
+(rule
+    (targets version.ml)
+    (deps (:script version.mlt) package.toml)
+    (action (with-stdout-to %{targets} (run %{ocaml} unix.cma %{script}))))
+
 (documentation
   (package drom_lib))
 

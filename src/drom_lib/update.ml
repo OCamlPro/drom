@@ -19,12 +19,14 @@ type update_args =
   { mutable arg_upgrade : bool;
     mutable arg_force : bool;
     mutable arg_diff : bool;
-    mutable arg_skip : (bool * string) list
+    mutable arg_skip : (bool * string) list;
+    mutable arg_promote_skip : bool ;
   }
 
 let update_args () =
   let args =
-    { arg_upgrade = false; arg_force = false; arg_diff = false; arg_skip = [] }
+    { arg_upgrade = false; arg_force = false; arg_diff = false;
+      arg_skip = [] ; arg_promote_skip = false }
   in
   let specs =
     [ ( [ "f" ; "force" ],
@@ -44,7 +46,10 @@ let update_args () =
         Ezcmd.info "Remove from skip list" );
       ( [ "diff" ],
         Arg.Unit (fun () -> args.arg_diff <- true),
-        Ezcmd.info "Print a diff of skipped files" )
+        Ezcmd.info "Print a diff of skipped files" );
+      ( [ "promote-skip" ],
+        Arg.Unit (fun () -> args.arg_promote_skip <- true),
+        Ezcmd.info "Promote skipped files to skip field" );
     ]
   in
   (args, specs)
@@ -60,13 +65,13 @@ let compute_config_hash files =
   in
   Hashes.digest_string to_hash
 
-let update_files ?args ?mode ?(git = false) ?(create = false)
-    ?(promote_skip = false) p =
-  let force, upgrade, skip, diff =
+let update_files ?args ?mode ?(git = false) ?(create = false) p =
+  let force, upgrade, skip, diff, promote_skip =
     match args with
-    | None -> (false, false, [], false)
+    | None -> (false, false, [], false, false)
     | Some args ->
-        (args.arg_force, args.arg_upgrade, args.arg_skip, args.arg_diff)
+        (args.arg_force, args.arg_upgrade, args.arg_skip, args.arg_diff,
+         args.arg_promote_skip)
   in
 
   let changed = false in
@@ -246,9 +251,12 @@ let update_files ?args ?mode ?(git = false) ?(create = false)
                  | None -> ()
                  | Some file ->
                      (* TODO : we should put info in this file *)
-                     write_file hashes (package.dir // file)
-                       (Printf.sprintf "let version = \"%s\"\n"
-                          (Misc.p_version package)) );
+                     let version_file = package.dir // file in
+                     if Sys.file_exists version_file then
+                       Sys.remove version_file;
+                     write_file hashes ( version_file ^ "t")
+                       (GenVersion.file package file)
+               );
                ( match Odoc.template_src_index_mld package with
                  | None -> ()
                  | Some content ->

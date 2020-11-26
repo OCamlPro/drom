@@ -12,7 +12,8 @@ type update_args =
   { mutable arg_upgrade : bool;
     mutable arg_force : bool;
     mutable arg_diff : bool;
-    mutable arg_skip : (bool * string) list
+    mutable arg_skip : (bool * string) list;
+    mutable arg_promote_skip : bool ;
   }
 
 val update_args :
@@ -24,7 +25,6 @@ val update_files :
   ?mode:Types.mode ->
   ?git:bool ->
   ?create:bool ->
-  ?promote_skip:bool ->
   Types.project ->
   unit
 

@@ -108,7 +108,7 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
 
   let skeleton = Skeleton.lookup_project ( Some skeleton ) in
   let p = iter_skeleton skeleton.skeleton_toml in
-  Update.update_files ~create:true ?mode ~promote_skip:false ~git:true ~args p
+  Update.update_files ~create:true ?mode ~git:true ~args p
 
 (* lookup for "drom.toml" and update it *)
 let action ~skeleton ~name ~mode ~inplace ~dir ~args =

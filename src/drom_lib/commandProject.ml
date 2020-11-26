@@ -15,7 +15,7 @@ open Update
 let cmd_name = "project"
 
 (* lookup for "drom.toml" and update it *)
-let action ~skeleton ~mode ~promote_skip ~args =
+let action ~skeleton ~mode ~args =
   let project = Project.find () in
   match project with
   | None ->
@@ -35,17 +35,16 @@ let action ~skeleton ~mode ~promote_skip ~args =
             args.arg_upgrade )
       }
     in
-    Update.update_files ~args ~create:false ?mode ~promote_skip ~git:true p
+    Update.update_files ~args ~create:false ?mode ~git:true p
 
 let cmd =
   let mode = ref None in
-  let promote_skip = ref false in
   let skeleton = ref None in
   let args, specs = Update.update_args () in
   { cmd_name;
     cmd_action =
       (fun () ->
-        action ~skeleton:!skeleton ~mode:!mode ~promote_skip:!promote_skip ~args);
+        action ~skeleton:!skeleton ~mode:!mode ~args);
     cmd_args =
       specs
       @ [ ( [ "library" ],
@@ -89,12 +88,6 @@ let cmd =
           ( [ "upgrade" ],
             Arg.Unit (fun () -> args.arg_upgrade <- true),
             Ezcmd.info "Upgrade drom.toml file" );
-          ( [ "promote-skip" ],
-            Arg.Unit
-              (fun () ->
-                promote_skip := true;
-                args.arg_upgrade <- true),
-            Ezcmd.info "Promote skipped files to skip field" )
         ];
     cmd_man = [];
     cmd_doc = "Create an initial project"
