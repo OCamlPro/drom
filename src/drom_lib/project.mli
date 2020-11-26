@@ -28,3 +28,6 @@ val package_of_string : msg:string -> string -> Types.package
 val string_of_package : Types.package -> string
 
 val dummy_project : Types.project
+
+val versions_of_string : string -> Types.version list
+val string_of_versions : Types.version list -> string

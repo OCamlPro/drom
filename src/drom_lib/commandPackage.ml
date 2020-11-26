@@ -115,7 +115,7 @@ let upgrade_package package ~upgrade ~kind ~mode ~files =
   end;
   ()
 
-let action ~package_name ~kind ~mode ~promote_skip ~dir ?create ?remove ?rename
+let action ~package_name ~kind ~mode ~dir ?create ?remove ?rename
     ~args ~files () =
   let p, inferred_dir = Project.get () in
   let name =
@@ -229,14 +229,13 @@ let action ~package_name ~kind ~mode ~promote_skip ~dir ?create ?remove ?rename
             !upgrade)
   in
   let args = { args with arg_upgrade = upgrade } in
-  Update.update_files ~create:false ?mode ~promote_skip ~git:true p ~args;
+  Update.update_files ~create:false ?mode ~git:true p ~args;
   ()
 
 let cmd =
   let package_name = ref None in
   let kind = ref None in
   let mode = ref None in
-  let promote_skip = ref false in
   let dir = ref None in
   let create = ref None in
   let remove = ref None in
@@ -247,7 +246,7 @@ let cmd =
     cmd_action =
       (fun () ->
          action ~package_name:!package_name ~mode:!mode ~kind:!kind
-           ~promote_skip:!promote_skip ~dir:!dir ?create:!create ?remove:!remove
+           ~dir:!dir ?create:!create ?remove:!remove
            ?rename:!rename ~args ~files:(List.rev !files) ());
     cmd_args =
       specs
@@ -279,9 +278,6 @@ let cmd =
           ( [ "javascript" ],
             Arg.Unit (fun () -> mode := Some Javascript),
             Ezcmd.info "Compile to javascript" );
-          ( [ "promote-skip" ],
-            Arg.Unit (fun () -> promote_skip := true),
-            Ezcmd.info "Promote skipped files to skip field" );
           ( [ "new-file" ],
             Arg.String (fun file -> files := file :: !files),
             Ezcmd.info "Add new source file" );

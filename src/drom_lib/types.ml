@@ -30,13 +30,10 @@ type version =
   | NoVersion
 
 type dependency =
-  { depversions : version list;
-    (* "version" *)
-    depname : string option;
+  { depversions : version list; (* "version" *)
+    depname : string option;    (* "libname" *)
     (* for dune if different *)
-    (* "libname" *)
-    deptest : bool;
-    (* "for-test" *)
+    deptest : bool; (* "for-test" *)
     depdoc : bool (* "for-doc" *)
   }
 
@@ -52,7 +49,7 @@ type package =
     p_synopsis : string option;
     p_description : string option;
     mutable p_dependencies : (string * dependency) list;
-    p_tools : (string * dependency) list;
+    mutable p_tools : (string * dependency) list;
     mutable p_mode : mode option;
     p_pack_modules : bool option;
     mutable p_gen_version : string option;
@@ -99,8 +96,8 @@ and project =
     authors : string list;
     synopsis : string;
     description : string;
-    dependencies : (string * dependency) list;
-    tools : (string * dependency) list;
+    mutable dependencies : (string * dependency) list;
+    mutable tools : (string * dependency) list;
     mode : mode;
     pack_modules : bool;
     share_dirs : string list ;
