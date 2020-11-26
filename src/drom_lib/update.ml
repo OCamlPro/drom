@@ -246,9 +246,12 @@ let update_files ?args ?mode ?(git = false) ?(create = false)
                  | None -> ()
                  | Some file ->
                      (* TODO : we should put info in this file *)
-                     write_file hashes (package.dir // file)
-                       (Printf.sprintf "let version = \"%s\"\n"
-                          (Misc.p_version package)) );
+                     let version_file = package.dir // file in
+                     if Sys.file_exists version_file then
+                       Sys.remove version_file;
+                     write_file hashes ( version_file ^ "t")
+                       (GenVersion.file package file)
+               );
                ( match Odoc.template_src_index_mld package with
                  | None -> ()
                  | Some content ->

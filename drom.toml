@@ -1,5 +1,5 @@
 [project]
-drom-version = "0.1.0"
+drom-version = "0.1"
 
 [project]
 authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>", "Léo Andrès <leo.andres@ocamlpro.com>"]

@@ -51,7 +51,7 @@ let config_dir =
       exit 2
   | Some config_dir -> config_dir
 
-let min_drom_version = "0.1.0"
+let min_drom_version = "0.1"
 
 let verbosity = ref 1
 

@@ -55,6 +55,13 @@ let package_dune_files package =
           else
             Printf.eprintf "no generator for %s\n%!" file)
       files );
+  begin
+    match package.p_gen_version with
+    | None -> ()
+    | Some file ->
+        Buffer.add_string b @@
+        GenVersion.dune package file
+  end;
   Buffer.contents b
 
 let template_dune_project p =
