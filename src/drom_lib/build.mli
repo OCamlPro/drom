@@ -8,6 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ezcmd.V2
 open Types
 
 type build_args =
@@ -20,7 +21,7 @@ type build_args =
 
 val build_args :
   unit ->
-  build_args * (string list * Ezcmd.TYPES.Arg.spec * Ezcmd.TYPES.info) list
+  build_args * (string list * EZCMD.TYPES.Arg.spec * EZCMD.TYPES.info) list
 
 val build :
   args:build_args ->

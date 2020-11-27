@@ -8,7 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 
 let cmd_name = "clean"
 
@@ -23,13 +24,12 @@ let action ~opam =
 
 let cmd =
   let opam = ref false in
-  { cmd_name;
-    cmd_action = (fun () -> action ~opam);
-    cmd_args =
+  EZCMD.sub
+    cmd_name
+    (fun () -> action ~opam)
+    ~args:
       [ ( [ "opam" ],
           Arg.Set opam,
-          Ezcmd.info "Also remove the local opam switch (_opam/ and _drom/)" )
-      ];
-    cmd_man = [];
-    cmd_doc = "Clean the project from build files"
-  }
+          EZCMD.info "Also remove the local opam switch (_opam/ and _drom/)" )
+      ]
+    ~doc: "Clean the project from build files"

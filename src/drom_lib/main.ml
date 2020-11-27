@@ -8,7 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 
 let main () =
   let commands =
@@ -38,24 +39,21 @@ let main () =
   let common_args =
     [ ( [ "v"; "verbose" ],
         Arg.Unit (fun () -> incr Globals.verbosity),
-        Ezcmd.info "Increase verbosity level" )
+        EZCMD.info "Increase verbosity level" )
     ]
-  in
-  let commands =
-    List.map
-      (fun sub -> { sub with cmd_args = common_args @ sub.cmd_args })
-      commands
   in
   Printexc.record_backtrace true;
   match Sys.argv with
   | [| _; "--version" |] -> Printf.printf "%s\n%!" Version.version
   | [| _; "--about" |] -> Printf.printf "%s\n%!" Globals.about
+  | [| _; "rst" |] -> CommandRst.action commands common_args
   | _ -> (
     (* OpambinMisc.global_log "args: %s"
        (String.concat " " (Array.to_list Sys.argv)); *)
     try
-      Ezcmd.main_with_subcommands ~name:Globals.command ~version:Version.version
+      EZCMD.main_with_subcommands ~name:Globals.command ~version:Version.version
         ~doc:"Create and manage an OCaml project" ~man:[] commands
+        ~common_args
     with
     | Error.Error s ->
       Printf.eprintf "Error: %s\n%!" s;

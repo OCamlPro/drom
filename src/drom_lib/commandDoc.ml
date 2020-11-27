@@ -8,7 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 
 let cmd_name = "doc"
 
@@ -22,14 +23,13 @@ let action ~args ~open_www () =
 let cmd =
   let args, specs = Build.build_args () in
   let open_www = ref false in
-  { cmd_name;
-    cmd_action = (fun () -> action ~args ~open_www ());
-    cmd_args =
+  EZCMD.sub cmd_name
+    (fun () -> action ~args ~open_www ())
+    ~args: (
       [ ( [ "view" ],
           Arg.Set open_www,
-          Ezcmd.info "Open a browser on the documentation" )
+          EZCMD.info "Open a browser on the documentation" )
       ]
-      @ specs;
-    cmd_man = [];
-    cmd_doc = "Generate all documentation (API and Sphinx)"
-  }
+      @ specs
+    )
+    ~doc: "Generate all documentation (API and Sphinx)"

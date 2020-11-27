@@ -8,7 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 open EzFile.OP
 
 let cmd_name = "odoc"
@@ -31,14 +32,14 @@ let action ~args ~open_www () =
 let cmd =
   let args, specs = Build.build_args () in
   let open_www = ref false in
-  { cmd_name;
-    cmd_action = (fun () -> action ~args ~open_www ());
-    cmd_args =
+  EZCMD.sub cmd_name
+    (fun () -> action ~args ~open_www ())
+    ~args: (
       [ ( [ "view" ],
           Arg.Set open_www,
-          Ezcmd.info "Open a browser on the documentation" )
+          EZCMD.info "Open a browser on the documentation" )
       ]
-      @ specs;
-    cmd_man = [];
-    cmd_doc = "Generate API documentation using odoc in the _drom/docs/doc directory"
-  }
+      @ specs
+    )
+    ~doc:
+      "Generate API documentation using odoc in the _drom/docs/doc directory"

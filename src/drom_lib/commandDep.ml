@@ -8,7 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 open Update
 open Types
 
@@ -156,39 +157,62 @@ let cmd =
   let deptest = ref None in
   let depdoc = ref None in
   let args, specs = Update.update_args () in
-  { cmd_name;
-    cmd_action =
-      (fun () ->
-         action ?dep:(!dep)
-           ~package:!package ~tool:!tool
-           ~add:!add ~remove:!remove
-           ~version:!version ~depname:!depname
-           ~deptest:!deptest ~depdoc:!depdoc
-           ~args
-      );
-    cmd_args =
+  EZCMD.sub cmd_name
+    (fun () ->
+       action ?dep:(!dep)
+         ~package:!package ~tool:!tool
+         ~add:!add ~remove:!remove
+         ~version:!version ~depname:!depname
+         ~deptest:!deptest ~depdoc:!depdoc
+         ~args
+    )
+    ~args: (
       specs @
       [ [ "package" ],
         Arg.String (fun s -> package := Some s),
-        Ezcmd.info "Attach dependency to this package name" ;
+        EZCMD.info ~docv:"PACKAGE" "Attach dependency to this package name" ;
         [ "tool" ], Arg.Unit (fun () -> tool := true),
-        Ezcmd.info "Dependency is a tool, not a library" ;
+        EZCMD.info "Dependency is a tool, not a library" ;
         [ "add" ], Arg.Unit (fun () -> add := true),
-        Ezcmd.info "Add as new dependency" ;
+        EZCMD.info "Add as new dependency" ;
         [ "remove" ], Arg.Unit (fun () -> tool := true),
-        Ezcmd.info "Remove this dependency" ;
+        EZCMD.info "Remove this dependency" ;
         [ "ver" ], Arg.String (fun s -> version := Some s),
-        Ezcmd.info "Dependency should have this version" ;
+        EZCMD.info ~docv:"VERSION" "Dependency should have this version" ;
         [ "lib" ], Arg.String (fun s -> depname := Some s),
-        Ezcmd.info "Dependency should have this libname in dune" ;
+        EZCMD.info ~docv:"LIBNAME"
+          "Dependency should have this libname in dune" ;
         [ "test" ], Arg.Bool (fun b -> deptest := Some b),
-        Ezcmd.info "Whether dependency is only for tests" ;
+        EZCMD.info "Whether dependency is only for tests" ;
         [ "doc" ], Arg.Bool (fun b -> depdoc := Some b),
-        Ezcmd.info "Whether dependency is only for doc" ;
+        EZCMD.info "Whether dependency is only for doc" ;
         ( [],
           Arg.Anon (0, fun name -> dep := Some name),
-          Ezcmd.info "Name of dependency" )
+          EZCMD.info ~docv:"DEPENDENCY" "Name of dependency" )
+      ]
+    )
+    ~doc: "Manage dependency of a package"
+    ~version:"0.2.1"
+    ~man: [
+      `S "DESCRIPTION";
+      `Blocks [
+        `P "Add, remove and modify dependencies from $(b,drom.toml) and  $(b,package.toml) files.";
+        `P "If the argument $(b,--package) is not specified, the dependency is added project-wide (i.e. for all packages), updating the $(i,drom.toml) file.";
+        `P "If the argument $(b,--package) is provided, the dependency is added to the $(i,package.toml) file for that particular package.";
+        `P "Dependencies can be added $(b,--add), removed $(b,--remove) or just modified. The $(b,--tool) argument should be used for tool dependencies, i.e. dependencies that are not linked to the library/program.";
+        `P "If no modification argument is provided, the dependency is printed in the terminal. Modification arguments are $(b,--ver VERSION) for the version, $(b,--lib LIBNAME) for the $(i,dune) library name, $(b,--doc BOOL) for documentation deps and $(b,--test BOOL) for test deps.";
       ];
-    cmd_man = [];
-    cmd_doc = "Manage dependency of a package"
-  }
+      `S "EXAMPLE";
+      `Pre {|
+drom dep --package drom_lib --add ez_cmdliner --ver ">0.1"
+drom dep --package drom_lib --remove ez_cmdliner
+drom dep --add --tool odoc --ver ">1.0 <3.0" --doc true
+|};
+      `S "VERSION SPECIFICATION";
+      `P "The version specified in the $(b,--ver VERSION) argument should follow the following format:";
+      `I ("1.", "Spaces are used to separate a conjunction of version constraints.");
+      `I ("2.", "An empty string is equivalent to no version constraint.");
+      `I ("3.", "Constraints are specified using a comparison operation directly followed by the version, like $(b,>1.2) or $(b,<=1.0).");
+      `I ("4.",
+          {|A semantic version like $(b,1.2.3) is equivalent to the constraints  $(b,>=1.2.3) and $(b,<2.0.0).|});
+    ]

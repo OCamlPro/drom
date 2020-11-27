@@ -8,7 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 open EzFile.OP
 
 let cmd_name = "publish"
@@ -131,16 +132,49 @@ url {
 let cmd =
   let opam_repo = ref None in
   let use_md5 = ref false in
-  { cmd_name;
-    cmd_action = (fun () -> action ~opam_repo ~use_md5:!use_md5 ());
-    cmd_args =
+  EZCMD.sub cmd_name
+    (fun () -> action ~opam_repo ~use_md5:!use_md5 ())
+    ~args:
       [ ( [ "opam-repo" ],
           Arg.String (fun s -> opam_repo := Some s),
-          Ezcmd.info "Path to local opam-repository" );
+          EZCMD.info ~docv:"DIRECTORY" "Path to local git-managed opam-repository. The path should be absolute. Overwrites the value $(i,opam-repo) from $(i,\\$HOME/.config/drom/config)" );
         ( [ "md5" ],
           Arg.Unit (fun () -> use_md5 := true),
-          Ezcmd.info "Use md5 instead of sha256 for checksums" )
-      ];
-    cmd_man = [];
-    cmd_doc = "Generate a set of packages from all found drom.toml files"
-  }
+          EZCMD.info "Use md5 instead of sha256 for checksums" )
+      ]
+    ~doc:
+      "Update opam files with checksums and copy them to a local opam-repository for publication"
+    ~man: [
+      `S "DESCRIPTION";
+      `Blocks [
+        `P "Before running this command, you should edit the file $(b,\\$HOME/.config/drom/config) and set the value of the $(i,opam-repo) option, like:";
+        `Pre
+        {|
+[user]
+author = "John Doe <john.doe@ocaml.org>"
+github-organization = "ocaml"
+license = "LGPL2"
+copyright = "OCamlPro SAS & Origin Labs SAS"
+opam-repo = "/home/john/GIT/opam-repository"
+|};
+        `P "Alternatively, you can run it with option $(b,--opam-repo REPOSITORY).";
+        `P "In both case, $(b,REPOSITORY) should be the absolute path to the location of a local git-managed opam repository.";
+        `P "$(b,drom publish) will perform the following actions:";
+        `I ("1.",
+            "Download the source archive corresponding to the current version");
+        `I ("2.",
+            "Compute the checksum of the archive");
+        `I ("3.", "Copy updated opam files to the git-managed opam repository");
+
+        `P "Note that, prior to calling $(b,drom publish), you should update the opam-repository to the latest version of the $(b,master) branch:";
+        `Pre "git checkout master\ngit pull ocaml master";
+        `P "Once the opam files have been added, you should push them to your local fork of opam-repository and create a merge request:";
+        `Pre {|cd ~/GIT/opam-repository
+git checkout -b z-\$(date --iso)-new-package-version
+git add packages
+git commit -a -m "New version of my package"
+git push
+|};
+        `P "To download the project source archive, $(b,drom publish) will either use the $(i,archive) URL of the drom.toml file, or the Github URL (if the $(i,github-organization) is set in the project), assuming in this later case that the version starts with 'v' (like v1.0.0). Two substitutions are allowed in $(i,archive): $(i,\\${version}) for the version, $(i,\\${name}) for the package name."
+      ]
+    ]

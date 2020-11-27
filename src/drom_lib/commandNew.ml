@@ -9,7 +9,8 @@
 (**************************************************************************)
 
 open Types
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 open EzCompat
 open EzFile.OP
 
@@ -135,44 +136,44 @@ let cmd =
   let dir = ref None in
   let args, specs = Update.update_args () in
   args.arg_upgrade <- true;
-  { cmd_name;
-    cmd_action =
-      (fun () ->
-        action ~name:!project_name ~skeleton:!skeleton ~mode:!mode ~dir:!dir
-          ~inplace:!inplace ~args);
-    cmd_args =
-      specs
-      @ [ ( [ "dir" ],
-            Arg.String (fun s -> dir := Some s),
-            Ezcmd.info "Dir where package sources are stored (src by default)"
-          );
-          ( [ "library" ],
-            Arg.Unit (fun () -> skeleton := Some "library"),
-            Ezcmd.info "Project contains only a library" );
-          ( [ "program" ],
-            Arg.Unit (fun () -> skeleton := Some "program"),
-            Ezcmd.info "Project contains only a program" );
-          ( [ "virtual" ],
-            Arg.Unit (fun () -> skeleton := Some "virtual"),
-            Ezcmd.info "Package is virtual, i.e. no code" );
-          ( [ "binary" ],
-            Arg.Unit (fun () -> mode := Some Binary),
-            Ezcmd.info "Compile to binary" );
-          ( [ "javascript" ],
-            Arg.Unit (fun () -> mode := Some Javascript),
-            Ezcmd.info "Compile to javascript" );
-          ( [ "skeleton" ],
-            Arg.String (fun s -> skeleton := Some s),
-            Ezcmd.info
-              "Create project using a predefined skeleton or one specified in \
-               ~/.config/drom/skeletons/" );
-          ( [ "inplace" ],
-            Arg.Set inplace,
-            Ezcmd.info "Create project in the the current directory" );
-          ( [],
-            Arg.Anon (0, fun name -> project_name := Some name),
-            Ezcmd.info "Name of the project" )
-        ];
-    cmd_man = [];
-    cmd_doc = "Create a new project"
-  }
+  EZCMD.sub cmd_name
+    ~args:
+      (
+        specs
+        @ [ ( [ "dir" ],
+              Arg.String (fun s -> dir := Some s),
+              EZCMD.info ~docv:"DIRECTORY"
+                "Dir where package sources are stored (src by default)"
+            );
+            ( [ "library" ],
+              Arg.Unit (fun () -> skeleton := Some "library"),
+              EZCMD.info "Project contains only a library" );
+            ( [ "program" ],
+              Arg.Unit (fun () -> skeleton := Some "program"),
+              EZCMD.info "Project contains only a program" );
+            ( [ "virtual" ],
+              Arg.Unit (fun () -> skeleton := Some "virtual"),
+              EZCMD.info "Package is virtual, i.e. no code" );
+            ( [ "binary" ],
+              Arg.Unit (fun () -> mode := Some Binary),
+              EZCMD.info "Compile to binary" );
+            ( [ "javascript" ],
+              Arg.Unit (fun () -> mode := Some Javascript),
+              EZCMD.info "Compile to javascript" );
+            ( [ "skeleton" ],
+              Arg.String (fun s -> skeleton := Some s),
+              EZCMD.info
+                ~docv:"SKELETON"
+                "Create project using a predefined skeleton or one specified in \
+                 ~/.config/drom/skeletons/" );
+            ( [ "inplace" ],
+              Arg.Set inplace,
+              EZCMD.info "Create project in the the current directory" );
+            ( [],
+              Arg.Anon (0, fun name -> project_name := Some name),
+              EZCMD.info ~docv:"PROJECT" "Name of the project" )
+          ])
+    ~doc:"Create a new project"
+    (fun () ->
+       action ~name:!project_name ~skeleton:!skeleton ~mode:!mode ~dir:!dir
+         ~inplace:!inplace ~args)

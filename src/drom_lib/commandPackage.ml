@@ -8,8 +8,9 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ezcmd.V2
 open Types
-open Ezcmd.TYPES
+open EZCMD.TYPES
 open EzFile.OP
 open Update
 
@@ -115,7 +116,7 @@ let upgrade_package package ~upgrade ~kind ~mode ~files =
   end;
   ()
 
-let action ~package_name ~kind ~mode ~dir ?create ?remove ?rename
+let action ~package_name ~kind ~mode ~dir ?create ~remove ?rename
     ~args ~files () =
   let p, inferred_dir = Project.get () in
   let name =
@@ -128,105 +129,106 @@ let action ~package_name ~kind ~mode ~dir ?create ?remove ?rename
   in
   let upgrade =
     Hashes.with_ctxt ~git:true (fun hashes ->
-        match remove with
-        | Some name ->
-            if create <> None then
-              Error.raise "--remove and --create are incompatible";
+        if remove then begin
 
-            if p.package.name = name then Error.raise "Cannot remove main package";
-            if List.for_all (fun package -> package.name <> name) p.packages then
-              Error.raise "No such package to remove";
-            p.packages <-
-              List.filter
-                (fun package ->
-                   if package.name = name then begin
-                     remove_package hashes package;
-                     false
-                   end else
-                     true)
-                p.packages;
-            true
-        | None ->
-            let upgrade =
-              match create with
-              | Some skeleton ->
-                  if List.exists (fun package -> package.name = name) p.packages
-                  then
-                    Error.raise "A package with this name already exists";
-                  let dir =
-                    match dir with
-                    | None ->
-                        let dir =
-                          if inferred_dir = "" then
-                            "src"
-                          else
-                            inferred_dir
-                        in
-                        dir // name
-                    | Some dir -> dir
-                  in
-                  let kind =
-                    match kind with
-                    | None -> Library
-                    | Some kind -> kind
-                  in
-                  let package = Project.create_package ~kind ~name ~dir in
-                  package.p_skeleton <- Some skeleton;
-                  begin
-                    match mode with
-                    | None -> ()
-                    | Some mode -> package.p_mode <- Some mode
-                  end;
-                  package.project <- p;
+          if create <> None then
+            Error.raise "--remove and --create are incompatible";
 
-                  let rec iter_skeleton list =
-                    match list with
-                    | [] -> package
-                    | content :: super ->
-                        let package = iter_skeleton super in
-                        let content = Subst.package () package content in
-                        Project.package_of_string ~msg:"toml template" content
-                  in
-                  let skeleton = Skeleton.lookup_package skeleton in
-                  let package = iter_skeleton skeleton.skeleton_toml in
-                  p.packages <- p.packages @ [ package ];
-                  true
-              | None -> (
-                  if List.for_all (fun package -> package.name <> name) p.packages
-                  then
-                    Error.raise "No such package to modify";
-                  if dir <> None then
-                    Error.raise "Option --dir is not available for update";
-                  match rename with
-                  | Some new_name ->
-                      if p.package.name = name then
-                        Error.raise "Cannot rename main package";
-                      if
-                        List.exists
-                          (fun package -> package.name = new_name)
-                          p.packages
-                      then
-                        Error.raise
-                          "Cannot rename to an already existing package name";
-                      p.packages <-
-                        List.map
-                          (fun package ->
-                             if package.name = name then
-                               rename_package hashes package new_name
-                             else
-                               package)
-                          p.packages;
-                      true
-                  | None -> false )
-            in
-            let upgrade = ref upgrade in
-            List.iter
+          if p.package.name = name then
+            Error.raise "Cannot remove main package";
+          if List.for_all (fun package -> package.name <> name) p.packages then
+            Error.raise "No such package to remove";
+          p.packages <-
+            List.filter
               (fun package ->
-                 if package.name = name then
-                   upgrade_package package ~upgrade ~kind ~mode ~files
-                 )
+                 if package.name = name then begin
+                   remove_package hashes package;
+                   false
+                 end else
+                   true)
               p.packages;
-            !upgrade)
+          true
+        end else
+          let upgrade =
+            match create with
+            | Some skeleton ->
+                if List.exists (fun package -> package.name = name) p.packages
+                then
+                  Error.raise "A package with this name already exists";
+                let dir =
+                  match dir with
+                  | None ->
+                      let dir =
+                        if inferred_dir = "" then
+                          "src"
+                        else
+                          inferred_dir
+                      in
+                      dir // name
+                  | Some dir -> dir
+                in
+                let kind =
+                  match kind with
+                  | None -> Library
+                  | Some kind -> kind
+                in
+                let package = Project.create_package ~kind ~name ~dir in
+                package.p_skeleton <- Some skeleton;
+                begin
+                  match mode with
+                  | None -> ()
+                  | Some mode -> package.p_mode <- Some mode
+                end;
+                package.project <- p;
+
+                let rec iter_skeleton list =
+                  match list with
+                  | [] -> package
+                  | content :: super ->
+                      let package = iter_skeleton super in
+                      let content = Subst.package () package content in
+                      Project.package_of_string ~msg:"toml template" content
+                in
+                let skeleton = Skeleton.lookup_package skeleton in
+                let package = iter_skeleton skeleton.skeleton_toml in
+                p.packages <- p.packages @ [ package ];
+                true
+            | None -> (
+                if List.for_all (fun package -> package.name <> name) p.packages
+                then
+                  Error.raise "No such package to modify";
+                if dir <> None then
+                  Error.raise "Option --dir is not available for update";
+                match rename with
+                | Some new_name ->
+                    if p.package.name = name then
+                      Error.raise "Cannot rename main package";
+                    if
+                      List.exists
+                        (fun package -> package.name = new_name)
+                        p.packages
+                    then
+                      Error.raise
+                        "Cannot rename to an already existing package name";
+                    p.packages <-
+                      List.map
+                        (fun package ->
+                           if package.name = name then
+                             rename_package hashes package new_name
+                           else
+                             package)
+                        p.packages;
+                    true
+                | None -> false )
+          in
+          let upgrade = ref upgrade in
+          List.iter
+            (fun package ->
+               if package.name = name then
+                 upgrade_package package ~upgrade ~kind ~mode ~files
+            )
+            p.packages;
+          !upgrade)
   in
   let args = { args with arg_upgrade = upgrade } in
   Update.update_files ~create:false ?mode ~git:true p ~args;
@@ -238,53 +240,58 @@ let cmd =
   let mode = ref None in
   let dir = ref None in
   let create = ref None in
-  let remove = ref None in
+  let remove = ref false in
   let rename = ref None in
   let args, specs = Update.update_args () in
   let files = ref [] in
-  { cmd_name;
-    cmd_action =
-      (fun () ->
-         action ~package_name:!package_name ~mode:!mode ~kind:!kind
-           ~dir:!dir ?create:!create ?remove:!remove
-           ?rename:!rename ~args ~files:(List.rev !files) ());
-    cmd_args =
+  EZCMD.sub cmd_name
+    (fun () ->
+       action ~package_name:!package_name ~mode:!mode ~kind:!kind
+         ~dir:!dir ?create:!create ~remove:!remove
+         ?rename:!rename ~args ~files:(List.rev !files) ())
+    ~args: (
       specs
       @ [ ( [ "new" ],
             Arg.String (fun s -> create := Some s),
-            Ezcmd.info "Add a new package to the project with skeleton NAME" );
+            EZCMD.info
+              ~docv:"SKELETON"
+              "Add a new package to the project with skeleton NAME" );
           ( [ "remove" ],
-            Arg.String (fun s -> remove := Some s),
-            Ezcmd.info "Remove a package from the project" );
+            Arg.Set remove,
+            EZCMD.info ~version:"0.2.1"
+              "Remove a package from the project" );
           ( [ "dir" ],
             Arg.String (fun s -> dir := Some s),
-            Ezcmd.info "Dir where package sources are stored (src by default)"
+            EZCMD.info
+              ~docv:"DIRECTORY"
+              "Dir where package sources are stored (src by default)"
           );
           ( [ "rename" ],
             Arg.String (fun s -> rename := Some s),
-            Ezcmd.info "Rename secondary package to a new name" );
+            EZCMD.info ~docv:"NEW_NAME"
+              "Rename secondary package to a new name" );
           ( [ "library" ],
             Arg.Unit (fun () -> kind := Some Library),
-            Ezcmd.info "Package is a library" );
+            EZCMD.info "Package is a library" );
           ( [ "program" ],
             Arg.Unit (fun () -> kind := Some Program),
-            Ezcmd.info "Package is a program" );
+            EZCMD.info "Package is a program" );
           ( [ "virtual" ],
             Arg.Unit (fun () -> kind := Some Virtual),
-            Ezcmd.info "Package is virtual, i.e. no code" );
+            EZCMD.info "Package is virtual, i.e. no code" );
           ( [ "binary" ],
             Arg.Unit (fun () -> mode := Some Binary),
-            Ezcmd.info "Compile to binary" );
+            EZCMD.info "Compile to binary" );
           ( [ "javascript" ],
             Arg.Unit (fun () -> mode := Some Javascript),
-            Ezcmd.info "Compile to javascript" );
+            EZCMD.info "Compile to javascript" );
           ( [ "new-file" ],
             Arg.String (fun file -> files := file :: !files),
-            Ezcmd.info "Add new source file" );
+            EZCMD.info ~docv:"FILENAME" ~version:"0.2.1"
+              "Add new source file" );
           ( [],
             Arg.Anon (0, fun name -> package_name := Some name),
-            Ezcmd.info "Name of the package" )
-        ];
-    cmd_man = [];
-    cmd_doc = "Manage a package within a project"
-  }
+            EZCMD.info ~docv:"PACKAGE" "Name of the package" )
+        ]
+    )
+    ~doc: "Manage a package within a project"

@@ -8,7 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 
 let cmd_name = "run"
 
@@ -34,17 +35,16 @@ let cmd =
   let cmd = ref [] in
   let package = ref None in
   let args, specs = Build.build_args () in
-  { cmd_name;
-    cmd_action = (fun () -> action ~args ~cmd ~package:!package);
-    cmd_args =
+  EZCMD.sub cmd_name
+    (fun () -> action ~args ~cmd ~package:!package)
+    ~args: (
       [ ( [ "p" ],
           Arg.String (fun s -> package := Some s),
-          Ezcmd.info "Package to run" );
+          EZCMD.info ~docv:"PACKAGE" "Package to run" );
         ( [],
           Arg.Anons (fun list -> cmd := list),
-          Ezcmd.info "Arguments to the command" )
+          EZCMD.info "Arguments to the command" )
       ]
-      @ specs;
-    cmd_man = [];
-    cmd_doc = "Execute the project"
-  }
+      @ specs
+    )
+    ~doc: "Execute the project"

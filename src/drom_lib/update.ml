@@ -9,7 +9,8 @@
 (**************************************************************************)
 
 open Types
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 open EzFile.OP
 open EzCompat
 
@@ -31,25 +32,25 @@ let update_args () =
   let specs =
     [ ( [ "f" ; "force" ],
         Arg.Unit (fun () -> args.arg_force <- true),
-        Ezcmd.info "Force overwriting files" );
+        EZCMD.info "Force overwriting modified files (otherwise, they would be skipped)" );
       ( [ "skip" ],
         Arg.String
           (fun s ->
             args.arg_skip <- (true, s) :: args.arg_skip;
             args.arg_upgrade <- true),
-        Ezcmd.info "Add to skip list" );
+        EZCMD.info ~docv:"FILE" "Add $(docv) to skip list" );
       ( [ "unskip" ],
         Arg.String
           (fun s ->
             args.arg_skip <- (false, s) :: args.arg_skip;
             args.arg_upgrade <- true),
-        Ezcmd.info "Remove from skip list" );
+        EZCMD.info ~docv:"FILE" "Remove $(docv) from skip list" );
       ( [ "diff" ],
         Arg.Unit (fun () -> args.arg_diff <- true),
-        Ezcmd.info "Print a diff of skipped files" );
+        EZCMD.info "Print a diff of user-modified files that are being skipped" );
       ( [ "promote-skip" ],
         Arg.Unit (fun () -> args.arg_promote_skip <- true),
-        Ezcmd.info "Promote skipped files to skip field" );
+        EZCMD.info "Promote user-modified files to skip field" );
     ]
   in
   (args, specs)

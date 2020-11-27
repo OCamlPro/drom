@@ -8,7 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
 
 let cmd_name = "test"
 
@@ -20,9 +20,7 @@ let action ~args () =
 
 let cmd =
   let args, specs = Build.build_args () in
-  { cmd_name;
-    cmd_action = (fun () -> action ~args ());
-    cmd_args = [] @ specs;
-    cmd_man = [];
-    cmd_doc = "Run tests"
-  }
+  EZCMD.sub cmd_name
+    (fun () -> action ~args ())
+    ~args: specs
+    ~doc: "Run tests"

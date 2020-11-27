@@ -11,21 +11,25 @@
 
 (** Easy Substitutions in Strings
 
-    [ez_subst] provides simple functions to perform substitutions of expressions
-    in strings. By default, expressions are recognized as [${expr}] ([brace]
-    substitution), [$(expr)] ([paren] substitution), [$\[expr\]] ([bracket]
-    substitution) and [$var] ([var] substitution), but it can be further
-    customized by:
+    [ez_subst] provides simple functions to perform substitutions of
+   expressions in strings. By default, expressions are recognized as
+   [${expr}] ([brace] substitution), [$(expr)] ([paren] substitution),
+   [$\[expr\]] ([bracket] substitution) and [$var] ([var]
+   substitution), but it can be further customized by:
 
-    - changing the separator [sep] (default is ['$'])
-    - using a symmetric notation [sym] (default is [false], whereas [true] means
-      ['${ident}$'].)
+    - changing the separator [sep] (default is ['$']) - using a
+   symmetric notation [sym] (default is [false], whereas [true] means
+   ['${ident}$'].)
 
-    Escaping is done using '\\', i.e. any character preceeded by a backslash is
-    printed as itself, and not interpreted as a beginning or ending separator
-    for expression. Escaping can be controled using the [escape] argument, a
-    reference that can be turned to [true] or [false] even during the
-    substitution. *)
+    Recursion is allowed in substitutions, i.e. "$(x$(y))" will
+   perform first the substitution "$(y)", returning "z" for example,
+   and then "$(xz)".
+
+    Escaping is done using '\\', i.e. any character preceeded by a
+   backslash is printed as itself, and not interpreted as a beginning
+   or ending separator for expression. Escaping can be controled using
+   the [escape] argument, a reference that can be turned to [true] or
+   [false] even during the substitution. *)
 
 (** The type for functions performing the translation from [ident] to its
     replacement. ['context] is some information, that is from the initial call

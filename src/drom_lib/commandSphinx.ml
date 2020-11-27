@@ -8,13 +8,17 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 
 let cmd_name = "sphinx"
 
 let make_sphinx p =
   let dir = Misc.sphinx_target p in
   let sphinx_target = Format.sprintf "_drom/docs/%s" dir in
+  let before_script =  "scripts/before-sphinx.sh" in
+  if Sys.file_exists before_script then
+    Misc.call [| before_script ; sphinx_target |];
   Misc.call [| "sphinx-build"; "sphinx"; sphinx_target |];
   sphinx_target
 
@@ -28,14 +32,13 @@ let action ~args ~open_www () =
 let cmd =
   let args, specs = Build.build_args () in
   let open_www = ref false in
-  { cmd_name;
-    cmd_action = (fun () -> action ~args ~open_www ());
-    cmd_args =
+  EZCMD.sub cmd_name
+    (fun () -> action ~args ~open_www ())
+    ~args: (
       [ ( [ "view" ],
           Arg.Set open_www,
-          Ezcmd.info "Open a browser on the sphinx documentation" )
+          EZCMD.info "Open a browser on the sphinx documentation" )
       ]
-      @ specs;
-    cmd_man = [];
-    cmd_doc = "Generate documentation using sphinx"
-  }
+      @ specs
+    )
+    ~doc: "Generate documentation using sphinx"

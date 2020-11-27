@@ -8,7 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
 open Types
 
 let cmd_name = "tree"
@@ -99,10 +99,5 @@ let action () =
   print_deps "" "tools" p.tools;
   ()
 
-let cmd =
-  { cmd_name;
-    cmd_action = (fun () -> action ());
-    cmd_args = [];
-    cmd_man = [];
-    cmd_doc = "Display a tree of dependencies"
-  }
+let cmd = EZCMD.sub cmd_name action
+    ~doc: "Display a tree of dependencies"

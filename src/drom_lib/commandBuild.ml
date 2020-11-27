@@ -8,7 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
 open EzFile.OP
 open Types
 
@@ -45,9 +45,8 @@ let action ~args () =
 
 let cmd =
   let args, specs = Build.build_args () in
-  { cmd_name;
-    cmd_action = (fun () -> action ~args ());
-    cmd_args = [] @ specs;
-    cmd_man = [];
-    cmd_doc = "Build a project"
-  }
+  EZCMD.sub
+    cmd_name
+    (fun () -> action ~args ())
+    ~args: specs
+    ~doc: "Build a project"
