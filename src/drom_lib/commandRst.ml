@@ -11,6 +11,7 @@
 (* This file should be moved to ez_cmdliner. However, it depends on ez_subst,
    that has not yet been published independantly. *)
 
+open Ez_subst.V1
 open EzCompat
 open Ezcmd.V2
 open EZCMD.TYPES
@@ -29,7 +30,7 @@ let doclang_to_rst ?(map= StringMap.empty) s =
             | None ->
                 s
   in
-  Ez_subst.string ~paren:paren map s
+  EZ_SUBST.string ~paren:paren map s
 
 let man_to_rst ?(map = StringMap.empty) ( man : block list ) =
   let b = Buffer.create 1000 in
