@@ -111,7 +111,8 @@ type config =
     config_github_organization : string option;
     config_license : string option;
     config_copyright : string option;
-    config_opam_repo : string option
+    config_opam_repo : string option;
+    config_dev_deps : (string list) option
   }
 
 type opam_kind =

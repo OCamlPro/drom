@@ -13,26 +13,32 @@ open EzFile.OP
 
 let config_of_toml filename =
   (* Printf.eprintf "Loading config from %s\n%!" filename ; *)
-  match EzToml.from_file filename with
+  let table = match EzToml.from_file filename with
   | `Error _ -> Error.raise "Could not parse config file %S" filename
-  | `Ok table ->
-    let config_author = EzToml.get_string_option table [ "user"; "author" ] in
-    let config_github_organization =
-      EzToml.get_string_option table [ "user"; "github-organization" ]
-    in
-    let config_license = EzToml.get_string_option table [ "user"; "license" ] in
-    let config_copyright =
-      EzToml.get_string_option table [ "user"; "copyright" ]
-    in
-    let config_opam_repo =
-      EzToml.get_string_option table [ "user"; "opam-repo" ]
-    in
-    { config_author;
-      config_github_organization;
-      config_license;
-      config_copyright;
-      config_opam_repo
-    }
+  | `Ok table -> table
+  in
+
+  let config_author = EzToml.get_string_option table [ "user"; "author" ] in
+  let config_github_organization =
+    EzToml.get_string_option table [ "user"; "github-organization" ]
+  in
+  let config_license = EzToml.get_string_option table [ "user"; "license" ] in
+  let config_copyright =
+    EzToml.get_string_option table [ "user"; "copyright" ]
+  in
+  let config_opam_repo =
+    EzToml.get_string_option table [ "user"; "opam-repo" ]
+  in
+  let config_dev_deps =
+    EzToml.get_string_list_option table ["user"; "dev-deps"]
+  in
+  { config_author;
+    config_github_organization;
+    config_license;
+    config_copyright;
+    config_opam_repo;
+    config_dev_deps
+  }
 
 let config_template =
   {|
@@ -42,6 +48,7 @@ let config_template =
 # license = "...license..."
 # copyright = "Company Ltd"
 # opam-repo = "/home/user/GIT/opam-repository"
+# dev-deps = ["drom", "merlin", "ocamlformat", "ocp-indent", "tuareg"]
 |}
 
 let load () =
@@ -84,6 +91,14 @@ let load () =
     | s -> { config with config_opam_repo = Some s }
     | exception Not_found -> config
   in
+
+  (*
+  TODO: split the env var into a list
+  let config =
+    match Sys.getenv "DROM_DEV_DEPS" with
+    | s -> { config with config_dev_deps = Some s }
+      exception Not_found -> config
+  *)
 
   config
 

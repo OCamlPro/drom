@@ -16,7 +16,10 @@ let action ~args () =
   let (_p : Types.project) =
     Build.build ~force_dev_deps:true ~dev_deps:true ~build:false ~args ()
   in
-  ()
+  let config = Lazy.force Config.config in
+  match config.config_dev_deps with
+  | Some dev_deps -> Opam.run ~y:(args.arg_yes) [ "install" ] dev_deps
+  | None -> ()
 
 let cmd =
   let args, specs = Build.build_args () in
