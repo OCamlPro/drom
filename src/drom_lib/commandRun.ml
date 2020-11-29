@@ -14,7 +14,7 @@ open EZCMD.TYPES
 let cmd_name = "run"
 
 let action ~args ~cmd ~package =
-  decr Globals.verbosity;
+  if !Globals.verbosity = 1 then decr Globals.verbosity;
   (* By default, `drom run` should be quiet *)
   let p = Build.build ~args () in
   let cmd = !cmd in
@@ -48,3 +48,12 @@ let cmd =
       @ specs
     )
     ~doc: "Execute the project"
+    ~man: [
+      `S "DESCRIPTION";
+      `Blocks [
+        `P "This command performs the following actions:";
+        `I ("1.", "Decrease verbosity level to display nothing during build");
+        `I ("2.", "Build the project packages (see $(b,drom build) for info).");
+        `I ("3.", "Call $(b,opam exec -- drun exec -- [PACKAGE] [ARGUMENTS]), where $(b,[PACKAGE]) is either the package name specified with the $(b,-p PACKAGE) argument or the main package of the project if it is a program, $(b,[ARGUMENTS]) are the arguments specified with $(b,drom run)");
+      ]
+    ]

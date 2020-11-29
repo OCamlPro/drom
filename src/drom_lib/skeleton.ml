@@ -98,7 +98,7 @@ let load_dir_skeletons map kind dir =
         let toml = dir // "skeleton.toml" in
         if Sys.file_exists toml then
           let name, skeleton = load_skeleton ~dir ~toml ~kind in
-          if StringMap.mem name !map then
+          if !Globals.verbosity > 0 &&  StringMap.mem name !map then
             Printf.eprintf "Warning: %s skeleton %S overwritten in %s\n%!"
               kind name dir;
           map := StringMap.add name skeleton !map
@@ -227,13 +227,13 @@ let write_files write_file p =
 
   List.iter (fun package -> write_package_files write_file package) p.packages
 
-let project_skeletons =
+let project_skeletons () =
   Lazy.force project_skeletons |> StringMap.to_list |> List.map fst
 
-let package_skeletons =
+let package_skeletons () =
   Lazy.force package_skeletons |> StringMap.to_list |> List.map fst
 
 let known_skeletons () =
   Printf.sprintf "project skeletons: %s\npackage skeletons: %s\n"
-    (String.concat " " project_skeletons)
-    (String.concat " " package_skeletons)
+    (String.concat " " ( project_skeletons ()) )
+    (String.concat " " ( package_skeletons ()) )

@@ -35,3 +35,13 @@ let cmd =
     (fun () -> action ~args ())
     ~args: specs
     ~doc: "Update packages in switch"
+    ~man: [
+      `S "DESCRIPTION";
+      `Blocks [
+        `P "This command performs the following actions:";
+        `I ( "1.", "Call $(b,opam update) to get information on newly available packages");
+        `I ( "2.", "Pin the package dependencies in the local opam switch");
+        `I ( "3.", "Call $(b,opam upgrade) to upgrade packages in the local opam switch");
+        `I ( "4.", "Unpin package dependencies");
+      ]
+    ]

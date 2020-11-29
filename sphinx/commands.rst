@@ -1,10 +1,14 @@
 
 Sub-commands and Arguments
 ==========================
+Common arguments to all sub-commands:
 
-For version: 0.2.1-cb899cfd
 
-Overview::
+* :code:`-q` or :code:`--quiet`   Set verbosity level to 0
+
+* :code:`-v` or :code:`--verbose`   Increase verbosity level
+
+Overview of sub-commands::
   
   build
     Build a project
@@ -75,6 +79,27 @@ drom build
 
 Build a project
 
+
+
+**DESCRIPTION**
+
+
+This command performs the following actions:
+
+* 1.
+  Create a local opam switch. The argument **--switch SWITCH** can be used to make the local switch a link to a global switch. The argument **--local** can be used to force a local switch to be created.
+
+* 2.
+  Check that the OCaml version is at least the **min-edition** specified in the project. If OCaml is not installed, use the **--edition VERSION** argument or the **edition** field specified in the project to install OCaml.
+
+* 3.
+  Install all the dependencies in the opam switch. If the argument **--locked** was specified, use the **${package}-deps.opam.locked** file in the project to get exact dependencies.
+
+* 4.
+  Build the project by calling **opam exec -- dune build @install**
+
+* 5.
+  If build was ok, copy executable in the top directory of the project
 
 **USAGE**
 ::
@@ -379,6 +404,28 @@ drom new
 Create a new project
 
 
+
+**DESCRIPTION**
+
+
+This command performs the following actions:
+
+
+**EXAMPLE**
+
+
+The following command creates a project containing library **my_lib** in **src/my_lib**:
+::
+  
+  drom new my_lib --skeleton library
+  
+
+The following command creates a project containing a library **hello_lib** in **src/hello_lib** and a program **hello** in **src/hello** calling the library:
+::
+  
+  drom new hello --skeleton program
+  
+
 **USAGE**
 ::
   
@@ -637,6 +684,21 @@ drom run
 Execute the project
 
 
+
+**DESCRIPTION**
+
+
+This command performs the following actions:
+
+* 1.
+  Decrease verbosity level to display nothing during build
+
+* 2.
+  Build the project packages (see **drom build** for info).
+
+* 3.
+  Call **opam exec -- drun exec -- [PACKAGE] [ARGUMENTS]**, where **[PACKAGE]** is either the package name specified with the **-p PACKAGE** argument or the main package of the project if it is a program, **[ARGUMENTS]** are the arguments specified with **drom run**
+
 **USAGE**
 ::
   
@@ -667,6 +729,24 @@ drom sphinx
 
 Generate documentation using sphinx
 
+
+
+**DESCRIPTION**
+
+
+This command performs the following actions:
+
+* 1.
+  Build the project, installing dev dependencies if not done yet (see **drom build** and **drom dev-deps** for more info).
+
+* 2.
+  If a file *scripts/before-sphinx.sh* exists, run it
+
+* 3.
+  Build Sphinx documentation using the command **sphinx-build sphinx _drom/docs/${sphinx-target}**, where **${sphinx-target}** is the **sphinx-target** field in the project description, or **sphinx** by default. Documentation source files are expected to be found in the top **sphinx/** directory.
+
+* 4.
+  If the argument **--view** was specified, open a browser on the newly generated documentation
 
 **USAGE**
 ::
@@ -724,6 +804,33 @@ drom tree
 Display a tree of dependencies
 
 
+
+**DESCRIPTION**
+
+
+Print the project as a tree of dependencies, i.e. dependencies are printed as branches of the package they are dependencies of. If a package is itself a dependency of another package, it will be printed there.
+
+
+**EXAMPLE**
+
+::
+  
+  └──drom (/src/drom)
+     └──drom_lib (/src/drom_lib)
+        └──toml 5.0.0
+        └──opam-file-format 2.1.1
+        └──ez_subst >= 0.1
+        └──ez_file 0.2.0
+        └──ez_config 0.1.0
+        └──ez_cmdliner 0.2.0
+        └──directories >= 0.2
+  [tools]
+  └── ppx_inline_test
+  └── ppx_expect
+  └── odoc
+  └── ocamlformat
+  
+
 **USAGE**
 ::
   
@@ -765,6 +872,24 @@ drom update
 
 Update packages in switch
 
+
+
+**DESCRIPTION**
+
+
+This command performs the following actions:
+
+* 1.
+  Call **opam update** to get information on newly available packages
+
+* 2.
+  Pin the package dependencies in the local opam switch
+
+* 3.
+  Call **opam upgrade** to upgrade packages in the local opam switch
+
+* 4.
+  Unpin package dependencies
 
 **USAGE**
 ::

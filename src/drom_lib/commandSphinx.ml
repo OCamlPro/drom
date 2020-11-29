@@ -42,3 +42,14 @@ let cmd =
       @ specs
     )
     ~doc: "Generate documentation using sphinx"
+    ~man: [
+      `S "DESCRIPTION";
+      `Blocks [
+        `P "This command performs the following actions:";
+        `I ("1.", "Build the project, installing dev dependencies if not done yet (see $(b,drom build) and $(b,drom dev-deps) for more info).");
+        `I ("2.", "If a file $(i,scripts/before-sphinx.sh) exists, run it");
+        `I ("3.", "Build Sphinx documentation using the command $(b,sphinx-build sphinx _drom/docs/${sphinx-target}), where $(b,${sphinx-target}) is the $(b,sphinx-target) field in the project description, or $(b,sphinx) by default. Documentation source files are expected to be found in the top $(b,sphinx/) directory.");
+        `I ("4.", "If the argument $(b,--view) was specified, open a browser on the newly generated documentation");
+
+      ]
+    ]

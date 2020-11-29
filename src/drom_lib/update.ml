@@ -306,8 +306,9 @@ let update_files ?args ?mode ?(git = false) ?(create = false) p =
           (p, changed)
       in
 
+      let upgrade = upgrade || changed in
       let skip =
-        not (upgrade || changed || not (Sys.file_exists "drom.toml"))
+        not (upgrade || not (Sys.file_exists "drom.toml"))
       in
       let files = Project.to_files p in
       let files =

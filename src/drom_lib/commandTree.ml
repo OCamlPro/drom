@@ -101,3 +101,28 @@ let action () =
 
 let cmd = EZCMD.sub cmd_name action
     ~doc: "Display a tree of dependencies"
+    ~man:[
+      `S "DESCRIPTION";
+
+      `Blocks [
+        `P "Print the project as a tree of dependencies, i.e. dependencies are printed as branches of the package they are dependencies of. If a package is itself a dependency of another package, it will be printed there.";
+      ];
+
+      `S "EXAMPLE";
+      `Pre {|
+└──drom (/src/drom)
+   └──drom_lib (/src/drom_lib)
+      └──toml 5.0.0
+      └──opam-file-format 2.1.1
+      └──ez_subst >= 0.1
+      └──ez_file 0.2.0
+      └──ez_config 0.1.0
+      └──ez_cmdliner 0.2.0
+      └──directories >= 0.2
+[tools]
+└── ppx_inline_test
+└── ppx_expect
+└── odoc
+└── ocamlformat
+|};
+    ]

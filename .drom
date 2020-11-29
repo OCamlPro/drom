@@ -75,11 +75,6 @@ b091dd96e8b553dd7a7df285279d7d9e:README.md
 0085152add896d7bab7b1a744d2a9af7:docs/style.css
 # end context for docs/style.css
 
-# begin context for drom-opam.deps
-# file drom-opam.deps
-30281c0f416f7fa965c21b066d27eb2c:drom-opam.deps
-# end context for drom-opam.deps
-
 # begin context for drom.opam
 # file drom.opam
 a579175cd5406ff98b1b62da682e0a32:drom.opam
@@ -92,7 +87,7 @@ a579175cd5406ff98b1b62da682e0a32:drom.opam
 
 # begin context for drom_lib.opam
 # file drom_lib.opam
-a736a084bc1304f8f534cf27a6528ea1:drom_lib.opam
+abe0080f9cca7ae367ff24a5a524f088:drom_lib.opam
 # end context for drom_lib.opam
 
 # begin context for dune
@@ -102,7 +97,7 @@ ff0b2308dfc7350e6ac7d519836f9e47:dune
 
 # begin context for dune-project
 # file dune-project
-85ded3a089d514bcea4c495af616804e:dune-project
+aa93be0420b76f91471897522639ad9c:dune-project
 # end context for dune-project
 
 # begin context for dune_
@@ -167,7 +162,7 @@ a8b8d27eed41f01c76e6535dbd620f52:src/drom/main.ml
 
 # begin context for src/drom_lib/dune
 # file src/drom_lib/dune
-049f218a16622c18dc8a59c7af14c1dc:src/drom_lib/dune
+5efa856ed4c3b172f10c308a41b3c264:src/drom_lib/dune
 # end context for src/drom_lib/dune
 
 # begin context for src/drom_lib/dune_

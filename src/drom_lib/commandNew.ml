@@ -177,3 +177,18 @@ let cmd =
     (fun () ->
        action ~name:!project_name ~skeleton:!skeleton ~mode:!mode ~dir:!dir
          ~inplace:!inplace ~args)
+    ~man: [
+      `S "DESCRIPTION";
+      `Blocks [
+        `P "This command performs the following actions:";
+      ];
+      `S "EXAMPLE";
+      `P "The following command creates a project containing library $(b,my_lib) in $(b,src/my_lib):";
+      `Pre {|
+drom new my_lib --skeleton library
+|};
+      `P "The following command creates a project containing a library $(b,hello_lib) in $(b,src/hello_lib) and a program $(b,hello) in $(b,src/hello) calling the library:";
+      `Pre {|
+drom new hello --skeleton program
+|}
+    ]

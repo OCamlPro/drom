@@ -23,7 +23,8 @@ let call args = Misc.call (Array.of_list ("git" :: args))
 let run args = try call args with _ -> ()
 
 let update_submodules () =
-  run [ "submodule"; "update"; "--init"; "--recursive" ]
+  if Sys.file_exists ".gitmodules" then
+    run [ "submodule"; "update"; "--init"; "--recursive" ]
 
 let remove dir =
   Misc.call [| "rm"; "-rf"; dir |];

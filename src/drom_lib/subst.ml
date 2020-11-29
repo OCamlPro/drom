@@ -421,7 +421,7 @@ let project context ?bracket p s =
     EZ_SUBST.string ~sep:'!' ~escape
       ~brace:(subst_encode project_brace escape)
       ~paren:(subst_encode project_paren (ref true))
-      ?bracket (context, p) s
+      ?bracket ~ctxt:(context, p) s
   with ReplaceContent content -> content
 
 let package context ?bracket p s =
@@ -430,5 +430,5 @@ let package context ?bracket p s =
     EZ_SUBST.string ~sep:'!' ~escape
       ~brace:(subst_encode package_brace escape)
       ~paren:(subst_encode package_paren (ref true))
-      ?bracket (context, p) s
+      ?bracket ~ctxt:(context, p) s
   with ReplaceContent content -> content

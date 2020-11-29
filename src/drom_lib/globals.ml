@@ -79,17 +79,34 @@ let share_dir =
   lazy (
     match
       match
-        find_ancestor_file "share"
-          (fun ~dir ~path:_ -> dir)
+        match Sys.getenv "DROM_SHARE_DIR" with
+        | share_dir ->
+            if not (Sys.file_exists share_dir) then begin
+              if !verbosity > 0 then
+                Printf.eprintf
+                  "Warning: DROM_SHARE_DIR points to inexistent directory %S\n%!"
+                share_dir;
+              None
+            end else
+              Some share_dir
+        | exception Not_found -> None
       with
-      | None -> None
-      | Some dir ->
-          let local_dir = dir // "share" // command in
-          if Sys.file_exists ( local_dir // "skeletons" ) then begin
-            Printf.eprintf "Warning: using local share dir: %s\n%!" local_dir;
-            Some local_dir
-          end else
-            None
+      | Some share_dir -> Some share_dir
+      | None ->
+          match
+            find_ancestor_file "share"
+              (fun ~dir ~path:_ -> dir)
+          with
+          | None -> None
+          | Some dir ->
+              let local_dir = dir // "share" // command in
+              if Sys.file_exists ( local_dir // "skeletons" ) then begin
+                if !verbosity > 0 then
+                  Printf.eprintf
+                    "Warning: using local share dir: %s\n%!" local_dir;
+                Some local_dir
+              end else
+                None
     with
       Some share_dir -> Some share_dir
     | None ->
@@ -100,13 +117,16 @@ let share_dir =
             if Sys.file_exists share_dir then
               Some share_dir
             else begin
-              Printf.eprintf
-                "Warning: drom is not correctly installed in this switch:\n";
+              if !verbosity > 0 then
+                Printf.eprintf
+                  "Warning: drom is not correctly installed in this switch:\n";
               Printf.eprintf "%s is missing\n%!" skeletons_dir;
               None
             end
         | None ->
-            Printf.eprintf "Warning: drom is not correctly configured, missing opam switch\n%!";
+            if !verbosity > 0 then
+              Printf.eprintf
+                "Warning: drom is not correctly configured, missing opam switch\n%!";
             None
   )
 

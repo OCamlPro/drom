@@ -224,7 +224,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
           | Some edition -> edition
         in
         Opam.run ~y [ "install" ] [ ocaml_nv ];
-        Opam.run [ "switch"; "set-base" ] [ "ocaml" ]
+        Opam.run [ "switch"; "set-base" ] [ ocaml_nv ]
     | v -> (
         match edition with
         | Some edition ->
@@ -335,11 +335,33 @@ had_switch: %b
       )
   );
 
+  if force_dev_deps then begin
+    let config = Lazy.force Config.config in
+    let to_install = ref [] in
+    List.iter (fun nv ->
+        if not ( StringMap.mem nv switch_packages ) then
+          to_install := nv :: !to_install
+      ) config.config_dev_tools;
+    match !to_install with
+    | [] -> ()
+    | packages ->
+        Opam.run ~y [ "install" ] packages
+  end;
+
   if build then
     Opam.run [ "exec" ]
       ( [ "--"; "dune"; "build"; "@install" ]
         @
-        match p.profile with
+        ( match p.profile with
         | None -> []
-        | Some profile -> [ "--profile"; profile ] );
+        | Some profile -> [ "--profile"; profile ] )
+        @
+        ( match !Globals.verbosity with
+          | 0 -> [ "--display=quiet" ]
+          | 1 -> []
+          | 2 -> [ "--display=short" ]
+          | _ -> [ "--display=verbose" ]
+        )
+
+      );
   p

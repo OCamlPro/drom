@@ -27,11 +27,16 @@ let config_of_toml filename =
     let config_opam_repo =
       EzToml.get_string_option table [ "user"; "opam-repo" ]
     in
+    let config_dev_tools =
+      EzToml.get_string_list_default table [ "user"; "dev-tools" ]
+        [ "merlin" ; "ocp-indent" ]
+    in
     { config_author;
       config_github_organization;
       config_license;
       config_copyright;
-      config_opam_repo
+      config_opam_repo;
+      config_dev_tools;
     }
 
 let config_template =
@@ -42,6 +47,7 @@ let config_template =
 # license = "...license..."
 # copyright = "Company Ltd"
 # opam-repo = "/home/user/GIT/opam-repository"
+# dev-tools = [ "merlin", "tuareg" ]
 |}
 
 let load () =
