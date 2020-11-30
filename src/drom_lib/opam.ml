@@ -179,11 +179,14 @@ let exec ?(y = false) cmd args =
            [] )
        @ args ))
 
+let root = lazy (
+  try Sys.getenv "OPAMROOT"
+  with Not_found -> Globals.home_dir // ".opam"
+)
+let root () = Lazy.force root
+
 let init ?y ?switch ?edition () =
-  let opam_root =
-    try Sys.getenv "OPAMROOT"
-    with Not_found -> Globals.home_dir // ".opam"
-  in
+  let opam_root = root () in
 
   if not (Sys.file_exists opam_root) then
     let args =

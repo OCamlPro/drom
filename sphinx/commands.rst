@@ -647,7 +647,7 @@ In both case, **REPOSITORY** should be the absolute path to the location of a lo
   Compute the checksum of the archive
 
 * 3.
-  Copy updated opam files to the git-managed opam repository
+  Copy updated opam files to the git-managed opam repository. During this operation, comment lines, :code:`version:` and :code:`name` lines are removed to conform to opam-repository policies.
 
 Note that, prior to calling **drom publish**, you should update the opam-repository to the latest version of the **master** branch:
 ::
@@ -779,6 +779,20 @@ drom test
 Run tests
 
 
+
+**DESCRIPTION**
+
+
+This command performs the following actions:
+
+* 1.
+  Build the project, installing required test dependencies if needed
+
+* 2.
+  Run the test command **opam exec -- dune build @runtest**
+
+If the **--all** argument was provided, a file **_drom/dune-workspace.dev** is created containing a context for every existing opam switch compatible with the project **min-edition** field, and the tests are run on all of them. Before using this option, you should make sure that dependencies are correctly installed on all of them, using the command drom build --switch SWITCH on every **SWITCH** in the list. Only switches starting with a number and without the *+* character are selected.
+
 **USAGE**
 ::
   
@@ -786,6 +800,8 @@ Run tests
 
 Where options are:
 
+
+* :code:`--all`   Build and run tests on all compatible switches
 
 * :code:`--edition VERSION`   Use this OCaml edition
 

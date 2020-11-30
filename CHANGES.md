@@ -1,6 +1,8 @@
 
 ## v0.2.1 ( 2020-11-25 )
 
+* New argument `--all` to `drom test` to do the test on all available/compatible
+   opam switches (using dune-workspace context feature)
 * New option `dev-tools` in ~/.config/drom/config, a list of opam packages
    that should be installed in the local switch when `drom dev-deps` is called
 * New environment variable DROM_SHARE_DIR can be used to set the directory
