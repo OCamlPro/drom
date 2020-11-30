@@ -21,6 +21,9 @@ let config_of_toml filename =
       EzToml.get_string_option table [ "user"; "github-organization" ]
     in
     let config_license = EzToml.get_string_option table [ "user"; "license" ] in
+    let config_share_dir =
+      EzToml.get_string_option table [ "user"; "share-dir" ]
+    in
     let config_copyright =
       EzToml.get_string_option table [ "user"; "copyright" ]
     in
@@ -33,6 +36,7 @@ let config_of_toml filename =
     in
     { config_author;
       config_github_organization;
+      config_share_dir;
       config_license;
       config_copyright;
       config_opam_repo;
@@ -49,6 +53,8 @@ let config_template =
 # opam-repo = "/home/user/GIT/opam-repository"
 # dev-tools = [ "merlin", "tuareg" ]
 |}
+
+
 
 let load () =
 
@@ -94,3 +100,66 @@ let load () =
   config
 
 let config = lazy (load ())
+
+let share_dir =
+  lazy (
+    let share_dirs =
+      (
+        match Sys.getenv "DROM_SHARE_DIR" with
+        | share_dir -> [ Some "env var DROM_SHARE_DIR", share_dir ]
+        | exception Not_found -> []
+      )
+      @
+      (
+        match
+          Globals.find_ancestor_file "share"
+            (fun ~dir ~path:_ -> dir)
+        with
+        | None -> []
+        | Some dir -> [ Some "local ./share/drom", dir ]
+      )
+      @
+      (
+        match Globals.opam_switch_prefix with
+        | Some opam_switch_prefix ->
+            let share_dir = opam_switch_prefix // "share" // Globals.command in
+            [ Some "OPAM_SWITCH_PREFIX", share_dir ]
+        | None -> []
+      )
+      @
+      ( let config = Lazy.force config in
+        match config.config_share_dir with
+        | None -> []
+        | Some share_dir -> [ Some "user config share_dir", share_dir ]
+      )
+    in
+    let rec iter msgs = function
+        [] ->
+          if !Globals.verbosity > 0 then begin
+            Printf.eprintf
+              "Warning: drom is not correctly configured, no share_dir found\n%!";
+            List.iter (fun (msg, dir) ->
+                Printf.eprintf
+                  "   * %s points to directory with missing %S\n%!"
+                  msg dir;
+              ) msgs;
+          end;
+          None
+
+      | (msg, share_dir) :: dirs ->
+
+          let skeletons_dir = share_dir // "skeletons" in
+          if not ( Sys.file_exists skeletons_dir ) then begin
+            let msgs =
+              match msg with
+              | None -> msgs
+              | Some msg -> (msg, skeletons_dir) :: msgs
+            in
+            iter msgs dirs
+          end else
+            Some share_dir
+    in
+    iter [] share_dirs
+  )
+
+let share_dir () = Lazy.force share_dir

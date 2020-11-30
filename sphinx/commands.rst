@@ -673,6 +673,8 @@ To download the project source archive, **drom publish** will either use the *ar
 Where options are:
 
 
+* :code:`-f` or :code:`--force`   Overwrite existing files
+
 * :code:`--md5`   Use md5 instead of sha256 for checksums
 
 * :code:`--opam-repo DIRECTORY`   Path to local git-managed opam-repository. The path should be absolute. Overwrites the value *opam-repo* from *$HOME/.config/drom/config*

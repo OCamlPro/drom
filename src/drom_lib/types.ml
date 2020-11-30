@@ -108,6 +108,7 @@ and profile = { flags : string StringMap.t }
 
 type config =
   { config_author : string option;
+    config_share_dir : string option;
     config_github_organization : string option;
     config_license : string option;
     config_copyright : string option;

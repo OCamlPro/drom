@@ -111,7 +111,7 @@ let kind_dir ~kind = "skeletons" // kind ^ "s"
 
 let load_skeletons map kind =
   let map =
-    match Globals.share_dir () with
+    match Config.share_dir () with
     | Some dir ->
         let global_skeletons_dir = dir // kind_dir ~kind in
         load_dir_skeletons map kind global_skeletons_dir
