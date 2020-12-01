@@ -41,3 +41,29 @@ targets:
 * :code:`doc`: build documentation with :code:`odoc`
 * :code:`fmt`: format the code using :code:`ocamlformat`
 * :code:`test`: run tests
+
+Installing :code:`drom` globally
+--------------------------------
+
+To be installed globally, :code:`drom` will need to locate its data
+files, in particular its skeleton and license files. This files are
+usually installed in :code:`$OPAM_SWITCH_PREFIX/share/drom` when
+:code:`drom` is installed through :code:`opam`.
+
+Once you have copied :code:`drom` executable in a global location
+(:code:`/usr/local/bin/drom` for example), you should do one of these
+two actions:
+
+* Set the :code:`DROM_SHARE_DIR` environment variable to the location
+  to the share dir containing its files
+  (:code:`$HOME/.opam/4.10.0/share/drom` for example if :code:`drom`
+  was installed in switch :code:`4.10.0`)
+
+* Edit :code:`$HOME/.config/drom/config` and define the
+  :code:`share-dir` option. For example::
+
+          share-dir = "/home/user/.opam/4.10.0/share/drom"
+
+Note that you can also copy :code:`drom`'s share directory to a global
+location if don't want the files to be removed accidentally by an
+:code:`opam` operation.

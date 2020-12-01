@@ -66,7 +66,7 @@ let load_licenses_dir map dir =
 let licenses = lazy (
   let map = StringMap.empty in
   let map =
-    match Globals.share_dir () with
+    match Config.share_dir () with
     | Some dir ->
         let global_licenses_dir = dir // "licenses" in
         load_licenses_dir map global_licenses_dir

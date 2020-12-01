@@ -8,7 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 
 let cmd_name = "fmt"
 
@@ -26,14 +27,12 @@ let action ~args ~auto_promote () =
 let cmd =
   let auto_promote = ref false in
   let args, specs = Build.build_args () in
-  { cmd_name;
-    cmd_action = (fun () -> action ~args ~auto_promote:!auto_promote ());
-    cmd_args =
+  EZCMD.sub cmd_name
+    (fun () -> action ~args ~auto_promote:!auto_promote ())
+    ~args: (
       [ ( [ "auto-promote" ],
           Arg.Set auto_promote,
-          Ezcmd.info "Promote detected changes immediately" )
+          EZCMD.info "Promote detected changes immediately" )
       ]
-      @ specs;
-    cmd_man = [];
-    cmd_doc = "Format sources with ocamlformat"
-  }
+      @ specs )
+    ~doc: "Format sources with ocamlformat"

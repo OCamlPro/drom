@@ -8,7 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
 open EzFile.OP
 open Types
 
@@ -27,9 +27,17 @@ let action ~args () =
 
 let cmd =
   let args, specs = Build.build_args () in
-  { cmd_name;
-    cmd_action = (fun () -> action ~args ());
-    cmd_args = [] @ specs;
-    cmd_man = [];
-    cmd_doc = "Generate a .locked file for the project"
-  }
+  EZCMD.sub cmd_name
+    (fun () -> action ~args ())
+    ~args: specs
+    ~doc:"Generate a .locked file for the project"
+    ~version:"0.2.1"
+    ~man: [
+      `S "DESCRIPTION";
+      `Blocks [
+        `P "This command will build the project and call $(b,opam lock) to generate a file $(i,\\${project}-deps.opam.locked) with the exact dependencies used during the build, and that file will be added to the git-managed files of the project to be committed.";
+        `P "The generated .locked file can be used by other developers to build in the exact same environment by calling $(b,drom build --locked) to build the current project.";
+      ]
+
+
+    ]

@@ -8,6 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ezcmd.V2
+
 type update_args =
   { mutable arg_upgrade : bool;
     mutable arg_force : bool;
@@ -18,7 +20,7 @@ type update_args =
 
 val update_args :
   unit ->
-  update_args * (string list * Ezcmd.TYPES.Arg.spec * Ezcmd.TYPES.info) list
+  update_args * (string list * EZCMD.TYPES.Arg.spec * EZCMD.TYPES.info) list
 
 val update_files :
   ?args:update_args ->

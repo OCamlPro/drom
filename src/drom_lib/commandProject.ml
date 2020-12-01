@@ -9,7 +9,8 @@
 (**************************************************************************)
 
 open Types
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 open Update
 
 let cmd_name = "project"
@@ -41,54 +42,61 @@ let cmd =
   let mode = ref None in
   let skeleton = ref None in
   let args, specs = Update.update_args () in
-  { cmd_name;
-    cmd_action =
-      (fun () ->
-        action ~skeleton:!skeleton ~mode:!mode ~args);
-    cmd_args =
+  EZCMD.sub cmd_name
+    (fun () ->
+       action ~skeleton:!skeleton ~mode:!mode ~args)
+    ~args: (
       specs
       @ [ ( [ "library" ],
             Arg.Unit
               (fun () ->
-                skeleton := Some "library";
-                args.arg_upgrade <- true),
-            Ezcmd.info "Project contains only a library" );
+                 skeleton := Some "library";
+                 args.arg_upgrade <- true),
+            EZCMD.info "Project contains only a library. Equivalent to $(b,--skeleton library)" );
           ( [ "program" ],
             Arg.Unit
               (fun () ->
-                skeleton := Some "program";
-                args.arg_upgrade <- true),
-            Ezcmd.info "Project contains only a program" );
+                 skeleton := Some "program";
+                 args.arg_upgrade <- true),
+            EZCMD.info "Project contains a program. Equivalent to $(b,--skeleton program). The generated project will be composed of a $(i,library) package and a $(i,driver) package calling the $(b,Main.main) of the library." );
           ( [ "virtual" ],
             Arg.Unit
               (fun () ->
-                skeleton := Some "virtual";
-                args.arg_upgrade <- true),
-            Ezcmd.info "Package is virtual, i.e. no code" );
+                 skeleton := Some "virtual";
+                 args.arg_upgrade <- true),
+            EZCMD.info "Package is virtual, i.e. no code. Equivalent to $(b,--skeleton virtual)." );
           ( [ "binary" ],
             Arg.Unit
               (fun () ->
-                mode := Some Binary;
-                args.arg_upgrade <- true),
-            Ezcmd.info "Compile to binary" );
+                 mode := Some Binary;
+                 args.arg_upgrade <- true),
+            EZCMD.info "Compile to binary" );
           ( [ "javascript" ],
             Arg.Unit
               (fun () ->
-                mode := Some Javascript;
-                args.arg_upgrade <- true),
-            Ezcmd.info "Compile to javascript" );
+                 mode := Some Javascript;
+                 args.arg_upgrade <- true),
+            EZCMD.info "Compile to javascript" );
           ( [ "skeleton" ],
             Arg.String
               (fun s ->
-                skeleton := Some s;
-                args.arg_upgrade <- true),
-            Ezcmd.info
+                 skeleton := Some s;
+                 args.arg_upgrade <- true),
+            EZCMD.info
+              ~docv:"SKELETON"
               "Create project using a predefined skeleton or one specified in \
                ~/.config/drom/skeletons/" );
           ( [ "upgrade" ],
             Arg.Unit (fun () -> args.arg_upgrade <- true),
-            Ezcmd.info "Upgrade drom.toml file" );
+            EZCMD.info "Force upgrade of the drom.toml file from the skeleton" );
+        ]
+    )
+    ~doc: "Update an existing project"
+    ~man:
+      [
+        `S "DESCRIPTION";
+        `Blocks [
+          `P "This command is used to regenerate the files of a project after updating its description.";
+          `P "With argument $(b,--upgrade), it can also be used to reformat the toml files, from their skeletons.";
         ];
-    cmd_man = [];
-    cmd_doc = "Create an initial project"
-  }
+      ]

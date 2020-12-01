@@ -8,16 +8,18 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ez_subst.V1
+
 val package :
   'context ->
-  ?bracket:('context * Types.package) Ez_subst.t ->
+  ?bracket:('context * Types.package) EZ_SUBST.t ->
   Types.package ->
   string ->
   string
 
 val project :
   'context ->
-  ?bracket:('context * Types.project) Ez_subst.t ->
+  ?bracket:('context * Types.project) EZ_SUBST.t ->
   Types.project ->
   string ->
   string

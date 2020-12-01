@@ -27,9 +27,10 @@
    (ocaml (>= 4.07.0))
    (toml (and (>= 5.0.0) (< 6.0.0)))
    (opam-file-format (and (>= 2.1.1) (< 3.0.0)))
+   (ez_subst ( >= 0.1 ))
    (ez_file (and (>= 0.2.0) (< 1.0.0)))
    (ez_config (and (>= 0.1.0) (< 1.0.0)))
-   (ez_cmdliner (and (>= 0.1.0) (< 1.0.0)))
+   (ez_cmdliner (and (>= 0.2.0) (< 1.0.0)))
    (directories ( >= 0.2 ))
    ppx_inline_test
    ppx_expect

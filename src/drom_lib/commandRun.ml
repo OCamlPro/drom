@@ -8,12 +8,13 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 
 let cmd_name = "run"
 
 let action ~args ~cmd ~package =
-  decr Globals.verbosity;
+  if !Globals.verbosity = 1 then decr Globals.verbosity;
   (* By default, `drom run` should be quiet *)
   let p = Build.build ~args () in
   let cmd = !cmd in
@@ -34,17 +35,25 @@ let cmd =
   let cmd = ref [] in
   let package = ref None in
   let args, specs = Build.build_args () in
-  { cmd_name;
-    cmd_action = (fun () -> action ~args ~cmd ~package:!package);
-    cmd_args =
+  EZCMD.sub cmd_name
+    (fun () -> action ~args ~cmd ~package:!package)
+    ~args: (
       [ ( [ "p" ],
           Arg.String (fun s -> package := Some s),
-          Ezcmd.info "Package to run" );
+          EZCMD.info ~docv:"PACKAGE" "Package to run" );
         ( [],
           Arg.Anons (fun list -> cmd := list),
-          Ezcmd.info "Arguments to the command" )
+          EZCMD.info "Arguments to the command" )
       ]
-      @ specs;
-    cmd_man = [];
-    cmd_doc = "Execute the project"
-  }
+      @ specs
+    )
+    ~doc: "Execute the project"
+    ~man: [
+      `S "DESCRIPTION";
+      `Blocks [
+        `P "This command performs the following actions:";
+        `I ("1.", "Decrease verbosity level to display nothing during build");
+        `I ("2.", "Build the project packages (see $(b,drom build) for info).");
+        `I ("3.", "Call $(b,opam exec -- drun exec -- [PACKAGE] [ARGUMENTS]), where $(b,[PACKAGE]) is either the package name specified with the $(b,-p PACKAGE) argument or the main package of the project if it is a program, $(b,[ARGUMENTS]) are the arguments specified with $(b,drom run)");
+      ]
+    ]

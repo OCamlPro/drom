@@ -8,7 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.TYPES
+open Ezcmd.V2
 
 let cmd_name = "update"
 
@@ -31,9 +31,17 @@ let action ~args () =
 
 let cmd =
   let args, specs = Build.build_args () in
-  { cmd_name;
-    cmd_action = (fun () -> action ~args ());
-    cmd_args = [] @ specs;
-    cmd_man = [];
-    cmd_doc = "Update packages in switch"
-  }
+  EZCMD.sub cmd_name
+    (fun () -> action ~args ())
+    ~args: specs
+    ~doc: "Update packages in switch"
+    ~man: [
+      `S "DESCRIPTION";
+      `Blocks [
+        `P "This command performs the following actions:";
+        `I ( "1.", "Call $(b,opam update) to get information on newly available packages");
+        `I ( "2.", "Pin the package dependencies in the local opam switch");
+        `I ( "3.", "Call $(b,opam upgrade) to upgrade packages in the local opam switch");
+        `I ( "4.", "Unpin package dependencies");
+      ]
+    ]

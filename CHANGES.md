@@ -1,6 +1,14 @@
 
 ## v0.2.1 ( 2020-11-25 )
 
+* New argument `--all` to `drom test` to do the test on all available/compatible
+   opam switches (using dune-workspace context feature)
+* New option `dev-tools` in ~/.config/drom/config, a list of opam packages
+   that should be installed in the local switch when `drom dev-deps` is called
+* New environment variable DROM_SHARE_DIR can be used to set the directory
+   containing `skeletons` and `licenses` directories (can be used to install
+   drom globally, i.e. DROM_SHARE_DIR=$OPAM_SWITCH_PREFIX/share/drom)
+* New common argument `-q` or `--quiet` to set verbosity to 0
 * New command `drom dep [DEP]`: display and update dependencies with options:
   --package NAME : only for package NAME
   --tool : tool dependencies

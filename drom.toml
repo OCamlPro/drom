@@ -54,6 +54,7 @@ ocaml-flags = "-w -a"
 [project]
 generators = ["ocamllex", "menhir"]
 pack-modules = true
+share-dirs = ["share"]
 skip-dirs = ["drom-test"]
 
 

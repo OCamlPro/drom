@@ -9,7 +9,8 @@
 (**************************************************************************)
 
 open Types
-open Ezcmd.TYPES
+open Ezcmd.V2
+open EZCMD.TYPES
 open EzFile.OP
 open EzCompat
 
@@ -33,23 +34,25 @@ let build_args () =
   let specs =
     [ ( [ "switch" ],
         Arg.String (fun s -> args.arg_switch <- Some (Global s)),
-        Ezcmd.info "Use global switch SWITCH instead of creating a local switch"
+        EZCMD.info ~docv:"OPAM_SWITCH"
+          "Use global switch SWITCH instead of creating a local switch"
       );
       ( [ "local" ],
         Arg.Unit (fun () -> args.arg_switch <- Some Local),
-        Ezcmd.info "Create a local switch instead of using a global switch" );
+        EZCMD.info "Create a local switch instead of using a global switch" );
       ( [ "edition" ],
         Arg.String (fun s -> args.arg_edition <- Some s),
-        Ezcmd.info "Use this OCaml edition" );
+        EZCMD.info ~docv:"VERSION" "Use this OCaml edition" );
       ( [ "y"; "yes" ],
         Arg.Unit (fun () -> args.arg_yes <- true),
-        Ezcmd.info "Reply yes to all questions" );
+        EZCMD.info "Reply yes to all questions" );
       ( [ "upgrade" ],
         Arg.Unit (fun () -> args.arg_upgrade <- true),
-        Ezcmd.info "Upgrade project files from drom.toml" );
+        EZCMD.info "Upgrade project files from drom.toml" );
       ( [ "locked" ],
         Arg.Unit (fun () -> args.arg_locked <- true),
-        Ezcmd.info "Use .locked file if it exists" );
+        EZCMD.info
+          ~version:"0.2.1" "Use .locked file if it exists" );
     ]
   in
   (args, specs)
@@ -221,7 +224,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
           | Some edition -> edition
         in
         Opam.run ~y [ "install" ] [ ocaml_nv ];
-        Opam.run [ "switch"; "set-base" ] [ "ocaml" ]
+        Opam.run [ "switch"; "set-base" ] [ ocaml_nv ]
     | v -> (
         match edition with
         | Some edition ->
@@ -332,11 +335,33 @@ had_switch: %b
       )
   );
 
+  if force_dev_deps then begin
+    let config = Lazy.force Config.config in
+    let to_install = ref [] in
+    List.iter (fun nv ->
+        if not ( StringMap.mem nv switch_packages ) then
+          to_install := nv :: !to_install
+      ) config.config_dev_tools;
+    match !to_install with
+    | [] -> ()
+    | packages ->
+        Opam.run ~y [ "install" ] packages
+  end;
+
   if build then
     Opam.run [ "exec" ]
       ( [ "--"; "dune"; "build"; "@install" ]
         @
-        match p.profile with
+        ( match p.profile with
         | None -> []
-        | Some profile -> [ "--profile"; profile ] );
+        | Some profile -> [ "--profile"; profile ] )
+        @
+        ( match !Globals.verbosity with
+          | 0 -> [ "--display=quiet" ]
+          | 1 -> []
+          | 2 -> [ "--display=short" ]
+          | _ -> [ "--display=verbose" ]
+        )
+
+      );
   p
