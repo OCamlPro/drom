@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>How to install &mdash; drom master
- (815eed0
-) (2020/11/27 15:06) documentation</title>
+ (1cd7cf5
+) (2020/12/01 15:27) documentation</title>
   
 
   
@@ -42,8 +42,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="drom master
- (815eed0
-) (2020/11/27 15:06) documentation" href="index.html"/>
+ (1cd7cf5
+) (2020/12/01 15:27) documentation" href="index.html"/>
         <link rel="next" title="Copyright and License" href="license.html"/>
         <link rel="prev" title="Managing Licenses" href="licenses.html"/> 
 
@@ -75,7 +75,7 @@
             
               <div class="version">
                 master
- (815eed0
+ (1cd7cf5
 )
               </div>
             
@@ -113,6 +113,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">How to install</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#install-with-opam">Install with <code class="code docutils literal"><span class="pre">opam</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#build-and-install-with-dune">Build and install with <code class="code docutils literal"><span class="pre">dune</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-drom-globally">Installing <code class="code docutils literal"><span class="pre">drom</span></code> globally</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://ocamlpro.github.io/drom/doc">API doc</a></li>
@@ -222,6 +223,32 @@ targets:</p>
 <li><code class="code docutils literal"><span class="pre">test</span></code>: run tests</li>
 </ul>
 </div>
+<div class="section" id="installing-drom-globally">
+<h2>Installing <code class="code docutils literal"><span class="pre">drom</span></code> globally<a class="headerlink" href="#installing-drom-globally" title="Permalink to this headline">¶</a></h2>
+<p>To be installed globally, <code class="code docutils literal"><span class="pre">drom</span></code> will need to locate its data
+files, in particular its skeleton and license files. This files are
+usually installed in <code class="code docutils literal"><span class="pre">$OPAM_SWITCH_PREFIX/share/drom</span></code> when
+<code class="code docutils literal"><span class="pre">drom</span></code> is installed through <code class="code docutils literal"><span class="pre">opam</span></code>.</p>
+<p>Once you have copied <code class="code docutils literal"><span class="pre">drom</span></code> executable in a global location
+(<code class="code docutils literal"><span class="pre">/usr/local/bin/drom</span></code> for example), you should do one of these
+two actions:</p>
+<ul>
+<li><p class="first">Set the <code class="code docutils literal"><span class="pre">DROM_SHARE_DIR</span></code> environment variable to the location
+to the share dir containing its files
+(<code class="code docutils literal"><span class="pre">$HOME/.opam/4.10.0/share/drom</span></code> for example if <code class="code docutils literal"><span class="pre">drom</span></code>
+was installed in switch <code class="code docutils literal"><span class="pre">4.10.0</span></code>)</p>
+</li>
+<li><p class="first">Edit <code class="code docutils literal"><span class="pre">$HOME/.config/drom/config</span></code> and define the
+<code class="code docutils literal"><span class="pre">share-dir</span></code> option. For example:</p>
+<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">share</span><span class="o">-</span><span class="n">dir</span> <span class="o">=</span> <span class="s2">&quot;/home/user/.opam/4.10.0/share/drom&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Note that you can also copy <code class="code docutils literal"><span class="pre">drom</span></code>’s share directory to a global
+location if don’t want the files to be removed accidentally by an
+<code class="code docutils literal"><span class="pre">opam</span></code> operation.</p>
+</div>
 </div>
 
 
@@ -268,7 +295,7 @@ targets:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'master (815eed0) (2020/11/27 15:06)',
+            VERSION:'master (1cd7cf5) (2020/12/01 15:27)',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
