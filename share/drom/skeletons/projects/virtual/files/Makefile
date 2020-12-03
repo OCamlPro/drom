@@ -12,8 +12,7 @@ build:
 
 build-deps:
 	if ! [ -e _opam ]; then \
-	   opam switch create . --empty && \
-	   opam install ocaml.4.10.0 ; \
+	   opam switch create . !{edition} ; \
 	fi
 	opam install ./*.opam --deps-only
 

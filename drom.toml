@@ -34,7 +34,7 @@ will generate files for Github Actions CI and Github pages.
 """
 
 [drom]
-skip = "sphinx/about.rst src/drom_lib/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml ocamlformat"
+skip = "sphinx/about.rst src/drom_lib/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml ocamlformat sphinx/install.rst"
 
 [dependencies]
 
