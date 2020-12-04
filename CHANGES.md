@@ -1,6 +1,10 @@
 
 ## v0.2.1 ( 2020-11-25 )
 
+* Improved inline documentation of `drom.toml` and `package.toml` files
+* New command `drom opam-plugin` to install `drom` as an opam plugin, so it
+  can be called `opam drom` from anywhere.
+* New argument `--profile PROFILE` to `drom build`
 * New argument `--all` to `drom test` to do the test on all available/compatible
    opam switches (using dune-workspace context feature)
 * New option `dev-tools` in ~/.config/drom/config, a list of opam packages

@@ -44,14 +44,14 @@ type package =
     mutable kind : kind;
     mutable p_skeleton : string option;
     mutable p_pack : string option;
-    p_version : string option;
-    p_authors : string list option;
-    p_synopsis : string option;
-    p_description : string option;
+    mutable p_version : string option;
+    mutable p_authors : string list option;
+    mutable p_synopsis : string option;
+    mutable p_description : string option;
     mutable p_dependencies : (string * dependency) list;
     mutable p_tools : (string * dependency) list;
     mutable p_mode : mode option;
-    p_pack_modules : bool option;
+    mutable p_pack_modules : bool option;
     mutable p_gen_version : string option;
     mutable p_fields : string StringMap.t;
     mutable p_generators : string list option;
@@ -87,7 +87,6 @@ and project =
     odoc_target : string option;
     (* CI options *)
     windows_ci : bool;
-    generators : string list;
     skip_dirs : string list;
     profiles : profile StringMap.t;
     profile : string option;
@@ -96,11 +95,9 @@ and project =
     authors : string list;
     synopsis : string;
     description : string;
+    share_dirs : string list ;
     mutable dependencies : (string * dependency) list;
     mutable tools : (string * dependency) list;
-    mode : mode;
-    pack_modules : bool;
-    share_dirs : string list ;
     mutable fields : string StringMap.t
   }
 

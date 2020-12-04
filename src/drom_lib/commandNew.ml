@@ -48,7 +48,6 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
     | Some copyright -> Some copyright
     | None -> Some author
   in
-  let generators = [ "ocamllex"; "ocamlyacc" ] in
   let p =
     { Project.dummy_project with
       package;
@@ -57,7 +56,6 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
       authors = [ author ];
       synopsis = Globals.default_synopsis ~name;
       description = Globals.default_description ~name;
-      generators;
       tools =
         [ ( "ocamlformat",
             { depversions = []; depname = None; deptest = true; depdoc = false }
@@ -80,7 +78,6 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
       license;
       dev_repo = None;
       copyright;
-      pack_modules = true;
       skip = [];
       archive = None;
       sphinx_target = None;

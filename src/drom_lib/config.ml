@@ -116,7 +116,11 @@ let share_dir =
             (fun ~dir ~path:_ -> dir)
         with
         | None -> []
-        | Some dir -> [ Some "local ./share/drom", dir ]
+        | Some dir -> [ Some "local ./share/drom", dir // "share" // "drom" ]
+      )
+      @
+      (
+        [ None, Globals.opam_root () // "plugins" // "opam-drom" ]
       )
       @
       (

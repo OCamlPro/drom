@@ -18,7 +18,7 @@ let action ~all ~args () =
   let (p : Types.project) = Build.build ~dev_deps:true ~args () in
   let workspace =
     if all then begin
-      let root = Opam.root () in
+      let root = Globals.opam_root () in
       let oc = open_out "_drom/dune-workspace.dev" in
       Printf.fprintf oc "(lang dune 2.7)\n";
       let files = Sys.readdir root in

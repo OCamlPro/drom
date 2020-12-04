@@ -127,12 +127,12 @@ let p_dependencies package =
 let p_mode package =
   match package.p_mode with
   | Some deps -> deps
-  | None -> package.project.mode
+  | None -> Binary
 
 let p_pack_modules package =
   match package.p_pack_modules with
   | Some deps -> deps
-  | None -> package.project.pack_modules
+  | None -> true
 
 let p_version package =
   match package.p_version with

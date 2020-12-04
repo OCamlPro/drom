@@ -2,7 +2,7 @@
 
 # hash of toml configuration files
 # used for generation of all files
-33f56ec062def04a4a44e16bc4f5c7d1:.
+bc88da0d4fd9e2e42baa7d9b25eb45c4:.
 # end context for .
 
 # begin context for .github/workflows/doc-deploy.yml
@@ -82,7 +82,7 @@ b091dd96e8b553dd7a7df285279d7d9e:README.md
 
 # begin context for drom.toml
 # file drom.toml
-9ce040b607cfb677a2a6750fcde83d08:drom.toml
+a5a18d06201f6d4ca61c7a1279b348e0:drom.toml
 # end context for drom.toml
 
 # begin context for drom_lib.opam

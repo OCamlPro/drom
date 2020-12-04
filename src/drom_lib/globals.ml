@@ -74,3 +74,10 @@ let find_ancestor_file file f =
         None
   in
   iter dir ""
+
+
+let opam_root = lazy (
+  try Sys.getenv "OPAMROOT"
+  with Not_found -> home_dir // ".opam"
+)
+let opam_root () = Lazy.force opam_root
