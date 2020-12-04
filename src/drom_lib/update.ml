@@ -219,7 +219,10 @@ let update_files ?args ?mode ?(git = false) ?(create = false) p =
         let dependencies, changed = add_dep js_dep p.dependencies changed in
         let tools, changed = add_dep js_tool p.tools changed in
         let tools, changed = add_dep ppx_tool tools changed in
-        ({ p with mode; dependencies; tools }, changed)
+        List.iter (fun package ->
+            package.p_mode <- Some mode
+          ) p.packages;
+        ({ p with dependencies; tools }, changed)
   in
   List.iter (fun package -> package.project <- p) p.packages;
 

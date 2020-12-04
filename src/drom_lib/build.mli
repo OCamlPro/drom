@@ -17,6 +17,7 @@ type build_args =
     mutable arg_edition : string option;
     mutable arg_upgrade : bool;
     mutable arg_locked : bool;
+    mutable arg_profile : string option;
   }
 
 val build_args :

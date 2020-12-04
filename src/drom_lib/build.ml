@@ -20,6 +20,7 @@ type build_args =
     mutable arg_edition : string option;
     mutable arg_upgrade : bool;
     mutable arg_locked : bool ;
+    mutable arg_profile : string option;
   }
 
 let build_args () =
@@ -29,6 +30,7 @@ let build_args () =
       arg_edition = None;
       arg_upgrade = false;
       arg_locked = false;
+      arg_profile = None ;
     }
   in
   let specs =
@@ -53,6 +55,10 @@ let build_args () =
         Arg.Unit (fun () -> args.arg_locked <- true),
         EZCMD.info
           ~version:"0.2.1" "Use .locked file if it exists" );
+      ( [ "profile" ],
+        Arg.String (fun s -> args.arg_profile <- Some s),
+        EZCMD.info ~docv:"PROFILE" "Build profile to use" );
+
     ]
   in
   (args, specs)
@@ -65,10 +71,12 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
     build = true) () =
   let p, _inferred_dir = Project.get () in
 
-  let { arg_switch; arg_yes = y;
-        arg_edition = edition;
-        arg_upgrade;
-        arg_locked; } = args in
+  let { arg_switch ;
+        arg_yes = y ;
+        arg_edition = edition ;
+        arg_upgrade ;
+        arg_locked ;
+        arg_profile ;} = args in
   ( match edition with
     | None -> ()
     | Some edition -> (
@@ -352,9 +360,11 @@ had_switch: %b
     Opam.run [ "exec" ]
       ( [ "--"; "dune"; "build"; "@install" ]
         @
-        ( match p.profile with
-        | None -> []
-        | Some profile -> [ "--profile"; profile ] )
+        ( match arg_profile with
+          | Some profile ->  [ "--profile"; profile ]
+          | None -> match p.profile with
+            | None -> []
+            | Some profile -> [ "--profile"; profile ] )
         @
         ( match !Globals.verbosity with
           | 0 -> [ "--display=quiet" ]

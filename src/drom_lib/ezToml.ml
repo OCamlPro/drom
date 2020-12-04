@@ -250,3 +250,86 @@ let rec union table1 table2 =
       table := Table.add key v !table)
     table2;
   !table
+
+type file_option = {
+  option_name : string ;
+  option_value : TomlTypes.value option ;
+  option_comment : string list option ;
+  option_default : string option ;
+}
+
+type file = {
+  mutable options : file_option list;
+}
+
+let new_file () = { options = [] }
+
+let add file options =
+  file.options <- file.options @ options
+
+let string_of_file file =
+  let b = Buffer.create 1000 in
+  List.iter (fun o ->
+      (
+        (match o.option_comment with
+         | None -> ()
+         | Some s ->
+             Printf.bprintf b "\n# %s\n" (String.concat "\n#" s)
+        );
+        Buffer.add_string b (
+          match o.option_value with
+          | Some v -> begin
+              match v with
+                TTable x when Table.is_empty x ->
+                  Printf.sprintf "[%s]\n# ...\n" o.option_name
+              | _ ->
+                  empty |> put [ o.option_name ] v |> to_string
+            end
+          | None ->
+              match o.option_default with
+              | Some s ->
+                  Printf.sprintf "# %s\n" s
+              | None ->
+                  Printf.sprintf "# %s = ...\n" o.option_name
+        );
+
+      )
+    ) file.options ;
+  Buffer.contents b
+
+
+module CONST = struct
+  let string s = Some ( TString s )
+  let string_option = function
+    | None -> None
+    | Some s -> string s
+  let string_list l = Some ( TArray ( NodeString l ))
+  let string_list_option = function
+    | None -> None
+    | Some l -> string_list l
+  let encoding enc v = Some ( enc.to_toml v )
+  let encoding_option enc = function
+    | None -> None
+    | Some b -> encoding enc b
+  let bool b = Some (TBool b)
+  let bool_option = function
+    | None -> None
+    | Some b -> bool b
+  let option option_name ?comment ?default option_value =
+      {
+        option_name ;
+        option_value ;
+        option_comment = comment ;
+        option_default = default ;
+      }
+  let s_ ?section options =
+    let file = new_file () in
+    add file options;
+    let s = string_of_file file in
+    match section with
+     | None -> s
+     | Some section ->
+         Printf.sprintf "[%s]\n%s" section s
+
+
+end

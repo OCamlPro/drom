@@ -34,8 +34,7 @@ let package_dune_files package =
       (fun file ->
         if Filename.check_suffix file ".mll" then begin
           if
-            List.mem "ocamllex" package.project.generators
-            || List.mem "ocamllex" p_generators
+            List.mem "ocamllex" p_generators
           then
             Printf.bprintf b "(ocamllex %s)\n"
               (Filename.chop_suffix file ".mll")
@@ -44,12 +43,6 @@ let package_dune_files package =
             Printf.bprintf b "(ocamlyacc %s)\n"
               (Filename.chop_suffix file ".mly")
           else if List.mem "menhir" p_generators then
-            Printf.bprintf b "(menhir (modules %s))\n"
-              (Filename.chop_suffix file ".mly")
-          else if List.mem "ocamlyacc" package.project.generators then
-            Printf.bprintf b "(ocamlyacc %s)\n"
-              (Filename.chop_suffix file ".mly")
-          else if List.mem "menhir" package.project.generators then
             Printf.bprintf b "(menhir (modules %s))\n"
               (Filename.chop_suffix file ".mly")
           else

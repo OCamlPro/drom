@@ -34,10 +34,12 @@ will generate files for Github Actions CI and Github pages.
 """
 
 [drom]
-skip = "sphinx/about.rst src/drom_lib/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml ocamlformat"
+skip = "sphinx/about.rst src/drom_lib/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml ocamlformat sphinx/install.rst"
 
+# project-wide library dependencies (not for package-specific deps)
 [dependencies]
 
+# project-wide tools dependencies (not for package-specific deps)
 [tools.ocamlformat]
 for-test = true
 [tools.odoc]
@@ -60,7 +62,10 @@ skip-dirs = ["drom-test"]
 
 [[package]]
 dir = "src/drom"
+# edit 'src/drom/package.toml' for package-specific options
+
 
 [[package]]
 dir = "src/drom_lib"
+# edit 'src/drom_lib/package.toml' for package-specific options
 
