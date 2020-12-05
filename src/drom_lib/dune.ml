@@ -24,7 +24,7 @@ let package_dune_files package =
   let b = Buffer.create 1000 in
   let p_generators =
     match package.p_generators with
-    | None -> []
+    | None -> [ "ocamllex" ; "ocamlyacc" ]
     | Some generators -> generators
   in
   ( match Sys.readdir package.dir with
