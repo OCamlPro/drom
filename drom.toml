@@ -8,14 +8,12 @@ edition = "4.10.0"
 github-organization = "ocamlpro"
 license = "LGPL2"
 min-edition = "4.07.0"
-mode = "binary"
 name = "drom"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
 version = "0.2.1"
 windows-ci = true
 
 # keys that you could also define:
-# build-profile = "...build-profile..."
 # odoc-target = "...odoc-target..."
 # sphinx-target = "...sphinx-target..."
 # archive = "...archive..."
@@ -33,8 +31,8 @@ sphinx and odoc documentation. It has specific knowledge of Github and
 will generate files for Github Actions CI and Github pages.
 """
 
-[drom]
-skip = "sphinx/about.rst src/drom_lib/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml ocamlformat sphinx/install.rst"
+[project]
+skip = "sphinx/about.rst src/drom_lib/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml ocamlformat sphinx/install.rst src/ez_opam_file/dune"
 
 # project-wide library dependencies (not for package-specific deps)
 [dependencies]
@@ -49,15 +47,29 @@ for-test = true
 [tools.ppx_inline_test]
 for-test = true
 
+[project]
+
+# dirs to skip while scanning for dune files
+skip-dirs = ["drom-test"]
+
+# dirs to scan for share/ folders (with package names)
+share-dirs = ["share"]
+
+# build profile to use by default
+# build-profile = ...
+
+# Profile options for this project
+#    [profile]
+#    dev = { ocaml-flags = "-w +a-4-40-41-42-44" }
+#    release = { ocaml-flags = "-w -a" }
 [profile.dev]
 ocaml-flags = "-w +a-4-40-41-42-44"
 [profile.release]
 ocaml-flags = "-w -a"
-[project]
-generators = ["ocamllex", "menhir"]
-pack-modules = true
-share-dirs = ["share"]
-skip-dirs = ["drom-test"]
+
+# project-wide fields (depends on project skeleton)
+[fields]
+# ...
 
 
 [[package]]
@@ -68,4 +80,5 @@ dir = "src/drom"
 [[package]]
 dir = "src/drom_lib"
 # edit 'src/drom_lib/package.toml' for package-specific options
+
 

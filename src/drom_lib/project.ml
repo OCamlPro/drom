@@ -18,7 +18,7 @@ let rec dummy_project =
     packages = [];
     skeleton = None;
     edition = Globals.current_ocaml_edition;
-    min_edition = Globals.current_ocaml_edition;
+    min_edition = Globals.min_ocaml_edition;
     github_organization = None;
     homepage = None;
     license = License.key_LGPL2;
@@ -390,7 +390,10 @@ let package_of_toml ?default table =
       else
         (table, None)
   in
-  let name = EzToml.get_string table [ "name" ] in
+  let name = try EzToml.get_string table [ "name" ] with Not_found ->
+    Printf.eprintf "Error: Missing field 'name' in package.toml\n%!";
+    exit 2
+  in
   let default = find_package ?default name in
   let dir = Misc.option_value dir ~default:default.dir in
   let kind =
