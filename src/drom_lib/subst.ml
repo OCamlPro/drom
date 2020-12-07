@@ -8,7 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ez_subst.V1
+open Ez_subst (* .V1 *)
 open Types
 open EzCompat
 open EzFile.OP
@@ -301,6 +301,8 @@ let package_brace (context, package) v =
   | "package-name" ->
       package.name
   | "library-name" -> Misc.library_name package
+  | "pack" -> Misc.library_module package
+  | "modules" -> String.concat " " (Misc.modules package)
   | "dir"
   | "package-dir" ->
       package.dir
@@ -385,50 +387,50 @@ let package_paren (context, package) name =
 let subst_encode p_subst escape p s =
   match EzString.split s ':' with
   | [] ->
-    Printf.eprintf "Warning: empty expression\n%!";
-    raise Not_found
+      Printf.eprintf "Warning: empty expression\n%!";
+      raise Not_found
   | [ "escape"; "true" ] ->
-    escape := true;
-    ""
+      escape := true;
+      ""
   | [ "escape"; "false" ] ->
-    escape := false;
-    ""
+      escape := false;
+      ""
   | var :: encodings ->
-    let var = p_subst p var in
-    let rec iter encodings var =
-      match encodings with
-      | [] -> var
-      | encoding :: encodings ->
-        let var =
-          match encoding with
-          | "html" -> EzHtml.string var
-          | "cap" -> String.capitalize var
-          | "uncap" -> String.uncapitalize var
-          | "low" -> String.lowercase var
-          | "up" -> String.uppercase var
-          | "alpha" -> Misc.underscorify var
-          | _ ->
-            Printf.eprintf "Error: unknown encoding %S\n%!" encoding;
-            raise Not_found
-        in
-        iter encodings var
-    in
-    iter encodings var
+      let var = p_subst p var in
+      let rec iter encodings var =
+        match encodings with
+        | [] -> var
+        | encoding :: encodings ->
+            let var =
+              match encoding with
+              | "html" -> EzHtml.string var
+              | "cap" -> String.capitalize var
+              | "uncap" -> String.uncapitalize var
+              | "low" -> String.lowercase var
+              | "up" -> String.uppercase var
+              | "alpha" -> Misc.underscorify var
+              | _ ->
+                  Printf.eprintf "Error: unknown encoding %S\n%!" encoding;
+                  raise Not_found
+            in
+            iter encodings var
+      in
+      iter encodings var
 
-let project context ?bracket p s =
+let project context ?bracket ?skipper p s =
   try
     let escape = ref false in
     EZ_SUBST.string ~sep:'!' ~escape
       ~brace:(subst_encode project_brace escape)
       ~paren:(subst_encode project_paren (ref true))
-      ?bracket ~ctxt:(context, p) s
+      ?bracket ?skipper ~ctxt:(context, p) s
   with ReplaceContent content -> content
 
-let package context ?bracket p s =
+let package context ?bracket ?skipper p s =
   try
     let escape = ref false in
     EZ_SUBST.string ~sep:'!' ~escape
       ~brace:(subst_encode package_brace escape)
       ~paren:(subst_encode package_paren (ref true))
-      ?bracket ~ctxt:(context, p) s
+      ?bracket ?skipper ~ctxt:(context, p) s
   with ReplaceContent content -> content

@@ -318,3 +318,8 @@ let library_module p =
   match p.p_pack with
   | Some name -> name
   | None -> String.capitalize (underscorify p.name)
+
+let string_of_kind = function
+  | Program -> "program"
+  | Library -> "library"
+  | Virtual -> "virtual"

@@ -10,6 +10,7 @@
 
 open Ezcmd.V2
 open Types
+open EzPrintTree
 
 let cmd_name = "tree"
 
@@ -35,15 +36,15 @@ let action () =
       match d.depversions with
       | []
       | [ Version ] ->
-        let _, counter, _ = Hashtbl.find h name in
-        incr counter
+          let _, counter, _ = Hashtbl.find h name in
+          incr counter
       | _ -> ()
     with Not_found -> ()
   in
   List.iter
     (fun package ->
-      List.iter add_dep package.p_dependencies;
-      List.iter add_dep package.p_tools)
+       List.iter add_dep package.p_dependencies;
+       List.iter add_dep package.p_tools)
     p.packages;
 
   let rec tree_of_dep kind (name, d) =
@@ -51,52 +52,54 @@ let action () =
       match d.depversions with
       | []
       | [ Version ] ->
-        let package, counter, printed = Hashtbl.find h name in
-        if (not !printed) && !counter = 1 then (
-          printed := true;
-          tree_of_package package
-        ) else
-          raise Not_found
+          let package, counter, printed = Hashtbl.find h name in
+          if (not !printed) && !counter = 1 then (
+            printed := true;
+            tree_of_package package
+          ) else
+            raise Not_found
       | _ -> raise Not_found
     with Not_found ->
       let dep_descr =
         Printf.sprintf "%s%s %s" name kind
           (String.concat " " (List.map string_of_version d.depversions))
       in
-      EzPrintTree.Branch (dep_descr, [])
+      Branch (dep_descr, [])
   and tree_of_package package =
-    let package_descr = Printf.sprintf "%s (/%s)" package.name package.dir in
-    EzPrintTree.Branch
+    let package_descr = Printf.sprintf "%s %s (/%s)"
+        ( Misc.string_of_kind package.kind ) package.name package.dir in
+    Branch
       ( package_descr,
         List.map (tree_of_dep "") package.p_dependencies
         @ List.map (tree_of_dep "(tool)") package.p_tools )
   in
 
-  let print indent p =
+  let branches = ref [] in
+  let print p =
     let _package, counter, printed = Hashtbl.find h p.name in
     if (not !printed) && !counter <> 1 then (
       printed := true;
-      EzPrintTree.print_tree indent (tree_of_package p)
+      branches := tree_of_package p :: !branches
     )
   in
-  print "" p.package;
+  print p.package;
   List.iter
-    (fun package -> if package != p.package then print "" package)
+    (fun package -> if package != p.package then print package)
     p.packages;
-  let print_deps indent kind list =
-    match list with
-    | [] -> ()
-    | _ ->
-      Printf.printf "%s[%s]\n" indent kind;
-      let indent = indent ^ "\226\148\148\226\148\128\226\148\128" in
-      List.iter
-        (fun (name, d) ->
-          Printf.printf "%s %s %s\n" indent name
-            (String.concat " " (List.map string_of_version d.depversions)))
-        list
+  let print_deps kind list =
+    branches :=
+      (Branch
+         (Printf.sprintf "[%s]" kind,
+          List.map
+            (fun (name, d) ->
+               Branch (
+                 Printf.sprintf "%s %s" name
+                   (String.concat " " (List.map string_of_version d.depversions)), []) )
+            list)) :: !branches;
   in
-  print_deps "" "dependencies" p.dependencies;
-  print_deps "" "tools" p.tools;
+  print_deps "dependencies" p.dependencies;
+  print_deps "tools" p.tools;
+  print_tree "" (Branch ("File drom.toml", List.rev !branches));
   ()
 
 let cmd = EZCMD.sub cmd_name action

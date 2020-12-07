@@ -1,4 +1,3 @@
-![skip:github]![skip:workflows]![file:.github/workflows/doc-deploy.yml]
 name: doc-deploy
 on:
   push:

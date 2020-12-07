@@ -24,6 +24,7 @@ let subst ?(more = fun v -> Printf.sprintf "${%s}" v) package s =
     s;
   Buffer.contents b
 
+(*
 let template_src_index_mld p =
   match p.kind with
   | Virtual -> assert false
@@ -57,3 +58,4 @@ This library exposes the following toplevel modules:
 
 ${description}
 |})
+*)

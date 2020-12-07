@@ -8,6 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open EzCompat
+
 module TYPES = struct
   include TomlTypes
 
@@ -178,6 +180,7 @@ let get_string_list_option ?default table key =
   match get table key with
   | TArray (NodeString v) -> Some v
   | TString "" -> default
+  | TString s -> Some [s]
   | _ -> failwith "Wrong type for field %S" (key2str key)
   | exception Not_found -> default
 
@@ -186,6 +189,7 @@ let get_string_list_default table key default =
   | TArray NodeEmpty -> []
   | TArray (NodeString v) -> v
   | TString "" -> default
+  | TString s -> [s]
   | _ -> failwith "Wrong type for field %S" (key2str key)
   | exception Not_found -> default
 
@@ -205,6 +209,17 @@ let expect_string ~key v =
   match v with
   | TString s -> s
   | _ -> failwith "wrong type for key %s (string expected)" (key2str key)
+
+let expect_string_list ~key v =
+  match v with
+  | TArray (NodeString v) -> v
+  | TString v -> [v]
+  | _ -> failwith "wrong type for key %s (string list expected)" (key2str key)
+
+let expect_bool ~key v =
+  match v with
+  | TBool b -> b
+  | _ -> failwith "wrong type for key %s (bool expected)" (key2str key)
 
 let enum_encoding ~to_string ~of_string =
   encoding
@@ -250,6 +265,39 @@ let rec union table1 table2 =
       table := Table.add key v !table)
     table2;
   !table
+
+
+
+
+
+
+
+
+
+
+
+module ENCODING = struct
+
+  let stringMap enc =
+    encoding
+      ~to_toml:(fun map ->
+          let table = ref empty in
+          StringMap.iter
+            (fun name s -> table := put [ name ] (enc.to_toml s) !table)
+            map;
+          TTable !table)
+      ~of_toml:(fun ~key v ->
+          let table = expect_table ~key ~name:"profile" v in
+          let map = ref StringMap.empty in
+          iter
+            (fun k v ->
+               map := StringMap.add k (enc.of_toml ~key:(key @ [ k ]) v) !map)
+            table;
+          !map)
+
+end
+
+
 
 type file_option = {
   option_name : string ;
@@ -330,6 +378,5 @@ module CONST = struct
      | None -> s
      | Some section ->
          Printf.sprintf "[%s]\n%s" section s
-
 
 end

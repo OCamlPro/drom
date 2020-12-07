@@ -1,4 +1,3 @@
-![skip:github]![skip:workflows]![file:.github/workflows/workflow.yml]
 name: Main Workflow
 
 on:

@@ -12,45 +12,87 @@ open EzCompat
 open Types
 open EzFile.OP
 
-type flags =
-  { mutable file : string;
-    mutable create : bool;
-    mutable record : bool;
-    mutable skips : string list;
-    mutable skip : bool
-  }
+let default_flags =
+    { flag_file = "";
+      flag_create = false;
+      flag_record = true;
+      flag_skips = [];
+      flag_skip = false ;
+      flag_skipper = ref [];
+      flag_subst = true ;}
 
-let bracket file =
-  let flags =
-    { file; create = false; record = true; skips = []; skip = false }
-  in
-  let bracket flags _ s =
+let bracket flags eval_cond =
+  let bracket flags ( (), p ) s =
     match EzString.split s ':' with
     (* set the name of the file *)
     | [ "file"; v ] ->
-      flags.file <- v;
+      flags.flag_file <- v;
       ""
     (* create only once *)
     | [ "create" ] ->
-      flags.create <- true;
+      flags.flag_create <- true;
       ""
     (* skip with this tag *)
     | [ "skip"; v ] ->
-      flags.skips <- v :: flags.skips;
+      flags.flag_skips <- v :: flags.flag_skips;
       ""
     (* skip always *)
     | [ "skip" ] ->
-      flags.skip <- true;
+      flags.flag_skip <- true;
       ""
     (* do not record in .git *)
     | [ "no-record" ] ->
-      flags.record <- false;
+      flags.flag_record <- false;
       ""
+    | "if" :: cond ->
+        flags.flag_skipper := ( not ( eval_cond p cond ) ) :: (!)
+                                flags.flag_skipper;
+        ""
+    | [ "else" ] ->
+        flags.flag_skipper := ( match (!) flags.flag_skipper with
+            | cond :: tail -> ( not cond ) :: tail
+            | [] -> failwith "else without if");
+        ""
+    | [ "fi" ] ->
+        flags.flag_skipper := ( match (!) flags.flag_skipper with
+            | _ :: tail -> tail
+            | [] -> failwith "fi without if");
+        ""
     | _ ->
       Printf.eprintf "Warning: unknown flag %S\n%!" s;
       ""
   in
-  (flags, bracket flags)
+  bracket flags
+
+let flags_encoding =
+  EzToml.encoding
+    ~to_toml:(fun _ -> assert false)
+    ~of_toml:(fun ~key v ->
+        let table = EzToml.expect_table ~key ~name:"flags" v in
+        let flags = { default_flags with flag_file = "" } in
+        EzToml.iter
+          (fun k v ->
+             let key = key @ [ k ] in
+             match k with
+             | "file" ->
+                 flags.flag_file <- EzToml.expect_string ~key v
+             | "create" ->
+                 flags.flag_create <- EzToml.expect_bool ~key v
+             | "record" ->
+                 flags.flag_record <- EzToml.expect_bool ~key v
+             | "skips" ->
+                 flags.flag_skips <- EzToml.expect_string_list ~key v
+             | "skip" ->
+                 flags.flag_skip <- EzToml.expect_bool ~key v
+             | "subst" ->
+                 flags.flag_subst <- EzToml.expect_bool ~key v
+             | _ ->
+                 Printf.eprintf "Warning: discarding flags field %S\n%!"
+                   (EzToml.key2str key)
+          )
+          table;
+        flags
+      )
 
 let load_skeleton ~dir ~toml ~kind =
   let table =
@@ -87,8 +129,11 @@ let load_skeleton ~dir ~toml ~kind =
               files := (path, content) :: !files);
       !files
   in
+  let skeleton_flags = EzToml.get_encoding_default
+      (EzToml.ENCODING.stringMap flags_encoding) table [ "file" ]
+      StringMap.empty  in
   (*  Printf.eprintf "Loaded %s skeleton %s\n%!" kind name; *)
-  (name, { skeleton_toml; skeleton_inherits; skeleton_files })
+  (name, { skeleton_toml; skeleton_inherits; skeleton_files ; skeleton_flags })
 
 let load_dir_skeletons map kind dir =
   if Sys.file_exists dir then begin
@@ -159,7 +204,10 @@ let lookup_skeleton skeletons name =
         let skeleton_files =
           inherit_files self.skeleton_files super.skeleton_files
         in
-        { skeleton_inherits = None; skeleton_toml; skeleton_files } )
+        { skeleton_inherits = None; skeleton_toml; skeleton_files ;
+          skeleton_flags =
+            StringMap.union (fun _ x _ -> Some x)
+              self.skeleton_flags super.skeleton_flags } )
   in
   iter name
 
@@ -169,13 +217,66 @@ let backup_skeleton file content =
   EzFile.make_dir ~p:true (Filename.dirname drom_file);
   EzFile.write_file drom_file content
 
+let project_skeleton = function
+  | None -> "program"
+  | Some skeleton -> skeleton
+
+let package_skeleton package =
+  match package.p_skeleton with
+  | Some skeleton -> skeleton
+  | None -> Misc.string_of_kind package.kind
+
 let lookup_project skeleton =
-  lookup_skeleton project_skeletons
-    ( match skeleton with
-    | None -> "program"
-    | Some skeleton -> skeleton )
+  lookup_skeleton project_skeletons (project_skeleton skeleton)
 
 let lookup_package skeleton = lookup_skeleton package_skeletons skeleton
+
+let rec eval_project_cond p cond =
+  match cond with
+  | [ "skeleton" ; "is" ; skeleton ] ->
+      project_skeleton p.skeleton = skeleton
+  | [ "skip" ;  skip ] -> List.mem skip p.skip
+  | [ "gen" ;  skip ] -> not ( List.mem skip p.skip )
+  | "not" :: cond -> not ( eval_project_cond p cond )
+  | [ "true" ] -> true
+  | [ "false" ] -> false
+  | _ ->
+      Printf.kprintf failwith "eval_project_cond: unknown condition %S\n%!"
+        ( String.concat ":" cond )
+
+let rec eval_package_cond p cond =
+  match cond with
+  | [ "skeleton" ; "is" ; skeleton ] ->
+      package_skeleton p = skeleton
+  | [ "kind" ; "is" ; kind ] -> kind = Misc.string_of_kind p.kind
+  | [ "pack" ] -> Misc.p_pack_modules p
+  | [ "skip" ;  skip ] -> List.mem skip p.project.skip
+  | [ "gen" ;  skip ] -> not ( List.mem skip p.project.skip )
+  | "not" :: cond -> not ( eval_package_cond p cond )
+  | [ "true" ] -> true
+  | [ "false" ] -> false
+  | _ ->
+      Printf.kprintf failwith "eval_package_cond: unknown condition %S\n%!"
+        ( String.concat ":" cond )
+
+let skeleton_flags skeleton file =
+  try
+    let flags =
+      try
+        StringMap.find file skeleton.skeleton_flags
+      with
+      (* This is absurd: toml.5.0.0 does not treat quoted keys and
+         unquoted keys internally in the same way... *)
+        Not_found ->
+          StringMap.find ( Printf.sprintf "\"%s\"" file )
+            skeleton.skeleton_flags
+    in
+    if flags.flag_file = "" then
+      { flags with flag_file = file ; flag_skipper = ref [] }
+    else
+      { flags with flag_skipper = ref [] }
+  with Not_found ->
+    { default_flags with flag_file = file ; flag_skipper = ref [] }
 
 let write_project_files write_file p =
   let skeleton = lookup_project p.skeleton in
@@ -183,43 +284,53 @@ let write_project_files write_file p =
     (fun (file, content) ->
       backup_skeleton file content;
 
-      let flags, bracket = bracket (Subst.project () p file) in
+      let flags = skeleton_flags skeleton file in
+      let bracket = bracket flags eval_project_cond in
       let content =
-        try Subst.project () ~bracket p content
-        with Not_found ->
-          Printf.eprintf "Exception Not_found in %S\n%!" file;
-          exit 2
+        if flags.flag_subst then
+          try Subst.project () ~bracket ~skipper:flags.flag_skipper p content
+          with Not_found ->
+            Printf.kprintf failwith "Exception Not_found in %S\n%!" file;
+        else content
       in
-      let { file; create; skips; record; skip } = flags in
-      write_file file ~create ~skips ~content ~record ~skip)
+      let { flag_file;
+            flag_create = create;
+            flag_skips = skips;
+            flag_record = record;
+            flag_skip = skip;
+            flag_skipper= _ ;
+            flag_subst = _ ; } = flags in
+      write_file flag_file ~create ~skips ~content ~record ~skip)
     skeleton.skeleton_files;
   ()
 
 let write_package_files write_file package =
-  let skeleton =
-    lookup_package
-      ( match package.p_skeleton with
-      | Some skeleton -> skeleton
-      | None -> (
-        match package.kind with
-        | Program -> "program"
-        | Library -> "library"
-        | Virtual -> "virtual" ) )
-  in
+  let skeleton = lookup_package (package_skeleton package) in
 
   List.iter
     (fun (file, content) ->
-      backup_skeleton file content;
-      let flags, bracket = bracket (Subst.package () package file) in
-      let content =
-        try Subst.package () ~bracket package content
-        with Not_found ->
-          Printf.eprintf "Exception Not_found in %S\n%!" file;
-          exit 2
-      in
-      let { file; create; skips; record; skip } = flags in
-      let file = package.dir // file in
-      write_file file ~create ~skips ~content ~record ~skip)
+       backup_skeleton file content;
+       let flags = skeleton_flags skeleton file in
+       let bracket = bracket flags eval_package_cond in
+       let content =
+         if flags.flag_subst then
+           try
+             Subst.package () ~bracket
+               ~skipper:flags.flag_skipper package content
+           with Not_found ->
+             Printf.kprintf failwith "Exception Not_found in %S\n%!" file
+         else
+           content
+       in
+       let { flag_file;
+             flag_create = create;
+             flag_skips = skips;
+             flag_record = record;
+             flag_skip = skip;
+             flag_skipper= _ ;
+             flag_subst = _ ; } = flags in
+       let file = package.dir // flag_file in
+       write_file file ~create ~skips ~content ~record ~skip)
     skeleton.skeleton_files
 
 let write_files write_file p =

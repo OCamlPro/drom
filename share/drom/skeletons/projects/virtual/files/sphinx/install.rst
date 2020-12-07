@@ -1,4 +1,3 @@
-![skip:sphinx]
 How to install
 ==============
 

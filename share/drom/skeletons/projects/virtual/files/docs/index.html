@@ -1,4 +1,3 @@
-![skip:docs]
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,8 +15,8 @@
       <div class="section">
         <ul>
           !{li-github}
-          !{li-doc-gen}
-          !{li-doc-api}
+![if:gen:docs]          !{li-doc-gen}![fi]
+![if:gen:sphinx]          !{li-doc-api}![fi]
           !{li-bug-reports}
         </ul>
         <p>Authors:</p>

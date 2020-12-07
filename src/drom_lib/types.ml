@@ -123,10 +123,23 @@ type switch_arg =
   | Local
   | Global of string
 
+(* These flags are used during file generation. They can either be set
+   in the file itself, or in the 'flags' section of the skeleton. *)
+type flags =
+  { mutable flag_file : string;
+    mutable flag_create : bool;
+    mutable flag_record : bool;
+    mutable flag_skips : string list;
+    mutable flag_skip : bool ;
+    mutable flag_subst : bool ;
+    flag_skipper : bool list ref ;
+  }
+
 type skeleton =
   { skeleton_inherits : string option;
     skeleton_toml : string list;
-    skeleton_files : (string * string) list
+    skeleton_files : (string * string) list;
+    skeleton_flags : flags StringMap.t;
   }
 
 type license = {

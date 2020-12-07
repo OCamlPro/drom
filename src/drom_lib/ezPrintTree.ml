@@ -10,42 +10,26 @@
 
 type tree = Branch of string * tree list
 
-let last_indent = "\226\148\148\226\148\128\226\148\128"
-
-let middle_indent = "\226\148\160\226\148\128\226\148\128"
+let up_down = "│  "
+let up_right_down = "├──"
+let up_right = "└──"
 
 let print_tree indent tree =
+
   let rec iter indent ~last = function
-    | Branch (s, branches) -> (
-      match branches with
-      | [] ->
-        Printf.printf "%s%s%s\n" indent
-          ( if last then
-            last_indent
-          else
-            middle_indent )
-          s
-      | branches ->
-        Printf.printf "%s%s%s\n" indent
-          ( if last then
-            last_indent
-          else
-            middle_indent )
-          s;
-        let indent =
+    | Branch (s, branches) ->
+        Printf.printf "%s%s %s\n"
           indent
-          ^
-          if last then
-            "   "
-          else
-            "\226\148\160  "
-        in
-        iter_branches indent branches )
+          (if last then up_right else up_right_down)
+          s;
+        iter_branches
+          (indent ^ if last then "   " else up_down) branches
+
   and iter_branches indent = function
-    | [] -> assert false
-    | [ branch ] -> iter indent ~last:true branch
-    | branch :: (_ :: _ as branches) ->
-      iter indent ~last:true branch;
+    | [] -> ()
+    | [ branch ] -> iter ( indent ^ " " ) ~last:true branch
+    | branch :: branches ->
+      iter ( indent ^ " ") ~last:false branch;
       iter_branches indent branches
   in
   iter indent ~last:true tree
