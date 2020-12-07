@@ -18,7 +18,7 @@ let rec dummy_project =
     packages = [];
     skeleton = None;
     edition = Globals.current_ocaml_edition;
-    min_edition = Globals.current_ocaml_edition;
+    min_edition = Globals.min_ocaml_edition;
     github_organization = None;
     homepage = None;
     license = License.key_LGPL2;
@@ -212,23 +212,6 @@ let dependencies_encoding =
         deps;
       !dependencies)
 
-let stringMap_encoding enc =
-  EzToml.encoding
-    ~to_toml:(fun map ->
-      let table = ref EzToml.empty in
-      StringMap.iter
-        (fun name s -> table := EzToml.put [ name ] (enc.to_toml s) !table)
-        map;
-      TTable !table)
-    ~of_toml:(fun ~key v ->
-      let table = EzToml.expect_table ~key ~name:"profile" v in
-      let map = ref StringMap.empty in
-      EzToml.iter
-        (fun k v ->
-          map := StringMap.add k (enc.of_toml ~key:(key @ [ k ]) v) !map)
-        table;
-      !map)
-
 let profile_encoding =
   EzToml.encoding
     ~to_toml:(fun prof ->
@@ -253,7 +236,7 @@ let profile_encoding =
         table;
       { flags = !flags })
 
-let fields_encoding = stringMap_encoding EzToml.string_encoding
+let fields_encoding = EzToml.ENCODING.stringMap EzToml.string_encoding
 
 let find_author config =
   match config.config_author with
@@ -390,7 +373,10 @@ let package_of_toml ?default table =
       else
         (table, None)
   in
-  let name = EzToml.get_string table [ "name" ] in
+  let name = try EzToml.get_string table [ "name" ] with Not_found ->
+    Printf.eprintf "Error: Missing field 'name' in package.toml\n%!";
+    exit 2
+  in
   let default = find_package ?default name in
   let dir = Misc.option_value dir ~default:default.dir in
   let kind =
@@ -571,7 +557,7 @@ let to_files p =
               {|    release = { ocaml-flags = "-w -a" }|};
             ]
             (encoding
-               (stringMap_encoding profile_encoding) p.profiles);
+               (EzToml.ENCODING.stringMap profile_encoding) p.profiles);
           option  "fields"
             ~comment:[ "project-wide fields (depends on project skeleton)" ]
             ( encoding fields_encoding p.fields );
@@ -835,7 +821,7 @@ let project_of_toml ?file ?default table =
 
   let profiles =
     EzToml.get_encoding_default
-      (stringMap_encoding profile_encoding)
+      (EzToml.ENCODING.stringMap profile_encoding)
       table [ "profile" ] d.profiles
   in
   let skip_dirs =

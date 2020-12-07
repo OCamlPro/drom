@@ -1,5 +1,50 @@
-kind = "program"
+
+# name of package
 name = "drom"
 skeleton = "driver"
+
+# version if different from project version
+# version = "0.1.0"
+
+# synopsis if different from project synopsis
+# synopsis = ...
+
+# description if different from project description
+# description = ...
+
+# kind is either "library", "program" or "virtual"
+kind = "program"
+
+# authors if different from project authors
+# authors = [ "Me <me@metoo.org>" ]
+
+# name of a file to generate with the current version
+# gen-version = "version.ml"
+
+# supported file generators are "ocamllex", "ocamlyacc" and "menhir" 
+# default is [ "ocamllex", "ocamlyacc" ] 
+# generators = [ "ocamllex", "menhir" ]
+
+# whether all modules should be packed/wrapped (default is true)
+# pack-modules = false
+
+# module name used to pack modules (if pack-modules is true)
+# pack = "Mylib"
+
+# compilation mode: "binary" (default) or "javascript"
+# mode = "javascript"
+
+# package library dependencies
+#   [dependencies]
+#   ez_file = ">=0.1 <1.3"
+#   base-unix = { libname = "unix", version = ">=base" } 
 [dependencies]
 drom_lib = "version"
+
+# package tools dependencies
+[tools]
+# ...
+
+# package fields (depends on package skeleton)
+[fields]
+# ...

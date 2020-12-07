@@ -16,6 +16,7 @@ let about =
   Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>" command
     Version.version
 
+let min_ocaml_edition = "4.07.0"
 let current_ocaml_edition = "4.10.0"
 
 let current_dune_version = "2.6.0"

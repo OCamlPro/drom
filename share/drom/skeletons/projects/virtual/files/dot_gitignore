@@ -1,4 +1,4 @@
-![skip:git]![file:.gitignore]!{gitignore-programs}
+!{gitignore-programs}
 *~
 _build
 .merlin

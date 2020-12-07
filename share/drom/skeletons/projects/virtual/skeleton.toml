@@ -1,2 +1,41 @@
 [skeleton]
 name = "virtual"
+
+[file]
+"Makefile" = { skips = [ "make" ] }
+
+"dot_ocp-indent" = { file = ".ocp-indent", create = true, skips = [ "ocamlformat" ] }
+
+"dot_ocamlformat" = { file = ".ocamlformat", create = true, skips = [ "ocamlformat" ] }
+"dot_ocamlformat-ignore" = { file = ".ocamlformat-ignore", skips = [ "ocamlformat" ] }
+
+"dot_github/workflows/workflow.yml" = { file = ".github/workflows/workflow.yml", skips = [ "github", "workflows" ] }
+"dot_github/workflows/doc-deploy.yml" = { file = ".github/workflows/doc-deploy.yml", skips = [ "github", "workflows" ] }
+
+"dog_gitignore" = { file = ".gitignore", skips = [ "git" ]  }
+
+"docs/index.html" = { skips = "docs" }
+"docs/favicon.png" = { skips = [ "docs" ], subst = false }
+"docs/README.txt" = { skips = "docs" }
+"docs/style.css" = { skips = "docs" }
+
+"sphinx/about.rst" = { skips = [ "sphinx", "docs" ] }
+"sphinx/conf.py" = { skips = [ "sphinx", "docs" ] }
+"sphinx/under_static/css/fixes.css" = { skips = [ "sphinx", "docs" ], file = "sphinx/_static/css/fixes.css", create = true }
+"sphinx/index.rst" = { skips = [ "sphinx", "docs" ] }
+"sphinx/install.rst" = { skips = [ "sphinx", "docs" ] }
+"sphinx/license.rst" = { skips = [ "sphinx", "docs" ] }
+
+"docs/doc/index.html" = { skips = "docs", create = true }
+"docs/sphinx/index.html" = { skips = "docs", create = true }
+
+"test/expect-tests/dune_" = { file = "test/expect-tests/dune", skips = "test" }
+"test/expect-tests/test.ml" = { skips = "test" }
+
+"test/inline-tests/dune_" = { file = "test/inline-tests/dune", skips = "test" }
+"test/inline-tests/test.ml" = { skips = "test" }
+
+"test/output-tests/dune_" = { file = "test/output-tests/dune", skips = "test" }
+"test/output-tests/test2.ml" = { skips = "test" }
+"test/output-tests/test1.expected" = { skips = "test" }
+"test/output-tests/test2.expected" = { skips = "test" }

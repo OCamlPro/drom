@@ -1,6 +1,15 @@
 
 ## v0.2.1 ( 2020-11-25 )
 
+* Add table `[file]` in `skeleton.toml` to specify flags for skeleton files
+    from the outside (useful for binary files for example). Flags can be
+    `file` (name of file), `create` (create only if non-existing), `skips`
+    (list of tags forcing skip), `subst` (do not perform substitution)
+* Extend skeleton substitution language with ![if:COND]...![else]...![fi]
+    COND can be `gen:SKIPTAG`, `skip:SKIPTAG`, `skeleton:is:SKELETON`,
+    `kind:is:KIND`, `not:COND`, `pack` (packed)
+* New skeleton projects `mini-lib` and `mini-prg` with
+   `skip = "test sphinx github docs ocamlformat ocp-indent code"`
 * Improved inline documentation of `drom.toml` and `package.toml` files
 * New command `drom opam-plugin` to install `drom` as an opam plugin, so it
   can be called `opam drom` from anywhere.

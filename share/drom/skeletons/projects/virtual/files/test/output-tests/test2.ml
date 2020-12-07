@@ -1,3 +1,3 @@
-![skip:test]let () =
+let () =
   Printf.printf "Bonjour\n%!";
   exit 0

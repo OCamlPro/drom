@@ -1,5 +1,4 @@
-![skip:ocpindent]![file:.ocp-indent]![create]!{global-ocpindent}
-# -*- conf -*-
+!{global-ocpindent}# -*- conf -*-
 # This is an example configuration file for ocp-indent
 #
 # Copy to the root of your project with name ".ocp-indent", customise, and

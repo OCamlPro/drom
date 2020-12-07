@@ -1,4 +1,3 @@
-![skip:sphinx]
 About
 =====
 

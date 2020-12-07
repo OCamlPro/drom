@@ -152,7 +152,8 @@ let update_files ?args ?mode ?(git = false) ?(create = false) p =
         if not record then
           write_file ~record:false hashes filename content
         else if not (Sys.file_exists filename) then (
-          Printf.eprintf "Creating file %s\n%!" filename;
+          if Misc.verbose 2 then
+            Printf.eprintf "Creating file %s\n%!" filename;
           write_file hashes filename content
         ) else if create then
           raise Skip
@@ -261,11 +262,6 @@ let update_files ?args ?mode ?(git = false) ?(create = false) p =
                      write_file hashes ( version_file ^ "t")
                        (GenVersion.file package file)
                );
-               ( match Odoc.template_src_index_mld package with
-                 | None -> ()
-                 | Some content ->
-                     write_file hashes (package.dir // "index.mld") content );
-
                let opam_filename = package.name ^ ".opam" in
                write_file hashes opam_filename
                  (Opam.opam_of_project Single package))

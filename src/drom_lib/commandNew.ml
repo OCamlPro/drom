@@ -16,6 +16,39 @@ open EzFile.OP
 
 let cmd_name = "new"
 
+
+let print_dir name dir =
+  let open EzPrintTree in
+  let rec iter name dir =
+    let files = Sys.readdir dir in
+    Array.sort compare files;
+    let files = Array.to_list files in
+    Branch (name,
+            List.map (fun file ->
+                let dir = dir // file in
+                if Sys.is_directory dir then
+                  iter (file ^ "/") dir
+                else
+                  let file =
+                    match file with
+                    | ".drom" -> ".drom             (drom state, do not edit)"
+                    | "drom.toml" -> "drom.toml    <────────── project config EDIT !"
+                    | "package.toml" -> "package.toml    <────────── package config EDIT !"
+                    | _ -> file
+                  in
+                  Branch (file, [])
+              )
+              (List.filter (function
+                   | ".git"
+                   | "_drom"
+                   | "_build"
+                     -> false
+                   | _ -> true
+                 ) files ))
+  in
+  let tree = iter name dir in
+  print_tree "" tree
+
 let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
   let skeleton_name = match skeleton with
     | None -> "program"
@@ -108,7 +141,8 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
   in
 
   let p = iter_skeleton skeleton.skeleton_toml in
-  Update.update_files ~create:true ?mode ~git:true ~args p
+  Update.update_files ~create:true ?mode ~git:true ~args p;
+  print_dir (name ^ "/") "."
 
 (* lookup for "drom.toml" and update it *)
 let action ~skeleton ~name ~mode ~inplace ~dir ~args =

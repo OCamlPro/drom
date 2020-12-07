@@ -1,4 +1,4 @@
-![skip:test]![file:test/output-tests/dune]; if you modify this file, add 'test' to the 'skip' field in drom.toml
+; if you modify this file, add 'test' to the 'skip' field in drom.toml
 
 ; a first example where we would test the behavior of one of the executables
 ; that we generate else-where

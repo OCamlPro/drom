@@ -1,4 +1,4 @@
-![skip:ocamlformat]![file:.ocamlformat]![create]!{global-ocamlformat}
+!{global-ocamlformat}
 version=0.15.0
 align-cases=false
 align-constructors-decl=false
