@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Welcome to drom doc &mdash; drom master
- (e83819a
-) (2020/12/08 13:00) documentation</title>
+ (5a2dfcf
+) (2020/12/08 23:27) documentation</title>
   
 
   
@@ -42,8 +42,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="drom master
- (e83819a
-) (2020/12/08 13:00) documentation" href="#"/>
+ (5a2dfcf
+) (2020/12/08 23:27) documentation" href="#"/>
         <link rel="next" title="About" href="about.html"/> 
 
   
@@ -74,7 +74,7 @@
             
               <div class="version">
                 master
- (e83819a
+ (5a2dfcf
 )
               </div>
             
@@ -110,6 +110,7 @@
 <li class="toctree-l1"><a class="reference internal" href="github.html">Github Projects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="licenses.html">Managing Licenses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">How to install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="skeletons.html">Contributing Your Own Skeletons</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://ocamlpro.github.io/drom/doc">API doc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Copyright and License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/ocamlpro/drom">Devel and Issues on Github</a></li>
@@ -211,6 +212,7 @@
 <li class="toctree-l2"><a class="reference internal" href="commands.html#drom-lock-since-version-0-2-1">drom lock (since version 0.2.1)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#drom-new">drom new</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#drom-odoc">drom odoc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#drom-opam-plugin-since-version-0-2-1">drom opam-plugin (since version 0.2.1)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#drom-package">drom package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#drom-project">drom project</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#drom-promote">drom promote</a></li>
@@ -234,6 +236,15 @@
 <li class="toctree-l2"><a class="reference internal" href="install.html#install-with-opam">Install with <code class="code docutils literal"><span class="pre">opam</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#build-and-install-with-dune">Build and install with <code class="code docutils literal"><span class="pre">dune</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#installing-drom-globally">Installing <code class="code docutils literal"><span class="pre">drom</span></code> globally</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="skeletons.html">Contributing Your Own Skeletons</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="skeletons.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skeletons.html#skeleton-locations">Skeleton Locations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skeletons.html#the-skeleton-format">The Skeleton Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skeletons.html#the-skeleton-substitution-language">The Skeleton Substitution Language</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skeletons.html#id1">Brace Substitutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skeletons.html#project-and-package-fields">Project and Package Fields</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://ocamlpro.github.io/drom/doc">API doc</a></li>
@@ -293,7 +304,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'master (e83819a) (2020/12/08 13:00)',
+            VERSION:'master (5a2dfcf) (2020/12/08 23:27)',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

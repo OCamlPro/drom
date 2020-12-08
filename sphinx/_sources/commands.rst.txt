@@ -43,6 +43,9 @@ Overview of sub-commands::
   odoc
     Generate API documentation using odoc in the _drom/docs/doc directory
   
+  opam-plugin (since version 0.2.1)
+    Install drom as an opam plugin (called by 'opam drom')
+  
   package
     Manage a package within a project
   
@@ -115,6 +118,8 @@ Where options are:
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
+* :code:`--profile PROFILE`   Build profile to use
+
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
 * :code:`--upgrade`   Upgrade project files from drom.toml
@@ -141,6 +146,8 @@ Where options are:
 * :code:`--local`   Create a local switch instead of using a global switch
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
+
+* :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
@@ -271,6 +278,8 @@ Where options are:
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
+* :code:`--profile PROFILE`   Build profile to use
+
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
 * :code:`--upgrade`   Upgrade project files from drom.toml
@@ -297,6 +306,8 @@ Where options are:
 * :code:`--local`   Create a local switch instead of using a global switch
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
+
+* :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
@@ -329,6 +340,8 @@ Where options are:
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
+* :code:`--profile PROFILE`   Build profile to use
+
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
 * :code:`--upgrade`   Upgrade project files from drom.toml
@@ -355,6 +368,8 @@ Where options are:
 * :code:`--local`   Create a local switch instead of using a global switch
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
+
+* :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
@@ -390,6 +405,8 @@ Where options are:
 * :code:`--local`   Create a local switch instead of using a global switch
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
+
+* :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
@@ -483,6 +500,8 @@ Where options are:
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
+* :code:`--profile PROFILE`   Build profile to use
+
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
 * :code:`--upgrade`   Upgrade project files from drom.toml
@@ -490,6 +509,35 @@ Where options are:
 * :code:`--view`   Open a browser on the documentation
 
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
+
+
+drom opam-plugin (since version 0.2.1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Install drom as an opam plugin (called by 'opam drom')
+
+
+
+**DESCRIPTION**
+
+
+This command performs the following actions:
+
+* 1.
+  Install drom executable in **$OPAMROOT/plugins/bin/opam-drom**
+
+* 2.
+  Install drom share files in **$OPAMROOT/plugins/opam-drom**, removing former files
+
+**USAGE**
+::
+  
+  drom opam-plugin [OPTIONS]
+
+Where options are:
+
+
+* :code:`--remove`   Remove drom as an opam plugin
 
 
 drom package
@@ -606,6 +654,8 @@ Where options are:
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
+* :code:`--profile PROFILE`   Build profile to use
+
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
 * :code:`--upgrade`   Upgrade project files from drom.toml
@@ -719,6 +769,8 @@ Where options are:
 
 * :code:`-p PACKAGE`   Package to run
 
+* :code:`--profile PROFILE`   Build profile to use
+
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
 * :code:`--upgrade`   Upgrade project files from drom.toml
@@ -764,6 +816,8 @@ Where options are:
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
+* :code:`--profile PROFILE`   Build profile to use
+
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
 * :code:`--upgrade`   Upgrade project files from drom.toml
@@ -808,6 +862,8 @@ Where options are:
 * :code:`--local`   Create a local switch instead of using a global switch
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
+
+* :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
@@ -878,6 +934,8 @@ Where options are:
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
+* :code:`--profile PROFILE`   Build profile to use
+
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
 * :code:`--upgrade`   Upgrade project files from drom.toml
@@ -922,6 +980,8 @@ Where options are:
 * :code:`--local`   Create a local switch instead of using a global switch
 
 * :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
+
+* :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
 
