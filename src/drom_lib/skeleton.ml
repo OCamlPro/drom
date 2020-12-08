@@ -217,29 +217,30 @@ let backup_skeleton file content =
   EzFile.make_dir ~p:true (Filename.dirname drom_file);
   EzFile.write_file drom_file content
 
-let project_skeleton = function
-  | None -> "program"
-  | Some skeleton -> skeleton
-
-let package_skeleton package =
-  match package.p_skeleton with
-  | Some skeleton -> skeleton
-  | None -> Misc.string_of_kind package.kind
-
 let lookup_project skeleton =
-  lookup_skeleton project_skeletons (project_skeleton skeleton)
+  lookup_skeleton project_skeletons (Misc.project_skeleton skeleton)
 
 let lookup_package skeleton = lookup_skeleton package_skeletons skeleton
 
 let rec eval_project_cond p cond =
   match cond with
   | [ "skeleton" ; "is" ; skeleton ] ->
-      project_skeleton p.skeleton = skeleton
+      Misc.project_skeleton p.skeleton = skeleton
   | [ "skip" ;  skip ] -> List.mem skip p.skip
   | [ "gen" ;  skip ] -> not ( List.mem skip p.skip )
   | "not" :: cond -> not ( eval_project_cond p cond )
   | [ "true" ] -> true
   | [ "false" ] -> false
+  | [ "windows-ci" ] -> p.windows_ci
+  | [ "github-organization"] -> p.github_organization <> None
+  | [ "homepage"] -> Misc.homepage p <> None
+  | [ "copyright"] -> p.copyright <> None
+  | [ "bug-reports"] -> Misc.bug_reports p <> None
+  | [ "dev-repo"] -> Misc.dev_repo p <> None
+  | [ "doc-gen"] -> Misc.doc_gen p <> None
+  | [ "doc-api"] -> Misc.doc_api p <> None
+  | [ "sphinx-target"] -> p.sphinx_target <> None
+  | [ "profile"] -> p.profile <> None
   | _ ->
       Printf.kprintf failwith "eval_project_cond: unknown condition %S\n%!"
         ( String.concat ":" cond )
@@ -247,7 +248,7 @@ let rec eval_project_cond p cond =
 let rec eval_package_cond p cond =
   match cond with
   | [ "skeleton" ; "is" ; skeleton ] ->
-      package_skeleton p = skeleton
+      Misc.package_skeleton p = skeleton
   | [ "kind" ; "is" ; kind ] -> kind = Misc.string_of_kind p.kind
   | [ "pack" ] -> Misc.p_pack_modules p
   | [ "skip" ;  skip ] -> List.mem skip p.project.skip
@@ -255,6 +256,7 @@ let rec eval_package_cond p cond =
   | "not" :: cond -> not ( eval_package_cond p cond )
   | [ "true" ] -> true
   | [ "false" ] -> false
+  | "project" :: cond -> eval_project_cond p.project cond
   | _ ->
       Printf.kprintf failwith "eval_package_cond: unknown condition %S\n%!"
         ( String.concat ":" cond )
@@ -305,7 +307,7 @@ let write_project_files write_file p =
   ()
 
 let write_package_files write_file package =
-  let skeleton = lookup_package (package_skeleton package) in
+  let skeleton = lookup_package (Misc.package_skeleton package) in
 
   List.iter
     (fun (file, content) ->

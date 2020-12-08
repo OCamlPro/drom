@@ -245,8 +245,6 @@ let update_files ?args ?mode ?(git = false) ?(create = false) p =
               Git.call [ "commit"; "--allow-empty"; "-m"; "Initial commit" ];
         );
 
-      write_file hashes "dune-project" (Dune.template_dune_project p);
-
       List.iter
         (fun package ->
            match package.kind with

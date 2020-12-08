@@ -13,7 +13,7 @@ let query cmd =
 
 let commit_hash = query "git show -s --pretty=format:%H"
 let commit_date = query "git show -s --pretty=format:%ci"
-let version = "0.2.1"
+let version = "0.2.2"
 let version =
   match commit_hash with
   | Some commit_hash ->
