@@ -372,21 +372,182 @@ The following project skeletons are available by default:
   be seen as the root of the inheritance tree between project
   skeletons.
 
+  Files::
+    
+    $ drom new VIRTUAL --skeleton virtual
+    └── VIRTUAL/
+        ├── .drom             (drom state, do not edit)
+        ├── .github/
+        │   └── workflows/
+        │       ├── doc-deploy.yml
+        │       └── workflow.yml
+        ├── .ocamlformat
+        ├── .ocamlformat-ignore
+        ├── .ocp-indent
+        ├── CHANGES.md
+        ├── LICENSE.md
+        ├── Makefile
+        ├── README.md
+        ├── docs/
+        │   ├── README.txt
+        │   ├── doc/
+        │   │   └── index.html
+        │   ├── favicon.png
+        │   ├── index.html
+        │   ├── sphinx/
+        │   │   └── index.html
+        │   └── style.css
+        ├── dot_gitignore
+        ├── drom.toml    <────────── project config EDIT !
+        ├── dune
+        ├── dune-project
+        ├── sphinx/
+        │   ├── _static/
+        │   │   └── css/
+        │   │       └── fixes.css
+        │   ├── about.rst
+        │   ├── conf.py
+        │   ├── index.rst
+        │   ├── install.rst
+        │   └── license.rst
+        ├── src/
+        │   └── VIRTUAL/
+        │       └── package.toml    <────────── package config EDIT !
+        └── test/
+            ├── expect-tests/
+            │   ├── dune
+            │   └── test.ml
+            ├── inline-tests/
+            │   ├── dune
+            │   └── test.ml
+            └── output-tests/
+                ├── dune
+                ├── test1.expected
+                ├── test2.expected
+                └── test2.ml
+
 * The :code:`library` skeleton contains only a library package. It
   inherits from the :code:`virtual` skeleton.
 
+  Files::
+    
+    $ drom new LIBRARY --skeleton library
+    └── LIBRARY/
+        │
+        .  (same as virtual )
+        .
+        ├── LIBRARY.opam
+        ├── src/
+        │   └── LIBRARY/
+        │       ├── dune
+        │       ├── index.mld
+        │       ├── main.ml
+        │       ├── package.toml    <────────── package config EDIT !
+        │       └── version.mlt
+        └── test/
+        .
+        .  (same as virtual )
+        
 * The :code:`program` skeleton contains both a library and a driver
   packages. It inherits from the :code:`virtual` skeleton. It is the
   default project skeleton used when nothing is specified.
 
+  Files::
+    
+    $ drom new PROGRAM --skeleton program
+    └── PROGRAM/
+        │
+        .  (same as virtual )
+        .
+        ├── PROGRAM.opam
+        ├── PROGRAM_lib.opam
+        ├── src/
+        │   ├── PROGRAM/
+        │   │   ├── dune
+        │   │   ├── index.mld
+        │   │   ├── main.ml
+        │   │   └── package.toml    <────────── package config EDIT !
+        │   └── PROGRAM_lib/
+        │       ├── dune
+        │       ├── index.mld
+        │       ├── main.ml
+        │       ├── package.toml    <────────── package config EDIT !
+        │       └── version.mlt
+        └── test/
+        .
+        .  (same as virtual )
+
 * The :code:`mini-lib` skeleton contains a library package, with a minimal
   set of files (no test, no docs, etc.)
+
+  Files::
+    
+    $ drom new MINI-LIB --skeleton mini-lib
+    └── MINI-LIB/
+        ├── .drom             (drom state, do not edit)
+        ├── CHANGES.md
+        ├── LICENSE.md
+        ├── MINI-LIB.opam
+        ├── Makefile
+        ├── README.md
+        ├── dot_gitignore
+        ├── drom.toml    <────────── project config EDIT !
+        ├── dune
+        ├── dune-project
+        └── src/
+            └── MINI-LIB/
+                ├── dune
+                ├── package.toml    <────────── package config EDIT !
+                └── version.mlt
 
 * The :code:`mini-prg` skeleton contains a program package, with a minimal
   set of files (no test, no docs, etc.)
 
-* The :code:`ppx_rewriter` skeleton contains a library package that defines
-  a *ppx_rewriter*, with a minimal example of code.
+  Files::
+    
+    $ drom new MINI-PRG --skeleton mini-prg 
+    └── MINI-PRG/
+        ├── .drom             (drom state, do not edit)
+        ├── CHANGES.md
+        ├── LICENSE.md
+        ├── MINI-PRG.opam
+        ├── MINI-PRG_lib.opam
+        ├── Makefile
+        ├── README.md
+        ├── dot_gitignore
+        ├── drom.toml    <────────── project config EDIT !
+        ├── dune
+        ├── dune-project
+        └── src/
+            ├── MINI-PRG/
+            │   ├── dune
+            │   └── package.toml    <────────── package config EDIT !
+            └── MINI-PRG_lib/
+                ├── dune
+                ├── package.toml    <────────── package config EDIT !
+                └── version.mlt
+
+* The :code:`ppx_deriver` skeleton contains a library package that defines
+  a *ppx_deriver*, with a minimal example of code.
+
+  Files::
+    
+    $ drom new PPX_DERIVER --skeleton ppx_deriver
+    └── PPX_DERIVER/
+        │
+        .  (same as virtual )
+        .
+        ├── PPX_DERIVER.opam
+        ├── src/
+        │   └── PPX_DERIVER/
+        │       ├── dune
+        │       ├── index.mld
+        │       ├── main.ml
+        │       ├── package.toml    <────────── package config EDIT !
+        │       └── version.mlt
+        └── test/
+        .
+        .  (same as virtual )
 
 Package Skeletons
 ~~~~~~~~~~~~~~~~~
@@ -401,8 +562,8 @@ The following package skeletons are available by default:
 * The :code:`program` skeleton contains a simple program.
 * The :code:`driver` skeleton contains a simple program that only
   calls the main entry point of an associated library.
-* The :code:`ppx_rewriter` skeleton contains a simple library that defines
-  a *ppx_rewriter*.
+* The :code:`ppx_deriver` skeleton contains a simple library that defines
+  a *ppx_deriver*.
 
 Note that the project :code:`program` skeleton combines a
 :code:`library` package skeleton with a :code:`driver` package
