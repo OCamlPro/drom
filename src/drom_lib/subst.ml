@@ -407,7 +407,7 @@ let subst_encode p_subst escape p s =
               | "cap" -> String.capitalize var
               | "uncap" -> String.uncapitalize var
               | "low" -> String.lowercase var
-              | "up" -> String.uppercase var
+              | "up" | "upp" -> String.uppercase var
               | "alpha" -> Misc.underscorify var
               | _ ->
                   Printf.eprintf "Error: unknown encoding %S\n%!" encoding;

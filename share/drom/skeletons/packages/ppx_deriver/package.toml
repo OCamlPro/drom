@@ -1,0 +1,7 @@
+name = "!{name}"
+dir = "!{dir}"
+kind = "ppx_deriver"
+
+# for now, this file is not used by drom. Packages are initialized from
+# project skeletons data
+
