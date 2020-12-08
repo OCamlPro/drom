@@ -3,7 +3,7 @@
 open Ppxlib
 open Ast_builder.Default
 
-let verbose = match Sys.getenv_opt "PPX_ENCODING_DEBUG" with
+let verbose = match Sys.getenv_opt "!{name:upp}_DEBUG" with
   | None | Some "0" | Some "false" | Some "no" -> 0
   | Some s ->
     match s with

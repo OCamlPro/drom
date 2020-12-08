@@ -2,8 +2,6 @@ name = "!{name}"
 dir = "!{dir}"
 kind = "ppx_deriver"
 
-[fields]
-dune-stanzas = """
- ; add here any runtime library of your ppx, also add it to the [tools] section
- (ppx_runtime_libraries ))
-"""
+# for now, this file is not used by drom. Packages are initialized from
+# project skeletons data
+
