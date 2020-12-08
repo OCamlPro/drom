@@ -1,0 +1,3 @@
+[skeleton]
+name = "ppx_deriver"
+inherits = "library"

@@ -1,0 +1,9 @@
+[skeleton]
+name = "ppx_deriver"
+inherits = "virtual"
+
+[file]
+dune_ = { file = "dune" }
+"index.mld" = { skips = [ "docs" ] }
+"main.ml" = { skips = [ "code" ] }
+
