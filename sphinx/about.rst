@@ -27,4 +27,4 @@ With help and advises from:
 * Raja Boujbel <raja.boujbel@ocamlpro.com>
 * Albin Coquereau <albin.coquereau@ocamlpro.com>
 * Guillaume Bury <guillaume.bury@ocamlpro.com>
-  
+* Maxime Levillain <maxime.levillain@origin-labs.com>

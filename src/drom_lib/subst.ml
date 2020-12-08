@@ -284,6 +284,8 @@ let project_brace (_, p) v =
             ) p.packages;
         ) p.share_dirs;
       Buffer.contents b
+
+  | "dune-packages" -> Dune.packages p
   | s ->
       Printf.eprintf "Error: no project substitution for %S\n%!" s;
       raise Not_found
