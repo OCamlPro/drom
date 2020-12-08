@@ -20,6 +20,7 @@ Welcome to drom doc
    github
    licenses
    install
+   skeletons
    API doc <https://ocamlpro.github.io/drom/doc>
    license
 
