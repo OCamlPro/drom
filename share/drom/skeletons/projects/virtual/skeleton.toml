@@ -24,7 +24,7 @@ name = "virtual"
    file = ".github/workflows/doc-deploy.yml",
    skips = [ "github", "workflows" ] }
 
-"dog_gitignore" = { file = ".gitignore", skips = [ "git" ]  }
+"dot_gitignore" = { file = ".gitignore", skips = [ "git" ]  }
 
 "docs/index.html" = { skips = "docs" }
 "docs/favicon.png" = { skips = [ "docs" ], subst = false }

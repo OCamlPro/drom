@@ -10,7 +10,7 @@ license = "LGPL2"
 min-edition = "4.07.0"
 name = "drom"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
-version = "0.2.1"
+version = "0.2.2"
 windows-ci = true
 
 # keys that you could also define:
