@@ -36,6 +36,14 @@
     as "skeletons/packages/driver/package.toml")
    ( "share/drom/skeletons/packages/driver/skeleton.toml"
     as "skeletons/packages/driver/skeleton.toml")
+   ( "share/drom/skeletons/packages/js/files/dune_"
+    as "skeletons/packages/js/files/dune_")
+   ( "share/drom/skeletons/packages/js/files/main.ml"
+    as "skeletons/packages/js/files/main.ml")
+   ( "share/drom/skeletons/packages/js/package.toml"
+    as "skeletons/packages/js/package.toml")
+   ( "share/drom/skeletons/packages/js/skeleton.toml"
+    as "skeletons/packages/js/skeleton.toml")
    ( "share/drom/skeletons/packages/library/dune_"
     as "skeletons/packages/library/dune_")
    ( "share/drom/skeletons/packages/library/index.mld"
@@ -96,6 +104,10 @@
     as "skeletons/packages/virtual/package.toml")
    ( "share/drom/skeletons/packages/virtual/skeleton.toml"
     as "skeletons/packages/virtual/skeleton.toml")
+   ( "share/drom/skeletons/projects/js/drom.toml"
+    as "skeletons/projects/js/drom.toml")
+   ( "share/drom/skeletons/projects/js/skeleton.toml"
+    as "skeletons/projects/js/skeleton.toml")
    ( "share/drom/skeletons/projects/library/drom.toml"
     as "skeletons/projects/library/drom.toml")
    ( "share/drom/skeletons/projects/library/skeleton.toml"
