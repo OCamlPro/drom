@@ -1,0 +1,7 @@
+[skeleton]
+name = "js"
+inherits = "virtual"
+
+[file]
+dune_ = { file = "dune", skips = [ "dune" ] }
+"main.ml" = { skips = [ "code" ] }

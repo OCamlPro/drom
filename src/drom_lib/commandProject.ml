@@ -75,6 +75,7 @@ let cmd =
             Arg.Unit
               (fun () ->
                  mode := Some Javascript;
+                 skeleton := Some "js";
                  args.arg_upgrade <- true),
             EZCMD.info "Compile to javascript" );
           ( [ "skeleton" ],

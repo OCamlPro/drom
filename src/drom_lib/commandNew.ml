@@ -189,7 +189,9 @@ let cmd =
               Arg.Unit (fun () -> mode := Some Binary),
               EZCMD.info "Compile to binary" );
             ( [ "javascript" ],
-              Arg.Unit (fun () -> mode := Some Javascript),
+              Arg.Unit (fun () ->
+                  skeleton := Some "js";
+                  mode := Some Javascript),
               EZCMD.info "Compile to javascript" );
             ( [ "skeleton" ],
               Arg.String (fun s -> skeleton := Some s),
