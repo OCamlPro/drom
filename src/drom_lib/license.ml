@@ -143,6 +143,8 @@ let header_mll p = header p
 
 let header_mly p = header ~sep:c_sep p
 
+let header_c p = header ~sep:c_sep p
+
 let license p =
   let key = p.license in
   try

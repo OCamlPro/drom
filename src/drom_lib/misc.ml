@@ -323,3 +323,12 @@ let string_of_kind = function
   | Program -> "program"
   | Library -> "library"
   | Virtual -> "virtual"
+
+let project_skeleton = function
+  | None -> "program"
+  | Some skeleton -> skeleton
+
+let package_skeleton package =
+  match package.p_skeleton with
+  | Some skeleton -> skeleton
+  | None -> string_of_kind package.kind

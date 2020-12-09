@@ -35,6 +35,7 @@ let project_brace (_, p) v =
   | "name" -> p.package.name
   | "synopsis" -> p.synopsis
   | "description" -> p.description
+  | "skeleton" -> Misc.project_skeleton p.skeleton
   | "version" -> p.version
   | "edition" -> p.edition
   | "min-edition" -> p.min_edition
@@ -50,8 +51,9 @@ let project_brace (_, p) v =
   | "license" -> License.license p
   | "license-name" -> p.license
   | "header-ml" -> License.header_ml p
-  | "header-mll" -> License.header_mll p
+  | "header-c" -> License.header_c p
   | "header-mly" -> License.header_mly p
+  | "header-mll" -> License.header_mll p
   | "authors-ampersand" -> String.concat " & " p.authors
   (* general *)
   | "year" -> (Misc.date ()).Unix.tm_year |> string_of_int
@@ -300,14 +302,14 @@ let project_paren (_, p) name =
 let package_brace (context, package) v =
   match v with
   | "name"
-  | "package-name" ->
-      package.name
+  | "package-name" -> package.name
+  | "skeleton" -> Misc.package_skeleton package
   | "library-name" -> Misc.library_name package
   | "pack" -> Misc.library_module package
+  | "kind" -> Misc.string_of_kind package.kind
   | "modules" -> String.concat " " (Misc.modules package)
   | "dir"
-  | "package-dir" ->
-      package.dir
+  | "package-dir" -> package.dir
   | "pack-modules" -> string_of_bool (Misc.p_pack_modules package)
   | "dune-libraries" ->
       let dependencies =
