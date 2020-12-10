@@ -28,6 +28,8 @@
     as "skeletons/README.md")
    ( "share/drom/skeletons/packages/driver/files/dune_"
     as "skeletons/packages/driver/files/dune_")
+   ( "share/drom/skeletons/packages/driver/files/index.mld"
+    as "skeletons/packages/driver/files/index.mld")
    ( "share/drom/skeletons/packages/driver/files/main.ml"
     as "skeletons/packages/driver/files/main.ml")
    ( "share/drom/skeletons/packages/driver/package.toml"
@@ -36,12 +38,24 @@
     as "skeletons/packages/driver/skeleton.toml")
    ( "share/drom/skeletons/packages/library/files/dune_"
     as "skeletons/packages/library/files/dune_")
+   ( "share/drom/skeletons/packages/library/files/index.mld"
+    as "skeletons/packages/library/files/index.mld")
    ( "share/drom/skeletons/packages/library/files/main.ml"
     as "skeletons/packages/library/files/main.ml")
    ( "share/drom/skeletons/packages/library/package.toml"
     as "skeletons/packages/library/package.toml")
    ( "share/drom/skeletons/packages/library/skeleton.toml"
     as "skeletons/packages/library/skeleton.toml")
+   ( "share/drom/skeletons/packages/ppx_deriver/files/dune_"
+    as "skeletons/packages/ppx_deriver/files/dune_")
+   ( "share/drom/skeletons/packages/ppx_deriver/files/index.mld"
+    as "skeletons/packages/ppx_deriver/files/index.mld")
+   ( "share/drom/skeletons/packages/ppx_deriver/files/main.ml"
+    as "skeletons/packages/ppx_deriver/files/main.ml")
+   ( "share/drom/skeletons/packages/ppx_deriver/package.toml"
+    as "skeletons/packages/ppx_deriver/package.toml")
+   ( "share/drom/skeletons/packages/ppx_deriver/skeleton.toml"
+    as "skeletons/packages/ppx_deriver/skeleton.toml")
    ( "share/drom/skeletons/packages/program/files/dune_"
     as "skeletons/packages/program/files/dune_")
    ( "share/drom/skeletons/packages/program/files/main.ml"
@@ -58,6 +72,18 @@
     as "skeletons/projects/library/project.toml")
    ( "share/drom/skeletons/projects/library/skeleton.toml"
     as "skeletons/projects/library/skeleton.toml")
+   ( "share/drom/skeletons/projects/mini-lib/project.toml"
+    as "skeletons/projects/mini-lib/project.toml")
+   ( "share/drom/skeletons/projects/mini-lib/skeleton.toml"
+    as "skeletons/projects/mini-lib/skeleton.toml")
+   ( "share/drom/skeletons/projects/mini-prg/project.toml"
+    as "skeletons/projects/mini-prg/project.toml")
+   ( "share/drom/skeletons/projects/mini-prg/skeleton.toml"
+    as "skeletons/projects/mini-prg/skeleton.toml")
+   ( "share/drom/skeletons/projects/ppx_deriver/project.toml"
+    as "skeletons/projects/ppx_deriver/project.toml")
+   ( "share/drom/skeletons/projects/ppx_deriver/skeleton.toml"
+    as "skeletons/projects/ppx_deriver/skeleton.toml")
    ( "share/drom/skeletons/projects/program/project.toml"
     as "skeletons/projects/program/project.toml")
    ( "share/drom/skeletons/projects/program/skeleton.toml"
@@ -94,6 +120,8 @@
     as "skeletons/projects/virtual/files/dot_ocamlformat-ignore")
    ( "share/drom/skeletons/projects/virtual/files/dot_ocp-indent"
     as "skeletons/projects/virtual/files/dot_ocp-indent")
+   ( "share/drom/skeletons/projects/virtual/files/dune-project_"
+    as "skeletons/projects/virtual/files/dune-project_")
    ( "share/drom/skeletons/projects/virtual/files/dune_"
     as "skeletons/projects/virtual/files/dune_")
    ( "share/drom/skeletons/projects/virtual/files/sphinx/about.rst"
