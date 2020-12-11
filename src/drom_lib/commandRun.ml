@@ -27,9 +27,11 @@ let action ~args ~cmd ~package =
       | Program -> p.package.name :: cmd
       | Virtual -> cmd )
   in
+  let dev_null = Unix.openfile "/dev/null" [Unix.O_RDWR] 0o0655 in
   Misc.call
     (Array.of_list
        ("opam" :: "exec" :: "--" :: "dune" :: "exec" :: "--" :: cmd))
+    ~stdout:dev_null
 
 let cmd =
   let cmd = ref [] in
