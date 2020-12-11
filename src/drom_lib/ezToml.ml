@@ -78,15 +78,13 @@ let rec get table keys =
 let get_string table keys =
   match get table keys with
   | TString s -> s
-  | _ -> raise Not_found
-  | exception _exn ->
-    (*
-    Printf.eprintf "Missing key %s: exception %s in %s\n%!"
-      ( String.concat "." keys )
-      ( Printexc.to_string exn )
-      ( Toml.Printer.string_of_table table )
-    ; *)
-    raise Not_found
+  | _ ->
+      failwith
+        "Wrong key type %s: expexted String in %s"
+        ( String.concat "." keys )
+        ( Toml.Printer.string_of_table table )
+
+  | exception _exn -> raise Not_found
 
 let get_string_default table keys default =
   match get_string table keys with

@@ -169,7 +169,7 @@ let wget ~url ~output =
        "--retry-delay";
        "2";
        "--user-agent";
-       "opam-bin/2.0.5";
+       "drom/0.1.0";
        "-L";
        "-o";
        output;

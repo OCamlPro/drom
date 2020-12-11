@@ -101,33 +101,38 @@ let load_skeleton ~dir ~toml ~kind =
     | `Error _ -> Error.raise "Could not parse skeleton file %S" toml
   in
 
-  let name = EzToml.get_string table [ "skeleton"; "name" ] in
+  let name = try
+      EzToml.get_string table [ "skeleton"; "name" ]
+    with Not_found ->
+      failwith "load_skeleton: wrong or missing key skeleton.name"
+  in
   let skeleton_inherits =
     EzToml.get_string_option table [ "skeleton"; "inherits" ]
   in
   let skeleton_toml =
-    let file = dir // (kind ^ ".toml") in
-    if Sys.file_exists file then
-      [ EzFile.read_file file ]
-    else begin
-      Printf.eprintf "Warning: file %s does not exist\n%!" file;
+    let file = dir // "drom.toml" in
+    if kind = "project" then
+      if Sys.file_exists file then
+        [ EzFile.read_file file ]
+      else begin
+        Printf.eprintf "Warning: file %s does not exist\n%!" file;
+        []
+      end
+    else
       []
-    end
   in
   let skeleton_files =
-    let dir = dir // "files" in
-    if not ( Sys.file_exists dir ) then begin
-      if !Globals.verbosity > 1 then
-        Printf.eprintf "Warning: missing files dir %s\n%!" dir;
-      []
-    end else
-      let files = ref [] in
-      EzFile.make_select EzFile.iter_dir ~deep:true dir ~kinds:[ S_REG; S_LNK ]
-        ~f:(fun path ->
-            if not ( Filename.check_suffix path "~" ) then
-              let content = EzFile.read_file (dir // path) in
-              files := (path, content) :: !files);
-      !files
+    let files = ref [] in
+    EzFile.make_select EzFile.iter_dir ~deep:true dir ~kinds:[ S_REG; S_LNK ]
+      ~f:(fun path ->
+          match String.lowercase ( Filename.basename path ) with
+          | "drom.toml"
+          | "skeleton.toml" -> ()
+          | _ ->
+              if not ( Filename.check_suffix path "~" ) then
+                let content = EzFile.read_file (dir // path) in
+                files := (path, content) :: !files);
+    !files
   in
   let skeleton_flags = EzToml.get_encoding_default
       (EzToml.ENCODING.stringMap flags_encoding) table [ "file" ]
@@ -142,11 +147,14 @@ let load_dir_skeletons map kind dir =
         let dir = dir // file in
         let toml = dir // "skeleton.toml" in
         if Sys.file_exists toml then
-          let name, skeleton = load_skeleton ~dir ~toml ~kind in
-          if !Globals.verbosity > 0 &&  StringMap.mem name !map then
-            Printf.eprintf "Warning: %s skeleton %S overwritten in %s\n%!"
-              kind name dir;
-          map := StringMap.add name skeleton !map
+          try
+            let name, skeleton = load_skeleton ~dir ~toml ~kind in
+            if !Globals.verbosity > 0 &&  StringMap.mem name !map then
+              Printf.eprintf "Warning: %s skeleton %S overwritten in %s\n%!"
+                kind name dir;
+            map := StringMap.add name skeleton !map
+          with exn ->
+            Printf.eprintf "Warning: could not load %s skeleton from %S, exception:\n%S\n%!" kind dir (Printexc.to_string exn)
       );
     !map
   end else
@@ -190,24 +198,57 @@ let rec inherit_files self_files super_files =
     else
       (super_file, super_content) :: inherit_files self_files super_files_tail
 
-let lookup_skeleton skeletons name =
+let lookup_skeleton ?(project=false) skeletons name =
   let skeletons = Lazy.force skeletons in
   let rec iter name =
     match StringMap.find name skeletons with
-    | exception Not_found -> Error.raise "Missing skeleton %S" name
+    | exception Not_found -> download_skeleton name
     | self -> (
-      match self.skeleton_inherits with
-      | None -> self
-      | Some super ->
-        let super = iter super in
-        let skeleton_toml = self.skeleton_toml @ super.skeleton_toml in
-        let skeleton_files =
-          inherit_files self.skeleton_files super.skeleton_files
-        in
-        { skeleton_inherits = None; skeleton_toml; skeleton_files ;
-          skeleton_flags =
-            StringMap.union (fun _ x _ -> Some x)
-              self.skeleton_flags super.skeleton_flags } )
+        match self.skeleton_inherits with
+        | None -> self
+        | Some super ->
+            let super = iter super in
+            let skeleton_toml = self.skeleton_toml @ super.skeleton_toml in
+            let skeleton_files =
+              inherit_files self.skeleton_files super.skeleton_files
+            in
+            { skeleton_inherits = None; skeleton_toml; skeleton_files ;
+              skeleton_flags =
+                StringMap.union (fun _ x _ -> Some x)
+                  self.skeleton_flags super.skeleton_flags } )
+
+  and download_skeleton name =
+    if project then
+      match EzString.chop_prefix name ~prefix:"gh:" with
+      | None ->
+          Error.raise "Missing skeleton %S" name
+      | Some github_project ->
+          let url = Printf.sprintf "https://github.com/%s/tarball/master"
+              github_project in
+          let output = Filename.temp_file "archive" ".tgz" in
+          Misc.wget ~url ~output;
+          let basedir = Printf.sprintf "gh-%s"
+              ( Digest.string name |> Digest.to_hex ) in
+          let dir = Globals.config_dir // "skeletons"
+                    // "projects" // basedir in
+          EzFile.make_dir ~p:true dir;
+          Misc.call [| "tar" ; "zxf"; output ;
+                       "--strip-components=1"; "-C"; dir |];
+          let toml = dir // "skeleton.toml" in
+          if not ( Sys.file_exists toml ) then
+            EzFile.write_file toml
+              ( Printf.sprintf {|[skeleton]
+name = "%s"
+|} name );
+          let (skel_name, skeleton) = load_skeleton ~dir ~toml ~kind:"project"
+          in
+          if skel_name = name then
+            skeleton
+          else
+            Error.raise "Wrong remote skeleton %S instead of %S in %s\n"
+              skel_name name dir
+    else
+      Error.raise "Missing skeleton %S" name
   in
   iter name
 
@@ -218,7 +259,8 @@ let backup_skeleton file content =
   EzFile.write_file drom_file content
 
 let lookup_project skeleton =
-  lookup_skeleton project_skeletons (Misc.project_skeleton skeleton)
+  lookup_skeleton ~project:true
+    project_skeletons (Misc.project_skeleton skeleton)
 
 let lookup_package skeleton = lookup_skeleton package_skeletons skeleton
 
