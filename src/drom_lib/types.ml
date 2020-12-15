@@ -59,7 +59,8 @@ type package =
   }
 
 and project =
-  { package : package;
+  { package : package; (* main package *)
+    (* The list of all packages, including the main package *)
     mutable packages : package list;
     mutable file : string option;
     (* name of the file *)
@@ -140,6 +141,8 @@ type skeleton =
     skeleton_toml : string list;
     skeleton_files : (string * string) list;
     skeleton_flags : flags StringMap.t;
+    skeleton_drom : bool ;
+    skeleton_name : string ;
   }
 
 type license = {

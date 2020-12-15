@@ -99,7 +99,7 @@ let flags_encoding =
         flags
       )
 
-let load_skeleton ~dir ~toml ~kind =
+let load_skeleton ~drom ~dir ~toml ~kind =
   let table =
     match EzToml.from_file toml with
     | `Ok table -> table
@@ -115,16 +115,18 @@ let load_skeleton ~dir ~toml ~kind =
     EzToml.get_string_option table [ "skeleton"; "inherits" ]
   in
   let skeleton_toml =
-    let file = dir // "drom.toml" in
-    if kind = "project" then
-      if Sys.file_exists file then
-        [ EzFile.read_file file ]
-      else begin
-        Printf.eprintf "Warning: file %s does not exist\n%!" file;
-        []
-      end
-    else
+    let basename =
+      if kind = "project" then "drom.toml" else
+      if kind = "package" then "package.toml" else
+        assert false
+    in
+    let file = dir // basename in
+    if Sys.file_exists file then
+      [ EzFile.read_file file ]
+    else begin
+      Printf.eprintf "Warning: file %s does not exist\n%!" file;
       []
+    end
   in
   let skeleton_files =
     let files = ref [] in
@@ -132,6 +134,7 @@ let load_skeleton ~dir ~toml ~kind =
       ~f:(fun path ->
           match String.lowercase ( Filename.basename path ) with
           | "drom.toml"
+          | "package.toml"
           | "skeleton.toml" -> ()
           | _ ->
               if not ( Filename.check_suffix path "~" ) then
@@ -142,10 +145,24 @@ let load_skeleton ~dir ~toml ~kind =
   let skeleton_flags = EzToml.get_encoding_default
       (EzToml.ENCODING.stringMap flags_encoding) table [ "file" ]
       StringMap.empty  in
+  begin
+    match EzToml.get table [ "files" ] with
+    | exception Not_found -> ()
+    | _ ->
+        Printf.eprintf
+          "Warning: %s skeleton %S has an entry [files], probably instead of [file]\n%!"
+          kind name
+  end;
   (*  Printf.eprintf "Loaded %s skeleton %s\n%!" kind name; *)
-  (name, { skeleton_toml; skeleton_inherits; skeleton_files ; skeleton_flags })
+  (name, { skeleton_toml;
+           skeleton_inherits;
+           skeleton_files ;
+           skeleton_flags ;
+           skeleton_drom = drom;
+           skeleton_name = name;
+         })
 
-let load_dir_skeletons map kind dir =
+let load_dir_skeletons ~drom map kind dir =
   if Sys.file_exists dir then begin
     let map = ref map in
     EzFile.iter_dir dir ~f:(fun file ->
@@ -153,7 +170,7 @@ let load_dir_skeletons map kind dir =
         let toml = dir // "skeleton.toml" in
         if Sys.file_exists toml then
           try
-            let name, skeleton = load_skeleton ~dir ~toml ~kind in
+            let name, skeleton = load_skeleton ~drom ~dir ~toml ~kind in
             if !Globals.verbosity > 0 &&  StringMap.mem name !map then
               Printf.eprintf "Warning: %s skeleton %S overwritten in %s\n%!"
                 kind name dir;
@@ -167,27 +184,26 @@ let load_dir_skeletons map kind dir =
 
 let kind_dir ~kind = "skeletons" // kind ^ "s"
 
-let load_skeletons map kind =
-  let map =
+let load_system_skeletons map kind =
     match Config.share_dir () with
     | Some dir ->
         let global_skeletons_dir = dir // kind_dir ~kind in
-        load_dir_skeletons map kind global_skeletons_dir
+        load_dir_skeletons ~drom:true map kind global_skeletons_dir
     | None ->
         Printf.eprintf "Warning: could not load skeletons from share/%s/skeletons/%s\n%!" Globals.command kind;
         map
-  in
+
+let load_user_skeletons map kind =
   let user_skeletons_dir = Globals.config_dir // kind_dir ~kind in
-  load_dir_skeletons map kind user_skeletons_dir
+  load_dir_skeletons ~drom:false map kind user_skeletons_dir
 
-let builtin_project_skeletons = StringMap.of_list []
-let builtin_package_skeletons = StringMap.of_list []
+let load_skeletons kind =
+  let map = load_system_skeletons StringMap.empty kind in
+  load_user_skeletons map kind
 
-let project_skeletons =
-  lazy (load_skeletons builtin_project_skeletons "project")
+let project_skeletons = lazy (load_skeletons "project")
 
-let package_skeletons =
-  lazy (load_skeletons builtin_package_skeletons "package")
+let package_skeletons = lazy (load_skeletons "package")
 
 let rec inherit_files self_files super_files =
   match (self_files, super_files) with
@@ -208,19 +224,26 @@ let lookup_skeleton ?(project=false) skeletons name =
   let rec iter name =
     match StringMap.find name skeletons with
     | exception Not_found -> download_skeleton name
-    | self -> (
+    | self ->
         match self.skeleton_inherits with
-        | None -> self
+        | None ->
+            self
         | Some super ->
             let super = iter super in
             let skeleton_toml = self.skeleton_toml @ super.skeleton_toml in
             let skeleton_files =
               inherit_files self.skeleton_files super.skeleton_files
             in
-            { skeleton_inherits = None; skeleton_toml; skeleton_files ;
-              skeleton_flags =
-                StringMap.union (fun _ x _ -> Some x)
-                  self.skeleton_flags super.skeleton_flags } )
+            let skeleton_flags =
+              StringMap.union (fun _ x _ -> Some x)
+                self.skeleton_flags super.skeleton_flags
+            in
+            { skeleton_name = name;
+              skeleton_inherits = None;
+              skeleton_toml; skeleton_files ;
+              skeleton_drom = false;
+              skeleton_flags ;
+            }
 
   and download_skeleton name =
     if project then
@@ -245,7 +268,8 @@ let lookup_skeleton ?(project=false) skeletons name =
               ( Printf.sprintf {|[skeleton]
 name = "%s"
 |} name );
-          let (skel_name, skeleton) = load_skeleton ~dir ~toml ~kind:"project"
+          let (skel_name, skeleton) =
+            load_skeleton ~drom:false ~dir ~toml ~kind:"project"
           in
           if skel_name = name then
             skeleton
@@ -328,6 +352,9 @@ let rec eval_package_cond p cond =
       Printf.kprintf failwith "eval_package_cond: unknown condition %S\n%!"
         ( String.concat ":" cond )
 
+let default_flags flag_file =
+  { default_flags with flag_file ; flag_skipper = ref [] }
+
 let skeleton_flags skeleton file =
   try
     let flags =
@@ -337,15 +364,22 @@ let skeleton_flags skeleton file =
       (* This is absurd: toml.5.0.0 does not treat quoted keys and
          unquoted keys internally in the same way... *)
         Not_found ->
-          StringMap.find ( Printf.sprintf "\"%s\"" file )
-            skeleton.skeleton_flags
+          try
+            StringMap.find ( Printf.sprintf "\"%s\"" file )
+              skeleton.skeleton_flags
+          with
+            Not_found ->
+              if Misc.verbose 2 then
+                Printf.eprintf "skeleton %S has no flags for file %S\n%!"
+                  skeleton.skeleton_name file;
+              raise Not_found
     in
     if flags.flag_file = "" then
       { flags with flag_file = file ; flag_skipper = ref [] }
     else
       { flags with flag_skipper = ref [] }
   with Not_found ->
-    { default_flags with flag_file = file ; flag_skipper = ref [] }
+    default_flags file
 
 let write_project_files write_file p =
   let skeleton = lookup_project p.skeleton in
@@ -373,6 +407,21 @@ let write_project_files write_file p =
     skeleton.skeleton_files;
   ()
 
+let subst_package_file flags content package =
+  let bracket = bracket flags eval_package_cond in
+  let content =
+    if flags.flag_subst then
+      try
+        Subst.package () ~bracket
+          ~skipper:flags.flag_skipper package content
+      with Not_found ->
+        Printf.kprintf failwith "Exception Not_found in %S\n%!"
+          flags.flag_file
+    else
+      content
+  in
+  content
+
 let write_package_files write_file package =
   let skeleton = lookup_package (Misc.package_skeleton package) in
 
@@ -380,17 +429,7 @@ let write_package_files write_file package =
     (fun (file, content) ->
        backup_skeleton file content;
        let flags = skeleton_flags skeleton file in
-       let bracket = bracket flags eval_package_cond in
-       let content =
-         if flags.flag_subst then
-           try
-             Subst.package () ~bracket
-               ~skipper:flags.flag_skipper package content
-           with Not_found ->
-             Printf.kprintf failwith "Exception Not_found in %S\n%!" file
-         else
-           content
-       in
+       let content = subst_package_file flags content package in
        let { flag_file;
              flag_create = create;
              flag_skips = skips;
@@ -408,12 +447,16 @@ let write_files write_file p =
   List.iter (fun package -> write_package_files write_file package) p.packages
 
 let project_skeletons () =
-  Lazy.force project_skeletons |> StringMap.to_list |> List.map fst
+  Lazy.force project_skeletons |> StringMap.to_list |> List.map snd
 
 let package_skeletons () =
-  Lazy.force package_skeletons |> StringMap.to_list |> List.map fst
+  Lazy.force package_skeletons |> StringMap.to_list |> List.map snd
 
 let known_skeletons () =
   Printf.sprintf "project skeletons: %s\npackage skeletons: %s\n"
-    (String.concat " " ( project_skeletons ()) )
-    (String.concat " " ( package_skeletons ()) )
+    (project_skeletons ()
+     |> List.map (fun s -> s.skeleton_name)
+     |> String.concat " " )
+    (package_skeletons ()
+     |> List.map (fun s -> s.skeleton_name)
+     |> String.concat " " )

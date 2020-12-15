@@ -1,9 +1,5 @@
 name = "!{name}"
 dir = "!{dir}"
-skeleton = "ppx_deriver"
+skeleton = "library"
 kind = "library"
 gen-version = "version.ml"
-
-[dependencies]
-ppxlib = "0.15"
-

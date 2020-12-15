@@ -49,6 +49,13 @@ let print_dir name dir =
   let tree = iter name dir in
   print_tree "" tree
 
+let rec find_project_package name packages =
+  match packages with
+  | [] -> Error.raise "Cannot find main package %S" name
+  | package :: packages ->
+      if package.name = name then package else
+        find_project_package name packages
+
 let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
   let skeleton_name = match skeleton with
     | None -> "program"
@@ -131,23 +138,74 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
     Unix.chdir name
   );
 
+  (* first, resolve project skeleton *)
   let rec iter_skeleton list =
     match list with
-    | [] -> p
+    | [] -> (p, None)
     | content :: super ->
-      let p = iter_skeleton super in
-      let content = Subst.project () p content in
-      Project.of_string ~msg:"toml template" ~default:p content
+        let p,_ = iter_skeleton super in
+        let content = Subst.project () p content in
+        Project.of_string ~msg:"toml template" ~default:p content, Some content
+  in
+  let p, p_content = iter_skeleton skeleton.skeleton_toml in
+
+  (* second, resolve package skeletons *)
+
+  let rec iter_skeleton package list =
+    match list with
+    | [] -> package
+    | content :: super ->
+        let package = iter_skeleton package super in
+        let flags = Skeleton.default_flags "package.toml" in
+        let content = Skeleton.subst_package_file flags content package in
+        match EzToml.from_string content with
+        | `Ok table ->
+            Project.package_of_toml ~default:p table
+        | `Error (s, loc) ->
+            Error.raise "Could not parse:\n<<<\n%s>>>\n %s at %s"
+              content s
+              (EzToml.string_of_location loc)
+
+  in
+  let packages = List.map (fun package ->
+      let skeleton = Misc.package_skeleton package in
+      Printf.eprintf "Using skeleton %S for package %S\n%!"
+        skeleton package.name;
+      let skeleton = Skeleton.lookup_package skeleton in
+      iter_skeleton package skeleton.skeleton_toml) p.packages in
+
+  (* create new project with correct packages *)
+  let project = {
+    p with
+    package = find_project_package p.package.name packages;
+    packages }
+  in
+  List.iter (fun p -> p.project <- project) packages;
+
+  (* third, extract project again, but with knowledge of packages *)
+  let p = match p_content with
+    | None -> project
+    | Some content ->
+        Project.of_string ~msg:"toml template" ~default:project content
   in
 
-  let p = iter_skeleton skeleton.skeleton_toml in
   Update.update_files ~create:true ?mode ~git:true ~args p;
   print_dir (name ^ "/") "."
 
 (* lookup for "drom.toml" and update it *)
 let action ~skeleton ~name ~mode ~inplace ~dir ~args =
   match name with
-  | None -> Error.raise "You must specify the name of the project to create"
+  | None ->
+      Printf.eprintf {|You must specify the name of the project to create:
+
+drom new PROJECT --skeleton SKELETON
+
+Available skeletons are: %s
+|} (Skeleton.project_skeletons ()
+    |> List.map (fun s -> s.skeleton_name)
+    |> String.concat " ");
+      exit 2
+
   | Some name -> (
     let config = Lazy.force Config.config in
     let project = Project.find () in
@@ -211,7 +269,8 @@ let cmd =
     ~man: [
       `S "DESCRIPTION";
       `Blocks [
-        `P "This command performs the following actions:";
+        `P "This command creates a new project, with name $(b,PROJECT) in a directory $(b,PROJECT) (unless the $(b,--inplace) argument was provided).";
+
       ];
       `S "EXAMPLE";
       `P "The following command creates a project containing library $(b,my_lib) in $(b,src/my_lib):";

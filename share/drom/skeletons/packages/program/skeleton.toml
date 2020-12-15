@@ -2,7 +2,7 @@
 name = "program"
 inherits = "virtual"
 
-[files]
+[file]
 dune_ = { file = "dune", skips = [ "dune" ] }
 "main.ml" = { skips = "code" }
 

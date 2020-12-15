@@ -43,20 +43,10 @@ for-test = true
 [project]
 pack-modules = true
 skip-dirs = []
-skip = "test sphinx github docs ocamlformat ocp-indent code"
+skip = "test sphinx github docs ocamlformat ocp-indent"
 
 [[package]]
-skeleton = "driver"
+skeleton = "program"
 dir = "src/!{name}"
-kind = "program"
 name = "!{name}"
-[package.dependencies]
-!{name}_lib = "version"
-
-[[package]]
-skeleton = "library"
-dir = "src/!{name}_lib"
-gen-version = "version.ml"
-kind = "library"
-name = "!{name}_lib"
 
