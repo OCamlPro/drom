@@ -37,4 +37,3 @@
    odoc
    ocamlformat
  ))
-
