@@ -53,6 +53,11 @@ let bracket flags eval_cond =
             | cond :: tail -> ( not cond ) :: tail
             | [] -> failwith "else without if");
         ""
+    | "elif" :: cond ->
+        flags.flag_skipper := ( match (!) flags.flag_skipper with
+            | _cond :: tail -> ( not (eval_cond p cond) ) :: tail
+            | [] -> failwith "elif without if");
+        ""
     | [ "fi" ] ->
         flags.flag_skipper := ( match (!) flags.flag_skipper with
             | _ :: tail -> tail
@@ -283,6 +288,16 @@ let rec eval_project_cond p cond =
   | [ "doc-api"] -> Misc.doc_api p <> None
   | [ "sphinx-target"] -> p.sphinx_target <> None
   | [ "profile"] -> p.profile <> None
+
+  | [ "field" ; name ] -> StringMap.mem name p.fields
+  | "field" :: name :: v ->
+      let v = String.concat ":" v in
+      begin
+        match StringMap.find name p.fields with
+        | exception Not_found -> false
+        | x -> x = v
+      end
+
   | _ ->
       Printf.kprintf failwith "eval_project_cond: unknown condition %S\n%!"
         ( String.concat ":" cond )
@@ -299,6 +314,16 @@ let rec eval_package_cond p cond =
   | [ "true" ] -> true
   | [ "false" ] -> false
   | "project" :: cond -> eval_project_cond p.project cond
+
+  | [ "field" ; name ] -> StringMap.mem name p.p_fields
+  | "field" :: name :: v ->
+      let v = String.concat ":" v in
+      begin
+        match StringMap.find name p.p_fields with
+        | exception Not_found -> false
+        | x -> x = v
+      end
+
   | _ ->
       Printf.kprintf failwith "eval_package_cond: unknown condition %S\n%!"
         ( String.concat ":" cond )

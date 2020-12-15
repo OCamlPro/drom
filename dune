@@ -42,12 +42,12 @@
     as "skeletons/packages/library/main.ml")
    ( "share/drom/skeletons/packages/library/skeleton.toml"
     as "skeletons/packages/library/skeleton.toml")
-   ( "share/drom/skeletons/packages/ppx_deriver/files/dune_"
-    as "skeletons/packages/ppx_deriver/files/dune_")
-   ( "share/drom/skeletons/packages/ppx_deriver/files/index.mld"
-    as "skeletons/packages/ppx_deriver/files/index.mld")
-   ( "share/drom/skeletons/packages/ppx_deriver/files/main.ml"
-    as "skeletons/packages/ppx_deriver/files/main.ml")
+   ( "share/drom/skeletons/packages/ppx_deriver/dune_"
+    as "skeletons/packages/ppx_deriver/dune_")
+   ( "share/drom/skeletons/packages/ppx_deriver/index.mld"
+    as "skeletons/packages/ppx_deriver/index.mld")
+   ( "share/drom/skeletons/packages/ppx_deriver/main.ml"
+    as "skeletons/packages/ppx_deriver/main.ml")
    ( "share/drom/skeletons/packages/ppx_deriver/package.toml"
     as "skeletons/packages/ppx_deriver/package.toml")
    ( "share/drom/skeletons/packages/ppx_deriver/skeleton.toml"
