@@ -3,7 +3,7 @@
   (name main)
   (public_name !{name})
   (kind ppx_deriver)
-  (libraries ppxlib !{dune-libraries} !(package-dune-libraries))
+  (libraries !{dune-libraries} !(package-dune-libraries))
   !{dune-stanzas}
   !(package-dune-stanzas)
   )

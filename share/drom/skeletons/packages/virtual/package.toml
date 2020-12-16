@@ -1,0 +1,4 @@
+name = "!{name}"
+dir = "!{dir}"
+skeleton = "virtual"
+kind = "virtual"

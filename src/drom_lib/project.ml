@@ -351,28 +351,8 @@ let find_package ?default name =
   in
   iter defaults
 
-let package_of_toml ?default table =
+let package_of_toml ?default ?p_file table =
   let dir = EzToml.get_string_option table [ "dir" ] in
-  let table, p_file =
-    match dir with
-    | None -> (table, None)
-    | Some dir ->
-      let filename = dir // "package.toml" in
-      if Sys.file_exists filename then
-        let package_table =
-          match EzToml.from_file filename with
-          | `Ok table -> table
-          | `Error (s, loc) ->
-            Error.raise "Could not parse %S: %s at %s" filename s
-              (EzToml.string_of_location loc)
-        in
-        let table =
-          TomlTypes.Table.union (fun _key _ v -> Some v) package_table table
-        in
-        (table, Some filename)
-      else
-        (table, None)
-  in
   let name = try EzToml.get_string table [ "name" ] with Not_found ->
     Printf.eprintf "Error: Missing field 'name' in package.toml\n%!";
     exit 2
@@ -452,6 +432,35 @@ let package_of_toml ?default table =
     p_skeleton;
     p_generators
   }
+
+let package_of_toml ?default table =
+  let dir = EzToml.get_string_option table [ "dir" ] in
+  let table, p_file =
+    match dir with
+    | None -> (table, None)
+    | Some dir ->
+        let filename = dir // "package.toml" in
+        if Sys.file_exists filename then
+          let package_table =
+            match EzToml.from_file filename with
+            | `Ok table -> table
+            | `Error (s, loc) ->
+                Error.raise "Could not parse %S: %s at %s" filename s
+                  (EzToml.string_of_location loc)
+          in
+          let table =
+            TomlTypes.Table.union (fun _key _ v -> Some v
+                (*
+                Error.raise "File %s: key %s already exist in drom.toml"
+                  filename (TomlTypes.Table.Key.to_string key)
+*)
+              ) package_table table
+          in
+          (table, Some filename)
+        else
+          (table, None)
+  in
+  package_of_toml ?default ?p_file table
 
 let to_files p =
   let version =
@@ -603,15 +612,14 @@ let project_of_toml ?file ?default table =
               version
         | _ -> () ) );
 
-  let project_key, project_packages =
+  let project_key = "project" in
+  let project_packages =
     match EzToml.get table [ "package" ] with
-    | exception _ -> ("project", [])
-    | TTable _ -> ("package", [])
+    | exception _ -> []
+    | TTable _ -> []
     | TArray (NodeTable tables) ->
-        let project_key = "project" in
-        let packages = List.map (package_of_toml ?default) tables in
-        (project_key, packages)
-    | TArray NodeEmpty -> ("project", [])
+        List.map (package_of_toml ?default) tables
+    | TArray NodeEmpty -> []
     | TArray _ -> Error.raise "Wrong type for field 'package'"
     | _ -> Error.raise "Unparsable field 'package'"
   in

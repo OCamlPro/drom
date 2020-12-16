@@ -24,3 +24,9 @@ val lookup_project : string option -> Types.skeleton
 val lookup_package : string -> Types.skeleton
 
 val known_skeletons : unit -> string
+
+val default_flags : string -> Types.flags
+val subst_package_file : Types.flags -> string -> Types.package -> string
+
+val project_skeletons : unit -> Types.skeleton list
+val package_skeletons : unit -> Types.skeleton list
