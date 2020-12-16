@@ -29,6 +29,9 @@ This is the description
 of the !{name} OCaml project
 """
 
+[drom]
+skip = ""
+
 [dependencies]
 
 [tools.ocamlformat]
@@ -44,19 +47,16 @@ for-test = true
 pack-modules = true
 skip-dirs = []
 
-
 [[package]]
 skeleton = "driver"
 dir = "src/!{name}"
-kind = "program"
 name = "!{name}"
+
 [package.dependencies]
 !{name:alpha}_lib = "version"
 
-[[package]]
-skeleton = "library"
-dir = "src/!{name:alpha}_lib"
-gen-version = "version.ml"
-kind = "library"
-name = "!{name:alpha}_lib"
 
+[[package]]
+skeleton = "menhir-lib"
+dir = "src/!{name:alpha}_lib"
+name = "!{name:alpha}_lib"

@@ -44,6 +44,8 @@ let rec dummy_project =
     profile = None;
     file = None ;
     share_dirs = [ "share" ] ;
+
+    generators = StringSet.empty;
   }
 
 and dummy_package =
@@ -236,6 +238,18 @@ let profile_encoding =
         table;
       { flags = !flags })
 
+let stringSet_encoding =
+  EzToml.encoding
+    ~to_toml:(fun set ->
+        TArray (NodeString (StringSet.to_list set)))
+    ~of_toml:(fun ~key v ->
+        match v with
+        | TArray NodeEmpty -> StringSet.empty
+        | TArray (NodeString list) -> StringSet.of_list list
+        | _ ->
+            EzToml.expecting_type "string list" key
+      )
+
 let fields_encoding = EzToml.ENCODING.stringMap EzToml.string_encoding
 
 let find_author config =
@@ -302,7 +316,7 @@ let string_of_package pk =
             {| default is [ "ocamllex", "ocamlyacc" ] |}
           ]
         ~default: {|generators = [ "ocamllex", "menhir" ]|}
-        ( string_list_option pk.p_generators );
+        ( encoding_option stringSet_encoding pk.p_generators );
       option "pack-modules"
         ~comment:
           [ "whether all modules should be packed/wrapped (default is true)" ]
@@ -403,7 +417,7 @@ let package_of_toml ?default ?p_file table =
     EzToml.get_string_option table [ "skeleton" ] ?default:default.p_skeleton
   in
   let p_generators =
-    EzToml.get_string_list_option table [ "generators" ]
+    EzToml.get_encoding_option stringSet_encoding table [ "generators" ]
       ?default:default.p_generators
   in
   let p_fields =
@@ -848,8 +862,18 @@ let project_of_toml ?file ?default table =
   in
   let fields = StringMap.union (fun _k a1 _a2 -> Some a1) fields d.fields in
 
+  let generators = ref StringSet.empty in
+  List.iter (fun p ->
+      match p.p_generators with
+      | None -> ()
+      | Some p_generators ->
+          generators := StringSet.union !generators p_generators
+    ) packages;
+  let generators = !generators in
+
   let project =
     { package;
+      packages;
       file;
       version;
       skeleton;
@@ -873,12 +897,12 @@ let project_of_toml ?file ?default table =
       sphinx_target;
       odoc_target;
       windows_ci;
-      packages;
       profiles;
       skip_dirs;
       share_dirs ;
       profile;
-      fields
+      fields;
+      generators;
     }
   in
   package.project <- project;

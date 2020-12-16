@@ -1,0 +1,3 @@
+[skeleton]
+name = "menhir"
+inherits = "virtual"

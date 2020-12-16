@@ -32,6 +32,8 @@
     as "skeletons/packages/driver/index.mld")
    ( "share/drom/skeletons/packages/driver/main.ml"
     as "skeletons/packages/driver/main.ml")
+   ( "share/drom/skeletons/packages/driver/package.toml"
+    as "skeletons/packages/driver/package.toml")
    ( "share/drom/skeletons/packages/driver/skeleton.toml"
     as "skeletons/packages/driver/skeleton.toml")
    ( "share/drom/skeletons/packages/library/dune_"
@@ -40,8 +42,28 @@
     as "skeletons/packages/library/index.mld")
    ( "share/drom/skeletons/packages/library/main.ml"
     as "skeletons/packages/library/main.ml")
+   ( "share/drom/skeletons/packages/library/package.toml"
+    as "skeletons/packages/library/package.toml")
    ( "share/drom/skeletons/packages/library/skeleton.toml"
     as "skeletons/packages/library/skeleton.toml")
+   ( "share/drom/skeletons/packages/menhir-lib/dune_"
+    as "skeletons/packages/menhir-lib/dune_")
+   ( "share/drom/skeletons/packages/menhir-lib/index.mld"
+    as "skeletons/packages/menhir-lib/index.mld")
+   ( "share/drom/skeletons/packages/menhir-lib/lexer.mll"
+    as "skeletons/packages/menhir-lib/lexer.mll")
+   ( "share/drom/skeletons/packages/menhir-lib/main.ml"
+    as "skeletons/packages/menhir-lib/main.ml")
+   ( "share/drom/skeletons/packages/menhir-lib/package.toml"
+    as "skeletons/packages/menhir-lib/package.toml")
+   ( "share/drom/skeletons/packages/menhir-lib/parser.mly"
+    as "skeletons/packages/menhir-lib/parser.mly")
+   ( "share/drom/skeletons/packages/menhir-lib/printer.ml"
+    as "skeletons/packages/menhir-lib/printer.ml")
+   ( "share/drom/skeletons/packages/menhir-lib/skeleton.toml"
+    as "skeletons/packages/menhir-lib/skeleton.toml")
+   ( "share/drom/skeletons/packages/menhir-lib/types.ml"
+    as "skeletons/packages/menhir-lib/types.ml")
    ( "share/drom/skeletons/packages/ppx_deriver/dune_"
     as "skeletons/packages/ppx_deriver/dune_")
    ( "share/drom/skeletons/packages/ppx_deriver/index.mld"
@@ -56,14 +78,22 @@
     as "skeletons/packages/program/dune_")
    ( "share/drom/skeletons/packages/program/main.ml"
     as "skeletons/packages/program/main.ml")
+   ( "share/drom/skeletons/packages/program/package.toml"
+    as "skeletons/packages/program/package.toml")
    ( "share/drom/skeletons/packages/program/skeleton.toml"
     as "skeletons/packages/program/skeleton.toml")
+   ( "share/drom/skeletons/packages/virtual/package.toml"
+    as "skeletons/packages/virtual/package.toml")
    ( "share/drom/skeletons/packages/virtual/skeleton.toml"
     as "skeletons/packages/virtual/skeleton.toml")
    ( "share/drom/skeletons/projects/library/drom.toml"
     as "skeletons/projects/library/drom.toml")
    ( "share/drom/skeletons/projects/library/skeleton.toml"
     as "skeletons/projects/library/skeleton.toml")
+   ( "share/drom/skeletons/projects/menhir/drom.toml"
+    as "skeletons/projects/menhir/drom.toml")
+   ( "share/drom/skeletons/projects/menhir/skeleton.toml"
+    as "skeletons/projects/menhir/skeleton.toml")
    ( "share/drom/skeletons/projects/mini-lib/drom.toml"
     as "skeletons/projects/mini-lib/drom.toml")
    ( "share/drom/skeletons/projects/mini-lib/skeleton.toml"

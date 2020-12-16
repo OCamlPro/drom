@@ -24,7 +24,7 @@ let package_dune_files package =
   let b = Buffer.create 1000 in
   let p_generators =
     match package.p_generators with
-    | None -> [ "ocamllex" ; "ocamlyacc" ]
+    | None -> StringSet.of_list [ "ocamllex" ; "ocamlyacc" ]
     | Some generators -> generators
   in
   ( match Sys.readdir package.dir with
@@ -34,15 +34,15 @@ let package_dune_files package =
       (fun file ->
         if Filename.check_suffix file ".mll" then begin
           if
-            List.mem "ocamllex" p_generators
+            StringSet.mem "ocamllex" p_generators
           then
             Printf.bprintf b "(ocamllex %s)\n"
               (Filename.chop_suffix file ".mll")
         end else if Filename.check_suffix file ".mly" then
-          if List.mem "ocamlyacc" p_generators then
+          if StringSet.mem "ocamlyacc" p_generators then
             Printf.bprintf b "(ocamlyacc %s)\n"
               (Filename.chop_suffix file ".mly")
-          else if List.mem "menhir" p_generators then
+          else if StringSet.mem "menhir" p_generators then
             Printf.bprintf b "(menhir (modules %s))\n"
               (Filename.chop_suffix file ".mly")
           else
@@ -106,6 +106,11 @@ let packages p =
     List.iter (fun (name, d) -> depend_of_dep name d) (Misc.p_tools package);
     Printf.bprintf b " ))\n"
   in
+
+  (* If menhir is used as a generator, prevents dune from modifying
+     dune-project by adding this line ourselves. *)
+  if StringSet.mem "menhir" p.generators then
+    Buffer.add_string b "(using menhir 2.0)\n";
 
   List.iter add_package p.packages;
   Buffer.contents b

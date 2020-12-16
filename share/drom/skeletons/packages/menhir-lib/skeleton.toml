@@ -1,0 +1,13 @@
+[skeleton]
+name = "menhir-lib"
+inherits = "virtual"
+
+[file]
+"package.toml" = { create = true }
+dune_ = { file = "dune", skips = "dune" }
+"index.mld" = { skips = [ "docs" ] }
+"main.ml" = { skips = [ "code" ] }
+"lexer.mll" = { skips = [ "code" ] }
+"parser.mly" = { skips = [ "code" ] }
+"printer.ml" = { skips = [ "code" ] }
+"types.ml" = { skips = [ "code" ] }
