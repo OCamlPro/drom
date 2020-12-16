@@ -1,0 +1,8 @@
+name = "!{name}"
+dir = "!{dir}"
+skeleton = "ppx_rewriter"
+kind = "library"
+gen-version = "version.ml"
+
+[dependencies]
+ppxlib = "0.15"

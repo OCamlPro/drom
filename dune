@@ -74,6 +74,16 @@
     as "skeletons/packages/ppx_deriver/package.toml")
    ( "share/drom/skeletons/packages/ppx_deriver/skeleton.toml"
     as "skeletons/packages/ppx_deriver/skeleton.toml")
+   ( "share/drom/skeletons/packages/ppx_rewriter/dune_"
+    as "skeletons/packages/ppx_rewriter/dune_")
+   ( "share/drom/skeletons/packages/ppx_rewriter/index.mld"
+    as "skeletons/packages/ppx_rewriter/index.mld")
+   ( "share/drom/skeletons/packages/ppx_rewriter/main.ml"
+    as "skeletons/packages/ppx_rewriter/main.ml")
+   ( "share/drom/skeletons/packages/ppx_rewriter/package.toml"
+    as "skeletons/packages/ppx_rewriter/package.toml")
+   ( "share/drom/skeletons/packages/ppx_rewriter/skeleton.toml"
+    as "skeletons/packages/ppx_rewriter/skeleton.toml")
    ( "share/drom/skeletons/packages/program/dune_"
     as "skeletons/packages/program/dune_")
    ( "share/drom/skeletons/packages/program/main.ml"
@@ -106,6 +116,10 @@
     as "skeletons/projects/ppx_deriver/drom.toml")
    ( "share/drom/skeletons/projects/ppx_deriver/skeleton.toml"
     as "skeletons/projects/ppx_deriver/skeleton.toml")
+   ( "share/drom/skeletons/projects/ppx_rewriter/drom.toml"
+    as "skeletons/projects/ppx_rewriter/drom.toml")
+   ( "share/drom/skeletons/projects/ppx_rewriter/skeleton.toml"
+    as "skeletons/projects/ppx_rewriter/skeleton.toml")
    ( "share/drom/skeletons/projects/program/drom.toml"
     as "skeletons/projects/program/drom.toml")
    ( "share/drom/skeletons/projects/program/skeleton.toml"

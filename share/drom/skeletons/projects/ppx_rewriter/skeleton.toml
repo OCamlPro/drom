@@ -1,0 +1,3 @@
+[skeleton]
+name = "ppx_rewriter"
+inherits = "library"

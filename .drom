@@ -147,7 +147,11 @@ d3596b8ebdb9ef59f5a1cc03b2f7180b:sphinx/license.rst
 
 # begin context for src/drom/dune
 # file src/drom/dune
+<<<<<<< HEAD
 b2467739c3fd8542338ce53133b3fefd:src/drom/dune
+=======
+f2a9c4e9ba38c536a0e1af291323ac22:src/drom/dune
+>>>>>>> skeleton for ppx_rewriter
 # end context for src/drom/dune
 
 # begin context for src/drom/index.mld
@@ -162,7 +166,11 @@ b2467739c3fd8542338ce53133b3fefd:src/drom/dune
 
 # begin context for src/drom/package.toml
 # file src/drom/package.toml
+<<<<<<< HEAD
 74b32a0ebe66d431cd5a1a75e52c8093:src/drom/package.toml
+=======
+f39901558b15016719433c9a43932382:src/drom/package.toml
+>>>>>>> skeleton for ppx_rewriter
 # end context for src/drom/package.toml
 
 # begin context for src/drom_lib/dune
