@@ -1,6 +1,0 @@
-generators = ["ocamllex"; "menhir"]
-kind = "library"
-gen-version = "version.ml"
-
-[dependencies]
-menhirLib = ""

@@ -190,6 +190,11 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
   in
 
   Update.update_files ~create:true ?mode ~git:true ~args p;
+  (* We need to iterate twice, because some files may not have been
+     present during the first iteration. For example, the `dune` file
+     will not be correct if some source files were not yet created
+     from the template. *)
+  Update.update_files ~git:true ~args p;
   print_dir (name ^ "/") "."
 
 (* lookup for "drom.toml" and update it *)

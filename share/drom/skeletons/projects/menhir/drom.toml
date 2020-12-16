@@ -51,10 +51,12 @@ skip-dirs = []
 skeleton = "driver"
 dir = "src/!{name}"
 name = "!{name}"
-  [package.fields]
-  dune-libraries = "!{name}_lib"
+
+[package.dependencies]
+!{name}_lib = "version"
+
 
 [[package]]
-skeleton = "menhir_lib"
+skeleton = "menhir-lib"
 dir = "src/!{name}_lib"
 name = "!{name}_lib"

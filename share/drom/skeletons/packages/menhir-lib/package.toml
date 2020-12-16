@@ -1,0 +1,12 @@
+name = "!{name}"
+dir = "!{dir}"
+skeleton = "menhir-lib"
+generators = ["ocamllex", "menhir"]
+kind = "library"
+gen-version = "version.ml"
+
+[dependencies]
+menhirLib = ">2019"
+
+[tools]
+menhir = ">2019"

@@ -54,7 +54,7 @@ type package =
     mutable p_pack_modules : bool option;
     mutable p_gen_version : string option;
     mutable p_fields : string StringMap.t;
-    mutable p_generators : string list option;
+    mutable p_generators : StringSet.t option;
     mutable p_file : string option
   }
 
@@ -62,8 +62,8 @@ and project =
   { package : package; (* main package *)
     (* The list of all packages, including the main package *)
     mutable packages : package list;
-    mutable file : string option;
-    (* name of the file *)
+    mutable file : string option; (* name of the file *)
+    mutable generators : StringSet.t;
     (* sub-packages *)
 
     (* common fields *)
