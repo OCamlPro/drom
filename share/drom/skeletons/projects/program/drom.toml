@@ -51,12 +51,12 @@ dir = "src/!{name}"
 kind = "program"
 name = "!{name}"
 [package.dependencies]
-!{name}_lib = "version"
+!{name:alpha}_lib = "version"
 
 [[package]]
 skeleton = "library"
-dir = "src/!{name}_lib"
+dir = "src/!{name:alpha}_lib"
 gen-version = "version.ml"
 kind = "library"
-name = "!{name}_lib"
+name = "!{name:alpha}_lib"
 

@@ -53,10 +53,10 @@ dir = "src/!{name}"
 name = "!{name}"
 
 [package.dependencies]
-!{name}_lib = "version"
+!{name:alpha}_lib = "version"
 
 
 [[package]]
 skeleton = "menhir-lib"
-dir = "src/!{name}_lib"
-name = "!{name}_lib"
+dir = "src/!{name:alpha}_lib"
+name = "!{name:alpha}_lib"

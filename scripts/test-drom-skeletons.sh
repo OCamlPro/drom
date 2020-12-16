@@ -1,4 +1,11 @@
 #!/bin/bash
+
+if [ "X$1" == "X" ]; then
+  SKELETONS=$(drom config --drom-project-skeletons)
+else
+  SKELETONS="$1"
+fi
+
 set -euo pipefail
 
 SWITCH=4.10.0
@@ -8,9 +15,6 @@ mkdir -p /tmp/drom-tests
 cd /tmp/drom-tests
 rm -rf *
 
-
-SKELETONS=$(drom config --drom-project-skeletons)
-
 for skeleton in $SKELETONS; do
 
   echo
@@ -19,8 +23,8 @@ for skeleton in $SKELETONS; do
   echo
   echo
   cd /tmp/drom-tests
-  drom new $skeleton --skeleton $skeleton
-  cd $skeleton
+  drom new test-$skeleton --skeleton $skeleton
+  cd test-$skeleton
   echo drom project --upgrade
   drom project --upgrade || exit 2
   echo drom build -y
