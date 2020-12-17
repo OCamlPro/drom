@@ -36,12 +36,7 @@ jobs:
         if: steps.cache-opam.outputs.cache-hit == 'true'
       - name: build-doc
         run: |
-          mkdir -p _drom/docs
-          rsync -auv docs/. _drom/docs/.
-          opam exec -- dune build @doc
-          mkdir -p _drom/docs/doc
-          rsync -auv _build/default/_doc/_html/. _drom/docs/!{odoc-target}/.
-          sphinx-build sphinx _drom/docs/!{sphinx-target}
+          make doc
           touch _drom/docs/.nojekyll
           touch _drom/docs/!{sphinx-target}/.nojekyll
           touch _drom/docs/!{odoc-target}/.nojekyll
