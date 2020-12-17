@@ -65,13 +65,23 @@ let opam_of_project kind package =
                 {|
 [
   ["dune" "subst"] {dev}
+  ["sh" "-c" "./scripts/before.sh" "build" name]
   ["dune" "build" "-p" name "-j" jobs "@install"
-     "@runtest" {with-test}
-    "@doc" {with-doc}
+     "@runtest" {with-test} "@doc" {with-doc}
   ]
+  ["sh" "-c" "./scripts/after.sh" "build" name]
 ]
 |}
-                filename )
+                filename );
+          var "install"
+            (
+              OpamParser.FullPos.value_from_string
+                {|
+[
+  ["sh" "-c" "./scripts/before.sh" "install" name]
+]
+|} filename
+            );
         ]
   in
   let depend_of_dep name d =

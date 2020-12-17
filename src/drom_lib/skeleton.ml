@@ -58,7 +58,7 @@ let bracket flags eval_cond =
             | _cond :: tail -> ( not (eval_cond p cond) ) :: tail
             | [] -> failwith "elif without if");
         ""
-    | [ "fi" ] ->
+    | [ "fi" | "endif" ] ->
         flags.flag_skipper := ( match (!) flags.flag_skipper with
             | _ :: tail -> tail
             | [] -> failwith "fi without if");
@@ -138,8 +138,11 @@ let load_skeleton ~drom ~dir ~toml ~kind =
           | "skeleton.toml" -> ()
           | _ ->
               if not ( Filename.check_suffix path "~" ) then
-                let content = EzFile.read_file (dir // path) in
-                files := (path, content) :: !files);
+                let filename = dir // path in
+                let content = EzFile.read_file filename in
+                let st = Unix.lstat filename in
+                let mode = st.Unix.st_perm in
+                files := (path, content, mode) :: !files);
     !files
   in
   let skeleton_flags = EzToml.get_encoding_default
@@ -209,15 +212,17 @@ let rec inherit_files self_files super_files =
   match (self_files, super_files) with
   | _, [] -> self_files
   | [], _ -> super_files
-  | ( (self_file, self_content) :: self_files_tail,
-      (super_file, super_content) :: super_files_tail ) ->
+  | ( (self_file, self_content, self_mode) :: self_files_tail,
+      (super_file, super_content, super_mode) :: super_files_tail ) ->
     if self_file = super_file then
-      (self_file, self_content)
+      (self_file, self_content, self_mode)
       :: inherit_files self_files_tail super_files_tail
     else if self_file < super_file then
-      (self_file, self_content) :: inherit_files self_files_tail super_files
+      (self_file, self_content, self_mode) ::
+      inherit_files self_files_tail super_files
     else
-      (super_file, super_content) :: inherit_files self_files super_files_tail
+      (super_file, super_content, super_mode)
+      :: inherit_files self_files super_files_tail
 
 let lookup_skeleton ?(project=false) skeletons name =
   let skeletons = Lazy.force skeletons in
@@ -281,11 +286,12 @@ name = "%s"
   in
   iter name
 
-let backup_skeleton file content =
+let backup_skeleton file content ~perm =
   let skeleton_dir = Globals.drom_dir // "skeleton" in
   let drom_file = skeleton_dir // file in
   EzFile.make_dir ~p:true (Filename.dirname drom_file);
-  EzFile.write_file drom_file content
+  EzFile.write_file drom_file content;
+  Unix.chmod drom_file perm
 
 let lookup_project skeleton =
   lookup_skeleton ~project:true
@@ -384,8 +390,9 @@ let skeleton_flags skeleton file =
 let write_project_files write_file p =
   let skeleton = lookup_project p.skeleton in
   List.iter
-    (fun (file, content) ->
-      backup_skeleton file content;
+    (fun (file, content, perm) ->
+       (* Printf.eprintf "File %s perm %o\n%!" file perm; *)
+      backup_skeleton file content ~perm;
 
       let flags = skeleton_flags skeleton file in
       let bracket = bracket flags eval_project_cond in
@@ -403,7 +410,8 @@ let write_project_files write_file p =
             flag_skip = skip;
             flag_skipper= _ ;
             flag_subst = _ ; } = flags in
-      write_file flag_file ~create ~skips ~content ~record ~skip)
+      write_file flag_file ~create ~skips ~content ~record ~skip ~perm;
+    )
     skeleton.skeleton_files;
   ()
 
@@ -426,8 +434,9 @@ let write_package_files write_file package =
   let skeleton = lookup_package (Misc.package_skeleton package) in
 
   List.iter
-    (fun (file, content) ->
-       backup_skeleton file content;
+    (fun (file, content, perm) ->
+       (* Printf.eprintf "File %s perm %o\n%!" file perm; *)
+       backup_skeleton file content ~perm;
        let flags = skeleton_flags skeleton file in
        let content = subst_package_file flags content package in
        let { flag_file;
@@ -438,7 +447,7 @@ let write_package_files write_file package =
              flag_skipper= _ ;
              flag_subst = _ ; } = flags in
        let file = package.dir // flag_file in
-       write_file file ~create ~skips ~content ~record ~skip)
+       write_file file ~create ~skips ~content ~record ~skip ~perm)
     skeleton.skeleton_files
 
 let write_files write_file p =

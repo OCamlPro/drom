@@ -332,3 +332,13 @@ let package_skeleton package =
   match package.p_skeleton with
   | Some skeleton -> skeleton
   | None -> string_of_kind package.kind
+
+let hook ?(args=[]) script =
+  if Sys.file_exists script then
+    call ( Array.of_list (script :: args) )
+
+let before_hook ?args command =
+  hook ?args (Printf.sprintf "./scripts/before-%s.sh" command)
+
+let after_hook ?args command =
+  hook ?args (Printf.sprintf "./scripts/after-%s.sh" command)

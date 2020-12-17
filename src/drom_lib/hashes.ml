@@ -15,7 +15,7 @@ open EzCompat
 type t =
   { mutable hashes : string StringMap.t;
     mutable modified : bool;
-    mutable files : (bool * string * string) list;
+    mutable files : (bool * string * string * int) list;
     (* for git *)
     mutable to_add : StringSet.t;
     mutable to_remove : StringSet.t
@@ -57,8 +57,8 @@ let load () =
     to_remove = StringSet.empty
   }
 
-let write t ~record file content =
-  t.files <- (record, file, content) :: t.files;
+let write t ~record ~perm file content =
+  t.files <- (record, file, content, perm) :: t.files;
   t.modified <- true
 
 let get t file = StringMap.find file t.hashes
@@ -80,18 +80,28 @@ let rename t src_file dst_file =
     remove t src_file;
     update t dst_file digest
 
-let digest_file file = Digest.file file
+(* only compare the 3 user permissions. Does it work on Windows ? *)
+let perm_equal p1 p2 =
+  ( p1 lsr 6 ) land 7 = ( p2 lsr 6 ) land 7
 
-let digest_string content = Digest.string content
+let digest_content ?(perm=0o644) content =
+  let perm = ( perm lsr 6 ) land 7 in
+  Digest.string (Printf.sprintf "%s.%d" content perm)
+
+let digest_file file =
+  let content = EzFile.read_file file in
+  let perm = ( Unix.lstat file ). Unix.st_perm in
+  digest_content ~perm content
 
 let save ?(git = true) t =
   if t.modified then begin
     List.iter
-      (fun (record, file, content) ->
+      (fun (record, file, content, perm) ->
         let dirname = Filename.dirname file in
         if not (Sys.file_exists dirname) then EzFile.make_dir ~p:true dirname;
         EzFile.write_file file content;
-        if record then update t file (digest_string content))
+        Unix.chmod file perm;
+        if record then update t file (digest_content ~perm content))
       t.files;
 
     let b = Buffer.create 1000 in

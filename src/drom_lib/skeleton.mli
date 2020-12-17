@@ -15,6 +15,7 @@ val write_files :
   content:string ->
   record:bool ->
   skip:bool ->
+  perm:int ->
   unit) ->
   Types.project ->
   unit

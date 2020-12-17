@@ -148,6 +148,10 @@
     as "skeletons/projects/virtual/dune-project_")
    ( "share/drom/skeletons/projects/virtual/dune_"
     as "skeletons/projects/virtual/dune_")
+   ( "share/drom/skeletons/projects/virtual/scripts/after.sh"
+    as "skeletons/projects/virtual/scripts/after.sh")
+   ( "share/drom/skeletons/projects/virtual/scripts/before.sh"
+    as "skeletons/projects/virtual/scripts/before.sh")
    ( "share/drom/skeletons/projects/virtual/skeleton.toml"
     as "skeletons/projects/virtual/skeleton.toml")
    ( "share/drom/skeletons/projects/virtual/sphinx/about.rst"
