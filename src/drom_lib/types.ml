@@ -139,7 +139,7 @@ type flags =
 type skeleton =
   { skeleton_inherits : string option;
     skeleton_toml : string list;
-    skeleton_files : (string * string) list;
+    skeleton_files : (string * string * int) list;
     skeleton_flags : flags StringMap.t;
     skeleton_drom : bool ;
     skeleton_name : string ;

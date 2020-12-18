@@ -58,13 +58,14 @@ let update_args () =
 let compute_config_hash files =
   let files = List.sort compare files in
   let files =
-    List.map (fun (file, content) -> (file, Hashes.digest_string content)) files
+    List.map (fun (file, content) ->
+        (file, Hashes.digest_content content)) files
   in
   let to_hash =
     String.concat "?"
       (List.map (fun (file, hash) -> Printf.sprintf "%s^%s" file hash) files)
   in
-  Hashes.digest_string to_hash
+  Hashes.digest_content to_hash
 
 let update_files ?args ?mode ?(git = false) ?(create = false) p =
   let force, upgrade, skip, diff, promote_skip =
@@ -99,24 +100,26 @@ let update_files ?args ?mode ?(git = false) ?(create = false) p =
     not (List.mem s p.skip)
   in
   let skipped = ref [] in
-  let write_file ?(record = true) hashes filename content =
-    Hashes.write hashes ~record filename content
+  let write_file ?(record = true) ~perm hashes filename content =
+    Hashes.write hashes ~record ~perm filename content
   in
-  let can_update ~filename hashes content =
+  let can_update ~filename ~perm hashes content =
     let old_content = EzFile.read_file filename in
-    if content = old_content then
+    let old_perm = ( Unix.lstat filename ). Unix.st_perm in
+    if content = old_content && Hashes.perm_equal perm old_perm then begin
       false
-    else
+    end else
       force
       ||
-      let hash = Hashes.digest_string old_content in
+      let hash = Hashes.digest_content ~perm:old_perm old_content in
       match Hashes.get hashes filename with
       | exception Not_found ->
           skipped := filename :: !skipped;
           Printf.eprintf "Skipping existing file %s\n%!" filename;
           false
       | former_hash ->
-          let modified = former_hash <> hash in
+          let modified = former_hash <> hash &&
+                         former_hash <> Digest.string content in
           if modified then (
             skipped := filename :: !skipped;
             Printf.eprintf "Skipping modified file %s\n%!" filename;
@@ -142,24 +145,26 @@ let update_files ?args ?mode ?(git = false) ?(create = false) p =
   let write_file ?((* add to git/.drom *) record = true)
       ?((* only create, never update *) create = false)
       ?((* force to skip *) skip = false) ?((* force to write *) force = false)
-      ?((* tests for skipping *) skips = []) hashes filename content =
+      ?((* tests for skipping *) skips = [])
+      ?(perm = 0o644)
+      hashes filename content =
     try
       if skip then raise Skip;
       if force then (
         Printf.eprintf "Forced Update of file %s\n%!" filename;
-        write_file hashes filename content
+        write_file hashes filename content ~perm
       ) else if not_skipped filename && List.for_all not_skipped skips then
         if not record then
-          write_file ~record:false hashes filename content
+          write_file ~record:false hashes filename content ~perm
         else if not (Sys.file_exists filename) then (
           if Misc.verbose 2 then
             Printf.eprintf "Creating file %s\n%!" filename;
-          write_file hashes filename content
+          write_file hashes filename content ~perm
         ) else if create then
           raise Skip
-        else if can_update ~filename hashes content then (
+        else if can_update ~filename ~perm hashes content then (
           Printf.eprintf "Updating file %s\n%!" filename;
-          write_file hashes filename content
+          write_file hashes filename content ~perm
         ) else
           raise Skip
       else
@@ -289,8 +294,8 @@ let update_files ?args ?mode ?(git = false) ?(create = false) p =
 
       (* Most of the files are created using Skeleton *)
       Skeleton.write_files
-        (fun file ~create ~skips ~content ~record ~skip ->
-           write_file hashes file ~create ~skips ~record ~skip content)
+        (fun file ~create ~skips ~content ~record ~skip ~perm ->
+           write_file hashes ~perm file ~create ~skips ~record ~skip content)
         p;
 
       let p, changed =

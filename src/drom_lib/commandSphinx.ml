@@ -16,10 +16,9 @@ let cmd_name = "sphinx"
 let make_sphinx p =
   let dir = Misc.sphinx_target p in
   let sphinx_target = Format.sprintf "_drom/docs/%s" dir in
-  let before_script =  "scripts/before-sphinx.sh" in
-  if Sys.file_exists before_script then
-    Misc.call [| before_script ; sphinx_target |];
+  Misc.before_hook "sphinx" ~args:[ sphinx_target ];
   Misc.call [| "sphinx-build"; "sphinx"; sphinx_target |];
+  Misc.after_hook "sphinx" ~args:[ sphinx_target ];
   sphinx_target
 
 let action ~args ~open_www () =

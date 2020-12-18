@@ -356,7 +356,8 @@ had_switch: %b
         Opam.run ~y [ "install" ] packages
   end;
 
-  if build then
+  if build then begin
+    Misc.before_hook "build";
     Opam.run [ "exec" ]
       ( [ "--"; "dune"; "build"; "@install" ]
         @
@@ -374,4 +375,6 @@ had_switch: %b
         )
 
       );
+    Misc.after_hook "build";
+  end;
   p

@@ -17,10 +17,11 @@ let action ~args () =
     Error.raise "Cannot install project if the project has vendors/ packages";
 
   let _p = Build.build ~args () in
+  let y = args.arg_yes in
   let packages = Misc.list_opam_packages "." in
-  Opam.run [ "pin" ] [ "-y"; "--no-action"; "-k"; "path"; "." ];
+  Opam.run ~y [ "pin" ] [ "--no-action"; "-k"; "path"; "." ];
   let exn =
-    match Opam.run [ "install" ] ("-y" :: packages) with
+    match Opam.run ~y [ "install" ] ("-y" :: packages) with
     | () -> None
     | exception exn -> Some exn
   in

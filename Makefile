@@ -4,11 +4,19 @@
 
 DEV_DEPS := merlin ocamlformat odoc ppx_expect ppx_inline_test
 
+
+SPHINX_TARGET:=_drom/docs/sphinx
+
+ODOC_TARGET:=_drom/docs/doc/.
+
+
 all: build
 
 build:
+	./scripts/before.sh build
 	opam exec -- dune build @install
 	cp -f _build/default/src/drom/main.exe drom
+	./scripts/after.sh build
 
 build-deps:
 	if ! [ -e _opam ]; then \
@@ -18,22 +26,21 @@ build-deps:
 
 
 .PHONY: doc-common odoc view sphinx
-doc-common:
-	opam exec -- dune build @doc
+doc-common: build
 	mkdir -p _drom/docs
 	rsync -auv docs/. _drom/docs/.
 
-sphinx: doc-common 
-	if [ -e ./scripts/before-sphinx.sh ]; then \
-		./scripts/before-sphinx.sh _drom/docs/sphinx; \
-	else \
-		echo No file ./scripts/before-sphinx.sh; \
-	fi
-	sphinx-build sphinx _drom/docs/sphinx
+sphinx: doc-common
+	./scripts/before.sh sphinx ${SPHINX_TARGET}
+	sphinx-build sphinx ${SPHINX_TARGET}
+	./scripts/after.sh sphinx  ${SPHINX_TARGET}
 
-odoc: doc-common 
-	mkdir -p _drom/docs/doc/.
-	rsync -auv --delete _build/default/_doc/_html/. _drom/docs/doc
+odoc: doc-common
+	mkdir -p ${ODOC_TARGET}
+	./scripts/before.sh odoc ${ODOC_TARGET}
+	opam exec -- dune build @doc
+	rsync -auv --delete _build/default/_doc/_html/. ${ODOC_TARGET}
+	./scripts/after.sh odoc ${ODOC_TARGET}
 
 doc: doc-common odoc sphinx
 
@@ -53,13 +60,15 @@ opam:
 	opam pin -k path .
 
 uninstall:
-	opam exec -- dune uninstall
+	opam install .
 
 dev-deps:
 	opam install ./*.opam --deps-only --with-doc --with-test
 
 test:
+	./scripts/before.sh test
 	opam exec -- dune build @runtest
+	./scripts/after.sh test
 
 clean:
 	rm -rf _build
