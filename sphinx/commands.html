@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Sub-commands and Arguments &mdash; drom master
- (b694f28
-) (2020/12/16 17:40) documentation</title>
+ (4602f54
+) (2020/12/18 00:24) documentation</title>
   
 
   
@@ -42,8 +42,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="drom master
- (b694f28
-) (2020/12/16 17:40) documentation" href="index.html"/>
+ (4602f54
+) (2020/12/18 00:24) documentation" href="index.html"/>
         <link rel="next" title="User Configuration" href="config.html"/>
         <link rel="prev" title="Project Description" href="reference.html"/> 
 
@@ -75,7 +75,7 @@
             
               <div class="version">
                 master
- (b694f28
+ (4602f54
 )
               </div>
             
@@ -110,6 +110,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#drom-build">drom build</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-build-deps">drom build-deps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-clean">drom clean</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#drom-config">drom config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-dep-since-version-0-2-1">drom dep (since version 0.2.1)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-dev-deps">drom dev-deps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-doc">drom doc</a></li>
@@ -218,6 +219,9 @@
 
 <span class="n">clean</span>
   <span class="nc">Clean</span> <span class="n">the</span> <span class="n">project</span> <span class="n">from</span> <span class="n">build</span> <span class="n">files</span>
+
+<span class="n">config</span>
+  <span class="nc">Read</span><span class="o">/</span><span class="n">write</span> <span class="n">configuration</span>
 
 <span class="n">dep</span> <span class="o">(</span><span class="n">since</span> <span class="n">version</span> <span class="mi">0</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">1</span><span class="o">)</span>
   <span class="nc">Manage</span> <span class="n">dependency</span> <span class="k">of</span> <span class="n">a</span> <span class="n">package</span>
@@ -336,7 +340,28 @@ If build was ok, copy executable in the top directory of the project</li>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--opam</span></code>   Also remove the local opam switch (_opam/ and _drom/)</li>
+<li><code class="code docutils literal"><span class="pre">--distclean</span></code>   Also remove _opam/ (local switch) and _drom/</li>
+</ul>
+</div>
+<div class="section" id="drom-config">
+<h2>drom config<a class="headerlink" href="#drom-config" title="Permalink to this headline">¶</a></h2>
+<p>Read/write configuration</p>
+<p><strong>DESCRIPTION</strong></p>
+<p>This command is useful to read/write drom configuration</p>
+<p><strong>EXAMPLE</strong></p>
+<p>The following displays the list of project skeletons:</p>
+<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">config</span> <span class="o">--</span><span class="n">project</span><span class="o">-</span><span class="n">skeletons</span>
+</pre></div>
+</div>
+<p><strong>USAGE</strong></p>
+<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">config</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>Where options are:</p>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">--drom-project-skeletons</span></code>   List available project skeletons from drom</li>
+<li><code class="code docutils literal"><span class="pre">--package-skeletons</span></code>   List available package skeletons</li>
+<li><code class="code docutils literal"><span class="pre">--project-skeletons</span></code>   List available project skeletons</li>
 </ul>
 </div>
 <div class="section" id="drom-dep-since-version-0-2-1">
@@ -487,7 +512,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 <h2>drom new<a class="headerlink" href="#drom-new" title="Permalink to this headline">¶</a></h2>
 <p>Create a new project</p>
 <p><strong>DESCRIPTION</strong></p>
-<p>This command performs the following actions:</p>
+<p>This command creates a new project, with name <strong>PROJECT</strong> in a directory <strong>PROJECT</strong> (unless the <strong>–inplace</strong> argument was provided).</p>
 <p><strong>EXAMPLE</strong></p>
 <p>The following command creates a project containing library <strong>my_lib</strong> in <strong>src/my_lib</strong>:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="k">new</span> <span class="n">my_lib</span> <span class="o">--</span><span class="n">skeleton</span> <span class="n">library</span>
@@ -889,7 +914,7 @@ Unpin package dependencies</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'master (b694f28) (2020/12/16 17:40)',
+            VERSION:'master (4602f54) (2020/12/18 00:24)',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

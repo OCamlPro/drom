@@ -19,6 +19,9 @@ Overview of sub-commands::
   clean
     Clean the project from build files
   
+  config
+    Read/write configuration
+  
   dep (since version 0.2.1)
     Manage dependency of a package
   
@@ -170,7 +173,44 @@ Clean the project from build files
 Where options are:
 
 
-* :code:`--opam`   Also remove the local opam switch (_opam/ and _drom/)
+* :code:`--distclean`   Also remove _opam/ (local switch) and _drom/
+
+
+drom config
+~~~~~~~~~~~~~
+
+Read/write configuration
+
+
+
+**DESCRIPTION**
+
+
+This command is useful to read/write drom configuration
+
+
+**EXAMPLE**
+
+
+The following displays the list of project skeletons:
+::
+  
+  drom config --project-skeletons
+  
+
+**USAGE**
+::
+  
+  drom config [OPTIONS]
+
+Where options are:
+
+
+* :code:`--drom-project-skeletons`   List available project skeletons from drom
+
+* :code:`--package-skeletons`   List available package skeletons
+
+* :code:`--project-skeletons`   List available project skeletons
 
 
 drom dep (since version 0.2.1)
@@ -425,7 +465,7 @@ Create a new project
 **DESCRIPTION**
 
 
-This command performs the following actions:
+This command creates a new project, with name **PROJECT** in a directory **PROJECT** (unless the **--inplace** argument was provided).
 
 
 **EXAMPLE**
