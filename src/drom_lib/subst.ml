@@ -60,11 +60,9 @@ let project_brace (_, p) v =
   | "month" -> (Misc.date ()).Unix.tm_mon |> Printf.sprintf "%02d"
   | "day" -> (Misc.date ()).Unix.tm_mday |> Printf.sprintf "%02d"
   (* for github *)
-  | "comment-if-not-windows-ci" ->
-      if p.windows_ci then
-        ""
-      else
-        "#"
+  | "ci-first-system" -> List.hd p.ci_systems
+  | "ci-systems" ->
+      String.concat "\n          - " p.ci_systems
   | "include-for-min-edition" ->
       if p.edition = p.min_edition then
         ""
@@ -72,10 +70,11 @@ let project_brace (_, p) v =
         Printf.sprintf
           {|
         include:
-          - os: ubuntu-latest
+          - os: %s
             ocaml-version: %s
             skip_test: true
 |}
+          (List.hd p.ci_systems)
           p.min_edition
   (* for sphinx *)
   | "sphinx-authors-list" -> String.concat "\n* " p.authors

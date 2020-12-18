@@ -1,0 +1,3 @@
+[file=.gitattributes]scripts/before*.sh text=auto
+scripts/after*.sh text=auto
+

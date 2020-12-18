@@ -308,7 +308,7 @@ let rec eval_project_cond p cond =
   | "not" :: cond -> not ( eval_project_cond p cond )
   | [ "true" ] -> true
   | [ "false" ] -> false
-  | [ "windows-ci" ] -> p.windows_ci
+  | [ "ci" ; system ] -> List.mem system p.ci_systems
   | [ "github-organization"] -> p.github_organization <> None
   | [ "homepage"] -> Misc.homepage p <> None
   | [ "copyright"] -> p.copyright <> None
@@ -452,8 +452,17 @@ let write_package_files write_file package =
 
 let write_files write_file p =
   write_project_files write_file p;
-
   List.iter (fun package -> write_package_files write_file package) p.packages
+
+let write_files ~twice write_file p =
+  write_files write_file p;
+  if twice then
+    (* We need to iterate a second time, because some files may not have
+       been present during the first iteration. For example, the `dune`
+       file will not be correct if some source files were not yet
+       created from the template when it was created. *)
+    write_files write_file p;
+  ()
 
 let project_skeletons () =
   Lazy.force project_skeletons |> StringMap.to_list |> List.map snd

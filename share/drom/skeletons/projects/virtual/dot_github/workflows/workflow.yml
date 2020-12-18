@@ -14,9 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-latest
-          - ubuntu-latest
-!{comment-if-not-windows-ci}          - windows-latest
+          - !{ci-systems}
         ocaml-version:
           - !{edition}
         skip_test:
@@ -68,4 +66,4 @@ jobs:
       - name: test source is well formatted
         run: make fmt
         continue-on-error: true
-        if: matrix.ocaml-version == '!{edition}' && matrix.os == 'ubuntu-latest'
+        if: matrix.ocaml-version == '!{edition}' && matrix.os == '!{ci-first-system}'

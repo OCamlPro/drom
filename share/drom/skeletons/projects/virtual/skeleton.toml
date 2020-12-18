@@ -25,6 +25,7 @@ name = "virtual"
    skips = [ "github", "workflows" ] }
 
 "dot_gitignore" = { file = ".gitignore", skips = [ "git" ]  }
+"dot_gitattributes" = { file = ".gitattributes", skips = [ "git" ]  }
 
 "docs/index.html" = { skips = "docs" }
 "docs/favicon.png" = { skips = [ "docs" ], subst = false }

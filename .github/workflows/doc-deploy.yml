@@ -34,14 +34,11 @@ jobs:
         if: steps.cache-opam.outputs.cache-hit != 'true'
       - run: opam upgrade --fixup
         if: steps.cache-opam.outputs.cache-hit == 'true'
+      - run: dos2unix ./scripts/*.sh
+        if: matrix.os == 'windows-latest'
       - name: build-doc
         run: |
-          mkdir -p _drom/docs
-          rsync -auv docs/. _drom/docs/.
-          opam exec -- dune build @doc
-          mkdir -p _drom/docs/doc
-          rsync -auv _build/default/_doc/_html/. _drom/docs/doc/.
-          sphinx-build sphinx _drom/docs/sphinx
+          make doc
           touch _drom/docs/.nojekyll
           touch _drom/docs/sphinx/.nojekyll
           touch _drom/docs/doc/.nojekyll

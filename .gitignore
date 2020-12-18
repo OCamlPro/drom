@@ -7,5 +7,7 @@ _build
 /_opam
 /_build
 
+# Use 'dot-gitignore-trailer' in the '[project.fields]' section of drom.toml
+# to add extra lines
 
 

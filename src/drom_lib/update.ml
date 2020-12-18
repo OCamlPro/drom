@@ -59,15 +59,15 @@ let compute_config_hash files =
   let files = List.sort compare files in
   let files =
     List.map (fun (file, content) ->
-        (file, Hashes.digest_content content)) files
+        (file, Hashes.digest_content ~file content)) files
   in
   let to_hash =
     String.concat "?"
       (List.map (fun (file, hash) -> Printf.sprintf "%s^%s" file hash) files)
   in
-  Hashes.digest_content to_hash
+  Hashes.digest_content ~file:"" to_hash
 
-let update_files ?args ?mode ?(git = false) ?(create = false) p =
+let update_files ~twice ?args ?mode ?(git = false) ?(create = false) p =
   let force, upgrade, skip, diff, promote_skip =
     match args with
     | None -> (false, false, [], false, false)
@@ -111,7 +111,7 @@ let update_files ?args ?mode ?(git = false) ?(create = false) p =
     end else
       force
       ||
-      let hash = Hashes.digest_content ~perm:old_perm old_content in
+      let hash = Hashes.digest_content ~file:filename ~perm:old_perm old_content in
       match Hashes.get hashes filename with
       | exception Not_found ->
           skipped := filename :: !skipped;
@@ -119,7 +119,9 @@ let update_files ?args ?mode ?(git = false) ?(create = false) p =
           false
       | former_hash ->
           let modified = former_hash <> hash &&
-                         former_hash <> Digest.string content in
+                         (* compatibility with former hashing system *)
+                         former_hash <> Digest.string content
+          in
           if modified then (
             skipped := filename :: !skipped;
             Printf.eprintf "Skipping modified file %s\n%!" filename;
@@ -293,7 +295,7 @@ let update_files ?args ?mode ?(git = false) ?(create = false) p =
         (Printf.sprintf "skip = \"%s\"\n" (String.concat " " !can_skip));
 
       (* Most of the files are created using Skeleton *)
-      Skeleton.write_files
+      Skeleton.write_files ~twice
         (fun file ~create ~skips ~content ~record ~skip ~perm ->
            write_file hashes ~perm file ~create ~skips ~record ~skip content)
         p;

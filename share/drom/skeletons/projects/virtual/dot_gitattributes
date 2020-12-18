@@ -1,0 +1,6 @@
+scripts/before*.sh text eol=auto
+scripts/after*.sh text eol=auto
+
+# Use 'dot-gitattributes-trailer' in the '[project.fields]' section of drom.toml
+# to add extra lines
+!(dot-gitattributes-trailer)

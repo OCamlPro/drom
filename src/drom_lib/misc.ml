@@ -342,3 +342,11 @@ let before_hook ?args command =
 
 let after_hook ?args command =
   hook ?args (Printf.sprintf "./scripts/after-%s.sh" command)
+
+let default_ci_systems =
+  [ "ubuntu-latest" ; "macos-latest" ; "windows-latest" ]
+
+let editor () =
+  match Sys.getenv "EDITOR" with
+  | exception Not_found -> "emacs"
+  | editor -> editor
