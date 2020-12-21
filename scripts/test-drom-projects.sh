@@ -26,7 +26,7 @@ for package in $PACKAGES; do
   cd /tmp/drom-tests
   git clone $package
   cd $(basename $package)
-  drom project --upgrade || exit 2
+  drom project -f --upgrade || exit 2
   drom build -y || exit 2
   drom test -y || exit 2
   drom sphinx -y || exit 2
