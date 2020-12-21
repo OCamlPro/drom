@@ -23,6 +23,7 @@ val update_args :
   update_args * (string list * EZCMD.TYPES.Arg.spec * EZCMD.TYPES.info) list
 
 val update_files :
+  twice:bool ->
   ?args:update_args ->
   ?mode:Types.mode ->
   ?git:bool ->

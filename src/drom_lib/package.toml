@@ -43,9 +43,9 @@ directories = ">=0.2"
 ez_cmdliner = "0.2.0"
 ez_config = "0.1.0"
 ez_file = "0.2.0"
+ez_opam_file = "0.1.0"
 ez_subst = ">=0.1"
 toml = "5.0.0"
-ez_opam_file = "0.1.0"
 
 # package tools dependencies
 [tools]

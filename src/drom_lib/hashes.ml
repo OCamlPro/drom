@@ -84,7 +84,13 @@ let rename t src_file dst_file =
 let perm_equal p1 p2 =
   ( p1 lsr 6 ) land 7 = ( p2 lsr 6 ) land 7
 
-let digest_content ?(perm=0o644) content =
+let digest_content ?(perm=0o644) ~file content =
+  let content =
+    if Filename.check_suffix file ".sh" then
+      String.concat "" (EzString.split content '\r')
+    else
+      content
+  in
   let perm = ( perm lsr 6 ) land 7 in
   Digest.string (Printf.sprintf "%s.%d" content perm)
 
@@ -101,7 +107,7 @@ let save ?(git = true) t =
         if not (Sys.file_exists dirname) then EzFile.make_dir ~p:true dirname;
         EzFile.write_file file content;
         Unix.chmod file perm;
-        if record then update t file (digest_content ~perm content))
+        if record then update t file (digest_content ~file ~perm content))
       t.files;
 
     let b = Buffer.create 1000 in

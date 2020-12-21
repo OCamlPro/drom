@@ -122,7 +122,7 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
       archive = None;
       sphinx_target = None;
       odoc_target = None;
-      windows_ci = true;
+      ci_systems = Misc.default_ci_systems;
       profiles = StringMap.empty;
       skip_dirs = [];
       fields = StringMap.empty
@@ -189,12 +189,7 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
         Project.of_string ~msg:"toml template" ~default:project content
   in
 
-  Update.update_files ~create:true ?mode ~git:true ~args p;
-  (* We need to iterate twice, because some files may not have been
-     present during the first iteration. For example, the `dune` file
-     will not be correct if some source files were not yet created
-     from the template. *)
-  Update.update_files ~git:true ~args p;
+  Update.update_files ~twice:true ~create:true ?mode ~git:true ~args p;
   print_dir (name ^ "/") "."
 
 (* lookup for "drom.toml" and update it *)

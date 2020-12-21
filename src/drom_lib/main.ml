@@ -36,6 +36,7 @@ let main () =
       CommandDep.cmd;
       CommandOpamPlugin.cmd;
       CommandConfig.cmd;
+      CommandTop.cmd;
     ]
   in
   let common_args =

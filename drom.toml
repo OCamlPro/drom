@@ -3,6 +3,7 @@ drom-version = "0.1"
 
 [project]
 authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>", "Léo Andrès <leo.andres@ocamlpro.com>"]
+ci-systems = ["ubuntu-latest", "macos-latest", "windows-latest"]
 copyright = "OCamlPro SAS & Origin Labs SAS"
 edition = "4.10.0"
 github-organization = "ocamlpro"
@@ -11,7 +12,6 @@ min-edition = "4.07.0"
 name = "drom"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
 version = "0.2.2"
-windows-ci = true
 
 # keys that you could also define:
 # odoc-target = "...odoc-target..."
@@ -69,7 +69,10 @@ ocaml-flags = "-w -a"
 
 # project-wide fields (depends on project skeleton)
 [fields]
-# ...
+dot-gitattributes-trailer = """
+share/drom/skeletons/projects/virtual/scripts/before*.sh text=lf
+share/drom/skeletons/projects/virtual/scripts/after*.sh text=lf
+"""
 
 
 [[package]]
@@ -80,5 +83,4 @@ dir = "src/drom"
 [[package]]
 dir = "src/drom_lib"
 # edit 'src/drom_lib/package.toml' for package-specific options
-
 

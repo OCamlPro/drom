@@ -116,7 +116,7 @@ let upgrade_package package ~upgrade ~kind ~mode ~files =
   end;
   ()
 
-let action ~package_name ~kind ~mode ~dir ?create ~remove ?rename
+let action ~edit ~package_name ~kind ~mode ~dir ?create ~remove ?rename
     ~args ~files () =
   let p, inferred_dir = Project.get () in
   let name =
@@ -126,6 +126,25 @@ let action ~package_name ~kind ~mode ~dir ?create ~remove ?rename
         Printf.eprintf "No name specified, using project name %S\n%!" name;
         name
     | Some name -> name
+  in
+  let p =
+    if edit then
+      let found = ref false in
+      List.iter (fun package ->
+          if package.name = name then begin
+            found := true;
+            let editor = Misc.editor () in
+            match Printf.kprintf Sys.command "%s '%s'" editor
+                    ( package.dir // "package.toml" ) with
+            | 0 -> ()
+            | _ -> Error.raise "Editing command returned a non-zero status"
+
+          end) p.packages;
+      if not !found then Error.raise "No such package to modify";
+      let p, _inferred_dir = Project.get () in
+      p
+    else
+      p
   in
   let upgrade =
     Hashes.with_ctxt ~git:true (fun hashes ->
@@ -219,7 +238,8 @@ let action ~package_name ~kind ~mode ~dir ?create ~remove ?rename
                              package)
                         p.packages;
                     true
-                | None -> false )
+                | None ->
+                    edit )
           in
           let upgrade = ref upgrade in
           List.iter
@@ -231,7 +251,9 @@ let action ~package_name ~kind ~mode ~dir ?create ~remove ?rename
           !upgrade)
   in
   let args = { args with arg_upgrade = upgrade } in
-  Update.update_files ~create:false ?mode ~git:true p ~args;
+  let twice = create <> None in
+  Update.update_files
+    ~twice ~create:false ?mode ~git:true p ~args;
   ()
 
 let cmd =
@@ -242,12 +264,14 @@ let cmd =
   let create = ref None in
   let remove = ref false in
   let rename = ref None in
+  let edit = ref false in
   let args, specs = Update.update_args () in
   let files = ref [] in
   EZCMD.sub cmd_name
     (fun () ->
        action ~package_name:!package_name ~mode:!mode ~kind:!kind
          ~dir:!dir ?create:!create ~remove:!remove
+         ~edit:!edit
          ?rename:!rename ~args ~files:(List.rev !files) ())
     ~args: (
       specs
@@ -289,6 +313,9 @@ let cmd =
             Arg.String (fun file -> files := file :: !files),
             EZCMD.info ~docv:"FILENAME" ~version:"0.2.1"
               "Add new source file" );
+          ( [ "edit" ],
+            Arg.Set edit,
+            EZCMD.info "Edit package.toml description with EDITOR" );
           ( [],
             Arg.Anon (0, fun name -> package_name := Some name),
             EZCMD.info ~docv:"PACKAGE" "Name of the package" )

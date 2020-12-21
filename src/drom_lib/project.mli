@@ -8,8 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
-val find : unit -> (Types.project * string) option
-
+val lookup : unit -> ( string * string ) option
+val find : ?display:bool -> unit -> (Types.project * string) option
 val get : unit -> Types.project * string
 
 val read : ?default:Types.project -> string -> Types.project

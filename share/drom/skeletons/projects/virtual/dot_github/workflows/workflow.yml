@@ -59,13 +59,16 @@ jobs:
       - run: opam upgrade --fixup
         if: steps.cache-opam.outputs.cache-hit == 'true'
 
-      - run: make build
+#      - run: make build
+      - run: opam exec -- dune build @install
 
       - name: run test suite
-        run: make test
+#        run: make test
+        run: opam exec -- dune build @runtest
         if: matrix.skip_test  != 'true'
 
       - name: test source is well formatted
-        run: make fmt
+        run: opam exec -- dune build @fmt
+#        run: make fmt
         continue-on-error: true
         if: matrix.ocaml-version == '!{edition}' && matrix.os == 'ubuntu-latest'
