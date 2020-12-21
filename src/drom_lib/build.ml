@@ -67,8 +67,9 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
     ?(force_build_deps = false)
     ?((* only for `drom build-deps` *)
     dev_deps = false) ?(force_dev_deps = false)
-    ?((* only for `drom dev-deps` *)
-    build = true) () =
+    ?((* only for `drom dev-deps` *) build = true)
+    ?(extra_packages = [])
+    () =
   let p, _inferred_dir = Project.get () in
 
   let { arg_switch ;
@@ -102,7 +103,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
 
   ( if arg_upgrade then
       let create = false in
-      Update.update_files ~create p
+      Update.update_files ~twice:false ~create p
     else
       let hashes = Hashes.load () in
       if
@@ -343,17 +344,26 @@ had_switch: %b
       )
   );
 
-  if force_dev_deps then begin
-    let config = Lazy.force Config.config in
-    let to_install = ref [] in
-    List.iter (fun nv ->
-        if not ( StringMap.mem nv switch_packages ) then
-          to_install := nv :: !to_install
-      ) config.config_dev_tools;
-    match !to_install with
+  let extra_packages =
+    if force_dev_deps then
+      let config = Lazy.force Config.config in
+      config.config_dev_tools @ extra_packages
+    else
+      extra_packages
+  in
+  begin
+    match extra_packages with
     | [] -> ()
-    | packages ->
-        Opam.run ~y [ "install" ] packages
+    | _ ->
+        let to_install = ref [] in
+        List.iter (fun nv ->
+            if not ( StringMap.mem nv switch_packages ) then
+              to_install := nv :: !to_install
+          ) extra_packages ;
+        match !to_install with
+        | [] -> ()
+        | packages ->
+            Opam.run ~y [ "install" ] packages
   end;
 
   if build then begin

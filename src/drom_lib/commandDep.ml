@@ -143,7 +143,7 @@ let action ?dep
 
   if !upgrade then
     let args = { args with arg_upgrade = !upgrade } in
-    Update.update_files ~create:false ~git:true p ~args;
+    Update.update_files ~twice:false ~create:false ~git:true p ~args;
     ()
 
 let cmd =

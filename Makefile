@@ -54,13 +54,14 @@ fmt-check:
 	opam exec -- dune build @fmt
 
 install:
-	opam exec -- dune install
+	opam pin -y --no-action -k path .
+	opam install -y .
 
 opam:
 	opam pin -k path .
 
 uninstall:
-	opam install .
+	opam uninstall .
 
 dev-deps:
 	opam install ./*.opam --deps-only --with-doc --with-test
@@ -72,8 +73,10 @@ test:
 
 clean:
 	rm -rf _build
+	./scripts/after.sh clean
 
 distclean: clean
 	rm -rf _opam _drom
+	./scripts/after.sh distclean
 
 

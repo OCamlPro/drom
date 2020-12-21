@@ -12,39 +12,51 @@ open Types
 open Ezcmd.V2
 open EZCMD.TYPES
 open Update
+open EzFile.OP
 
 let cmd_name = "project"
 
 (* lookup for "drom.toml" and update it *)
-let action ~skeleton ~mode ~args =
+let action ~skeleton ~mode ~edit ~args =
+  begin
+    match Project.lookup () with
+    | None ->
+        Error.raise
+          "No project found. Maybe you need to create a project first with 'drom \
+           new PROJECT'"
+    | Some (dir, _) ->
+        if edit then
+          let editor = Misc.editor () in
+          match Printf.kprintf Sys.command "%s '%s'" editor ( dir // "drom.toml" ) with
+          | 0 -> ()
+          | _ -> Error.raise "Editing command returned a non-zero status"
+  end;
+
   let project = Project.find () in
   match project with
-  | None ->
-    Error.raise
-      "No project found. Maybe you need to create a project first with 'drom \
-       new PROJECT'"
+  | None -> assert false
   | Some (p, _) ->
-    let _sk = Skeleton.lookup_project skeleton in
-
-    let args =
-      { args with
-        arg_upgrade =
-          ( if p.skeleton <> skeleton then begin
-            p.skeleton <- skeleton;
-            true
-          end else
-            args.arg_upgrade )
-      }
-    in
-    Update.update_files ~args ~create:false ?mode ~git:true p
+      let _sk = Skeleton.lookup_project skeleton in
+      let args =
+        { args with
+          arg_upgrade =
+            ( if p.skeleton <> skeleton then begin
+                  p.skeleton <- skeleton;
+                  true
+                end else
+                args.arg_upgrade )
+        }
+      in
+      Update.update_files ~twice:false ~args ~create:false ?mode ~git:true p
 
 let cmd =
   let mode = ref None in
   let skeleton = ref None in
   let args, specs = Update.update_args () in
+  let edit = ref false in
   EZCMD.sub cmd_name
     (fun () ->
-       action ~skeleton:!skeleton ~mode:!mode ~args)
+       action ~skeleton:!skeleton ~mode:!mode ~edit:!edit ~args)
     ~args: (
       specs
       @ [ ( [ "library" ],
@@ -89,6 +101,9 @@ let cmd =
           ( [ "upgrade" ],
             Arg.Unit (fun () -> args.arg_upgrade <- true),
             EZCMD.info "Force upgrade of the drom.toml file from the skeleton" );
+          ( [ "edit" ],
+            Arg.Set edit,
+            EZCMD.info "Edit project description" );
         ]
     )
     ~doc: "Update an existing project"

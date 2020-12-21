@@ -32,5 +32,6 @@ val build :
   ?dev_deps:bool ->
   ?force_dev_deps:bool ->
   ?build:bool ->
+  ?extra_packages:string list ->
   unit ->
   Types.project

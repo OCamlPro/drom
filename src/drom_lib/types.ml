@@ -87,7 +87,7 @@ and project =
     (* odoc options *)
     odoc_target : string option;
     (* CI options *)
-    windows_ci : bool;
+    ci_systems : string list;
     skip_dirs : string list;
     profiles : profile StringMap.t;
     profile : string option;

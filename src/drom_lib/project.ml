@@ -37,7 +37,7 @@ let rec dummy_project =
     archive = None;
     sphinx_target = None;
     odoc_target = None;
-    windows_ci = true;
+    ci_systems = Misc.default_ci_systems;
     profiles = StringMap.empty;
     skip_dirs = [];
     fields = StringMap.empty;
@@ -493,7 +493,7 @@ let to_files p =
     |> EzToml.put_string [ "project"; "license" ] p.license
     (*    |> EzToml.put_string [ "project" ; "dir" ] p.package.dir *)
     |> EzToml.put [ "project"; "authors" ] (TArray (NodeString p.authors))
-    |> EzToml.put_bool [ "project"; "windows-ci" ] p.windows_ci
+    |> EzToml.put_string_list [ "project"; "ci-systems" ] p.ci_systems
   in
   let maybe_package_key key v (table, optionals) =
     match v with
@@ -790,13 +790,22 @@ let project_of_toml ?file ?default table =
       ?default:d.profile
   in
 
-  let windows_ci =
-    EzToml.get_bool_default table [ project_key; "windows-ci" ] d.windows_ci
-  in
   let _generators = (* obsolete *)
     EzToml.get_string_list_default table
       [ project_key; "generators" ]
       []
+  in
+  let ci_systems = EzToml.get_string_list_default table
+      [ project_key; "ci-systems" ]
+      (
+        let windows_ci =
+          EzToml.get_bool_default table [ project_key; "windows-ci" ] true
+        in
+        if windows_ci then
+          Misc.default_ci_systems
+        else
+          List.filter (fun s -> s <> "windows-latest") Misc.default_ci_systems
+      )
   in
   let package, packages =
     let rec iter list =
@@ -896,7 +905,7 @@ let project_of_toml ?file ?default table =
       archive;
       sphinx_target;
       odoc_target;
-      windows_ci;
+      ci_systems;
       profiles;
       skip_dirs;
       share_dirs ;
@@ -931,14 +940,18 @@ let project_of_filename ?default file =
   in
   project_of_toml ~file ?default table
 
-let find () =
+let lookup () =
   Globals.find_ancestor_file Globals.drom_file
-    (fun ~dir ~path ->
-       Unix.chdir dir;
-       if Misc.verbose 1 then
-         Printf.eprintf "drom: Entering directory '%s'\n%!" (Sys.getcwd ());
-       ( project_of_filename Globals.drom_file, path )
-    )
+    (fun ~dir ~path -> (dir,path))
+
+let find ?(display=true) () =
+  match lookup () with
+    None -> None
+  | Some (dir, path) ->
+      Unix.chdir dir;
+      if display && Misc.verbose 1 then
+        Printf.eprintf "drom: Entering directory '%s'\n%!" (Sys.getcwd ());
+      Some ( project_of_filename Globals.drom_file, path )
 
 let get () =
   match find () with
