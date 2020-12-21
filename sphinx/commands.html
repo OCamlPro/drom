@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Sub-commands and Arguments &mdash; drom master
- (4602f54
-) (2020/12/18 00:24) documentation</title>
+ (d32caec
+) (2020/12/21 15:43) documentation</title>
   
 
   
@@ -42,8 +42,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="drom master
- (4602f54
-) (2020/12/18 00:24) documentation" href="index.html"/>
+ (d32caec
+) (2020/12/21 15:43) documentation" href="index.html"/>
         <link rel="next" title="User Configuration" href="config.html"/>
         <link rel="prev" title="Project Description" href="reference.html"/> 
 
@@ -75,7 +75,7 @@
             
               <div class="version">
                 master
- (4602f54
+ (d32caec
 )
               </div>
             
@@ -127,6 +127,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#drom-run">drom run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-sphinx">drom sphinx</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-test">drom test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#drom-top">drom top</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-tree">drom tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-uninstall">drom uninstall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-update">drom update</a></li>
@@ -270,6 +271,9 @@
 
 <span class="n">test</span>
   <span class="nc">Run</span> <span class="n">tests</span>
+
+<span class="n">top</span>
+  <span class="nc">Run</span> <span class="n">the</span> <span class="n">ocaml</span> <span class="n">toplevel</span>
 
 <span class="n">tree</span>
   <span class="nc">Display</span> <span class="n">a</span> <span class="n">tree</span> <span class="k">of</span> <span class="n">dependencies</span>
@@ -596,6 +600,7 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 <li><code class="code docutils literal"><span class="pre">--binary</span></code>   Compile to binary</li>
 <li><code class="code docutils literal"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</li>
 <li><code class="code docutils literal"><span class="pre">--dir</span> <span class="pre">DIRECTORY</span></code>   Dir where package sources are stored (src by default)</li>
+<li><code class="code docutils literal"><span class="pre">--edit</span></code>   Edit package.toml description with EDITOR</li>
 <li><code class="code docutils literal"><span class="pre">-f</span></code> or <code class="code docutils literal"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</li>
 <li><code class="code docutils literal"><span class="pre">--javascript</span></code>   Compile to javascript</li>
 <li><code class="code docutils literal"><span class="pre">--library</span></code>   Package is a library</li>
@@ -624,6 +629,7 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 <ul class="simple">
 <li><code class="code docutils literal"><span class="pre">--binary</span></code>   Compile to binary</li>
 <li><code class="code docutils literal"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</li>
+<li><code class="code docutils literal"><span class="pre">--edit</span></code>   Edit project description</li>
 <li><code class="code docutils literal"><span class="pre">-f</span></code> or <code class="code docutils literal"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</li>
 <li><code class="code docutils literal"><span class="pre">--javascript</span></code>   Compile to javascript</li>
 <li><code class="code docutils literal"><span class="pre">--library</span></code>   Project contains only a library. Equivalent to <strong>–skeleton library</strong></li>
@@ -792,6 +798,25 @@ Run the test command <strong>opam exec – dune build &#64;runtest</strong></li>
 <li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
+<div class="section" id="drom-top">
+<h2>drom top<a class="headerlink" href="#drom-top" title="Permalink to this headline">¶</a></h2>
+<p>Run the ocaml toplevel</p>
+<p><strong>USAGE</strong></p>
+<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">top</span> <span class="nc">ARGUMENTS</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>Where options are:</p>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">ARGUMENTS</span></code>   Provide arguments for the ocaml toplevel</li>
+<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+</ul>
+</div>
 <div class="section" id="drom-tree">
 <h2>drom tree<a class="headerlink" href="#drom-tree" title="Permalink to this headline">¶</a></h2>
 <p>Display a tree of dependencies</p>
@@ -914,7 +939,7 @@ Unpin package dependencies</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'master (4602f54) (2020/12/18 00:24)',
+            VERSION:'master (d32caec) (2020/12/21 15:43)',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

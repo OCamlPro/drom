@@ -70,6 +70,9 @@ Overview of sub-commands::
   test
     Run tests
   
+  top
+    Run the ocaml toplevel
+  
   tree
     Display a tree of dependencies
   
@@ -602,6 +605,8 @@ Where options are:
 
 * :code:`--dir DIRECTORY`   Dir where package sources are stored (src by default)
 
+* :code:`--edit`   Edit package.toml description with EDITOR
+
 * :code:`-f` or :code:`--force`   Force overwriting modified files (otherwise, they would be skipped)
 
 * :code:`--javascript`   Compile to javascript
@@ -652,6 +657,8 @@ Where options are:
 * :code:`--binary`   Compile to binary
 
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
+
+* :code:`--edit`   Edit project description
 
 * :code:`-f` or :code:`--force`   Force overwriting modified files (otherwise, they would be skipped)
 
@@ -896,6 +903,37 @@ Where options are:
 
 
 * :code:`--all`   Build and run tests on all compatible switches
+
+* :code:`--edition VERSION`   Use this OCaml edition
+
+* :code:`--local`   Create a local switch instead of using a global switch
+
+* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
+
+* :code:`--profile PROFILE`   Build profile to use
+
+* :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
+
+* :code:`--upgrade`   Upgrade project files from drom.toml
+
+* :code:`-y` or :code:`--yes`   Reply yes to all questions
+
+
+drom top
+~~~~~~~~~~
+
+Run the ocaml toplevel
+
+
+**USAGE**
+::
+  
+  drom top ARGUMENTS [OPTIONS]
+
+Where options are:
+
+
+* :code:`ARGUMENTS`   Provide arguments for the ocaml toplevel
 
 * :code:`--edition VERSION`   Use this OCaml edition
 
