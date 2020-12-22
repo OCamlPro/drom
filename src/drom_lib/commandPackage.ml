@@ -71,19 +71,13 @@ let rename_package hashes package new_name =
 
   { package with dir = new_dir; name = new_name }
 
-let upgrade_package package ~upgrade ~kind ~mode ~files =
+let upgrade_package package ~upgrade ~kind ~files =
 
   ( match kind with
     | None -> ()
     | Some kind ->
         package.kind <- kind;
         upgrade := true );
-  ( match mode with
-    | None -> ()
-    | Some mode ->
-        package.p_mode <- Some mode;
-        upgrade := true
-  );
 
   begin
 
@@ -116,7 +110,7 @@ let upgrade_package package ~upgrade ~kind ~mode ~files =
   end;
   ()
 
-let action ~edit ~package_name ~kind ~mode ~dir ?create ~remove ?rename
+let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename
     ~args ~files () =
   let p, inferred_dir = Project.get () in
   let name =
@@ -193,11 +187,6 @@ let action ~edit ~package_name ~kind ~mode ~dir ?create ~remove ?rename
                 in
                 let package = Project.create_package ~kind ~name ~dir in
                 package.p_skeleton <- Some skeleton;
-                begin
-                  match mode with
-                  | None -> ()
-                  | Some mode -> package.p_mode <- Some mode
-                end;
                 package.project <- p;
 
                 let rec iter_skeleton list =
@@ -245,7 +234,7 @@ let action ~edit ~package_name ~kind ~mode ~dir ?create ~remove ?rename
           List.iter
             (fun package ->
                if package.name = name then
-                 upgrade_package package ~upgrade ~kind ~mode ~files
+                 upgrade_package package ~upgrade ~kind ~files
             )
             p.packages;
           !upgrade)
@@ -253,13 +242,12 @@ let action ~edit ~package_name ~kind ~mode ~dir ?create ~remove ?rename
   let args = { args with arg_upgrade = upgrade } in
   let twice = create <> None in
   Update.update_files
-    ~twice ~create:false ?mode ~git:true p ~args;
+    ~twice ~create:false ~git:true p ~args;
   ()
 
 let cmd =
   let package_name = ref None in
   let kind = ref None in
-  let mode = ref None in
   let dir = ref None in
   let create = ref None in
   let remove = ref false in
@@ -269,7 +257,7 @@ let cmd =
   let files = ref [] in
   EZCMD.sub cmd_name
     (fun () ->
-       action ~package_name:!package_name ~mode:!mode ~kind:!kind
+       action ~package_name:!package_name ~kind:!kind
          ~dir:!dir ?create:!create ~remove:!remove
          ~edit:!edit
          ?rename:!rename ~args ~files:(List.rev !files) ())
@@ -303,12 +291,6 @@ let cmd =
           ( [ "virtual" ],
             Arg.Unit (fun () -> kind := Some Virtual),
             EZCMD.info "Package is virtual, i.e. no code" );
-          ( [ "binary" ],
-            Arg.Unit (fun () -> mode := Some Binary),
-            EZCMD.info "Compile to binary" );
-          ( [ "javascript" ],
-            Arg.Unit (fun () -> mode := Some Javascript),
-            EZCMD.info "Compile to javascript" );
           ( [ "new-file" ],
             Arg.String (fun file -> files := file :: !files),
             EZCMD.info ~docv:"FILENAME" ~version:"0.2.1"

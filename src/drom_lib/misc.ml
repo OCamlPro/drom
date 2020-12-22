@@ -124,11 +124,6 @@ let doc_gen p =
 let p_dependencies package =
   package.p_dependencies @ package.project.dependencies
 
-let p_mode package =
-  match package.p_mode with
-  | Some deps -> deps
-  | None -> Binary
-
 let p_pack_modules package =
   match package.p_pack_modules with
   | Some deps -> deps

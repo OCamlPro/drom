@@ -61,7 +61,6 @@ and dummy_package =
     p_description = None;
     p_dependencies = [];
     p_tools = [];
-    p_mode = None;
     p_pack_modules = None;
     p_gen_version = None;
     p_fields = StringMap.empty;
@@ -91,24 +90,6 @@ let kind_encoding =
         Virtual
       | kind ->
         Error.raise {|unknown kind %S (should be "library" or "program")|} kind)
-
-let mode_encoding =
-  EzToml.enum_encoding
-    ~to_string:(function
-      | Binary -> "binary"
-      | Javascript -> "javascript")
-    ~of_string:(fun ~key:_ s ->
-      match s with
-      | "bin"
-      | "binary" ->
-        Binary
-      | "js"
-      | "javascript"
-      | "jsoo" ->
-        Javascript
-      | mode ->
-        Error.raise {|unknown mode %S (should be "binary" or "javascript")|}
-          mode)
 
 let string_of_versions versions =
   String.concat " "
@@ -328,11 +309,6 @@ let string_of_package pk =
         ~default: {|pack = "Mylib"|}
         ( string_option pk.p_pack );
 
-      option "mode"
-        ~comment:[ {|compilation mode: "binary" (default) or "javascript"|}  ]
-        ~default: {|mode = "javascript"|}
-        ( encoding_option mode_encoding pk.p_mode );
-
       option "dependencies"
         ~comment:[ "package library dependencies";
                    "   [dependencies]";
@@ -397,10 +373,6 @@ let package_of_toml ?default ?p_file table =
     EzToml.get_bool_option table [ "pack-modules" ]
       ?default:default.p_pack_modules
   in
-  let p_mode =
-    EzToml.get_encoding_option mode_encoding table [ "mode" ]
-      ?default:default.p_mode
-  in
   let p_dependencies =
     EzToml.get_encoding_default dependencies_encoding table [ "dependencies" ]
       default.p_dependencies
@@ -439,7 +411,6 @@ let package_of_toml ?default ?p_file table =
     p_description;
     p_dependencies;
     p_tools;
-    p_mode;
     p_pack_modules;
     p_gen_version;
     p_fields;
@@ -690,10 +661,6 @@ let project_of_toml ?file ?default table =
         match VersionCompare.compare min_edition edition with
         | 1 -> Error.raise "min-edition is greater than edition in drom.toml"
         | _ -> (edition, min_edition) )
-  in
-  let _mode =
-    EzToml.get_encoding_default mode_encoding table [ project_key; "mode" ]
-      Binary
   in
   let dependencies =
     EzToml.get_encoding_default dependencies_encoding table [ "dependencies" ]

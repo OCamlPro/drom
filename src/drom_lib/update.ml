@@ -67,7 +67,7 @@ let compute_config_hash files =
   in
   Hashes.digest_content ~file:"" to_hash
 
-let update_files ~twice ?args ?mode ?(git = false) ?(create = false) p =
+let update_files ~twice ?args ?(git = false) ?(create = false) p =
   let force, upgrade, skip, diff, promote_skip =
     match args with
     | None -> (false, false, [], false, false)
@@ -200,6 +200,7 @@ let update_files ~twice ?args ?mode ?(git = false) ?(create = false) p =
     else
       (p, changed)
   in
+  (*
   let p, changed =
     match mode with
     | None -> (p, changed)
@@ -232,6 +233,7 @@ let update_files ~twice ?args ?mode ?(git = false) ?(create = false) p =
           ) p.packages;
         ({ p with dependencies; tools }, changed)
   in
+*)
   List.iter (fun package -> package.project <- p) p.packages;
 
   Hashes.with_ctxt ~git (fun hashes ->

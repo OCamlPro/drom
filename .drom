@@ -37,7 +37,7 @@ ae6a87df5770f4f6a09196ec38906d5a:.gitignore
 
 # begin context for Makefile
 # file Makefile
-8db959b1e739ddc8519230dd268054d7:Makefile
+603b9d0e2c3041e2569ead8c62ce91bd:Makefile
 # end context for Makefile
 
 # begin context for README.md
@@ -114,6 +114,11 @@ a202354a3c0a360d9279fff87a67922d:dune-project
 # file scripts/before.sh
 ae050b3099ac0b43d7c7f4295f6b2319:scripts/before.sh
 # end context for scripts/before.sh
+
+# begin context for scripts/copy-bin.sh
+# file scripts/copy-bin.sh
+2fa092bed7f3be3d498f06272936fbcd:scripts/copy-bin.sh
+# end context for scripts/copy-bin.sh
 
 # begin context for sphinx/_static/css/fixes.css
 # file sphinx/_static/css/fixes.css

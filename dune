@@ -178,6 +178,8 @@
     as "skeletons/projects/virtual/scripts/after.sh")
    ( "share/drom/skeletons/projects/virtual/scripts/before.sh"
     as "skeletons/projects/virtual/scripts/before.sh")
+   ( "share/drom/skeletons/projects/virtual/scripts/copy-bin.sh"
+    as "skeletons/projects/virtual/scripts/copy-bin.sh")
    ( "share/drom/skeletons/projects/virtual/skeleton.toml"
     as "skeletons/projects/virtual/skeleton.toml")
    ( "share/drom/skeletons/projects/virtual/sphinx/about.rst"

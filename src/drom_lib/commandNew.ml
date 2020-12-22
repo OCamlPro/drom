@@ -56,7 +56,7 @@ let rec find_project_package name packages =
       if package.name = name then package else
         find_project_package name packages
 
-let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
+let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
   let skeleton_name = match skeleton with
     | None -> "program"
     | Some skeleton -> skeleton
@@ -189,11 +189,11 @@ let create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args =
         Project.of_string ~msg:"toml template" ~default:project content
   in
 
-  Update.update_files ~twice:true ~create:true ?mode ~git:true ~args p;
+  Update.update_files ~twice:true ~create:true ~git:true ~args p;
   print_dir (name ^ "/") "."
 
 (* lookup for "drom.toml" and update it *)
-let action ~skeleton ~name ~mode ~inplace ~dir ~args =
+let action ~skeleton ~name ~inplace ~dir ~args =
   match name with
   | None ->
       Printf.eprintf {|You must specify the name of the project to create:
@@ -210,7 +210,7 @@ Available skeletons are: %s
     let config = Lazy.force Config.config in
     let project = Project.find () in
     match project with
-    | None -> create_project ~config ~name ~skeleton ~mode ~dir ~inplace ~args
+    | None -> create_project ~config ~name ~skeleton ~dir ~inplace ~args
     | Some (p, _) ->
       Error.raise
         "Cannot create a project within another project %S. Maybe you want to \
@@ -219,7 +219,6 @@ Available skeletons are: %s
 
 let cmd =
   let project_name = ref None in
-  let mode = ref None in
   let inplace = ref false in
   let skeleton = ref None in
   let dir = ref None in
@@ -243,14 +242,6 @@ let cmd =
             ( [ "virtual" ],
               Arg.Unit (fun () -> skeleton := Some "virtual"),
               EZCMD.info "Package is virtual, i.e. no code" );
-            ( [ "binary" ],
-              Arg.Unit (fun () -> mode := Some Binary),
-              EZCMD.info "Compile to binary" );
-            ( [ "javascript" ],
-              Arg.Unit (fun () ->
-                  skeleton := Some "js";
-                  mode := Some Javascript),
-              EZCMD.info "Compile to javascript" );
             ( [ "skeleton" ],
               Arg.String (fun s -> skeleton := Some s),
               EZCMD.info
@@ -266,7 +257,7 @@ let cmd =
           ])
     ~doc:"Create a new project"
     (fun () ->
-       action ~name:!project_name ~skeleton:!skeleton ~mode:!mode ~dir:!dir
+       action ~name:!project_name ~skeleton:!skeleton ~dir:!dir
          ~inplace:!inplace ~args)
     ~man: [
       `S "DESCRIPTION";
