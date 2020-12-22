@@ -57,6 +57,6 @@ name = "!{name}"
 
 
 [[package]]
-skeleton = "menhir-lib"
+skeleton = "menhir_lib"
 dir = "src/!{name:alpha}_lib"
 name = "!{name:alpha}_lib"

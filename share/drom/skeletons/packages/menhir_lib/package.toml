@@ -1,6 +1,6 @@
 name = "!{name}"
 dir = "!{dir}"
-skeleton = "menhir-lib"
+skeleton = "menhir_lib"
 generators = ["ocamllex", "menhir"]
 kind = "library"
 gen-version = "version.ml"
