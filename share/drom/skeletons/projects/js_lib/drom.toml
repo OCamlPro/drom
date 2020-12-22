@@ -3,6 +3,7 @@ drom-version = "0.1.0"
 
 [project]
 authors = [!{authors-for-toml}]
+skeleton = "js_lib"
 copyright = "!{copyright}"
 edition = "!{edition}"
 github-organization = "!{github-organization}"
@@ -48,16 +49,6 @@ pack-modules = true
 skip-dirs = []
 
 [[package]]
-skeleton = "js"
+skeleton = "js_library"
 dir = "src/!{name}"
-kind = "program"
 name = "!{name}"
-[package.dependencies]
-!{name}_lib = "version"
-
-[[package]]
-skeleton = "library"
-dir = "src/!{name}_lib"
-gen-version = "version.ml"
-kind = "library"
-name = "!{name}_lib"

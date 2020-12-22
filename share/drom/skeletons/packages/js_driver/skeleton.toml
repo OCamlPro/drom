@@ -1,5 +1,5 @@
 [skeleton]
-name = "js"
+name = "js_driver"
 inherits = "virtual"
 
 [file]

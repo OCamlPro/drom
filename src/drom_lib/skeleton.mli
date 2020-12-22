@@ -9,7 +9,6 @@
 (**************************************************************************)
 
 val write_files :
-  twice:bool ->
   (string ->
   create:bool ->
   skips:string list ->

@@ -410,6 +410,8 @@ let write_project_files write_file p =
             flag_skip = skip;
             flag_skipper= _ ;
             flag_subst = _ ; } = flags in
+      Printf.eprintf "flag_file %s\n%!" flag_file;
+      let flag_file = Subst.project () p flag_file in
       write_file flag_file ~create ~skips ~content ~record ~skip ~perm;
     )
     skeleton.skeleton_files;
@@ -446,6 +448,7 @@ let write_package_files write_file package =
              flag_skip = skip;
              flag_skipper= _ ;
              flag_subst = _ ; } = flags in
+       let flag_file = Subst.package () package flag_file in
        let file = package.dir // flag_file in
        write_file file ~create ~skips ~content ~record ~skip ~perm)
     skeleton.skeleton_files
@@ -453,16 +456,6 @@ let write_package_files write_file package =
 let write_files write_file p =
   write_project_files write_file p;
   List.iter (fun package -> write_package_files write_file package) p.packages
-
-let write_files ~twice write_file p =
-  write_files write_file p;
-  if twice then
-    (* We need to iterate a second time, because some files may not have
-       been present during the first iteration. For example, the `dune`
-       file will not be correct if some source files were not yet
-       created from the template when it was created. *)
-    write_files write_file p;
-  ()
 
 let project_skeletons () =
   Lazy.force project_skeletons |> StringMap.to_list |> List.map snd

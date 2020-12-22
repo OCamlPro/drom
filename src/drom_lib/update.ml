@@ -67,7 +67,7 @@ let compute_config_hash files =
   in
   Hashes.digest_content ~file:"" to_hash
 
-let update_files ~twice ?args ?(git = false) ?(create = false) p =
+let update_files ?args ?(git = false) ?(create = false) p =
   let force, upgrade, skip, diff, promote_skip =
     match args with
     | None -> (false, false, [], false, false)
@@ -297,7 +297,7 @@ let update_files ~twice ?args ?(git = false) ?(create = false) p =
         (Printf.sprintf "skip = \"%s\"\n" (String.concat " " !can_skip));
 
       (* Most of the files are created using Skeleton *)
-      Skeleton.write_files ~twice
+      Skeleton.write_files
         (fun file ~create ~skips ~content ~record ~skip ~perm ->
            write_file hashes ~perm file ~create ~skips ~record ~skip content)
         p;
@@ -342,3 +342,10 @@ let update_files ~twice ?args ?(git = false) ?(create = false) p =
          will discard it. *)
       Hashes.update ~git:false hashes "." hash);
   ()
+
+let update_files ~twice ?args ?(git = false) ?(create = false) p =
+  update_files ?args ~git ~create p;
+  if twice then begin
+    Printf.eprintf "Re-iterate file generation for consistency...\n%!";
+    update_files ?args ~git p
+  end

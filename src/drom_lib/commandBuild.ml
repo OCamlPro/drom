@@ -30,8 +30,7 @@ let action ~args () =
              EzFile.write_file package.name s;
              incr n;
              Unix.chmod package.name 0o755
-           ) else
-             Printf.eprintf "Warning: target %s not found.\n%!" src)
+           ) )
     p.packages;
   if !Globals.verbosity > 0 then
     Printf.eprintf "\nBuild OK%s\n%!"
