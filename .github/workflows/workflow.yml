@@ -14,8 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-latest
           - ubuntu-latest
+          - macos-latest
           - windows-latest
         ocaml-version:
           - 4.10.0
@@ -64,16 +64,19 @@ jobs:
       - run: opam upgrade --fixup
         if: steps.cache-opam.outputs.cache-hit == 'true'
 
-#      - run: make build
-      - run: opam exec -- dune build @install
+      - run: dos2unix scripts/*.sh
+        if: matrix.os == 'windows-latest'
+
+      - run: make build
 
       - name: run test suite
-#        run: make test
-        run: opam exec -- dune build @runtest
+        run: |
+          ./scripts/before.sh test
+          opam exec -- dune build @runtest
+          ./scripts/after.sh test
         if: matrix.skip_test  != 'true'
 
       - name: test source is well formatted
-        run: opam exec -- dune build @fmt
-#        run: make fmt
+        run: make fmt
         continue-on-error: true
         if: matrix.ocaml-version == '4.10.0' && matrix.os == 'ubuntu-latest'

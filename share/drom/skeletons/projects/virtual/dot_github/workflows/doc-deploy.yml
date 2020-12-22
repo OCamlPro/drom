@@ -5,7 +5,7 @@ on:
       - master
 jobs:
   doc-deploy:
-    runs-on: ubuntu-latest
+    runs-on: !{ci-first-system}
 
     steps:
       - name: checkout

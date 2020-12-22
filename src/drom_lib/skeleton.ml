@@ -318,7 +318,7 @@ let rec eval_project_cond p cond =
   | [ "doc-api"] -> Misc.doc_api p <> None
   | [ "sphinx-target"] -> p.sphinx_target <> None
   | [ "profile"] -> p.profile <> None
-
+  | [ "min-edition" ] -> p.min_edition <> p.edition
   | [ "field" ; name ] -> StringMap.mem name p.fields
   | "field" :: name :: v ->
       let v = String.concat ":" v in

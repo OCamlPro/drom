@@ -14,14 +14,17 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-latest
-          - ubuntu-latest
-!{comment-if-not-windows-ci}          - windows-latest
+          - !{ci-systems}
         ocaml-version:
           - !{edition}
         skip_test:
           - false
-!{include-for-min-edition}
+![if:min-edition]
+        include:
+          - os: !{ci-first-system}
+            ocaml-version: !{min-edition}
+            skip_test: true
+![fi]
 
     runs-on: ${{ matrix.os }}
 
@@ -59,16 +62,19 @@ jobs:
       - run: opam upgrade --fixup
         if: steps.cache-opam.outputs.cache-hit == 'true'
 
-#      - run: make build
-      - run: opam exec -- dune build @install
+      - run: dos2unix scripts/*.sh
+        if: matrix.os == 'windows-latest'
+
+      - run: make build
 
       - name: run test suite
-#        run: make test
-        run: opam exec -- dune build @runtest
+        run: |
+          ./scripts/before.sh test
+          opam exec -- dune build @runtest
+          ./scripts/after.sh test
         if: matrix.skip_test  != 'true'
 
       - name: test source is well formatted
-        run: opam exec -- dune build @fmt
-#        run: make fmt
+        run: make fmt
         continue-on-error: true
-        if: matrix.ocaml-version == '!{edition}' && matrix.os == 'ubuntu-latest'
+        if: matrix.ocaml-version == '!{edition}' && matrix.os == '!{ci-first-system}'
