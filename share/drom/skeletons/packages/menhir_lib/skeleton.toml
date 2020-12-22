@@ -1,5 +1,5 @@
 [skeleton]
-name = "menhir-lib"
+name = "menhir_lib"
 inherits = "virtual"
 
 [file]

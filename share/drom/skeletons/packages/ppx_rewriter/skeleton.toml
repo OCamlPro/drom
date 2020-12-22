@@ -1,0 +1,9 @@
+[skeleton]
+name = "ppx_rewriter"
+inherits = "virtual"
+
+[file]
+"package.toml" = { create = true }
+dune_ = { file = "dune", skips = [ "dune" ] }
+"index.mld" = { skips = [ "docs" ] }
+"main.ml" = { skips = [ "code" ] }

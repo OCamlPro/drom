@@ -48,15 +48,13 @@ pack-modules = true
 skip-dirs = []
 
 [[package]]
-skeleton = "driver"
+skeleton = "ppx_rewriter"
 dir = "src/!{name}"
 name = "!{name}"
 
-[package.dependencies]
-!{name:alpha}_lib = "version"
-
-
-[[package]]
-skeleton = "menhir_lib"
-dir = "src/!{name:alpha}_lib"
-name = "!{name:alpha}_lib"
+[package.fields]
+dune-stanzas = """
+ ; add here in package.toml any runtime library of your ppx,
+ ; also add it to the [tools] section
+ (ppx_runtime_libraries )
+"""
