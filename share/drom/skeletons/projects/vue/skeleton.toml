@@ -1,0 +1,6 @@
+[skeleton]
+name = "vue"
+inherits = "program"
+
+[file]
+"share/js_prg/www/index.html" = { file = "share/!{name}/www/index.html" }

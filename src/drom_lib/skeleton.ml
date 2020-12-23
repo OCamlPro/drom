@@ -410,7 +410,6 @@ let write_project_files write_file p =
             flag_skip = skip;
             flag_skipper= _ ;
             flag_subst = _ ; } = flags in
-      Printf.eprintf "flag_file %s\n%!" flag_file;
       let flag_file = Subst.project () p flag_file in
       write_file flag_file ~create ~skips ~content ~record ~skip ~perm;
     )
