@@ -3,6 +3,7 @@ drom-version = "0.1.0"
 
 [project]
 authors = [!{authors-for-toml}]
+skeleton = "ppx_rewriter"
 copyright = "!{copyright}"
 edition = "!{edition}"
 github-organization = "!{github-organization}"

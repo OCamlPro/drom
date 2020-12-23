@@ -139,12 +139,6 @@ let project_brace (_, p) v =
             github_organization p.package.name )
   | "sphinx-target" -> Misc.sphinx_target p
   | "odoc-target" -> Misc.odoc_target p
-  | "make-copy-programs" ->
-      List.filter (fun package -> package.kind = Program) p.packages
-      |> List.map (fun package ->
-          Printf.sprintf "\n\tcp -f _build/default/%s/main.exe %s" package.dir
-            package.name)
-      |> String.concat ""
   | "badge-ci" -> (
       match p.github_organization with
       | None -> ""
@@ -322,41 +316,22 @@ let package_brace (context, package) v =
              | Some name -> name)
           (Misc.p_dependencies package)
       in
-      let p_mode = Misc.p_mode package in
-      let dependencies =
-        match p_mode with
-        | Binary -> dependencies
-        | Javascript ->
-            if List.mem "js_of_ocaml" dependencies then
-              dependencies
-            else
-              "js_of_ocaml" :: dependencies
-      in
       String.concat " " dependencies
-  | "dune-stanzas" ->
-      String.concat "\n"
-        ( match Misc.p_mode package with
-          | Binary -> []
-          | Javascript ->
-              [ ( match package.kind with
-                    | Library
-                    | Virtual ->
-                        ""
-                    | Program -> "(modes exe js)" );
-                "   (preprocess (pps js_of_ocaml-ppx))"
-              ] )
+  | "dune-stanzas" -> ""
   | "package-dune-files" -> Dune.package_dune_files package
   | "package-dune-installs" ->
       let share_files = ref [] in
+      (*
       begin
         match (Misc.p_mode package, package.kind) with
         | Javascript, Program ->
             (* We need to create a specific installation rule to force
                build of the Javascript files when `dune build
                @install` is called by `drom build` *)
-            share_files := "(main.bc.js as www/js/%s.js)" :: !share_files
+            share_files := Printf.sprintf "(main.bc.js as %s.js)" package.name :: !share_files
         | _ -> ()
       end;
+*)
       (
         match !share_files with
         | [] -> ""

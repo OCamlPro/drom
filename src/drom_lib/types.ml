@@ -15,10 +15,6 @@ type kind =
   | Library
   | Virtual
 
-type mode =
-  | Binary
-  | Javascript
-
 type version =
   | Lt of string
   | Le of string
@@ -50,7 +46,6 @@ type package =
     mutable p_description : string option;
     mutable p_dependencies : (string * dependency) list;
     mutable p_tools : (string * dependency) list;
-    mutable p_mode : mode option;
     mutable p_pack_modules : bool option;
     mutable p_gen_version : string option;
     mutable p_fields : string StringMap.t;

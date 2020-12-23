@@ -36,6 +36,30 @@
     as "skeletons/packages/driver/package.toml")
    ( "share/drom/skeletons/packages/driver/skeleton.toml"
     as "skeletons/packages/driver/skeleton.toml")
+   ( "share/drom/skeletons/packages/js_driver/dune_"
+    as "skeletons/packages/js_driver/dune_")
+   ( "share/drom/skeletons/packages/js_driver/main.ml"
+    as "skeletons/packages/js_driver/main.ml")
+   ( "share/drom/skeletons/packages/js_driver/package.toml"
+    as "skeletons/packages/js_driver/package.toml")
+   ( "share/drom/skeletons/packages/js_driver/skeleton.toml"
+    as "skeletons/packages/js_driver/skeleton.toml")
+   ( "share/drom/skeletons/packages/js_library/dune_"
+    as "skeletons/packages/js_library/dune_")
+   ( "share/drom/skeletons/packages/js_library/main.ml"
+    as "skeletons/packages/js_library/main.ml")
+   ( "share/drom/skeletons/packages/js_library/package.toml"
+    as "skeletons/packages/js_library/package.toml")
+   ( "share/drom/skeletons/packages/js_library/skeleton.toml"
+    as "skeletons/packages/js_library/skeleton.toml")
+   ( "share/drom/skeletons/packages/js_program/dune_"
+    as "skeletons/packages/js_program/dune_")
+   ( "share/drom/skeletons/packages/js_program/main.ml"
+    as "skeletons/packages/js_program/main.ml")
+   ( "share/drom/skeletons/packages/js_program/package.toml"
+    as "skeletons/packages/js_program/package.toml")
+   ( "share/drom/skeletons/packages/js_program/skeleton.toml"
+    as "skeletons/packages/js_program/skeleton.toml")
    ( "share/drom/skeletons/packages/library/dune_"
     as "skeletons/packages/library/dune_")
    ( "share/drom/skeletons/packages/library/index.mld"
@@ -96,6 +120,14 @@
     as "skeletons/packages/virtual/package.toml")
    ( "share/drom/skeletons/packages/virtual/skeleton.toml"
     as "skeletons/packages/virtual/skeleton.toml")
+   ( "share/drom/skeletons/projects/js_lib/drom.toml"
+    as "skeletons/projects/js_lib/drom.toml")
+   ( "share/drom/skeletons/projects/js_lib/skeleton.toml"
+    as "skeletons/projects/js_lib/skeleton.toml")
+   ( "share/drom/skeletons/projects/js_prg/drom.toml"
+    as "skeletons/projects/js_prg/drom.toml")
+   ( "share/drom/skeletons/projects/js_prg/skeleton.toml"
+    as "skeletons/projects/js_prg/skeleton.toml")
    ( "share/drom/skeletons/projects/library/drom.toml"
     as "skeletons/projects/library/drom.toml")
    ( "share/drom/skeletons/projects/library/skeleton.toml"
@@ -166,6 +198,8 @@
     as "skeletons/projects/virtual/scripts/after.sh")
    ( "share/drom/skeletons/projects/virtual/scripts/before.sh"
     as "skeletons/projects/virtual/scripts/before.sh")
+   ( "share/drom/skeletons/projects/virtual/scripts/copy-bin.sh"
+    as "skeletons/projects/virtual/scripts/copy-bin.sh")
    ( "share/drom/skeletons/projects/virtual/skeleton.toml"
     as "skeletons/projects/virtual/skeleton.toml")
    ( "share/drom/skeletons/projects/virtual/sphinx/about.rst"

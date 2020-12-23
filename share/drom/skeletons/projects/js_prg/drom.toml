@@ -3,13 +3,13 @@ drom-version = "0.1.0"
 
 [project]
 authors = [!{authors-for-toml}]
-skeleton = "mini_lib"
+skeleton = "js_prg"
 copyright = "!{copyright}"
 edition = "!{edition}"
 github-organization = "!{github-organization}"
 license = "!{license-name}"
 min-edition = "!{min-edition}"
-mode = "binary"
+mode = "javascript"
 name = "!{name}"
 synopsis = "The !{name} project"
 version = "0.1.0"
@@ -30,6 +30,9 @@ This is the description
 of the !{name} OCaml project
 """
 
+[drom]
+skip = ""
+
 [dependencies]
 
 [tools.ocamlformat]
@@ -44,12 +47,13 @@ for-test = true
 [project]
 pack-modules = true
 skip-dirs = []
-skip = "test sphinx github docs ocamlformat ocp-indent"
 
 [[package]]
-skeleton = "library"
+skeleton = "js_driver"
 dir = "src/!{name}"
-gen-version = "version.ml"
-kind = "library"
 name = "!{name}"
 
+[[package]]
+skeleton = "js_library"
+dir = "src/!{name}_lib"
+name = "!{name}_lib"

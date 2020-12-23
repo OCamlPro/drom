@@ -17,7 +17,7 @@ open EzFile.OP
 let cmd_name = "project"
 
 (* lookup for "drom.toml" and update it *)
-let action ~skeleton ~mode ~edit ~args =
+let action ~skeleton ~edit ~args =
   begin
     match Project.lookup () with
     | None ->
@@ -47,16 +47,15 @@ let action ~skeleton ~mode ~edit ~args =
                 args.arg_upgrade )
         }
       in
-      Update.update_files ~twice:false ~args ~create:false ?mode ~git:true p
+      Update.update_files ~twice:false ~args ~create:false ~git:true p
 
 let cmd =
-  let mode = ref None in
   let skeleton = ref None in
   let args, specs = Update.update_args () in
   let edit = ref false in
   EZCMD.sub cmd_name
     (fun () ->
-       action ~skeleton:!skeleton ~mode:!mode ~edit:!edit ~args)
+       action ~skeleton:!skeleton ~edit:!edit ~args)
     ~args: (
       specs
       @ [ ( [ "library" ],
@@ -77,18 +76,6 @@ let cmd =
                  skeleton := Some "virtual";
                  args.arg_upgrade <- true),
             EZCMD.info "Package is virtual, i.e. no code. Equivalent to $(b,--skeleton virtual)." );
-          ( [ "binary" ],
-            Arg.Unit
-              (fun () ->
-                 mode := Some Binary;
-                 args.arg_upgrade <- true),
-            EZCMD.info "Compile to binary" );
-          ( [ "javascript" ],
-            Arg.Unit
-              (fun () ->
-                 mode := Some Javascript;
-                 args.arg_upgrade <- true),
-            EZCMD.info "Compile to javascript" );
           ( [ "skeleton" ],
             Arg.String
               (fun s ->

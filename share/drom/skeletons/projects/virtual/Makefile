@@ -14,7 +14,8 @@ all: build
 
 build:
 	./scripts/before.sh build
-	opam exec -- dune build @install!{make-copy-programs}
+	opam exec -- dune build @install
+	./scripts/copy-bin.sh !{packages}
 	./scripts/after.sh build
 
 build-deps:

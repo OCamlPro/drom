@@ -1,0 +1,11 @@
+name = "!{name}"
+dir = "!{dir}"
+kind = "program"
+skeleton = "js_program"
+gen-version = "version.ml"
+
+[dependencies]
+js_of_ocaml = "3.0"
+
+[tools]
+js_of_ocaml-ppx = "3.0"

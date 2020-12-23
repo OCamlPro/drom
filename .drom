@@ -37,7 +37,7 @@ ae6a87df5770f4f6a09196ec38906d5a:.gitignore
 
 # begin context for Makefile
 # file Makefile
-8db959b1e739ddc8519230dd268054d7:Makefile
+603b9d0e2c3041e2569ead8c62ce91bd:Makefile
 # end context for Makefile
 
 # begin context for README.md
@@ -97,7 +97,7 @@ f6a7c3e25c2983f59c7255926897ba6c:drom_lib.opam
 
 # begin context for dune
 # file dune
-2ad6f4359ebeec6a971b633db5d9f526:dune
+36fb43e93f12440dea7ad3ed221ca8a8:dune
 # end context for dune
 
 # begin context for dune-project
@@ -114,6 +114,11 @@ a202354a3c0a360d9279fff87a67922d:dune-project
 # file scripts/before.sh
 ae050b3099ac0b43d7c7f4295f6b2319:scripts/before.sh
 # end context for scripts/before.sh
+
+# begin context for scripts/copy-bin.sh
+# file scripts/copy-bin.sh
+bb3a9d286f0dc64021db4194427263ee:scripts/copy-bin.sh
+# end context for scripts/copy-bin.sh
 
 # begin context for sphinx/_static/css/fixes.css
 # file sphinx/_static/css/fixes.css

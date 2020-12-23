@@ -25,7 +25,6 @@ val update_args :
 val update_files :
   twice:bool ->
   ?args:update_args ->
-  ?mode:Types.mode ->
   ?git:bool ->
   ?create:bool ->
   Types.project ->
