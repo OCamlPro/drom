@@ -496,8 +496,6 @@ Where options are:
 
 * :code:`PROJECT`   Name of the project
 
-* :code:`--binary`   Compile to binary
-
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
 * :code:`--dir DIRECTORY`   Dir where package sources are stored (src by default)
@@ -505,8 +503,6 @@ Where options are:
 * :code:`-f` or :code:`--force`   Force overwriting modified files (otherwise, they would be skipped)
 
 * :code:`--inplace`   Create project in the the current directory
-
-* :code:`--javascript`   Compile to javascript
 
 * :code:`--library`   Project contains only a library
 
@@ -599,8 +595,6 @@ Where options are:
 
 * :code:`PACKAGE`   Name of the package
 
-* :code:`--binary`   Compile to binary
-
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
 * :code:`--dir DIRECTORY`   Dir where package sources are stored (src by default)
@@ -608,8 +602,6 @@ Where options are:
 * :code:`--edit`   Edit package.toml description with EDITOR
 
 * :code:`-f` or :code:`--force`   Force overwriting modified files (otherwise, they would be skipped)
-
-* :code:`--javascript`   Compile to javascript
 
 * :code:`--library`   Package is a library
 
@@ -654,15 +646,11 @@ With argument **--upgrade**, it can also be used to reformat the toml files, fro
 Where options are:
 
 
-* :code:`--binary`   Compile to binary
-
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
 * :code:`--edit`   Edit project description
 
 * :code:`-f` or :code:`--force`   Force overwriting modified files (otherwise, they would be skipped)
-
-* :code:`--javascript`   Compile to javascript
 
 * :code:`--library`   Project contains only a library. Equivalent to **--skeleton library**
 
