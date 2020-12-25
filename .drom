@@ -37,7 +37,7 @@ ae6a87df5770f4f6a09196ec38906d5a:.gitignore
 
 # begin context for Makefile
 # file Makefile
-603b9d0e2c3041e2569ead8c62ce91bd:Makefile
+d2c0c591b39c417ff36c09c3e3ba9080:Makefile
 # end context for Makefile
 
 # begin context for README.md
@@ -82,7 +82,7 @@ c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 
 # begin context for drom.opam
 # file drom.opam
-44b3f50b78c6b2c3adad4a58acad1609:drom.opam
+29806d41b658c1110972b0b1f7576022:drom.opam
 # end context for drom.opam
 
 # begin context for drom.toml
@@ -92,12 +92,12 @@ a1640359a014ab959a9798639997a921:drom.toml
 
 # begin context for drom_lib.opam
 # file drom_lib.opam
-f6a7c3e25c2983f59c7255926897ba6c:drom_lib.opam
+c11460be4cb80485ad3772b5301c6941:drom_lib.opam
 # end context for drom_lib.opam
 
 # begin context for dune
 # file dune
-36fb43e93f12440dea7ad3ed221ca8a8:dune
+cf2a8834f368c02c69a27109cef16ae7:dune
 # end context for dune
 
 # begin context for dune-project
@@ -119,6 +119,11 @@ ae050b3099ac0b43d7c7f4295f6b2319:scripts/before.sh
 # file scripts/copy-bin.sh
 bb3a9d286f0dc64021db4194427263ee:scripts/copy-bin.sh
 # end context for scripts/copy-bin.sh
+
+# begin context for scripts/copy-share-subdirs.sh
+# file scripts/copy-share-subdirs.sh
+fd08a6bd214b2aa820c27c1853dc2312:scripts/copy-share-subdirs.sh
+# end context for scripts/copy-share-subdirs.sh
 
 # begin context for sphinx/_static/css/fixes.css
 # file sphinx/_static/css/fixes.css
@@ -172,7 +177,7 @@ b2467739c3fd8542338ce53133b3fefd:src/drom/dune
 
 # begin context for src/drom_lib/dune
 # file src/drom_lib/dune
-6f32b6f2b7c2c03984c0c4101b8b88fc:src/drom_lib/dune
+1a67056f148247ecd7af0b1a5dd6e2ec:src/drom_lib/dune
 # end context for src/drom_lib/dune
 
 # begin context for src/drom_lib/index.mld

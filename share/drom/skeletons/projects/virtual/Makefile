@@ -16,6 +16,7 @@ build:
 	./scripts/before.sh build
 	opam exec -- dune build @install
 	./scripts/copy-bin.sh !{packages}
+	./scripts/copy-share-subdirs.sh !{share-subdirs}
 	./scripts/after.sh build
 
 build-deps:

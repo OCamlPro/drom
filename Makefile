@@ -16,6 +16,7 @@ build:
 	./scripts/before.sh build
 	opam exec -- dune build @install
 	./scripts/copy-bin.sh drom drom_lib
+	./scripts/copy-share-subdirs.sh 
 	./scripts/after.sh build
 
 build-deps:
