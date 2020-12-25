@@ -126,6 +126,8 @@
     as "skeletons/projects/js_lib/skeleton.toml")
    ( "share/drom/skeletons/projects/js_prg/drom.toml"
     as "skeletons/projects/js_prg/drom.toml")
+   ( "share/drom/skeletons/projects/js_prg/share/js_prg/www/index.html"
+    as "skeletons/projects/js_prg/share/js_prg/www/index.html")
    ( "share/drom/skeletons/projects/js_prg/skeleton.toml"
     as "skeletons/projects/js_prg/skeleton.toml")
    ( "share/drom/skeletons/projects/library/drom.toml"

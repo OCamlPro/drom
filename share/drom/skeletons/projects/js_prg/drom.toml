@@ -47,6 +47,7 @@ for-test = true
 [project]
 pack-modules = true
 skip-dirs = []
+build-profile = "release"
 
 [[package]]
 skeleton = "js_driver"
