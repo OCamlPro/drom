@@ -1,0 +1,3 @@
+[skeleton]
+name = "c_binding"
+inherits = "virtual"

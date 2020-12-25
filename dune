@@ -26,6 +26,18 @@
     as "licenses/MIT.toml")
    ( "share/drom/skeletons/README.md"
     as "skeletons/README.md")
+   ( "share/drom/skeletons/packages/c_binding/dune_"
+    as "skeletons/packages/c_binding/dune_")
+   ( "share/drom/skeletons/packages/c_binding/index.mld"
+    as "skeletons/packages/c_binding/index.mld")
+   ( "share/drom/skeletons/packages/c_binding/main.ml"
+    as "skeletons/packages/c_binding/main.ml")
+   ( "share/drom/skeletons/packages/c_binding/package.toml"
+    as "skeletons/packages/c_binding/package.toml")
+   ( "share/drom/skeletons/packages/c_binding/skeleton.toml"
+    as "skeletons/packages/c_binding/skeleton.toml")
+   ( "share/drom/skeletons/packages/c_binding/stubs.c"
+    as "skeletons/packages/c_binding/stubs.c")
    ( "share/drom/skeletons/packages/driver/dune_"
     as "skeletons/packages/driver/dune_")
    ( "share/drom/skeletons/packages/driver/index.mld"
@@ -120,12 +132,18 @@
     as "skeletons/packages/virtual/package.toml")
    ( "share/drom/skeletons/packages/virtual/skeleton.toml"
     as "skeletons/packages/virtual/skeleton.toml")
+   ( "share/drom/skeletons/projects/c_binding/drom.toml"
+    as "skeletons/projects/c_binding/drom.toml")
+   ( "share/drom/skeletons/projects/c_binding/skeleton.toml"
+    as "skeletons/projects/c_binding/skeleton.toml")
    ( "share/drom/skeletons/projects/js_lib/drom.toml"
     as "skeletons/projects/js_lib/drom.toml")
    ( "share/drom/skeletons/projects/js_lib/skeleton.toml"
     as "skeletons/projects/js_lib/skeleton.toml")
    ( "share/drom/skeletons/projects/js_prg/drom.toml"
     as "skeletons/projects/js_prg/drom.toml")
+   ( "share/drom/skeletons/projects/js_prg/share/js_prg/www/index.html"
+    as "skeletons/projects/js_prg/share/js_prg/www/index.html")
    ( "share/drom/skeletons/projects/js_prg/skeleton.toml"
     as "skeletons/projects/js_prg/skeleton.toml")
    ( "share/drom/skeletons/projects/library/drom.toml"
