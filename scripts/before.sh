@@ -21,7 +21,7 @@
 #  * after-publish.sh OPAM_REPO
 
 COMMAND=$1
-shift
+shift $(( $# > 0 ? 1 : 0 ))
 SCRIPT=./scripts/before-${COMMAND}.sh
 
 if [ -e ${SCRIPT} ]; then
