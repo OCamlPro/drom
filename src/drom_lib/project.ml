@@ -44,7 +44,7 @@ let rec dummy_project =
     profile = None;
     file = None ;
     share_dirs = [ "share" ] ;
-
+    exposed_share_subdirs = [] ;
     generators = StringSet.empty;
   }
 
@@ -832,6 +832,12 @@ let project_of_toml ?file ?default table =
       [ project_key; "share-dirs" ]
       d.share_dirs
   in
+  let exposed_share_subdirs =
+    EzToml.get_string_list_default table
+      [ project_key; "share-subdirs" ]
+      d.exposed_share_subdirs
+  in
+
   let fields =
     EzToml.get_encoding_default fields_encoding table [ project_key; "fields" ]
       StringMap.empty
@@ -875,7 +881,8 @@ let project_of_toml ?file ?default table =
       ci_systems;
       profiles;
       skip_dirs;
-      share_dirs ;
+      share_dirs;
+      exposed_share_subdirs;
       profile;
       fields;
       generators;

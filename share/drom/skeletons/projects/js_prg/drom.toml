@@ -47,6 +47,7 @@ for-test = true
 [project]
 pack-modules = true
 skip-dirs = []
+share-subdirs = ["!{name}/www"]
 
 [[package]]
 skeleton = "js_driver"

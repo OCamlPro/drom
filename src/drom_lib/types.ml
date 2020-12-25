@@ -92,9 +92,10 @@ and project =
     synopsis : string;
     description : string;
     share_dirs : string list ;
+    exposed_share_subdirs : string list;
     mutable dependencies : (string * dependency) list;
     mutable tools : (string * dependency) list;
-    mutable fields : string StringMap.t
+    mutable fields : string StringMap.t;
   }
 
 and profile = { flags : string StringMap.t }
