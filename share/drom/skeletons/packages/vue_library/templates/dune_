@@ -1,0 +1,15 @@
+(rule
+ (target hello.esc)
+ (deps hello.html)
+ (action (system "sed 's/\\\"/\\\\\\\"/g' %{deps} > %{target}")))
+
+(rule
+ (target templates.ml)
+ (action
+   (write-file %{target}
+     "let hello = \"%{read-lines:hello.esc}\"")))
+
+(library
+ (name templates)
+ (public_name !{name}.templates)
+ (modules templates))
