@@ -284,6 +284,7 @@ let project_brace (_, p) v =
       Buffer.contents b
 
   | "dune-packages" -> Dune.packages p
+  | "build-profile" -> (match p.profile with None -> "" | Some s -> " --profile " ^ s)
   | s ->
       Printf.eprintf "Error: no project substitution for %S\n%!" s;
       raise Not_found
