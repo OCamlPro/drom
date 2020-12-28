@@ -120,6 +120,18 @@
     as "skeletons/packages/virtual/package.toml")
    ( "share/drom/skeletons/packages/virtual/skeleton.toml"
     as "skeletons/packages/virtual/skeleton.toml")
+   ( "share/drom/skeletons/packages/vue_library/dune_"
+    as "skeletons/packages/vue_library/dune_")
+   ( "share/drom/skeletons/packages/vue_library/main.ml"
+    as "skeletons/packages/vue_library/main.ml")
+   ( "share/drom/skeletons/packages/vue_library/package.toml"
+    as "skeletons/packages/vue_library/package.toml")
+   ( "share/drom/skeletons/packages/vue_library/skeleton.toml"
+    as "skeletons/packages/vue_library/skeleton.toml")
+   ( "share/drom/skeletons/packages/vue_library/templates/dune_"
+    as "skeletons/packages/vue_library/templates/dune_")
+   ( "share/drom/skeletons/packages/vue_library/templates/hello.html"
+    as "skeletons/packages/vue_library/templates/hello.html")
    ( "share/drom/skeletons/projects/js_lib/drom.toml"
     as "skeletons/projects/js_lib/drom.toml")
    ( "share/drom/skeletons/projects/js_lib/skeleton.toml"
@@ -232,6 +244,12 @@
     as "skeletons/projects/virtual/test/output-tests/test2.expected")
    ( "share/drom/skeletons/projects/virtual/test/output-tests/test2.ml"
     as "skeletons/projects/virtual/test/output-tests/test2.ml")
+   ( "share/drom/skeletons/projects/vue/drom.toml"
+    as "skeletons/projects/vue/drom.toml")
+   ( "share/drom/skeletons/projects/vue/share/js_prg/www/index.html"
+    as "skeletons/projects/vue/share/js_prg/www/index.html")
+   ( "share/drom/skeletons/projects/vue/skeleton.toml"
+    as "skeletons/projects/vue/skeleton.toml")
  )
  (section share)
  (package drom))
