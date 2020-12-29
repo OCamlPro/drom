@@ -3,7 +3,7 @@ drom-version = "0.1.0"
 
 [project]
 authors = [!{authors-for-toml}]
-skeleton = "js_prg"
+skeleton = "vue"
 copyright = "!{copyright}"
 edition = "!{edition}"
 github-organization = "!{github-organization}"
@@ -47,6 +47,7 @@ for-test = true
 [project]
 pack-modules = true
 skip-dirs = []
+build-profile = "release"
 
 [[package]]
 skeleton = "js_driver"

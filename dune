@@ -262,8 +262,8 @@
     as "skeletons/projects/virtual/test/output-tests/test2.ml")
    ( "share/drom/skeletons/projects/vue/drom.toml"
     as "skeletons/projects/vue/drom.toml")
-   ( "share/drom/skeletons/projects/vue/share/js_prg/www/index.html"
-    as "skeletons/projects/vue/share/js_prg/www/index.html")
+   ( "share/drom/skeletons/projects/vue/index.html"
+    as "skeletons/projects/vue/index.html")
    ( "share/drom/skeletons/projects/vue/skeleton.toml"
     as "skeletons/projects/vue/skeleton.toml")
  )
