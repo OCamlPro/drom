@@ -19,31 +19,36 @@ let default_flags =
       flag_skips = [];
       flag_skip = false ;
       flag_skipper = ref [];
-      flag_subst = true ;}
+      flag_subst = true ;
+      flag_perm = 0;
+    }
 
 let bracket flags eval_cond =
   let bracket flags ( (), p ) s =
     match EzString.split s ':' with
     (* set the name of the file *)
     | [ "file"; v ] ->
-      flags.flag_file <- v;
-      ""
+        flags.flag_file <- v;
+        ""
     (* create only once *)
     | [ "create" ] ->
-      flags.flag_create <- true;
-      ""
+        flags.flag_create <- true;
+        ""
     (* skip with this tag *)
     | [ "skip"; v ] ->
-      flags.flag_skips <- v :: flags.flag_skips;
-      ""
+        flags.flag_skips <- v :: flags.flag_skips;
+        ""
     (* skip always *)
     | [ "skip" ] ->
-      flags.flag_skip <- true;
-      ""
+        flags.flag_skip <- true;
+        ""
     (* do not record in .git *)
     | [ "no-record" ] ->
-      flags.flag_record <- false;
-      ""
+        flags.flag_record <- false;
+        ""
+    | [ "perm" ; v ] ->
+        flags.flag_perm <- int_of_string ( "0o" ^ v );
+        ""
     | "if" :: cond ->
         flags.flag_skipper := ( not ( eval_cond p cond ) ) :: (!)
                                 flags.flag_skipper;
@@ -64,8 +69,8 @@ let bracket flags eval_cond =
             | [] -> failwith "fi without if");
         ""
     | _ ->
-      Printf.eprintf "Warning: unknown flag %S\n%!" s;
-      ""
+        Printf.eprintf "Warning: unknown flag %S\n%!" s;
+        ""
   in
   bracket flags
 
@@ -91,6 +96,9 @@ let flags_encoding =
                  flags.flag_skip <- EzToml.expect_bool ~key v
              | "subst" ->
                  flags.flag_subst <- EzToml.expect_bool ~key v
+             | "perm" ->
+                 flags.flag_perm <-
+                   int_of_string ( "0o" ^ EzToml.expect_string ~key v)
              | _ ->
                  Printf.eprintf "Warning: discarding flags field %S\n%!"
                    (EzToml.key2str key)
@@ -141,8 +149,8 @@ let load_skeleton ~drom ~dir ~toml ~kind =
                 let filename = dir // path in
                 let content = EzFile.read_file filename in
                 let st = Unix.lstat filename in
-                let mode = st.Unix.st_perm in
-                files := (path, content, mode) :: !files);
+                let perm = st.Unix.st_perm in
+                files := (path, content, perm) :: !files);
     !files
   in
   let skeleton_flags = EzToml.get_encoding_default
@@ -381,11 +389,21 @@ let skeleton_flags skeleton file =
               raise Not_found
     in
     if flags.flag_file = "" then
-      { flags with flag_file = file ; flag_skipper = ref [] }
+      { flags with
+        flag_file = file ;
+        flag_skipper = ref [] ;
+      }
     else
       { flags with flag_skipper = ref [] }
   with Not_found ->
     default_flags file
+
+let skeleton_flags skeleton file perm =
+  let flags = skeleton_flags skeleton file in
+  if flags.flag_perm = 0 then flags.flag_perm <- perm;
+  if Filename.check_suffix file ".sh" then
+    flags.flag_perm <- flags.flag_perm lor 0o111;
+  flags
 
 let write_project_files write_file p =
   let skeleton = lookup_project p.skeleton in
@@ -393,8 +411,7 @@ let write_project_files write_file p =
     (fun (file, content, perm) ->
        (* Printf.eprintf "File %s perm %o\n%!" file perm; *)
       backup_skeleton file content ~perm;
-
-      let flags = skeleton_flags skeleton file in
+      let flags = skeleton_flags skeleton file perm in
       let bracket = bracket flags eval_project_cond in
       let content =
         if flags.flag_subst then
@@ -408,6 +425,7 @@ let write_project_files write_file p =
             flag_skips = skips;
             flag_record = record;
             flag_skip = skip;
+            flag_perm = perm;
             flag_skipper= _ ;
             flag_subst = _ ; } = flags in
       let flag_file = Subst.project () p flag_file in
@@ -438,13 +456,14 @@ let write_package_files write_file package =
     (fun (file, content, perm) ->
        (* Printf.eprintf "File %s perm %o\n%!" file perm; *)
        backup_skeleton file content ~perm;
-       let flags = skeleton_flags skeleton file in
+       let flags = skeleton_flags skeleton file perm in
        let content = subst_package_file flags content package in
        let { flag_file;
              flag_create = create;
              flag_skips = skips;
              flag_record = record;
              flag_skip = skip;
+             flag_perm = perm;
              flag_skipper= _ ;
              flag_subst = _ ; } = flags in
        let flag_file = Subst.package () package flag_file in

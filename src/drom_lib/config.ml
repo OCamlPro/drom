@@ -101,69 +101,72 @@ let load () =
 
 let config = lazy (load ())
 
-let share_dir =
-  lazy (
-    let share_dirs =
-      (
+let find_share_dir ?(for_copy=false) () =
+  let share_dirs =
+    (
+      if for_copy then [] else
         match Sys.getenv "DROM_SHARE_DIR" with
         | share_dir -> [ Some "env var DROM_SHARE_DIR", share_dir ]
         | exception Not_found -> []
-      )
-      @
-      (
-        match
-          Globals.find_ancestor_file "share"
-            (fun ~dir ~path:_ -> dir)
-        with
-        | None -> []
-        | Some dir -> [ Some "local ./share/drom", dir // "share" // "drom" ]
-      )
-      @
-      (
+    )
+    @
+    (
+      match
+        Globals.find_ancestor_file "share"
+          (fun ~dir ~path:_ -> dir)
+      with
+      | None -> []
+      | Some dir -> [ Some "local ./share/drom", dir // "share" // "drom" ]
+    )
+    @
+    (
+      if for_copy then [] else
         [ None, Globals.opam_root () // "plugins" // "opam-drom" ]
-      )
-      @
-      (
-        match Globals.opam_switch_prefix with
-        | Some opam_switch_prefix ->
-            let share_dir = opam_switch_prefix // "share" // Globals.command in
-            [ Some "OPAM_SWITCH_PREFIX", share_dir ]
-        | None -> []
-      )
-      @
-      ( let config = Lazy.force config in
+    )
+    @
+    (
+      match Globals.opam_switch_prefix with
+      | Some opam_switch_prefix ->
+          let share_dir = opam_switch_prefix // "share" // Globals.command in
+          [ Some "OPAM_SWITCH_PREFIX", share_dir ]
+      | None -> []
+    )
+    @
+    (
+      if for_copy then [] else
+        let config = Lazy.force config in
         match config.config_share_dir with
         | None -> []
         | Some share_dir -> [ Some "user config share_dir", share_dir ]
-      )
-    in
-    let rec iter msgs = function
-        [] ->
-          if !Globals.verbosity > 0 then begin
-            Printf.eprintf
-              "Warning: drom is not correctly configured, no share_dir found\n%!";
-            List.iter (fun (msg, dir) ->
-                Printf.eprintf
-                  "   * %s points to directory with missing %S\n%!"
-                  msg dir;
-              ) msgs;
-          end;
-          None
+    )
+  in
+  let rec iter msgs = function
+      [] ->
+        if !Globals.verbosity > 0 then begin
+          Printf.eprintf
+            "Warning: drom is not correctly configured, no share_dir found\n%!";
+          List.iter (fun (msg, dir) ->
+              Printf.eprintf
+                "   * %s points to directory with missing %S\n%!"
+                msg dir;
+            ) msgs;
+        end;
+        None
 
-      | (msg, share_dir) :: dirs ->
+    | (msg, share_dir) :: dirs ->
 
-          let skeletons_dir = share_dir // "skeletons" in
-          if not ( Sys.file_exists skeletons_dir ) then begin
-            let msgs =
-              match msg with
-              | None -> msgs
-              | Some msg -> (msg, skeletons_dir) :: msgs
-            in
-            iter msgs dirs
-          end else
-            Some share_dir
-    in
-    iter [] share_dirs
-  )
+        let skeletons_dir = share_dir // "skeletons" in
+        if not ( Sys.file_exists skeletons_dir ) then begin
+          let msgs =
+            match msg with
+            | None -> msgs
+            | Some msg -> (msg, skeletons_dir) :: msgs
+          in
+          iter msgs dirs
+        end else
+          Some share_dir
+  in
+  iter [] share_dirs
 
+let share_dir = lazy ( find_share_dir () )
 let share_dir () = Lazy.force share_dir

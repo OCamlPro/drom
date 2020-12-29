@@ -132,10 +132,6 @@
     as "skeletons/packages/virtual/package.toml")
    ( "share/drom/skeletons/packages/virtual/skeleton.toml"
     as "skeletons/packages/virtual/skeleton.toml")
-   ( "share/drom/skeletons/projects/c_binding/drom.toml"
-    as "skeletons/projects/c_binding/drom.toml")
-   ( "share/drom/skeletons/projects/c_binding/skeleton.toml"
-    as "skeletons/projects/c_binding/skeleton.toml")
    ( "share/drom/skeletons/packages/vue_library/dune_"
     as "skeletons/packages/vue_library/dune_")
    ( "share/drom/skeletons/packages/vue_library/main.ml"
@@ -148,6 +144,10 @@
     as "skeletons/packages/vue_library/templates/dune_")
    ( "share/drom/skeletons/packages/vue_library/templates/hello.html"
     as "skeletons/packages/vue_library/templates/hello.html")
+   ( "share/drom/skeletons/projects/c_binding/drom.toml"
+    as "skeletons/projects/c_binding/drom.toml")
+   ( "share/drom/skeletons/projects/c_binding/skeleton.toml"
+    as "skeletons/projects/c_binding/skeleton.toml")
    ( "share/drom/skeletons/projects/js_lib/drom.toml"
     as "skeletons/projects/js_lib/drom.toml")
    ( "share/drom/skeletons/projects/js_lib/skeleton.toml"
