@@ -1,0 +1,9 @@
+name = "!{name}"
+dir = "!{dir}"
+skeleton = "c_binding"
+kind = "library"
+gen-version = "version.ml"
+
+[fields]
+c-names = "!{name}_stubs"
+c-library-flags = "-lgsl"

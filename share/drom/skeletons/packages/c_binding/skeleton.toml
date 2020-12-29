@@ -1,0 +1,9 @@
+[skeleton]
+name = "c_binding"
+inherits = "virtual"
+
+[file]
+dune_ = { file = "dune", skips = "dune" }
+"index.mld" = { skips = [ "docs" ] }
+"main.ml" = { skips = [ "code" ] }
+"stubs.c" = { file = "!{name}_stubs.c", skips = [ "code" ] }
