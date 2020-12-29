@@ -128,6 +128,7 @@ type flags =
     mutable flag_skips : string list;
     mutable flag_skip : bool ;
     mutable flag_subst : bool ;
+    mutable flag_perm : int ;
     flag_skipper : bool list ref ;
   }
 

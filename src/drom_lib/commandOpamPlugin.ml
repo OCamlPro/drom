@@ -24,7 +24,7 @@ let action ~remove () =
     Misc.call [| "rm" ; "-f" ; plugins_bin_exe |];
     Misc.call [| "rm" ; "-rf" ; plugins_drom_dir |];
   end else
-    match Config.share_dir () with
+    match Config.find_share_dir ~for_copy:true () with
     | None ->
         Printf.eprintf
           "Error: share dir not specified. Aborting\n%!";
