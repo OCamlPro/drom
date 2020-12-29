@@ -1,0 +1,12 @@
+name = "!{name}"
+dir = "!{dir}"
+kind = "library"
+skeleton = "js_library"
+gen-version = "version.ml"
+
+[dependencies]
+js_of_ocaml = "3.0"
+vue-jsoo = ""
+
+[tools]
+js_of_ocaml-ppx = "3.0"

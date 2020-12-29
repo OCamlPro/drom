@@ -47,7 +47,6 @@ for-test = true
 [project]
 pack-modules = true
 skip-dirs = []
-build-profile = "release"
 
 [[package]]
 skeleton = "js_driver"
@@ -55,6 +54,6 @@ dir = "src/!{name}"
 name = "!{name}"
 
 [[package]]
-skeleton = "js_library"
+skeleton = "vue_library"
 dir = "src/!{name}_lib"
 name = "!{name}_lib"
