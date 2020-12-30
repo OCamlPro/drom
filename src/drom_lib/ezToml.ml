@@ -11,7 +11,7 @@
 open EzCompat
 
 module TYPES = struct
-  include TomlTypes
+  include Toml.Types
 
   type 'a encoding =
     { to_toml : 'a -> value;
@@ -20,15 +20,15 @@ module TYPES = struct
 end
 
 module EZ = struct
-  let key = Toml.key
+  let key = Toml.Min.key
 
-  let empty = TomlTypes.Table.empty
+  let empty = Toml.Types.Table.empty
 
-  let find = TomlTypes.Table.find
+  let find = Toml.Types.Table.find
 
-  let add = TomlTypes.Table.add
+  let add = Toml.Types.Table.add
 
-  let to_string = EzTomlPrinter.string_of_table
+  let to_string = Toml.Printer.string_of_table
 
   let from_file = Toml.Parser.from_filename
 
@@ -59,16 +59,16 @@ let failwith fmt = Printf.kprintf failwith fmt
 let key2str key = String.concat "." key
 
 let iter f table =
-  TomlTypes.Table.iter
-    (fun key v -> f (TomlTypes.Table.Key.to_string key) v)
+  Toml.Types.Table.iter
+    (fun key v -> f (Toml.Types.Table.Key.to_string key) v)
     table
 
 let rec get table keys =
   match keys with
   | [] -> assert false
-  | [ key ] -> find (Toml.key key) table
+  | [ key ] -> find (Toml.Min.key key) table
   | key :: keys -> (
-    match find (Toml.key key) table with
+    match find (Toml.Min.key key) table with
     | exception Not_found -> raise Not_found
     | TTable table2 -> get table2 keys
     | _ ->
@@ -121,9 +121,9 @@ let get_bool_default table keys default =
 let rec put keys v table =
   match keys with
   | [] -> assert false
-  | [ key ] -> add (Toml.key key) v table
+  | [ key ] -> add (Toml.Min.key key) v table
   | key :: keys ->
-    let key = Toml.key key in
+    let key = Toml.Min.key key in
     let v =
       match find key table with
       | exception Not_found -> put keys v empty
@@ -264,16 +264,6 @@ let rec union table1 table2 =
     table2;
   !table
 
-
-
-
-
-
-
-
-
-
-
 module ENCODING = struct
 
   let stringMap enc =
@@ -295,11 +285,9 @@ module ENCODING = struct
 
 end
 
-
-
 type file_option = {
   option_name : string ;
-  option_value : TomlTypes.value option ;
+  option_value : Toml.Types.value option ;
   option_comment : string list option ;
   option_default : string option ;
 }

@@ -34,4 +34,4 @@ val string_of_versions : Types.version list -> string
 
 val package_of_toml :
   ?default:Types.project ->
-  TomlTypes.value TomlTypes.Table.t -> Types.package
+  Toml.Types.value Toml.Types.Table.t -> Types.package

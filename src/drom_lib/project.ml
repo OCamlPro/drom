@@ -434,10 +434,10 @@ let package_of_toml ?default table =
                   (EzToml.string_of_location loc)
           in
           let table =
-            TomlTypes.Table.union (fun _key _ v -> Some v
+            Toml.Types.Table.union (fun _key _ v -> Some v
                 (*
                 Error.raise "File %s: key %s already exist in drom.toml"
-                  filename (TomlTypes.Table.Key.to_string key)
+                  filename (Toml.Types.Table.Key.to_string key)
 *)
               ) package_table table
           in
