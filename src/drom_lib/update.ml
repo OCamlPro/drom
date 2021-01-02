@@ -111,16 +111,17 @@ let update_files ?args ?(git = false) ?(create = false) p =
     end else
       force
       ||
-      let hash = Hashes.digest_content ~file:filename ~perm:old_perm old_content in
       match Hashes.get hashes filename with
       | exception Not_found ->
           skipped := filename :: !skipped;
           Printf.eprintf "Skipping existing file %s\n%!" filename;
           false
       | former_hash ->
+          let hash = Hashes.digest_content
+              ~file:filename ~perm:old_perm old_content in
           let modified = former_hash <> hash &&
                          (* compatibility with former hashing system *)
-                         former_hash <> Digest.string content
+                         former_hash <> Digest.string old_content
           in
           if modified then (
             skipped := filename :: !skipped;
