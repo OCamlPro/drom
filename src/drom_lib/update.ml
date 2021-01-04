@@ -240,7 +240,8 @@ let update_files ?args ?(git = false) ?(create = false) p =
   Hashes.with_ctxt ~git (fun hashes ->
       if create then
         if git && not (Sys.file_exists ".git") then (
-          Git.call [ "init" ];
+          let branch_name = Git.init_default_branch () in
+          Git.call [ "init"; "-b"; branch_name ];
           match config.config_github_organization with
           | None -> ()
           | Some organization ->
