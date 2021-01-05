@@ -1,0 +1,11 @@
+name = "!{name}"
+dir = "!{dir}"
+skeleton = "wasm_binding"
+kind = "library"
+gen-version = "version.ml"
+
+[fields]
+package-dune-libraries = "bigstring"
+c-names = "main"
+c-names-dot-c = "main.c"
+c-library-flags = ""

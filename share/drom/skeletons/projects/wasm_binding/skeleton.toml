@@ -1,0 +1,3 @@
+[skeleton]
+name = "wasm_binding"
+inherits = "virtual"

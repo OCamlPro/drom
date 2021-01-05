@@ -144,6 +144,28 @@
     as "skeletons/packages/vue_library/templates/dune_")
    ( "share/drom/skeletons/packages/vue_library/templates/hello.html"
     as "skeletons/packages/vue_library/templates/hello.html")
+   ( "share/drom/skeletons/packages/wasm_binding/build_wasm.sh"
+    as "skeletons/packages/wasm_binding/build_wasm.sh")
+   ( "share/drom/skeletons/packages/wasm_binding/dune_"
+    as "skeletons/packages/wasm_binding/dune_")
+   ( "share/drom/skeletons/packages/wasm_binding/index.mld"
+    as "skeletons/packages/wasm_binding/index.mld")
+   ( "share/drom/skeletons/packages/wasm_binding/main.c"
+    as "skeletons/packages/wasm_binding/main.c")
+   ( "share/drom/skeletons/packages/wasm_binding/main.h"
+    as "skeletons/packages/wasm_binding/main.h")
+   ( "share/drom/skeletons/packages/wasm_binding/main.ml"
+    as "skeletons/packages/wasm_binding/main.ml")
+   ( "share/drom/skeletons/packages/wasm_binding/package.toml"
+    as "skeletons/packages/wasm_binding/package.toml")
+   ( "share/drom/skeletons/packages/wasm_binding/skeleton.toml"
+    as "skeletons/packages/wasm_binding/skeleton.toml")
+   ( "share/drom/skeletons/packages/wasm_binding/stubs.c"
+    as "skeletons/packages/wasm_binding/stubs.c")
+   ( "share/drom/skeletons/packages/wasm_binding/stubs.js"
+    as "skeletons/packages/wasm_binding/stubs.js")
+   ( "share/drom/skeletons/packages/wasm_binding/wasm_utils.js"
+    as "skeletons/packages/wasm_binding/wasm_utils.js")
    ( "share/drom/skeletons/projects/c_binding/drom.toml"
     as "skeletons/projects/c_binding/drom.toml")
    ( "share/drom/skeletons/projects/c_binding/skeleton.toml"
@@ -266,6 +288,10 @@
     as "skeletons/projects/vue/index.html")
    ( "share/drom/skeletons/projects/vue/skeleton.toml"
     as "skeletons/projects/vue/skeleton.toml")
+   ( "share/drom/skeletons/projects/wasm_binding/drom.toml"
+    as "skeletons/projects/wasm_binding/drom.toml")
+   ( "share/drom/skeletons/projects/wasm_binding/skeleton.toml"
+    as "skeletons/projects/wasm_binding/skeleton.toml")
  )
  (section share)
  (package drom))
