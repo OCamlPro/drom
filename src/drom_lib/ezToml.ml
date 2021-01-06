@@ -118,6 +118,16 @@ let get_bool_default table keys default =
   | exception Not_found -> default
   | s -> s
 
+let get_int table keys =
+  match get table keys with
+  | TInt i -> i
+  | _ -> raise Not_found
+
+let get_int_default table keys default =
+  match get_int table keys with
+  | exception Not_found -> default
+  | i -> i
+
 let rec put keys v table =
   match keys with
   | [] -> assert false

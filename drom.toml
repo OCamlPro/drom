@@ -12,6 +12,7 @@ min-edition = "4.07.0"
 name = "drom"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
 version = "0.2.2"
+year = 2020
 
 # keys that you could also define:
 # odoc-target = "...odoc-target..."
@@ -24,8 +25,7 @@ version = "0.2.2"
 # homepage = "...homepage..."
 
 [project]
-description = """
-The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like
+description = """\nThe drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like
 user experience. It can be used to create full OCaml projects with
 sphinx and odoc documentation. It has specific knowledge of Github and
 will generate files for Github Actions CI and Github pages.
@@ -69,18 +69,12 @@ ocaml-flags = "-w -a"
 
 # project-wide fields (depends on project skeleton)
 [fields]
-dot-gitattributes-trailer = """
-share/drom/skeletons/projects/virtual/scripts/before*.sh text=lf
-share/drom/skeletons/projects/virtual/scripts/after*.sh text=lf
-"""
-
+# ...
 
 [[package]]
 dir = "src/drom"
 # edit 'src/drom/package.toml' for package-specific options
 
-
 [[package]]
 dir = "src/drom_lib"
 # edit 'src/drom_lib/package.toml' for package-specific options
-

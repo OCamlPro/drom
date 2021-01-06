@@ -56,6 +56,11 @@ let project_brace (_, p) v =
   | "header-mll" -> License.header_mll p
   | "authors-ampersand" -> String.concat " & " p.authors
   (* general *)
+  | "start_year" -> string_of_int p.year
+  | "years" ->
+      let current_year = (Misc.date ()).Unix.tm_year in
+      if current_year = p.year then string_of_int p.year
+      else Printf.sprintf "%d-%d" p.year current_year
   | "year" -> (Misc.date ()).Unix.tm_year |> string_of_int
   | "month" -> (Misc.date ()).Unix.tm_mon |> Printf.sprintf "%02d"
   | "day" -> (Misc.date ()).Unix.tm_mday |> Printf.sprintf "%02d"

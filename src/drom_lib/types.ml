@@ -94,7 +94,8 @@ and project =
     share_dirs : string list ;
     mutable dependencies : (string * dependency) list;
     mutable tools : (string * dependency) list;
-    mutable fields : string StringMap.t
+    mutable fields : string StringMap.t;
+    year : int;
   }
 
 and profile = { flags : string StringMap.t }

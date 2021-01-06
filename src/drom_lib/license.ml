@@ -127,11 +127,14 @@ let header ?(sep = ml_sep) p =
   let line s = Printf.sprintf "%s  %-70s%s" boc s eoc in
   String.concat "\n"
     ( [ starline; line "" ]
-    @ ( match p.copyright with
-      | None -> []
-      | Some copyright ->
-        [ Printf.kprintf line "Copyright (c) %d %s" (Misc.date ()).Unix.tm_year
-            copyright;
+      @ ( match p.copyright with
+          | None -> []
+          | Some copyright ->
+              let current_year = (Misc.date ()).Unix.tm_year in
+              let years =
+                if current_year = p.year then string_of_int current_year
+                else Printf.sprintf "%d-%d" p.year current_year in
+              [ Printf.kprintf line "Copyright (c) %s %s" years copyright;
           line ""
         ] )
     @ [ line "All rights reserved." ]

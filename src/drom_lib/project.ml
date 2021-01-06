@@ -44,7 +44,7 @@ let rec dummy_project =
     profile = None;
     file = None ;
     share_dirs = [ "share" ] ;
-
+    year = (Misc.date ()).Unix.tm_year;
     generators = StringSet.empty;
   }
 
@@ -846,7 +846,7 @@ let project_of_toml ?file ?default table =
           generators := StringSet.union !generators p_generators
     ) packages;
   let generators = !generators in
-
+  let year = EzToml.get_int_default table [ project_key; "year" ] d.year in
   let project =
     { package;
       packages;
@@ -879,6 +879,7 @@ let project_of_toml ?file ?default table =
       profile;
       fields;
       generators;
+      year;
     }
   in
   package.project <- project;
