@@ -38,6 +38,64 @@
     as "skeletons/packages/c_binding/skeleton.toml")
    ( "share/drom/skeletons/packages/c_binding/stubs.c"
     as "skeletons/packages/c_binding/stubs.c")
+   ( "share/drom/skeletons/packages/ctypes_drv/dune_"
+    as "skeletons/packages/ctypes_drv/dune_")
+   ( "share/drom/skeletons/packages/ctypes_drv/index.mld"
+    as "skeletons/packages/ctypes_drv/index.mld")
+   ( "share/drom/skeletons/packages/ctypes_drv/main.ml"
+    as "skeletons/packages/ctypes_drv/main.ml")
+   ( "share/drom/skeletons/packages/ctypes_drv/package.toml"
+    as "skeletons/packages/ctypes_drv/package.toml")
+   ( "share/drom/skeletons/packages/ctypes_drv/skeleton.toml"
+    as "skeletons/packages/ctypes_drv/skeleton.toml")
+   ( "share/drom/skeletons/packages/ctypes_lib_foreign/discover/discover.ml"
+    as "skeletons/packages/ctypes_lib_foreign/discover/discover.ml")
+   ( "share/drom/skeletons/packages/ctypes_lib_foreign/discover/dune_"
+    as "skeletons/packages/ctypes_lib_foreign/discover/dune_")
+   ( "share/drom/skeletons/packages/ctypes_lib_foreign/dune_"
+    as "skeletons/packages/ctypes_lib_foreign/dune_")
+   ( "share/drom/skeletons/packages/ctypes_lib_foreign/index.mld"
+    as "skeletons/packages/ctypes_lib_foreign/index.mld")
+   ( "share/drom/skeletons/packages/ctypes_lib_foreign/lib.ml"
+    as "skeletons/packages/ctypes_lib_foreign/lib.ml")
+   ( "share/drom/skeletons/packages/ctypes_lib_foreign/package.toml"
+    as "skeletons/packages/ctypes_lib_foreign/package.toml")
+   ( "share/drom/skeletons/packages/ctypes_lib_foreign/skeleton.toml"
+    as "skeletons/packages/ctypes_lib_foreign/skeleton.toml")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/ctypes_stubgen/ctypes_stubgen.ml"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/ctypes_stubgen/ctypes_stubgen.ml")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/ctypes_stubgen/ctypes_stubgen.mli"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/ctypes_stubgen/ctypes_stubgen.mli")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/ctypes_stubgen/dune_"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/ctypes_stubgen/dune_")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/discover/discover.ml"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/discover/discover.ml")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/discover/dune_"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/discover/dune_")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/dune_"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/dune_")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/gen_functions.ml"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/gen_functions.ml")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/gen_types.ml"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/gen_types.ml")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/gsl_functions.ml"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/gsl_functions.ml")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/gsl_functions_functor.ml"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/gsl_functions_functor.ml")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/gsl_types.ml"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/gsl_types.ml")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/bindings/gsl_types_functor.ml"
+    as "skeletons/packages/ctypes_lib_stubs/bindings/gsl_types_functor.ml")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/dune_"
+    as "skeletons/packages/ctypes_lib_stubs/dune_")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/index.mld"
+    as "skeletons/packages/ctypes_lib_stubs/index.mld")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/lib.ml"
+    as "skeletons/packages/ctypes_lib_stubs/lib.ml")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/package.toml"
+    as "skeletons/packages/ctypes_lib_stubs/package.toml")
+   ( "share/drom/skeletons/packages/ctypes_lib_stubs/skeleton.toml"
+    as "skeletons/packages/ctypes_lib_stubs/skeleton.toml")
    ( "share/drom/skeletons/packages/driver/dune_"
     as "skeletons/packages/driver/dune_")
    ( "share/drom/skeletons/packages/driver/index.mld"
@@ -148,6 +206,14 @@
     as "skeletons/projects/c_binding/drom.toml")
    ( "share/drom/skeletons/projects/c_binding/skeleton.toml"
     as "skeletons/projects/c_binding/skeleton.toml")
+   ( "share/drom/skeletons/projects/ctypes_foreign/drom.toml"
+    as "skeletons/projects/ctypes_foreign/drom.toml")
+   ( "share/drom/skeletons/projects/ctypes_foreign/skeleton.toml"
+    as "skeletons/projects/ctypes_foreign/skeleton.toml")
+   ( "share/drom/skeletons/projects/ctypes_stubs/drom.toml"
+    as "skeletons/projects/ctypes_stubs/drom.toml")
+   ( "share/drom/skeletons/projects/ctypes_stubs/skeleton.toml"
+    as "skeletons/projects/ctypes_stubs/skeleton.toml")
    ( "share/drom/skeletons/projects/js_lib/drom.toml"
     as "skeletons/projects/js_lib/drom.toml")
    ( "share/drom/skeletons/projects/js_lib/skeleton.toml"

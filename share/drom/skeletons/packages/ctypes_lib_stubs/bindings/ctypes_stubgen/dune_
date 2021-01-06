@@ -1,0 +1,6 @@
+
+(library
+ (name ctypes_stubgen)
+ (modules ctypes_stubgen)
+ (libraries ctypes ctypes.stubs)
+ (wrapped false))

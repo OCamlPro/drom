@@ -1,0 +1,8 @@
+[skeleton]
+name = "ctypes_drv"
+inherits = "virtual"
+
+[file]
+dune_ = { file = "dune", skips = [ "dune" ] }
+"index.mld" = { skips = [ "docs" ] }
+"main.ml" = { skips = [ "code" ] }

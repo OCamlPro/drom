@@ -1,0 +1,10 @@
+[skeleton]
+name = "ctypes_lib_foreign"
+inherits = "virtual"
+
+[file]
+"dune_" = { file = "dune", skips = [ "dune" ] }
+"index.mld" = { skips = [ "docs" ] }
+"lib.ml" = { file = "!{name}.ml", skips = [ "code" ] }
+"discover/dune_" = { file = "discover/dune", skips = [ "dune" ] }
+"discover/discover.ml" = { skips = [ "code" ] }
