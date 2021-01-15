@@ -4,9 +4,11 @@
 ; that we generate else-where
 
 (rule
- (with-stdout-to
-  test1.output
-  (run cat test1.expected)))
+ (deps test1.expected)
+ (action
+  (with-stdout-to
+   test1.output
+   (run cat test1.expected))))
 
 (rule
  (alias runtest)
