@@ -1,6 +1,6 @@
 Copyright and License
 =====================
 
-Copyright (c) !{year} !{copyright}
+Copyright (c) !{years} !{copyright}
 
 !{license}

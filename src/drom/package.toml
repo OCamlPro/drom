@@ -31,9 +31,6 @@ kind = "program"
 # module name used to pack modules (if pack-modules is true)
 # pack = "Mylib"
 
-# compilation mode: "binary" (default) or "javascript"
-# mode = "javascript"
-
 # package library dependencies
 #   [dependencies]
 #   ez_file = ">=0.1 <1.3"

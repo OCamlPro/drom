@@ -3,7 +3,7 @@ drom-version = "0.1.0"
 
 [project]
 authors = [!{authors-for-toml}]
-skeleton = "c_binding"
+skeleton = "wasm_binding"
 copyright = "!{copyright}"
 edition = "!{edition}"
 github-organization = "!{github-organization}"
@@ -33,7 +33,7 @@ of the !{name} OCaml project
 skip = ""
 
 [dependencies]
-conf-gsl = "2"
+bigstring = "0.3"
 
 [tools.ocamlformat]
 for-test = true
@@ -49,6 +49,6 @@ pack-modules = true
 skip-dirs = []
 
 [[package]]
-skeleton = "c_binding"
+skeleton = "wasm_binding"
 dir = "src/!{name}"
 name = "!{name}"

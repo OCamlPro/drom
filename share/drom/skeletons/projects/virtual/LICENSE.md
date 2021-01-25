@@ -1,3 +1,3 @@
-![skip:license]Copyright (c) !{year} !{copyright}
+![skip:license]Copyright (c) !{years} !{copyright}
 
 !{license}

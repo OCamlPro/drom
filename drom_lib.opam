@@ -2,11 +2,12 @@
 # Do not modify, or add to the `skip` field of `drom.toml`.
 opam-version: "2.0"
 name: "drom_lib"
-version: "0.2.2"
+version: "0.3.0"
 license: "LGPL-2.1-only with OCaml-LGPL-linking-exception"
 synopsis:
   "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
-description: """\
+description: """
+
 The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like
 user experience. It can be used to create full OCaml projects with
 sphinx and odoc documentation. It has specific knowledge of Github and
