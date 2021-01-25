@@ -1,0 +1,3 @@
+[skeleton]
+name = "ctypes_stubs"
+inherits = "virtual"

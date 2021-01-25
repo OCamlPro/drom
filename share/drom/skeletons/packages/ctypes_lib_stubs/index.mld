@@ -1,0 +1,10 @@
+{1 Library !{name}}
+
+!{description}
+
+!{escape:true}![if:pack]
+The entry point of this library is the module: {\!!{pack}}.
+![else]
+This library exposes the following toplevel modules:
+{\!modules:!{modules}}
+![fi]!{escape:false}

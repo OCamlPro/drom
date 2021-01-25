@@ -1,0 +1,5 @@
+name = "!{name}"
+dir = "!{dir}"
+skeleton = "ctypes_drv"
+kind = "program"
+
