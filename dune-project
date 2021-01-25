@@ -3,7 +3,7 @@
 (name drom)
 (allow_approximate_merlin)
 (generate_opam_files false)
-(version 0.2.2)
+(version 0.3.0)
 (formatting (enabled_for ocaml reason))
 
 (package
