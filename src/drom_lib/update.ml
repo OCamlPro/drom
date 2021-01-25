@@ -201,47 +201,12 @@ let update_files ?args ?(git = false) ?(create = false) p =
     else
       (p, changed)
   in
-  (*
-  let p, changed =
-    match mode with
-    | None -> (p, changed)
-    | Some mode ->
-        let js_dep = ("js_of_ocaml", [ Semantic (3, 6, 0) ]) in
-        let js_tool = ("js_of_ocaml", [ Semantic (3, 6, 0) ]) in
-        let ppx_tool = ("js_of_ocaml-ppx", [ Semantic (3, 6, 0) ]) in
-        let add_dep (name, depversions) deps changed =
-          let dep =
-            ( name,
-              { depversions; depname = None; deptest = false; depdoc = false } )
-          in
-          match mode with
-          | Binary ->
-              if List.mem dep deps then
-                (EzList.remove dep deps, true)
-              else
-                (deps, changed)
-          | Javascript ->
-              if not (List.mem_assoc (fst dep) deps) then
-                (dep :: deps, true)
-              else
-                (deps, changed)
-        in
-        let dependencies, changed = add_dep js_dep p.dependencies changed in
-        let tools, changed = add_dep js_tool p.tools changed in
-        let tools, changed = add_dep ppx_tool tools changed in
-        List.iter (fun package ->
-            package.p_mode <- Some mode
-          ) p.packages;
-        ({ p with dependencies; tools }, changed)
-  in
-*)
   List.iter (fun package -> package.project <- p) p.packages;
 
   Hashes.with_ctxt ~git (fun hashes ->
       if create then
         if git && not (Sys.file_exists ".git") then (
-          let branch_name = Git.init_default_branch () in
-          Git.call [ "init"; "-b"; branch_name ];
+          Git.call [ "init" ; "-q"];
           match config.config_github_organization with
           | None -> ()
           | Some organization ->

@@ -18,11 +18,6 @@ let email () =
   | Some email -> email
   | None -> raise Not_found
 
-let init_default_branch () =
-  match Misc.call_get_fst_line "git config --get init.defaultBranch" with
-  | Some branch -> branch
-  | None -> "master"
-
 let call args = Misc.call (Array.of_list ("git" :: args))
 
 let run args = try call args with _ -> ()

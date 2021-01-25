@@ -11,8 +11,8 @@ license = "LGPL2"
 min-edition = "4.07.0"
 name = "drom"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
-version = "0.2.2"
 year = 2020
+version = "0.3.0"
 
 # keys that you could also define:
 # odoc-target = "...odoc-target..."
