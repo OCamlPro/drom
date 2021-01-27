@@ -251,7 +251,7 @@ let find_author config =
                 try Sys.getenv "USERNAME"
                 with Not_found -> (
                   try Sys.getenv "NAME"
-                  with Not_found -> Error.raise "Cannot determine user name" ) ) ) ) ) )
+                  with Not_found -> Error.raise "Cannot determine user name. Hint: try to set DROM_USER." ) ) ) ) ) )
     in
     let email =
       try Sys.getenv "DROM_EMAIL"
@@ -261,7 +261,7 @@ let find_author config =
           try Sys.getenv "GIT_COMMITTER_EMAIL"
           with Not_found -> (
             try Git.email ()
-            with Not_found -> Error.raise "Cannot determine user email" ) ) )
+            with Not_found -> Error.raise "Cannot determine user email. Hint: try to set DROM_EMAIL." ) ) )
     in
     Printf.sprintf "%s <%s>" user email
 
