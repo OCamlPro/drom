@@ -1,7 +1,7 @@
 Copyright and License
 =====================
 
-Copyright (c) 2020 OCamlPro SAS & Origin Labs SAS
+Copyright (c) 2020-2021 OCamlPro SAS & Origin Labs SAS
 
 This software is distributed under the terms of the
 GNU Lesser General Public License (LGPL) version 2.1 (included below).
@@ -173,7 +173,7 @@ If you develop a new library, and you want it to be of the greatest possible use
 To apply these terms, attach the following notices to the library. It is safest to attach them to the start of each source file to most effectively convey the exclusion of warranty; and each file should have at least the "copyright" line and a pointer to where the full notice is found.
 
 one line to give the library's name and an idea of what it does.
-Copyright (C) year  name of author
+Copyright (C) years  name of author
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
