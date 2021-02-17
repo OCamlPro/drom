@@ -1,0 +1,4 @@
+name = "!{name}"
+dir = "!{dir}"
+skeleton = "rust_binding_test"
+kind = "program"

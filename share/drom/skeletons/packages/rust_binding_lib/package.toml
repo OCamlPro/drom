@@ -1,0 +1,5 @@
+name = "!{name}"
+dir = "!{dir}"
+skeleton = "rust_binding"
+kind = "library"
+gen-version = "version.ml"

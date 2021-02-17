@@ -1,0 +1,17 @@
+[package]
+name = "!{name}"
+version = "!{version}"
+edition = "2018"
+authors = [!{authors-for-toml}]
+
+[lib]
+crate-type = ["staticlib", "cdylib"]
+path = "src/!{name}/lib.rs"
+
+[dependencies]
+ocaml = "*"
+# Or use the development version:
+# ocaml = {git = "git://github.com/zshipko/ocaml-rs"}
+!(cargo-dependencies)
+
+!(cargo-trailer)
