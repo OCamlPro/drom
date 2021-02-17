@@ -1,0 +1,59 @@
+[project]
+drom-version = "0.1.0"
+
+[project]
+authors = [!{authors-for-toml}]
+skeleton = "rust_binding"
+copyright = "!{copyright}"
+edition = "!{edition}"
+github-organization = "!{github-organization}"
+license = "!{license-name}"
+min-edition = "!{min-edition}"
+name = "!{name}"
+synopsis = "The !{name} project"
+version = "0.1.0"
+windows-ci = true
+
+# keys that you could also define:
+# sphinx-target = "...sphinx-target..."
+# archive = "...archive..."
+# dev-repo = "...dev-repo..."
+# bug-reports = "...bug-reports..."
+# doc-api = "...doc-api..."
+# doc-gen = "...doc-gen..."
+# homepage = "...homepage..."
+
+[project]
+description = """
+This is the description
+of the !{name} OCaml project
+"""
+
+[drom]
+skip = ""
+
+[tools.ocamlformat]
+for-test = true
+[tools.odoc]
+for-doc = true
+[tools.ppx_expect]
+for-test = true
+[tools.ppx_inline_test]
+for-test = true
+
+[project]
+pack-modules = true
+skip-dirs = []
+
+[[package]]
+skeleton = "rust_binding_lib"
+dir = "src/!{name}"
+name = "!{name}"
+
+[[package]]
+skeleton = "rust_binding_test"
+dir = "src/!{name}_test"
+kind = "program"
+name = "!{name}_test"
+[package.dependencies]
+!{name} = "version"

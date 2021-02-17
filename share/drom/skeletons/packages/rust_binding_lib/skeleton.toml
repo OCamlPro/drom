@@ -1,0 +1,9 @@
+[skeleton]
+name = "rust_binding_lib"
+inherits = "virtual"
+
+[file]
+dune_ = { file = "dune", skips = "dune" }
+"index.mld" = { skips = [ "docs" ] }
+"main.ml" = { skips = [ "code" ] }
+"lib.rs" = { skips = [ "code" ] }

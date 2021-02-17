@@ -1,0 +1,3 @@
+[skeleton]
+name = "rust_binding"
+inherits = "virtual"

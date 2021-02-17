@@ -1,3 +1,3 @@
 !{header-ml}
 
-let () = !{name:alpha:cap}_lib.Main.main ()
+let () = !{project-name:alpha:cap}_lib.Main.main ()
