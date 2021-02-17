@@ -18,7 +18,7 @@
  (libraries !{dune-libraries} !(package-dune-libraries))
  (foreign_archives !{library-name})
  (c_library_flags
-  (-lpthread -lc -lm))
+  (-lpthread -lc -lm !(package-c-libraries)))
   !{dune-stanzas}
   !(package-dune-stanzas)
   )
