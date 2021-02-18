@@ -13,6 +13,12 @@ open Types
 open EzCompat
 open EzFile.OP
 
+let verbose_subst =
+  try
+    ignore (Sys.getenv "DROM_VERBOSE_SUBST");
+    true
+  with Not_found -> false
+
 let rec dummy_project =
   { package = dummy_package;
     packages = [];
@@ -397,8 +403,14 @@ let package_of_toml ?default ?p_file table =
       StringMap.empty
   in
   let p_fields =
-    StringMap.union (fun _k a1 _a2 -> Some a1) p_fields default.p_fields
+    StringMap.union (fun _k a1 _a2 ->
+        Some a1) p_fields default.p_fields
   in
+  if verbose_subst then
+    StringMap.iter (fun k _ ->
+        Printf.eprintf "Package defined field %S\n%!" k;
+      ) p_fields;
+
   { name;
     dir;
     project;
@@ -836,7 +848,16 @@ let project_of_toml ?file ?default table =
     EzToml.get_encoding_default fields_encoding table [ project_key; "fields" ]
       StringMap.empty
   in
-  let fields = StringMap.union (fun _k a1 _a2 -> Some a1) fields d.fields in
+  let p_fields =
+    EzToml.get_encoding_default fields_encoding table [ "fields" ]
+      StringMap.empty
+  in
+  let fields = StringMap.union (fun _k a1 _a2 ->  Some a1) fields d.fields in
+  let fields = StringMap.union (fun _k a1 _a2 -> Some a1) fields p_fields in
+  if verbose_subst then
+    StringMap.iter (fun k _ ->
+        Printf.eprintf "Project defined field %S\n%!" k;
+      ) fields;
 
   let generators = ref StringSet.empty in
   List.iter (fun p ->
