@@ -186,6 +186,28 @@
     as "skeletons/packages/program/package.toml")
    ( "share/drom/skeletons/packages/program/skeleton.toml"
     as "skeletons/packages/program/skeleton.toml")
+   ( "share/drom/skeletons/packages/rust_binding_lib/dune_"
+    as "skeletons/packages/rust_binding_lib/dune_")
+   ( "share/drom/skeletons/packages/rust_binding_lib/index.mld"
+    as "skeletons/packages/rust_binding_lib/index.mld")
+   ( "share/drom/skeletons/packages/rust_binding_lib/lib.rs"
+    as "skeletons/packages/rust_binding_lib/lib.rs")
+   ( "share/drom/skeletons/packages/rust_binding_lib/main.ml"
+    as "skeletons/packages/rust_binding_lib/main.ml")
+   ( "share/drom/skeletons/packages/rust_binding_lib/package.toml"
+    as "skeletons/packages/rust_binding_lib/package.toml")
+   ( "share/drom/skeletons/packages/rust_binding_lib/skeleton.toml"
+    as "skeletons/packages/rust_binding_lib/skeleton.toml")
+   ( "share/drom/skeletons/packages/rust_binding_test/dune_"
+    as "skeletons/packages/rust_binding_test/dune_")
+   ( "share/drom/skeletons/packages/rust_binding_test/index.mld"
+    as "skeletons/packages/rust_binding_test/index.mld")
+   ( "share/drom/skeletons/packages/rust_binding_test/main.ml"
+    as "skeletons/packages/rust_binding_test/main.ml")
+   ( "share/drom/skeletons/packages/rust_binding_test/package.toml"
+    as "skeletons/packages/rust_binding_test/package.toml")
+   ( "share/drom/skeletons/packages/rust_binding_test/skeleton.toml"
+    as "skeletons/packages/rust_binding_test/skeleton.toml")
    ( "share/drom/skeletons/packages/virtual/package.toml"
     as "skeletons/packages/virtual/package.toml")
    ( "share/drom/skeletons/packages/virtual/skeleton.toml"
@@ -274,6 +296,12 @@
     as "skeletons/projects/program/drom.toml")
    ( "share/drom/skeletons/projects/program/skeleton.toml"
     as "skeletons/projects/program/skeleton.toml")
+   ( "share/drom/skeletons/projects/rust_binding/Cargo.toml"
+    as "skeletons/projects/rust_binding/Cargo.toml")
+   ( "share/drom/skeletons/projects/rust_binding/drom.toml"
+    as "skeletons/projects/rust_binding/drom.toml")
+   ( "share/drom/skeletons/projects/rust_binding/skeleton.toml"
+    as "skeletons/projects/rust_binding/skeleton.toml")
    ( "share/drom/skeletons/projects/virtual/CHANGES.md"
     as "skeletons/projects/virtual/CHANGES.md")
    ( "share/drom/skeletons/projects/virtual/LICENSE.md"
