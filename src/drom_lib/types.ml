@@ -50,7 +50,8 @@ type package =
     mutable p_gen_version : string option;
     mutable p_fields : string StringMap.t;
     mutable p_generators : StringSet.t option;
-    mutable p_file : string option
+    mutable p_file : string option ;
+    mutable p_skip : string list option ;
   }
 
 and project =
