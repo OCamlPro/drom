@@ -11,7 +11,6 @@ license = "LGPL2"
 min-edition = "4.07.0"
 name = "drom"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
-year = 2020
 version = "0.3.0"
 
 # keys that you could also define:
@@ -25,14 +24,15 @@ version = "0.3.0"
 # homepage = "...homepage..."
 
 [project]
-description = """\nThe drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like
+description = """\n
+The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like
 user experience. It can be used to create full OCaml projects with
 sphinx and odoc documentation. It has specific knowledge of Github and
 will generate files for Github Actions CI and Github pages.
 """
 
 [project]
-skip = "sphinx/about.rst src/drom_lib/main.ml sphinx/index.rst CHANGES.md test/expect-tests/test.ml ocamlformat sphinx/install.rst src/ez_opam_file/dune"
+skip = ["sphinx/about.rst", "src/drom_lib/main.ml", "sphinx/index.rst", "CHANGES.md", "test/expect-tests/test.ml", "ocamlformat", "sphinx/install.rst", "src/ez_opam_file/dune"]
 
 # project-wide library dependencies (not for package-specific deps)
 [dependencies]
@@ -78,3 +78,4 @@ dir = "src/drom"
 [[package]]
 dir = "src/drom_lib"
 # edit 'src/drom_lib/package.toml' for package-specific options
+
