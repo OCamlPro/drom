@@ -2,7 +2,7 @@
 
 # hash of toml configuration files
 # used for generation of all files
-278dd51e1b58745b985a0d2ef237e412:.
+37d2ec51c16aabe2d1e294274b1333e0:.
 # end context for .
 
 # begin context for .github/workflows/doc-deploy.yml
@@ -32,7 +32,7 @@ ae6a87df5770f4f6a09196ec38906d5a:.gitignore
 
 # begin context for LICENSE.md
 # file LICENSE.md
-a6eab40337af2e76a38e4c8d30866c0b:LICENSE.md
+d091b81b6155e5fd5d6556fc8bba0094:LICENSE.md
 # end context for LICENSE.md
 
 # begin context for Makefile
@@ -42,7 +42,7 @@ a6eab40337af2e76a38e4c8d30866c0b:LICENSE.md
 
 # begin context for README.md
 # file README.md
-1ff0ab35f115b004da7c51828b5d92af:README.md
+8f82018407e6d8849fcabf4bb4a122bf:README.md
 # end context for README.md
 
 # begin context for docs/README.txt
@@ -62,7 +62,7 @@ e739f3026aa997af4026bc428f4c9ef6:docs/favicon.png
 
 # begin context for docs/index.html
 # file docs/index.html
-ed28d2e07e40a7874cbc18bbc06f1e2d:docs/index.html
+01aa408f04bb85411b6aba5543afd329:docs/index.html
 # end context for docs/index.html
 
 # begin context for docs/sphinx/index.html
@@ -82,27 +82,27 @@ c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 
 # begin context for drom.opam
 # file drom.opam
-d5855df69929294839ca6f0728f52c27:drom.opam
+456d187dfb6bfb0d0b4af0025ad0b846:drom.opam
 # end context for drom.opam
 
 # begin context for drom.toml
 # file drom.toml
-179c8354c2b44c8de53a607146742626:drom.toml
+2523f690c8f611bc9408398fa0758bb9:drom.toml
 # end context for drom.toml
 
 # begin context for drom_lib.opam
 # file drom_lib.opam
-7b5671645f7a7334a5cb8c2b75aa1d9a:drom_lib.opam
+3b43cf36d8034541f7af508c72af11cf:drom_lib.opam
 # end context for drom_lib.opam
 
 # begin context for dune
 # file dune
-1269367ee87604a4594dec75bbf306e8:dune
+f5ed08bd9458ec38573e43de911b83ad:dune
 # end context for dune
 
 # begin context for dune-project
 # file dune-project
-70849131d65433a9c6ba0c1ea930197b:dune-project
+9cbe545b43e16db683612aaed7fd9379:dune-project
 # end context for dune-project
 
 # begin context for scripts/after.sh
@@ -147,7 +147,7 @@ dc4cee7810778bedcd7b9bfa95338ac4:sphinx/conf.py
 
 # begin context for sphinx/license.rst
 # file sphinx/license.rst
-6f8d8b2e533aaf4e245bb45f36589235:sphinx/license.rst
+cdf74f69fd392ea9a545b06789762a13:sphinx/license.rst
 # end context for sphinx/license.rst
 
 # begin context for src/drom/dune
@@ -157,17 +157,17 @@ b2467739c3fd8542338ce53133b3fefd:src/drom/dune
 
 # begin context for src/drom/index.mld
 # file src/drom/index.mld
-155ff396ec5ab6ff5deb5f290c25634e:src/drom/index.mld
+eee8dd1e3c122db4488a63b7625362d4:src/drom/index.mld
 # end context for src/drom/index.mld
 
 # begin context for src/drom/main.ml
 # file src/drom/main.ml
-46f55db0ab1ffc429e105af60218f0c8:src/drom/main.ml
+13a81bf0db841e7d20b3ef4a846e91bc:src/drom/main.ml
 # end context for src/drom/main.ml
 
 # begin context for src/drom/package.toml
 # file src/drom/package.toml
-0df6a7d101efd463b801a3c71f967ed2:src/drom/package.toml
+33e8b94293dfa9a52bbb0abb93c4c7c6:src/drom/package.toml
 # end context for src/drom/package.toml
 
 # begin context for src/drom_lib/dune
@@ -177,12 +177,12 @@ b2467739c3fd8542338ce53133b3fefd:src/drom/dune
 
 # begin context for src/drom_lib/index.mld
 # file src/drom_lib/index.mld
-410f9035731da781d0c50b063d81f834:src/drom_lib/index.mld
+29291dab31df17dbd29859d84fc73b8f:src/drom_lib/index.mld
 # end context for src/drom_lib/index.mld
 
 # begin context for src/drom_lib/package.toml
 # file src/drom_lib/package.toml
-44e05f9ed47a68f1c619629becf277d5:src/drom_lib/package.toml
+c629dc904af03262b5deededb0c9f2a4:src/drom_lib/package.toml
 # end context for src/drom_lib/package.toml
 
 # begin context for src/drom_lib/version.mlt

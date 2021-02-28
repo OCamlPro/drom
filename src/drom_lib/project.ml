@@ -71,7 +71,8 @@ and dummy_package =
     p_gen_version = None;
     p_fields = StringMap.empty;
     p_skeleton = None;
-    p_generators = None
+    p_generators = None;
+    p_skip = None;
   }
 
 let create_package ~name ~dir ~kind = { dummy_package with name; dir; kind }
@@ -138,6 +139,21 @@ let versions_of_string versions =
               Gt (String.sub version 1 (len - 1))
           | _ -> Ge version ))
     (EzString.split_simplify versions ' ')
+
+let skip_encoding =
+  let to_toml list =
+    match list with
+    | [] -> TArray NodeEmpty
+    | list -> TArray (NodeString list)
+  in
+  let of_toml ~key value =
+    match value with
+    | TArray NodeEmpty -> []
+    | TArray (NodeString v) -> v
+    | TString s -> EzString.split s ' '
+    | _ -> EzToml.failwith "Wrong type for field %S" (EzToml.key2str key)
+  in
+  EzToml.encoding ~to_toml ~of_toml
 
 let dependency_encoding =
   EzToml.encoding
@@ -315,6 +331,11 @@ let string_of_package pk =
         ~default: {|pack = "Mylib"|}
         ( string_option pk.p_pack );
 
+      option "skip"
+        ~comment: [ "files to skip while updating at package level" ]
+        ~default: {|skip = []|}
+        ( string_list_option  pk.p_skip );
+
       option "dependencies"
         ~comment:[ "package library dependencies";
                    "   [dependencies]";
@@ -410,6 +431,10 @@ let package_of_toml ?default ?p_file table =
     StringMap.iter (fun k _ ->
         Printf.eprintf "Package defined field %S\n%!" k;
       ) p_fields;
+  let p_skip =
+    EzToml.get_encoding_option skip_encoding table [ "skip" ]
+      ?default:default.p_skip
+  in
 
   { name;
     dir;
@@ -427,7 +452,8 @@ let package_of_toml ?default ?p_file table =
     p_gen_version;
     p_fields;
     p_skeleton;
-    p_generators
+    p_generators;
+    p_skip;
   }
 
 let package_of_toml ?default table =
@@ -503,7 +529,7 @@ let to_files p =
   in
   let drom =
     EzToml.empty
-    |> EzToml.put_string [ "project"; "skip" ] (String.concat " " p.skip)
+    |> EzToml.put_string_list [ "project"; "skip" ] p.skip
     |> EzToml.to_string
   in
   let package = EzToml.to_string package in
@@ -731,9 +757,9 @@ let project_of_toml ?file ?default table =
   in
   let skip =
     match
-      EzToml.get_string_option table [ "project"; "skip" ]
+      EzToml.get_encoding_option skip_encoding table [ "project"; "skip" ]
     with
-    | Some s -> EzString.split s ' '
+    | Some list -> list
     | None ->
         match
           EzToml.get_string_option table [ "drom"; "skip" ]

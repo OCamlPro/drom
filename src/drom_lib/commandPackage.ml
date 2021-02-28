@@ -110,16 +110,39 @@ let upgrade_package package ~upgrade ~kind ~files =
   end;
   ()
 
+let find_package_name () =
+  Globals.find_ancestor_file "package.toml"
+    (fun ~dir ~path:_ ->
+       let file = Filename.concat dir "package.toml" in
+       match EzToml.from_file file with
+       | `Error (s, loc) ->
+           Error.raise "Could not parse: %s at %s" file s
+             (EzToml.string_of_location loc)
+       | `Ok table ->
+           let name = EzToml.get_string table [ "name" ] in
+           Printf.eprintf "Infering package name %S from location\n%!" name;
+           name
+    )
+
+
 let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename
     ~args ~files () =
+  let package_name =
+    match package_name with
+    | Some _ -> package_name
+    | None -> find_package_name ()
+  in
   let p, inferred_dir = Project.get () in
   let name =
     match package_name with
-    | None ->
-        let name = p.package.name in
-        Printf.eprintf "No name specified, using project name %S\n%!" name;
-        name
     | Some name -> name
+    | None ->
+        match p.packages with
+        [ { name ; _ } ] ->
+          Printf.eprintf "No name specified, using project name %S\n%!" name;
+          name
+        | _ ->
+            Error.raise "No name specified, cannot resolve ambiguity, you must specify the package name\n%!";
   in
   let p =
     if edit then

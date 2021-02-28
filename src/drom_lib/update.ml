@@ -95,9 +95,24 @@ let update_files ?args ?(git = false) ?(create = false) p =
   in
 
   let can_skip = ref [] in
+
+  let skip_set = ref StringSet.empty in
+  List.iter (fun skip ->
+      skip_set := StringSet.add skip !skip_set
+    ) p.skip ;
+  List.iter (fun pk ->
+      match pk.p_skip with
+      | None -> ()
+      | Some list ->
+          List.iter (fun skip ->
+              skip_set := StringSet.add
+                  ( Filename.concat pk.dir skip ) !skip_set
+            ) list ;
+    ) p.packages;
+  let skip_set = !skip_set in
   let not_skipped s =
     can_skip := s :: !can_skip;
-    not (List.mem s p.skip)
+    not (StringSet.mem s skip_set)
   in
   let skipped = ref [] in
   let write_file ?(record = true) ~perm hashes filename content =
@@ -156,7 +171,11 @@ let update_files ?args ?(git = false) ?(create = false) p =
       if force then (
         Printf.eprintf "Forced Update of file %s\n%!" filename;
         write_file hashes filename content ~perm
-      ) else if not_skipped filename && List.for_all not_skipped skips then
+      ) else if
+        (* the file should not be to skip *)
+        not_skipped filename &&
+        (* all tags attached to this file should also not be to skip *)
+        List.for_all not_skipped skips then
         if not record then
           write_file ~record:false hashes filename content ~perm
         else if not (Sys.file_exists filename) then (
