@@ -69,7 +69,7 @@ ocaml-flags = "-w -a"
 
 # project-wide fields (depends on project skeleton)
 [fields]
-# ...
+dune-lang = "2.1"
 
 [[package]]
 dir = "src/drom"

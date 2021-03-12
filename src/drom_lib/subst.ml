@@ -387,6 +387,13 @@ let subst_encode p_subst escape p s =
       let rec iter encodings var =
         match encodings with
         | [] -> var
+        | "default" :: default :: encodings ->
+            let var =
+              if var = "" then
+                default
+              else var
+            in
+            iter encodings var
         | encoding :: encodings ->
             let var =
               match encoding with
