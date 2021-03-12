@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Contributing Your Own Skeletons &mdash; drom master
- (57f48a2
-) (2021/02/28 07:25) documentation</title>
+ (057f134
+) (2021/03/12 13:02) documentation</title>
   
 
   
@@ -19,48 +19,38 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
-  
-
-  
-        <link rel="author" title="About these documents"
-              href="about.html"/>
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="drom master
- (57f48a2
-) (2021/02/28 07:25) documentation" href="index.html"/>
-        <link rel="next" title="Copyright and License" href="license.html"/>
-        <link rel="prev" title="How to install" href="install.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Copyright and License" href="license.html" />
+    <link rel="prev" title="How to install" href="install.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -75,7 +65,7 @@
             
               <div class="version">
                 master
- (57f48a2
+ (057f134
 )
               </div>
             
@@ -137,7 +127,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">drom</a>
@@ -145,9 +135,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -193,59 +184,59 @@
 <span id="contributing-skeletons"></span><h1>Contributing Your Own Skeletons<a class="headerlink" href="#contributing-your-own-skeletons" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>There are 2 kinds of skeletons used to create and update <code class="code docutils literal"><span class="pre">drom</span></code>
+<p>There are 2 kinds of skeletons used to create and update <code class="code docutils literal notranslate"><span class="pre">drom</span></code>
 project:</p>
 <ul class="simple">
 <li><em>project skeletons</em> define a whole project composed of one or more packages</li>
 <li><em>package skeletons</em> define only one package, corresponding to every opam
 package generated in the project</li>
 </ul>
-<p><code class="code docutils literal"><span class="pre">drom</span></code> comes with a set of predefined skeletons. Users can
+<p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> comes with a set of predefined skeletons. Users can
 contribute their own skeletons, either by adding them to their local
-configuration, or by submitting them to the <code class="code docutils literal"><span class="pre">drom</span></code> project.</p>
+configuration, or by submitting them to the <code class="code docutils literal notranslate"><span class="pre">drom</span></code> project.</p>
 </div>
 <div class="section" id="skeleton-locations">
 <h2>Skeleton Locations<a class="headerlink" href="#skeleton-locations" title="Permalink to this headline">¶</a></h2>
-<p>When building its set of skeletons, <code class="code docutils literal"><span class="pre">drom</span></code> will search them in two
+<p>When building its set of skeletons, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will search them in two
 directories:</p>
 <ul class="simple">
 <li>A system directory. It is the first existing one in the following list:<ul>
-<li><code class="code docutils literal"><span class="pre">$DROM_SHARE_DIR/skeletons/</span></code>, i.e. using the <code class="code docutils literal"><span class="pre">$DROM_SHARED_DIR</span></code> environment variable</li>
-<li>any directory <code class="code docutils literal"><span class="pre">./share/drom/skeletons/</span></code> in one of the ancestor directories (<code class="code docutils literal"><span class="pre">.</span></code>, <code class="code docutils literal"><span class="pre">..</span></code>, <code class="code docutils literal"><span class="pre">../..</span></code>, etc.). This is used to test new skeletons directly from <code class="code docutils literal"><span class="pre">drom</span></code> sources.</li>
-<li><code class="code docutils literal"><span class="pre">$OPAMROOT/plugins/opam-drom/skeletons/</span></code>, where <code class="code docutils literal"><span class="pre">$OPAMROOT</span></code> defaults to <code class="code docutils literal"><span class="pre">$HOME/.opam/</span></code> if undefined. This is used when <code class="code docutils literal"><span class="pre">drom</span></code> is installed as an <code class="code docutils literal"><span class="pre">opam</span></code> plugin, but can also be used when installed globally by the user.</li>
-<li><code class="code docutils literal"><span class="pre">$OPAM_SWITCH_PREFIX/share/drom/skeletons/</span></code>. This is used when <code class="code docutils literal"><span class="pre">drom</span></code> is installed in the local switch only.</li>
-<li><code class="code docutils literal"><span class="pre">${share-dir}/skeletons</span></code>, where <code class="code docutils literal"><span class="pre">${share-dir}</span></code> is the value of that variable in the user configuration file (<code class="code docutils literal"><span class="pre">$HOME/.config/drom/config</span></code>)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">$DROM_SHARE_DIR/skeletons/</span></code>, i.e. using the <code class="code docutils literal notranslate"><span class="pre">$DROM_SHARED_DIR</span></code> environment variable</li>
+<li>any directory <code class="code docutils literal notranslate"><span class="pre">./share/drom/skeletons/</span></code> in one of the ancestor directories (<code class="code docutils literal notranslate"><span class="pre">.</span></code>, <code class="code docutils literal notranslate"><span class="pre">..</span></code>, <code class="code docutils literal notranslate"><span class="pre">../..</span></code>, etc.). This is used to test new skeletons directly from <code class="code docutils literal notranslate"><span class="pre">drom</span></code> sources.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">$OPAMROOT/plugins/opam-drom/skeletons/</span></code>, where <code class="code docutils literal notranslate"><span class="pre">$OPAMROOT</span></code> defaults to <code class="code docutils literal notranslate"><span class="pre">$HOME/.opam/</span></code> if undefined. This is used when <code class="code docutils literal notranslate"><span class="pre">drom</span></code> is installed as an <code class="code docutils literal notranslate"><span class="pre">opam</span></code> plugin, but can also be used when installed globally by the user.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">$OPAM_SWITCH_PREFIX/share/drom/skeletons/</span></code>. This is used when <code class="code docutils literal notranslate"><span class="pre">drom</span></code> is installed in the local switch only.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">${share-dir}/skeletons</span></code>, where <code class="code docutils literal notranslate"><span class="pre">${share-dir}</span></code> is the value of that variable in the user configuration file (<code class="code docutils literal notranslate"><span class="pre">$HOME/.config/drom/config</span></code>)</li>
 </ul>
 </li>
-<li>A user directory: <code class="code docutils literal"><span class="pre">$HOME/.config/drom/skeletons/</span></code></li>
+<li>A user directory: <code class="code docutils literal notranslate"><span class="pre">$HOME/.config/drom/skeletons/</span></code></li>
 </ul>
-<p>If a skeleton exists in both directories, the one in the user directory overwrites the one in the system directory. <code class="code docutils literal"><span class="pre">drom</span></code> will then complain about it.</p>
+<p>If a skeleton exists in both directories, the one in the user directory overwrites the one in the system directory. <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will then complain about it.</p>
 </div>
 <div class="section" id="the-skeleton-format">
 <h2>The Skeleton Format<a class="headerlink" href="#the-skeleton-format" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="code docutils literal"><span class="pre">skeletons/</span></code> folder is divided in two directories
-<code class="code docutils literal"><span class="pre">projects/</span></code> and <code class="code docutils literal"><span class="pre">packages/</span></code> for the two kinds of skeletons.</p>
+<p>The <code class="code docutils literal notranslate"><span class="pre">skeletons/</span></code> folder is divided in two directories
+<code class="code docutils literal notranslate"><span class="pre">projects/</span></code> and <code class="code docutils literal notranslate"><span class="pre">packages/</span></code> for the two kinds of skeletons.</p>
 <p>Each directory contains one directory per skeleton, containing the
 following files:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">skeleton.toml</span></code>: some information on the skeleton (name,
+<li><code class="code docutils literal notranslate"><span class="pre">skeleton.toml</span></code>: some information on the skeleton (name,
 inheritance, additionnal information on files)</li>
-<li><code class="code docutils literal"><span class="pre">files/</span></code>: the template files, that will be instantiated for
+<li><code class="code docutils literal notranslate"><span class="pre">files/</span></code>: the template files, that will be instantiated for
 that skeleton. For a project skeleton, the files are expected to be
-instantiated at the root of the project (<code class="code docutils literal"><span class="pre">drom.toml</span></code>
+instantiated at the root of the project (<code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code>
 location). For a package skeleton, the files are expected to be
-instantiated in the package directory (<code class="code docutils literal"><span class="pre">package.toml</span></code> location)</li>
-<li><code class="code docutils literal"><span class="pre">project.toml</span></code>: for project skeletons, this file contains an
+instantiated in the package directory (<code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> location)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">project.toml</span></code>: for project skeletons, this file contains an
 initial configuration for the project variables and packages. If the
 skeleton is inherited from another one, the ancester configuration
 is completed with the child configuration, with priority to the
 child configuration, and so recursively. Note that this file
 contains also the configuration of the packages, since no package
 configuration is read from package skeletons for now.</li>
-<li><code class="code docutils literal"><span class="pre">package.toml</span></code>: this file is not used.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">package.toml</span></code>: this file is not used.</li>
 </ul>
-<p>Let’s take an excerpt of a <code class="code docutils literal"><span class="pre">skeleton.toml</span></code> file:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="o">[</span><span class="n">skeleton</span><span class="o">]</span>
+<p>Let’s take an excerpt of a <code class="code docutils literal notranslate"><span class="pre">skeleton.toml</span></code> file:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">[</span><span class="n">skeleton</span><span class="o">]</span>
 <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;program&quot;</span>
 <span class="n">inherits</span> <span class="o">=</span> <span class="s2">&quot;virtual&quot;</span>
 
@@ -257,31 +248,31 @@ configuration is read from package skeletons for now.</li>
 </div>
 <p>The file contains the following fields:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">name</span></code> (mandatory): the name of the skeleton</li>
-<li><code class="code docutils literal"><span class="pre">inherits</span></code> (optional): the name of a skeleton from which this
+<li><code class="code docutils literal notranslate"><span class="pre">name</span></code> (mandatory): the name of the skeleton</li>
+<li><code class="code docutils literal notranslate"><span class="pre">inherits</span></code> (optional): the name of a skeleton from which this
 skeleton inherits</li>
-<li><code class="code docutils literal"><span class="pre">[file]</span></code> section (optional): a set of fields to configure the
-use of one of the files in the <code class="code docutils literal"><span class="pre">files/</span></code> directory. Currently,
+<li><code class="code docutils literal notranslate"><span class="pre">[file]</span></code> section (optional): a set of fields to configure the
+use of one of the files in the <code class="code docutils literal notranslate"><span class="pre">files/</span></code> directory. Currently,
 the following fields are availble:<ul>
-<li><code class="code docutils literal"><span class="pre">file</span></code>: the name under which the file should be
+<li><code class="code docutils literal notranslate"><span class="pre">file</span></code>: the name under which the file should be
 instantiated. This is useful if you cannot use the real name of
 the file in the skeleton, for example because the name would
-conflict with tools used in the project (dot files, <code class="code docutils literal"><span class="pre">dune</span></code>
+conflict with tools used in the project (dot files, <code class="code docutils literal notranslate"><span class="pre">dune</span></code>
 files, etc)</li>
-<li><code class="code docutils literal"><span class="pre">skips</span></code>: a list of tags that can be used in the
-<code class="code docutils literal"><span class="pre">drom.toml</span></code> <code class="code docutils literal"><span class="pre">skip</span></code> option or <code class="code docutils literal"><span class="pre">--skip</span></code> argument to
+<li><code class="code docutils literal notranslate"><span class="pre">skips</span></code>: a list of tags that can be used in the
+<code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> <code class="code docutils literal notranslate"><span class="pre">skip</span></code> option or <code class="code docutils literal notranslate"><span class="pre">--skip</span></code> argument to
 skip this file.</li>
-<li><code class="code docutils literal"><span class="pre">create</span></code>: whether the file should only be created if it
-doesn’t exist yet (<code class="code docutils literal"><span class="pre">true</span></code>) or every time (<code class="code docutils literal"><span class="pre">false</span></code>,
+<li><code class="code docutils literal notranslate"><span class="pre">create</span></code>: whether the file should only be created if it
+doesn’t exist yet (<code class="code docutils literal notranslate"><span class="pre">true</span></code>) or every time (<code class="code docutils literal notranslate"><span class="pre">false</span></code>,
 default).</li>
-<li><code class="code docutils literal"><span class="pre">subst</span></code>: whether substitutions should happen on the file
-(<code class="code docutils literal"><span class="pre">true</span></code>, default) or not (<code class="code docutils literal"><span class="pre">false</span></code>). Useful for binary
+<li><code class="code docutils literal notranslate"><span class="pre">subst</span></code>: whether substitutions should happen on the file
+(<code class="code docutils literal notranslate"><span class="pre">true</span></code>, default) or not (<code class="code docutils literal notranslate"><span class="pre">false</span></code>). Useful for binary
 files for example to avoid accidental substitutions.</li>
-<li><code class="code docutils literal"><span class="pre">skip</span></code>: whether the file should be always skipped
-(<code class="code docutils literal"><span class="pre">true</span></code>) or not (<code class="code docutils literal"><span class="pre">false</span></code>, default). Useful for a
+<li><code class="code docutils literal notranslate"><span class="pre">skip</span></code>: whether the file should be always skipped
+(<code class="code docutils literal notranslate"><span class="pre">true</span></code>) or not (<code class="code docutils literal notranslate"><span class="pre">false</span></code>, default). Useful for a
 documentation file in the skeleton files.</li>
-<li><code class="code docutils literal"><span class="pre">record</span></code>: whether the file should recorded in <code class="code docutils literal"><span class="pre">git</span></code>
-files and in the <code class="code docutils literal"><span class="pre">.drom</span></code> state file (<code class="code docutils literal"><span class="pre">true</span></code>,
+<li><code class="code docutils literal notranslate"><span class="pre">record</span></code>: whether the file should recorded in <code class="code docutils literal notranslate"><span class="pre">git</span></code>
+files and in the <code class="code docutils literal notranslate"><span class="pre">.drom</span></code> state file (<code class="code docutils literal notranslate"><span class="pre">true</span></code>,
 default). Useful for documentation files that are only to help the
 user, not to remain in the project.</li>
 </ul>
@@ -290,131 +281,131 @@ user, not to remain in the project.</li>
 </div>
 <div class="section" id="the-skeleton-substitution-language">
 <h2>The Skeleton Substitution Language<a class="headerlink" href="#the-skeleton-substitution-language" title="Permalink to this headline">¶</a></h2>
-<p>Substitutions are performed on files in skeletons if the <code class="code docutils literal"><span class="pre">subst</span></code>
-field is not set to <code class="code docutils literal"><span class="pre">false</span></code> in the <code class="code docutils literal"><span class="pre">skeleton.toml</span></code> file
+<p>Substitutions are performed on files in skeletons if the <code class="code docutils literal notranslate"><span class="pre">subst</span></code>
+field is not set to <code class="code docutils literal notranslate"><span class="pre">false</span></code> in the <code class="code docutils literal notranslate"><span class="pre">skeleton.toml</span></code> file
 (see above).</p>
 <p>There are 3 kinds of substitutions happening:</p>
 <ul class="simple">
-<li>Brace substitutions (<code class="code docutils literal"><span class="pre">!{xxx}</span></code>): these substitutions are
-hardcoded in <code class="code docutils literal"><span class="pre">drom</span></code> to generate specific information for the
+<li>Brace substitutions (<code class="code docutils literal notranslate"><span class="pre">!{xxx}</span></code>): these substitutions are
+hardcoded in <code class="code docutils literal notranslate"><span class="pre">drom</span></code> to generate specific information for the
 project or package.</li>
-<li>Paren substitutions (<code class="code docutils literal"><span class="pre">!(xxx)</span></code>): these substitutions replace
+<li>Paren substitutions (<code class="code docutils literal notranslate"><span class="pre">!(xxx)</span></code>): these substitutions replace
 the variable with its value, respectively, for a project, in the
-<code class="code docutils literal"><span class="pre">[fields]</span></code> section of the <code class="code docutils literal"><span class="pre">drom.toml</span></code>, or for a package,
-in the <code class="code docutils literal"><span class="pre">[fields]</span></code> section of the <code class="code docutils literal"><span class="pre">package.toml</span></code> or in
-the <code class="code docutils literal"><span class="pre">[package.fields]</span></code> section of the package in the
-<code class="code docutils literal"><span class="pre">drom.toml</span></code> file.</li>
-<li>Bracket substitutions (<code class="code docutils literal"><span class="pre">![xxx]</span></code>): these substitutions always
+<code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> section of the <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code>, or for a package,
+in the <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> section of the <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> or in
+the <code class="code docutils literal notranslate"><span class="pre">[package.fields]</span></code> section of the package in the
+<code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> file.</li>
+<li>Bracket substitutions (<code class="code docutils literal notranslate"><span class="pre">![xxx]</span></code>): these substitutions always
 return an empty string. They are used for side-effects on the
 substitutions (conditional substitutions, setting flags, etc.)</li>
 </ul>
 <p>Brace and paren substitutions can be combined with encodings by using
-a <code class="code docutils literal"><span class="pre">:ENCODING</span></code> extension. For example, <code class="code docutils literal"><span class="pre">!{name:upp}</span></code> is
+a <code class="code docutils literal notranslate"><span class="pre">:ENCODING</span></code> extension. For example, <code class="code docutils literal notranslate"><span class="pre">!{name:upp}</span></code> is
 replaced by the name of the project/package in uppercase.</p>
 <p>The following encodings are available:
-* <code class="code docutils literal"><span class="pre">html</span></code>: html encoding (<code class="code docutils literal"><span class="pre">&amp;</span></code> is replaced by <code class="code docutils literal"><span class="pre">&amp;amp;</span></code>, etc.)
-* <code class="code docutils literal"><span class="pre">cap</span></code>: set the first char to uppercase
-* <code class="code docutils literal"><span class="pre">uncap</span></code>: set the first char to lowercase
-* <code class="code docutils literal"><span class="pre">low</span></code>: lowercase
-* <code class="code docutils literal"><span class="pre">uncap</span></code>: uppercase
-* <code class="code docutils literal"><span class="pre">alpha</span></code>: replace all non-alpha chars by underscores</p>
+* <code class="code docutils literal notranslate"><span class="pre">html</span></code>: html encoding (<code class="code docutils literal notranslate"><span class="pre">&amp;</span></code> is replaced by <code class="code docutils literal notranslate"><span class="pre">&amp;amp;</span></code>, etc.)
+* <code class="code docutils literal notranslate"><span class="pre">cap</span></code>: set the first char to uppercase
+* <code class="code docutils literal notranslate"><span class="pre">uncap</span></code>: set the first char to lowercase
+* <code class="code docutils literal notranslate"><span class="pre">low</span></code>: lowercase
+* <code class="code docutils literal notranslate"><span class="pre">uncap</span></code>: uppercase
+* <code class="code docutils literal notranslate"><span class="pre">alpha</span></code>: replace all non-alpha chars by underscores</p>
 <p>For <em>package</em> substitutions, brace and paren substitutions for the
 <em>project</em> are used if no substitution was found for the <em>package</em>. It
 is possible to force <em>project</em> substitution in a <em>package</em> using the
-<code class="code docutils literal"><span class="pre">project-</span></code> prefix (<code class="code docutils literal"><span class="pre">!{project-name}</span></code> for example in a
-package file for the <code class="code docutils literal"><span class="pre">name</span></code> substitution of the
-project). Reciprocally, it is possible to use a <code class="code docutils literal"><span class="pre">package-</span></code>
+<code class="code docutils literal notranslate"><span class="pre">project-</span></code> prefix (<code class="code docutils literal notranslate"><span class="pre">!{project-name}</span></code> for example in a
+package file for the <code class="code docutils literal notranslate"><span class="pre">name</span></code> substitution of the
+project). Reciprocally, it is possible to use a <code class="code docutils literal notranslate"><span class="pre">package-</span></code>
 prefix in a Paren (field) substitution to prevent a project
 substitution if the field is not defined in the package.</p>
 <div class="section" id="brace-substitutions">
 <h3>Brace Substitutions<a class="headerlink" href="#brace-substitutions" title="Permalink to this headline">¶</a></h3>
 <p>The ultimate source of information for Brace substitutions is the
 <a class="reference external" href="https://github.com/OCamlPro/drom/blob/master/src/drom_lib/subst.ml">subst.ml module</a>
-in the <code class="code docutils literal"><span class="pre">project_brace</span></code> and <code class="code docutils literal"><span class="pre">package_brace</span></code> fuctions.</p>
+in the <code class="code docutils literal notranslate"><span class="pre">project_brace</span></code> and <code class="code docutils literal notranslate"><span class="pre">package_brace</span></code> fuctions.</p>
 <p>Currently, the following <em>project</em> substitutions are available:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">!{escape:true}</span></code>… <code class="code docutils literal"><span class="pre">!{escape:false}</span></code>: makes <code class="code docutils literal"><span class="pre">\!{</span></code>
-be replaced by <code class="code docutils literal"><span class="pre">!{</span></code> instead of starting a substitution.</li>
-<li><code class="code docutils literal"><span class="pre">!{name}</span></code>: the project name</li>
-<li><code class="code docutils literal"><span class="pre">!{synopsis}</span></code>: the project synopsis</li>
-<li><code class="code docutils literal"><span class="pre">!{description}</span></code>: the project description</li>
-<li><code class="code docutils literal"><span class="pre">!{version}</span></code>: the project version</li>
-<li><code class="code docutils literal"><span class="pre">!{edition}</span></code>: the default OCaml version to use</li>
-<li><code class="code docutils literal"><span class="pre">!{min-edition}</span></code>: the minimal OCaml version</li>
-<li><code class="code docutils literal"><span class="pre">!{github-organization}</span></code>: the current github-organization</li>
-<li><code class="code docutils literal"><span class="pre">!{authors-as-strings}</span></code>: the list of authors</li>
-<li><code class="code docutils literal"><span class="pre">!{authors-for-toml}</span></code>: the list of authors in TOML</li>
-<li><code class="code docutils literal"><span class="pre">!{authors-ampersand}</span></code>: the authors separated by ampersands</li>
-<li><code class="code docutils literal"><span class="pre">!{copyright}</span></code>: the project copyright</li>
-<li><code class="code docutils literal"><span class="pre">!{license}</span></code>: the project full license file</li>
-<li><code class="code docutils literal"><span class="pre">!{license-name}</span></code>: the SPDF name of the project license</li>
-<li><code class="code docutils literal"><span class="pre">!{header-ml}</span></code>: the header for an ML file (also MLL file)</li>
-<li><code class="code docutils literal"><span class="pre">!{header-c}</span></code>: the header for a C file (also MLY file)</li>
-<li><code class="code docutils literal"><span class="pre">!{year}</span></code>, <code class="code docutils literal"><span class="pre">!{month}</span></code>, <code class="code docutils literal"><span class="pre">!{day}</span></code>: current date</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{escape:true}</span></code>… <code class="code docutils literal notranslate"><span class="pre">!{escape:false}</span></code>: makes <code class="code docutils literal notranslate"><span class="pre">\!{</span></code>
+be replaced by <code class="code docutils literal notranslate"><span class="pre">!{</span></code> instead of starting a substitution.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{name}</span></code>: the project name</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{synopsis}</span></code>: the project synopsis</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{description}</span></code>: the project description</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{version}</span></code>: the project version</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{edition}</span></code>: the default OCaml version to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{min-edition}</span></code>: the minimal OCaml version</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{github-organization}</span></code>: the current github-organization</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{authors-as-strings}</span></code>: the list of authors</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{authors-for-toml}</span></code>: the list of authors in TOML</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{authors-ampersand}</span></code>: the authors separated by ampersands</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{copyright}</span></code>: the project copyright</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{license}</span></code>: the project full license file</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{license-name}</span></code>: the SPDF name of the project license</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{header-ml}</span></code>: the header for an ML file (also MLL file)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{header-c}</span></code>: the header for a C file (also MLY file)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{year}</span></code>, <code class="code docutils literal notranslate"><span class="pre">!{month}</span></code>, <code class="code docutils literal notranslate"><span class="pre">!{day}</span></code>: current date</li>
 <li>There are many other substitutions, for example specific to Dune
-files (like <code class="code docutils literal"><span class="pre">!{dune-packages}</span></code> for the <code class="code docutils literal"><span class="pre">dune-project</span></code>
+files (like <code class="code docutils literal notranslate"><span class="pre">!{dune-packages}</span></code> for the <code class="code docutils literal notranslate"><span class="pre">dune-project</span></code>
 file). Some of them will disappear because they can be generated
-using conditionals (<code class="code docutils literal"><span class="pre">![if:...]</span></code>, see bracket substitutions),
+using conditionals (<code class="code docutils literal notranslate"><span class="pre">![if:...]</span></code>, see bracket substitutions),
 some of them will be documented later (TODO).</li>
 </ul>
 <p>Currently, the following <em>package</em> substitutions are available:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">!{name}</span></code>: the package name</li>
-<li><code class="code docutils literal"><span class="pre">!{dir}</span></code>: the package dir</li>
-<li><code class="code docutils literal"><span class="pre">!{skeleton}</span></code>: the package skeleton</li>
-<li><code class="code docutils literal"><span class="pre">!{library-name}</span></code>: the package library name (uncapitalized version of
-the <code class="code docutils literal"><span class="pre">pack</span></code> option or underscorified version of the package name)</li>
-<li><code class="code docutils literal"><span class="pre">!{library-module}</span></code>: the package module name (<code class="code docutils literal"><span class="pre">pack</span></code> option
+<li><code class="code docutils literal notranslate"><span class="pre">!{name}</span></code>: the package name</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{dir}</span></code>: the package dir</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{skeleton}</span></code>: the package skeleton</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{library-name}</span></code>: the package library name (uncapitalized version of
+the <code class="code docutils literal notranslate"><span class="pre">pack</span></code> option or underscorified version of the package name)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!{library-module}</span></code>: the package module name (<code class="code docutils literal notranslate"><span class="pre">pack</span></code> option
 or capitalized version of the package name)</li>
 </ul>
 </div>
 <div class="section" id="paren-substitutions-project-and-package-fields">
 <h3>Paren Substitutions (project and package fields)<a class="headerlink" href="#paren-substitutions-project-and-package-fields" title="Permalink to this headline">¶</a></h3>
-<p>Paren substitutions are substituted by the <code class="code docutils literal"><span class="pre">[fields]</span></code> variables
+<p>Paren substitutions are substituted by the <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> variables
 in the project/package description files. If the field is not defined,
 the substitution is replaced by the empty string. Such fields are
-often used for trailers in generated files, to keep using <code class="code docutils literal"><span class="pre">drom</span></code>
+often used for trailers in generated files, to keep using <code class="code docutils literal notranslate"><span class="pre">drom</span></code>
 to update them while still adding specific information by hand.</p>
 <p>Currently, the following paren substitutions are used in <em>project</em>
 skeletons:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">!(dot-gitignore-trailer)</span></code>: a trailer added at the end of the
-<code class="code docutils literal"><span class="pre">.gitignore</span></code> file</li>
-<li><code class="code docutils literal"><span class="pre">!(dune-dirs)</span></code>: a string added in the <code class="code docutils literal"><span class="pre">(dirs</span> <span class="pre">...)</span></code>
-stanza of the root <code class="code docutils literal"><span class="pre">dune</span></code> files to specify which dirs should
+<li><code class="code docutils literal notranslate"><span class="pre">!(dot-gitignore-trailer)</span></code>: a trailer added at the end of the
+<code class="code docutils literal notranslate"><span class="pre">.gitignore</span></code> file</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!(dune-dirs)</span></code>: a string added in the <code class="code docutils literal notranslate"><span class="pre">(dirs</span> <span class="pre">...)</span></code>
+stanza of the root <code class="code docutils literal notranslate"><span class="pre">dune</span></code> files to specify which dirs should
 be scanned.</li>
-<li><code class="code docutils literal"><span class="pre">!(makefile-trailer)</span></code>: a trailer added at the end of the
-generated <code class="code docutils literal"><span class="pre">Makefile</span></code></li>
+<li><code class="code docutils literal notranslate"><span class="pre">!(makefile-trailer)</span></code>: a trailer added at the end of the
+generated <code class="code docutils literal notranslate"><span class="pre">Makefile</span></code></li>
 </ul>
 <p>Currently, the following paren substitutions are used in <em>package</em>
 skeletons:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">!(dune-libraries)</span></code>: a string added in the <code class="code docutils literal"><span class="pre">(libraries</span>
-<span class="pre">...)</span></code> stanza of the generated <code class="code docutils literal"><span class="pre">dune</span></code> file</li>
-<li><code class="code docutils literal"><span class="pre">!(dune-stanzas)</span></code>: a string added in the <code class="code docutils literal"><span class="pre">(executable</span>
-<span class="pre">...)</span></code> or <code class="code docutils literal"><span class="pre">(library</span> <span class="pre">...)</span></code> stanza of the generated
-<code class="code docutils literal"><span class="pre">dune</span></code> file</li>
-<li><code class="code docutils literal"><span class="pre">!(dune-trailer)</span></code>: a string added at the end of the generated
-<code class="code docutils literal"><span class="pre">dune</span></code> file</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!(dune-libraries)</span></code>: a string added in the <code class="code docutils literal notranslate"><span class="pre">(libraries</span>
+<span class="pre">...)</span></code> stanza of the generated <code class="code docutils literal notranslate"><span class="pre">dune</span></code> file</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!(dune-stanzas)</span></code>: a string added in the <code class="code docutils literal notranslate"><span class="pre">(executable</span>
+<span class="pre">...)</span></code> or <code class="code docutils literal notranslate"><span class="pre">(library</span> <span class="pre">...)</span></code> stanza of the generated
+<code class="code docutils literal notranslate"><span class="pre">dune</span></code> file</li>
+<li><code class="code docutils literal notranslate"><span class="pre">!(dune-trailer)</span></code>: a string added at the end of the generated
+<code class="code docutils literal notranslate"><span class="pre">dune</span></code> file</li>
 </ul>
 </div>
 <div class="section" id="bracket-substitutions">
 <h3>Bracket Substitutions<a class="headerlink" href="#bracket-substitutions" title="Permalink to this headline">¶</a></h3>
 <p>The following bracket substitutions are currently available:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">![if:CONDITION]</span></code>… <code class="code docutils literal"><span class="pre">![else]</span></code> … <code class="code docutils literal"><span class="pre">![fi]</span></code>:
+<li><code class="code docutils literal notranslate"><span class="pre">![if:CONDITION]</span></code>… <code class="code docutils literal notranslate"><span class="pre">![else]</span></code> … <code class="code docutils literal notranslate"><span class="pre">![fi]</span></code>:
 depending on the condition, replace by the first or second part.
 The condition can be:<ul>
-<li><code class="code docutils literal"><span class="pre">not:CONDITION</span></code>: negation of a condition</li>
-<li><code class="code docutils literal"><span class="pre">skip:TAG</span></code>: true if the tag should be skipped</li>
-<li><code class="code docutils literal"><span class="pre">gen:TAG</span></code>: true if the tag should not be skipped</li>
-<li><code class="code docutils literal"><span class="pre">true</span></code> and <code class="code docutils literal"><span class="pre">false</span></code>: constants</li>
-<li><code class="code docutils literal"><span class="pre">skeleton:is:SKELETON</span></code>: true is the current skeleton is the argument</li>
-<li><code class="code docutils literal"><span class="pre">kind:is:KIND</span></code>: true if the kind of the <em>package</em> is the argument (kind is one of <code class="code docutils literal"><span class="pre">library</span></code>, <code class="code docutils literal"><span class="pre">program</span></code> or <code class="code docutils literal"><span class="pre">virtual</span></code>)</li>
-<li><code class="code docutils literal"><span class="pre">pack</span></code>: true if the <em>package</em> should be packed</li>
-<li><code class="code docutils literal"><span class="pre">windows-ci</span></code>: true if the <em>project</em> should run Windows CI</li>
-<li><code class="code docutils literal"><span class="pre">github-organization</span></code>, <code class="code docutils literal"><span class="pre">homepage</span></code>, <code class="code docutils literal"><span class="pre">copyright</span></code>, <code class="code docutils literal"><span class="pre">bug-reports</span></code>, <code class="code docutils literal"><span class="pre">dev-repo</span></code>, <code class="code docutils literal"><span class="pre">doc-gen</span></code>, <code class="code docutils literal"><span class="pre">doc-api</span></code>, <code class="code docutils literal"><span class="pre">sphinx-target</span></code>, <code class="code docutils literal"><span class="pre">profile</span></code>: true if the corresponding value is defined for the project</li>
-<li><code class="code docutils literal"><span class="pre">project:CONDITION</span></code>: in a <em>package</em>, check if the condition is true for the project instead</li>
+<li><code class="code docutils literal notranslate"><span class="pre">not:CONDITION</span></code>: negation of a condition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">skip:TAG</span></code>: true if the tag should be skipped</li>
+<li><code class="code docutils literal notranslate"><span class="pre">gen:TAG</span></code>: true if the tag should not be skipped</li>
+<li><code class="code docutils literal notranslate"><span class="pre">true</span></code> and <code class="code docutils literal notranslate"><span class="pre">false</span></code>: constants</li>
+<li><code class="code docutils literal notranslate"><span class="pre">skeleton:is:SKELETON</span></code>: true is the current skeleton is the argument</li>
+<li><code class="code docutils literal notranslate"><span class="pre">kind:is:KIND</span></code>: true if the kind of the <em>package</em> is the argument (kind is one of <code class="code docutils literal notranslate"><span class="pre">library</span></code>, <code class="code docutils literal notranslate"><span class="pre">program</span></code> or <code class="code docutils literal notranslate"><span class="pre">virtual</span></code>)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">pack</span></code>: true if the <em>package</em> should be packed</li>
+<li><code class="code docutils literal notranslate"><span class="pre">windows-ci</span></code>: true if the <em>project</em> should run Windows CI</li>
+<li><code class="code docutils literal notranslate"><span class="pre">github-organization</span></code>, <code class="code docutils literal notranslate"><span class="pre">homepage</span></code>, <code class="code docutils literal notranslate"><span class="pre">copyright</span></code>, <code class="code docutils literal notranslate"><span class="pre">bug-reports</span></code>, <code class="code docutils literal notranslate"><span class="pre">dev-repo</span></code>, <code class="code docutils literal notranslate"><span class="pre">doc-gen</span></code>, <code class="code docutils literal notranslate"><span class="pre">doc-api</span></code>, <code class="code docutils literal notranslate"><span class="pre">sphinx-target</span></code>, <code class="code docutils literal notranslate"><span class="pre">profile</span></code>: true if the corresponding value is defined for the project</li>
+<li><code class="code docutils literal notranslate"><span class="pre">project:CONDITION</span></code>: in a <em>package</em>, check if the condition is true for the project instead</li>
 </ul>
 </li>
 </ul>
@@ -424,9 +415,7 @@ The condition can be:<ul>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -435,7 +424,7 @@ The condition can be:<ul>
         <a href="license.html" class="btn btn-neutral float-right" title="Copyright and License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="install.html" class="btn btn-neutral" title="How to install" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="install.html" class="btn btn-neutral float-left" title="How to install" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -444,11 +433,11 @@ The condition can be:<ul>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright OCamlPro SAS &amp; Origin Labs SAS.
+        &copy; Copyright OCamlPro SAS &amp; Origin Labs SAS
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -461,36 +450,15 @@ The condition can be:<ul>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'master (57f48a2) (2021/02/28 07:25)',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

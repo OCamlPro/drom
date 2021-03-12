@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Sub-commands and Arguments &mdash; drom master
- (57f48a2
-) (2021/02/28 07:25) documentation</title>
+ (057f134
+) (2021/03/12 13:02) documentation</title>
   
 
   
@@ -19,48 +19,38 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
-  
-
-  
-        <link rel="author" title="About these documents"
-              href="about.html"/>
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="drom master
- (57f48a2
-) (2021/02/28 07:25) documentation" href="index.html"/>
-        <link rel="next" title="User Configuration" href="config.html"/>
-        <link rel="prev" title="Project Description" href="reference.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User Configuration" href="config.html" />
+    <link rel="prev" title="Project Description" href="reference.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -75,7 +65,7 @@
             
               <div class="version">
                 master
- (57f48a2
+ (057f134
 )
               </div>
             
@@ -152,7 +142,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">drom</a>
@@ -160,9 +150,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -208,11 +199,11 @@
 <h1>Sub-commands and Arguments<a class="headerlink" href="#sub-commands-and-arguments" title="Permalink to this headline">¶</a></h1>
 <p>Common arguments to all sub-commands:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">-q</span></code> or <code class="code docutils literal"><span class="pre">--quiet</span></code>   Set verbosity level to 0</li>
-<li><code class="code docutils literal"><span class="pre">-v</span></code> or <code class="code docutils literal"><span class="pre">--verbose</span></code>   Increase verbosity level</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-q</span></code> or <code class="code docutils literal notranslate"><span class="pre">--quiet</span></code>   Set verbosity level to 0</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-v</span></code> or <code class="code docutils literal notranslate"><span class="pre">--verbose</span></code>   Increase verbosity level</li>
 </ul>
 <p>Overview of sub-commands:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">build</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">build</span>
   <span class="nc">Build</span> <span class="n">a</span> <span class="n">project</span>
 
 <span class="n">build</span><span class="o">-</span><span class="n">deps</span>
@@ -303,48 +294,48 @@ Build the project by calling <strong>opam exec – dune build &#64;install</stro
 If build was ok, copy executable in the top directory of the project</li>
 </ul>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">build</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">build</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-build-deps">
 <h2>drom build-deps<a class="headerlink" href="#drom-build-deps" title="Permalink to this headline">¶</a></h2>
 <p>Install build dependencies only</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">build</span><span class="o">-</span><span class="n">deps</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">build</span><span class="o">-</span><span class="n">deps</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-clean">
 <h2>drom clean<a class="headerlink" href="#drom-clean" title="Permalink to this headline">¶</a></h2>
 <p>Clean the project from build files</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">clean</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">clean</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--distclean</span></code>   Also remove _opam/ (local switch) and _drom/</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--distclean</span></code>   Also remove _opam/ (local switch) and _drom/</li>
 </ul>
 </div>
 <div class="section" id="drom-config">
@@ -354,18 +345,18 @@ If build was ok, copy executable in the top directory of the project</li>
 <p>This command is useful to read/write drom configuration</p>
 <p><strong>EXAMPLE</strong></p>
 <p>The following displays the list of project skeletons:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">config</span> <span class="o">--</span><span class="n">project</span><span class="o">-</span><span class="n">skeletons</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">config</span> <span class="o">--</span><span class="n">project</span><span class="o">-</span><span class="n">skeletons</span>
 </pre></div>
 </div>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">config</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">config</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--drom-project-skeletons</span></code>   List available project skeletons from drom</li>
-<li><code class="code docutils literal"><span class="pre">--package-skeletons</span></code>   List available package skeletons</li>
-<li><code class="code docutils literal"><span class="pre">--project-skeletons</span></code>   List available project skeletons</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--drom-project-skeletons</span></code>   List available project skeletons from drom</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--package-skeletons</span></code>   List available package skeletons</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--project-skeletons</span></code>   List available project skeletons</li>
 </ul>
 </div>
 <div class="section" id="drom-dep-since-version-0-2-1">
@@ -378,7 +369,7 @@ If build was ok, copy executable in the top directory of the project</li>
 <p>Dependencies can be added <strong>–add</strong>, removed <strong>–remove</strong> or just modified. The <strong>–tool</strong> argument should be used for tool dependencies, i.e. dependencies that are not linked to the library/program.</p>
 <p>If no modification argument is provided, the dependency is printed in the terminal. Modification arguments are <strong>–ver VERSION</strong> for the version, <strong>–lib LIBNAME</strong> for the <em>dune</em> library name, <strong>–doc BOOL</strong> for documentation deps and <strong>–test BOOL</strong> for test deps.</p>
 <p><strong>EXAMPLE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">dep</span> <span class="o">--</span><span class="n">package</span> <span class="n">drom_lib</span> <span class="o">--</span><span class="n">add</span> <span class="n">ez_cmdliner</span> <span class="o">--</span><span class="n">ver</span> <span class="s2">&quot;&gt;0.1&quot;</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">dep</span> <span class="o">--</span><span class="n">package</span> <span class="n">drom_lib</span> <span class="o">--</span><span class="n">add</span> <span class="n">ez_cmdliner</span> <span class="o">--</span><span class="n">ver</span> <span class="s2">&quot;&gt;0.1&quot;</span>
 <span class="n">drom</span> <span class="n">dep</span> <span class="o">--</span><span class="n">package</span> <span class="n">drom_lib</span> <span class="o">--</span><span class="n">remove</span> <span class="n">ez_cmdliner</span>
 <span class="n">drom</span> <span class="n">dep</span> <span class="o">--</span><span class="n">add</span> <span class="o">--</span><span class="n">tool</span> <span class="n">odoc</span> <span class="o">--</span><span class="n">ver</span> <span class="s2">&quot;&gt;1.0 &lt;3.0&quot;</span> <span class="o">--</span><span class="n">doc</span> <span class="bp">true</span>
 </pre></div>
@@ -396,99 +387,99 @@ Constraints are specified using a comparison operation directly followed by the 
 A semantic version like <strong>1.2.3</strong> is equivalent to the constraints  <strong>&gt;=1.2.3</strong> and <strong>&lt;2.0.0</strong>.</li>
 </ul>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">dep</span> <span class="nc">DEPENDENCY</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">dep</span> <span class="nc">DEPENDENCY</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">DEPENDENCY</span></code>   Name of dependency</li>
-<li><code class="code docutils literal"><span class="pre">--add</span></code>   Add as new dependency</li>
-<li><code class="code docutils literal"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</li>
-<li><code class="code docutils literal"><span class="pre">--doc</span> <span class="pre">BOOL</span></code>   Whether dependency is only for doc</li>
-<li><code class="code docutils literal"><span class="pre">-f</span></code> or <code class="code docutils literal"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</li>
-<li><code class="code docutils literal"><span class="pre">--lib</span> <span class="pre">LIBNAME</span></code>   Dependency should have this libname in dune</li>
-<li><code class="code docutils literal"><span class="pre">--package</span> <span class="pre">PACKAGE</span></code>   Attach dependency to this package name</li>
-<li><code class="code docutils literal"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</li>
-<li><code class="code docutils literal"><span class="pre">--remove</span></code>   Remove this dependency</li>
-<li><code class="code docutils literal"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</li>
-<li><code class="code docutils literal"><span class="pre">--test</span> <span class="pre">BOOL</span></code>   Whether dependency is only for tests</li>
-<li><code class="code docutils literal"><span class="pre">--tool</span></code>   Dependency is a tool, not a library</li>
-<li><code class="code docutils literal"><span class="pre">--unskip</span> <span class="pre">FILE</span></code>   Remove FILE from skip list</li>
-<li><code class="code docutils literal"><span class="pre">--ver</span> <span class="pre">VERSION</span></code>   Dependency should have this version</li>
+<li><code class="code docutils literal notranslate"><span class="pre">DEPENDENCY</span></code>   Name of dependency</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--add</span></code>   Add as new dependency</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--doc</span> <span class="pre">BOOL</span></code>   Whether dependency is only for doc</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-f</span></code> or <code class="code docutils literal notranslate"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--lib</span> <span class="pre">LIBNAME</span></code>   Dependency should have this libname in dune</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--package</span> <span class="pre">PACKAGE</span></code>   Attach dependency to this package name</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--remove</span></code>   Remove this dependency</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--test</span> <span class="pre">BOOL</span></code>   Whether dependency is only for tests</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--tool</span></code>   Dependency is a tool, not a library</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--unskip</span> <span class="pre">FILE</span></code>   Remove FILE from skip list</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--ver</span> <span class="pre">VERSION</span></code>   Dependency should have this version</li>
 </ul>
 </div>
 <div class="section" id="drom-dev-deps">
 <h2>drom dev-deps<a class="headerlink" href="#drom-dev-deps" title="Permalink to this headline">¶</a></h2>
 <p>Install dev dependencies (odoc, ocamlformat, merlin, etc.)</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">dev</span><span class="o">-</span><span class="n">deps</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">dev</span><span class="o">-</span><span class="n">deps</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-doc">
 <h2>drom doc<a class="headerlink" href="#drom-doc" title="Permalink to this headline">¶</a></h2>
 <p>Generate all documentation (API and Sphinx)</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">doc</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">doc</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">--view</span></code>   Open a browser on the documentation</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--view</span></code>   Open a browser on the documentation</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-fmt">
 <h2>drom fmt<a class="headerlink" href="#drom-fmt" title="Permalink to this headline">¶</a></h2>
 <p>Format sources with ocamlformat</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">fmt</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">fmt</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--auto-promote</span></code>   Promote detected changes immediately</li>
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--auto-promote</span></code>   Promote detected changes immediately</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-install">
 <h2>drom install<a class="headerlink" href="#drom-install" title="Permalink to this headline">¶</a></h2>
 <p>Build &amp; install the project in the project opam switch</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">install</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">install</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-lock-since-version-0-2-1">
@@ -498,18 +489,18 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 <p>This command will build the project and call <strong>opam lock</strong> to generate a file <em>${project}-deps.opam.locked</em> with the exact dependencies used during the build, and that file will be added to the git-managed files of the project to be committed.</p>
 <p>The generated .locked file can be used by other developers to build in the exact same environment by calling <strong>drom build –locked</strong> to build the current project.</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">lock</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">lock</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-new">
@@ -519,50 +510,50 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 <p>This command creates a new project, with name <strong>PROJECT</strong> in a directory <strong>PROJECT</strong> (unless the <strong>–inplace</strong> argument was provided).</p>
 <p><strong>EXAMPLE</strong></p>
 <p>The following command creates a project containing library <strong>my_lib</strong> in <strong>src/my_lib</strong>:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="k">new</span> <span class="n">my_lib</span> <span class="o">--</span><span class="n">skeleton</span> <span class="n">library</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="k">new</span> <span class="n">my_lib</span> <span class="o">--</span><span class="n">skeleton</span> <span class="n">library</span>
 </pre></div>
 </div>
 <p>The following command creates a project containing a library <strong>hello_lib</strong> in <strong>src/hello_lib</strong> and a program <strong>hello</strong> in <strong>src/hello</strong> calling the library:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="k">new</span> <span class="n">hello</span> <span class="o">--</span><span class="n">skeleton</span> <span class="n">program</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="k">new</span> <span class="n">hello</span> <span class="o">--</span><span class="n">skeleton</span> <span class="n">program</span>
 </pre></div>
 </div>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="k">new</span> <span class="nc">PROJECT</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="k">new</span> <span class="nc">PROJECT</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">PROJECT</span></code>   Name of the project</li>
-<li><code class="code docutils literal"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</li>
-<li><code class="code docutils literal"><span class="pre">--dir</span> <span class="pre">DIRECTORY</span></code>   Dir where package sources are stored (src by default)</li>
-<li><code class="code docutils literal"><span class="pre">-f</span></code> or <code class="code docutils literal"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</li>
-<li><code class="code docutils literal"><span class="pre">--inplace</span></code>   Create project in the the current directory</li>
-<li><code class="code docutils literal"><span class="pre">--library</span></code>   Project contains only a library</li>
-<li><code class="code docutils literal"><span class="pre">--program</span></code>   Project contains only a program</li>
-<li><code class="code docutils literal"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</li>
-<li><code class="code docutils literal"><span class="pre">--skeleton</span> <span class="pre">SKELETON</span></code>   Create project using a predefined skeleton or one specified in ~/.config/drom/skeletons/</li>
-<li><code class="code docutils literal"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</li>
-<li><code class="code docutils literal"><span class="pre">--unskip</span> <span class="pre">FILE</span></code>   Remove FILE from skip list</li>
-<li><code class="code docutils literal"><span class="pre">--virtual</span></code>   Package is virtual, i.e. no code</li>
+<li><code class="code docutils literal notranslate"><span class="pre">PROJECT</span></code>   Name of the project</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--dir</span> <span class="pre">DIRECTORY</span></code>   Dir where package sources are stored (src by default)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-f</span></code> or <code class="code docutils literal notranslate"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--inplace</span></code>   Create project in the the current directory</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--library</span></code>   Project contains only a library</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--program</span></code>   Project contains only a program</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--skeleton</span> <span class="pre">SKELETON</span></code>   Create project using a predefined skeleton or one specified in ~/.config/drom/skeletons/</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--unskip</span> <span class="pre">FILE</span></code>   Remove FILE from skip list</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--virtual</span></code>   Package is virtual, i.e. no code</li>
 </ul>
 </div>
 <div class="section" id="drom-odoc">
 <h2>drom odoc<a class="headerlink" href="#drom-odoc" title="Permalink to this headline">¶</a></h2>
 <p>Generate API documentation using odoc in the _drom/docs/doc directory</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">odoc</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">odoc</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">--view</span></code>   Open a browser on the documentation</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--view</span></code>   Open a browser on the documentation</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-opam-plugin-since-version-0-2-1">
@@ -577,38 +568,38 @@ Install drom executable in <strong>$OPAMROOT/plugins/bin/opam-drom</strong></li>
 Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removing former files</li>
 </ul>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">opam</span><span class="o">-</span><span class="n">plugin</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">opam</span><span class="o">-</span><span class="n">plugin</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--remove</span></code>   Remove drom as an opam plugin</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--remove</span></code>   Remove drom as an opam plugin</li>
 </ul>
 </div>
 <div class="section" id="drom-package">
 <h2>drom package<a class="headerlink" href="#drom-package" title="Permalink to this headline">¶</a></h2>
 <p>Manage a package within a project</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">package</span> <span class="nc">PACKAGE</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">package</span> <span class="nc">PACKAGE</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">PACKAGE</span></code>   Name of the package</li>
-<li><code class="code docutils literal"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</li>
-<li><code class="code docutils literal"><span class="pre">--dir</span> <span class="pre">DIRECTORY</span></code>   Dir where package sources are stored (src by default)</li>
-<li><code class="code docutils literal"><span class="pre">--edit</span></code>   Edit package.toml description with EDITOR</li>
-<li><code class="code docutils literal"><span class="pre">-f</span></code> or <code class="code docutils literal"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</li>
-<li><code class="code docutils literal"><span class="pre">--library</span></code>   Package is a library</li>
-<li><code class="code docutils literal"><span class="pre">--new</span> <span class="pre">SKELETON</span></code>   Add a new package to the project with skeleton NAME</li>
-<li><code class="code docutils literal"><span class="pre">--new-file</span> <span class="pre">FILENAME</span></code>   (since version 0.2.1) Add new source file</li>
-<li><code class="code docutils literal"><span class="pre">--program</span></code>   Package is a program</li>
-<li><code class="code docutils literal"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</li>
-<li><code class="code docutils literal"><span class="pre">--remove</span></code>   (since version 0.2.1) Remove a package from the project</li>
-<li><code class="code docutils literal"><span class="pre">--rename</span> <span class="pre">NEW_NAME</span></code>   Rename secondary package to a new name</li>
-<li><code class="code docutils literal"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</li>
-<li><code class="code docutils literal"><span class="pre">--unskip</span> <span class="pre">FILE</span></code>   Remove FILE from skip list</li>
-<li><code class="code docutils literal"><span class="pre">--virtual</span></code>   Package is virtual, i.e. no code</li>
+<li><code class="code docutils literal notranslate"><span class="pre">PACKAGE</span></code>   Name of the package</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--dir</span> <span class="pre">DIRECTORY</span></code>   Dir where package sources are stored (src by default)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edit</span></code>   Edit package.toml description with EDITOR</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-f</span></code> or <code class="code docutils literal notranslate"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--library</span></code>   Package is a library</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--new</span> <span class="pre">SKELETON</span></code>   Add a new package to the project with skeleton NAME</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--new-file</span> <span class="pre">FILENAME</span></code>   (since version 0.2.1) Add new source file</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--program</span></code>   Package is a program</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--remove</span></code>   (since version 0.2.1) Remove a package from the project</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--rename</span> <span class="pre">NEW_NAME</span></code>   Rename secondary package to a new name</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--unskip</span> <span class="pre">FILE</span></code>   Remove FILE from skip list</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--virtual</span></code>   Package is virtual, i.e. no code</li>
 </ul>
 </div>
 <div class="section" id="drom-project">
@@ -618,40 +609,40 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 <p>This command is used to regenerate the files of a project after updating its description.</p>
 <p>With argument <strong>–upgrade</strong>, it can also be used to reformat the toml files, from their skeletons.</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">project</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">project</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</li>
-<li><code class="code docutils literal"><span class="pre">--edit</span></code>   Edit project description</li>
-<li><code class="code docutils literal"><span class="pre">-f</span></code> or <code class="code docutils literal"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</li>
-<li><code class="code docutils literal"><span class="pre">--library</span></code>   Project contains only a library. Equivalent to <strong>–skeleton library</strong></li>
-<li><code class="code docutils literal"><span class="pre">--program</span></code>   Project contains a program. Equivalent to <strong>–skeleton program</strong>. The generated project will be composed of a <em>library</em> package and a <em>driver</em> package calling the <strong>Main.main</strong> of the library.</li>
-<li><code class="code docutils literal"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</li>
-<li><code class="code docutils literal"><span class="pre">--skeleton</span> <span class="pre">SKELETON</span></code>   Create project using a predefined skeleton or one specified in ~/.config/drom/skeletons/</li>
-<li><code class="code docutils literal"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</li>
-<li><code class="code docutils literal"><span class="pre">--unskip</span> <span class="pre">FILE</span></code>   Remove FILE from skip list</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Force upgrade of the drom.toml file from the skeleton</li>
-<li><code class="code docutils literal"><span class="pre">--virtual</span></code>   Package is virtual, i.e. no code. Equivalent to <strong>–skeleton virtual</strong>.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edit</span></code>   Edit project description</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-f</span></code> or <code class="code docutils literal notranslate"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--library</span></code>   Project contains only a library. Equivalent to <strong>–skeleton library</strong></li>
+<li><code class="code docutils literal notranslate"><span class="pre">--program</span></code>   Project contains a program. Equivalent to <strong>–skeleton program</strong>. The generated project will be composed of a <em>library</em> package and a <em>driver</em> package calling the <strong>Main.main</strong> of the library.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--skeleton</span> <span class="pre">SKELETON</span></code>   Create project using a predefined skeleton or one specified in ~/.config/drom/skeletons/</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--unskip</span> <span class="pre">FILE</span></code>   Remove FILE from skip list</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Force upgrade of the drom.toml file from the skeleton</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--virtual</span></code>   Package is virtual, i.e. no code. Equivalent to <strong>–skeleton virtual</strong>.</li>
 </ul>
 </div>
 <div class="section" id="drom-promote">
 <h2>drom promote<a class="headerlink" href="#drom-promote" title="Permalink to this headline">¶</a></h2>
 <p>Promote detected changes after running drom test or drom fmt</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">promote</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">promote</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-publish">
@@ -659,7 +650,7 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 <p>Update opam files with checksums and copy them to a local opam-repository for publication</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>Before running this command, you should edit the file <strong>$HOME/.config/drom/config</strong> and set the value of the <em>opam-repo</em> option, like:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="o">[</span><span class="n">user</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">[</span><span class="n">user</span><span class="o">]</span>
 <span class="n">author</span> <span class="o">=</span> <span class="s2">&quot;John Doe &lt;john.doe@ocaml.org&gt;&quot;</span>
 <span class="n">github</span><span class="o">-</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;ocaml&quot;</span>
 <span class="n">license</span> <span class="o">=</span> <span class="s2">&quot;LGPL2&quot;</span>
@@ -676,15 +667,15 @@ Download the source archive corresponding to the current version</li>
 <li>2.
 Compute the checksum of the archive</li>
 <li>3.
-Copy updated opam files to the git-managed opam repository. During this operation, comment lines, <code class="code docutils literal"><span class="pre">version:</span></code> and <code class="code docutils literal"><span class="pre">name</span></code> lines are removed to conform to opam-repository policies.</li>
+Copy updated opam files to the git-managed opam repository. During this operation, comment lines, <code class="code docutils literal notranslate"><span class="pre">version:</span></code> and <code class="code docutils literal notranslate"><span class="pre">name</span></code> lines are removed to conform to opam-repository policies.</li>
 </ul>
 <p>Note that, prior to calling <strong>drom publish</strong>, you should update the opam-repository to the latest version of the <strong>master</strong> branch:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
 <span class="n">git</span> <span class="n">pull</span> <span class="n">ocaml</span> <span class="n">master</span>
 </pre></div>
 </div>
 <p>Once the opam files have been added, you should push them to your local fork of opam-repository and create a merge request:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="nc">GIT</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">repository</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="nc">GIT</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">repository</span>
 <span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">z</span><span class="o">-$(</span><span class="n">date</span> <span class="o">--</span><span class="n">iso</span><span class="o">)-</span><span class="k">new</span><span class="o">-</span><span class="n">package</span><span class="o">-</span><span class="n">version</span>
 <span class="n">git</span> <span class="n">add</span> <span class="n">packages</span>
 <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;New version of my package&quot;</span>
@@ -693,14 +684,14 @@ Copy updated opam files to the git-managed opam repository. During this operatio
 </div>
 <p>To download the project source archive, <strong>drom publish</strong> will either use the <em>archive</em> URL of the drom.toml file, or the Github URL (if the <em>github-organization</em> is set in the project), assuming in this later case that the version starts with ‘v’ (like v1.0.0). Two substitutions are allowed in <em>archive</em>: <em>${version}</em> for the version, <em>${name}</em> for the package name.</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">publish</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">publish</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">-f</span></code> or <code class="code docutils literal"><span class="pre">--force</span></code>   Overwrite existing files</li>
-<li><code class="code docutils literal"><span class="pre">--md5</span></code>   Use md5 instead of sha256 for checksums</li>
-<li><code class="code docutils literal"><span class="pre">--opam-repo</span> <span class="pre">DIRECTORY</span></code>   Path to local git-managed opam-repository. The path should be absolute. Overwrites the value <em>opam-repo</em> from <em>$HOME/.config/drom/config</em></li>
+<li><code class="code docutils literal notranslate"><span class="pre">-f</span></code> or <code class="code docutils literal notranslate"><span class="pre">--force</span></code>   Overwrite existing files</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--md5</span></code>   Use md5 instead of sha256 for checksums</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--opam-repo</span> <span class="pre">DIRECTORY</span></code>   Path to local git-managed opam-repository. The path should be absolute. Overwrites the value <em>opam-repo</em> from <em>$HOME/.config/drom/config</em></li>
 </ul>
 </div>
 <div class="section" id="drom-run">
@@ -717,20 +708,20 @@ Build the project packages (see <strong>drom build</strong> for info).</li>
 Call <strong>opam exec – drun exec – [PACKAGE] [ARGUMENTS]</strong>, where <strong>[PACKAGE]</strong> is either the package name specified with the <strong>-p PACKAGE</strong> argument or the main package of the project if it is a program, <strong>[ARGUMENTS]</strong> are the arguments specified with <strong>drom run</strong></li>
 </ul>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">run</span> <span class="nc">ARGUMENTS</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">run</span> <span class="nc">ARGUMENTS</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">ARGUMENTS</span></code>   Arguments to the command</li>
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">-p</span> <span class="pre">PACKAGE</span></code>   Package to run</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">ARGUMENTS</span></code>   Arguments to the command</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-p</span> <span class="pre">PACKAGE</span></code>   Package to run</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-sphinx">
@@ -749,19 +740,19 @@ Build Sphinx documentation using the command <strong>sphinx-build sphinx _drom/d
 If the argument <strong>–view</strong> was specified, open a browser on the newly generated documentation</li>
 </ul>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">sphinx</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">sphinx</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">--view</span></code>   Open a browser on the sphinx documentation</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--view</span></code>   Open a browser on the sphinx documentation</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-test">
@@ -777,38 +768,38 @@ Run the test command <strong>opam exec – dune build &#64;runtest</strong></li>
 </ul>
 <p>If the <strong>–all</strong> argument was provided, a file <strong>_drom/dune-workspace.dev</strong> is created containing a context for every existing opam switch compatible with the project <strong>min-edition</strong> field, and the tests are run on all of them. Before using this option, you should make sure that dependencies are correctly installed on all of them, using the command drom build –switch SWITCH on every <strong>SWITCH</strong> in the list. Only switches starting with a number and without the <em>+</em> character are selected.</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">test</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">test</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--all</span></code>   Build and run tests on all compatible switches</li>
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--all</span></code>   Build and run tests on all compatible switches</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-top">
 <h2>drom top<a class="headerlink" href="#drom-top" title="Permalink to this headline">¶</a></h2>
 <p>Run the ocaml toplevel</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">top</span> <span class="nc">ARGUMENTS</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">top</span> <span class="nc">ARGUMENTS</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">ARGUMENTS</span></code>   Provide arguments for the ocaml toplevel</li>
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">ARGUMENTS</span></code>   Provide arguments for the ocaml toplevel</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-tree">
@@ -817,7 +808,7 @@ Run the test command <strong>opam exec – dune build &#64;runtest</strong></li>
 <p><strong>DESCRIPTION</strong></p>
 <p>Print the project as a tree of dependencies, i.e. dependencies are printed as branches of the package they are dependencies of. If a package is itself a dependency of another package, it will be printed there.</p>
 <p><strong>EXAMPLE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span>└──drom (/src/drom)
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>└──drom (/src/drom)
    └──drom_lib (/src/drom_lib)
       └──toml 5.0.0
       └──opam-file-format 2.1.1
@@ -834,7 +825,7 @@ Run the test command <strong>opam exec – dune build &#64;runtest</strong></li>
 </pre></div>
 </div>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">tree</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">tree</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
@@ -843,18 +834,18 @@ Run the test command <strong>opam exec – dune build &#64;runtest</strong></li>
 <h2>drom uninstall<a class="headerlink" href="#drom-uninstall" title="Permalink to this headline">¶</a></h2>
 <p>Uninstall the project from the project opam switch</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">uninstall</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">uninstall</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 <div class="section" id="drom-update">
@@ -873,27 +864,25 @@ Call <strong>opam upgrade</strong> to upgrade packages in the local opam switch<
 Unpin package dependencies</li>
 </ul>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">update</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="n">update</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
-<li><code class="code docutils literal"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
-<li><code class="code docutils literal"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
-<li><code class="code docutils literal"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
-<li><code class="code docutils literal"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
-<li><code class="code docutils literal"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
-<li><code class="code docutils literal"><span class="pre">-y</span></code> or <code class="code docutils literal"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--profile</span> <span class="pre">PROFILE</span></code>   Build profile to use</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
+<li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
+<li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
 </ul>
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -902,7 +891,7 @@ Unpin package dependencies</li>
         <a href="config.html" class="btn btn-neutral float-right" title="User Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="reference.html" class="btn btn-neutral" title="Project Description" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="reference.html" class="btn btn-neutral float-left" title="Project Description" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -911,11 +900,11 @@ Unpin package dependencies</li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright OCamlPro SAS &amp; Origin Labs SAS.
+        &copy; Copyright OCamlPro SAS &amp; Origin Labs SAS
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -928,36 +917,15 @@ Unpin package dependencies</li>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'master (57f48a2) (2021/02/28 07:25)',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>
