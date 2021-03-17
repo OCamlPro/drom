@@ -21,8 +21,8 @@ kind = "library"
 # name of a file to generate with the current version
 gen-version = "version.ml"
 
-# supported file generators are "ocamllex", "ocamlyacc" and "menhir" 
-# default is [ "ocamllex", "ocamlyacc" ] 
+# supported file generators are "ocamllex", "ocamlyacc" and "menhir"
+# default is [ "ocamllex", "ocamlyacc" ]
 # generators = [ "ocamllex", "menhir" ]
 
 # whether all modules should be packed/wrapped (default is true)
@@ -37,7 +37,7 @@ pack-modules = true
 # package library dependencies
 #   [dependencies]
 #   ez_file = ">=0.1 <1.3"
-#   base-unix = { libname = "unix", version = ">=base" } 
+#   base-unix = { libname = "unix", version = ">=base" }
 [dependencies]
 directories = ">=0.2"
 ez_cmdliner = "0.2.0"
@@ -45,7 +45,7 @@ ez_config = "0.1.0"
 ez_file = "0.2.0"
 ez_opam_file = "0.1.0"
 ez_subst = ">=0.1"
-toml = "6.0.0"
+toml = "7.0.0"
 
 # package tools dependencies
 [tools]

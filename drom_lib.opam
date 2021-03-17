@@ -8,7 +8,6 @@ synopsis:
   "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
 description: """
 
-
 The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like
 user experience. It can be used to create full OCaml projects with
 sphinx and odoc documentation. It has specific knowledge of Github and
@@ -49,7 +48,7 @@ install: [
 depends: [
   "ocaml" {>= "4.07.0"}
   "dune" {>= "2.6.0"}
-  "toml" {>= "6.0.0" & < "7.0.0"}
+  "toml" {>= "7.0.0" & < "8.0.0"}
   "ez_subst" {>= "0.1"}
   "ez_opam_file" {>= "0.1.0" & < "1.0.0"}
   "ez_file" {>= "0.2.0" & < "1.0.0"}
