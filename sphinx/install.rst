@@ -45,6 +45,24 @@ targets:
 Installing :code:`drom` globally
 --------------------------------
 
+There are two recommendend approaches to using `drom` globally.
+
+User profile shell function
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The simplest way to use :code:`drom` globally is through a shell 
+function.
+::
+   function drom () { 
+     opam config exec --switch=SWITCH -- drom "$@"; 
+   }
+
+The value for :code:`SWITCH` can easily be obtained via 
+:code:`opam switch -s show`.
+
+Global binary
+^^^^^^^^^^^^^
+
 To be installed globally, :code:`drom` will need to locate its data
 files, in particular its skeleton and license files. This files are
 usually installed in :code:`$OPAM_SWITCH_PREFIX/share/drom` when
