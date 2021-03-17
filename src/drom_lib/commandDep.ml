@@ -27,7 +27,7 @@ let print_dep (name, d) =
   Printf.printf "  for-doc (--test) : %b\n%!" d.depdoc;
   ()
 
-let action ?dep
+let action ~dep
     ~package ~tool
     ~add ~remove
     ~version ~depname ~deptest ~depdoc ~args =
@@ -159,7 +159,7 @@ let cmd =
   let args, specs = Update.update_args () in
   EZCMD.sub cmd_name
     (fun () ->
-       action ?dep:(!dep)
+       action ~dep:(!dep)
          ~package:!package ~tool:!tool
          ~add:!add ~remove:!remove
          ~version:!version ~depname:!depname
