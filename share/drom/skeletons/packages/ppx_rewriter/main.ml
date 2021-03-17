@@ -1,4 +1,4 @@
-(* !{header-ml} *)
+!{header-ml}
 
 open Ppxlib
 open Ast_builder.Default
