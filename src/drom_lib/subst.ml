@@ -305,6 +305,12 @@ let package_brace (context, package) v =
   match v with
   | "name"
   | "package-name" -> package.name
+  | "program-name" -> begin
+      match StringMap.find "program-name" package.p_fields with
+      | exception Not_found -> package.name
+      | name -> name
+    end
+
   | "skeleton" -> Misc.package_skeleton package
   | "library-name" -> Misc.library_name package
   | "pack" -> Misc.library_module package

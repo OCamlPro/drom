@@ -82,7 +82,7 @@ c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 
 # begin context for drom.opam
 # file drom.opam
-d5855df69929294839ca6f0728f52c27:drom.opam
+456d187dfb6bfb0d0b4af0025ad0b846:drom.opam
 # end context for drom.opam
 
 # begin context for drom.toml
@@ -92,7 +92,7 @@ d5855df69929294839ca6f0728f52c27:drom.opam
 
 # begin context for drom_lib.opam
 # file drom_lib.opam
-05b813c5d992ad20e7748c0f0223eb76:drom_lib.opam
+0405e54b525fb9cc4f17d00ef2a6fda8:drom_lib.opam
 # end context for drom_lib.opam
 
 # begin context for dune
