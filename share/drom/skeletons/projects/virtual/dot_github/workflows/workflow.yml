@@ -50,7 +50,11 @@ jobs:
         run: |
           git config --global user.name github-actions
           git config --global user.email github-actions-bot@users.noreply.github.com
-
+![if:field:opam-repo]
+      - run: opam repo add extra !(opam-repo)
+![else]
+      # define opam-repo = "git+https://" to add an extra opam repo
+![fi]
       - run: opam pin add . -y --no-action
 
       - run: opam depext -y !{packages}

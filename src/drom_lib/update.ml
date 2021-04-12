@@ -122,6 +122,15 @@ let update_files ?args ?(git = false) ?(create = false) p =
     let old_content = EzFile.read_file filename in
     let old_perm = ( Unix.lstat filename ). Unix.st_perm in
     if content = old_content && Hashes.perm_equal perm old_perm then begin
+      begin
+        match Hashes.get hashes filename with
+        | exception Not_found ->
+            Printf.eprintf "Warning: .drom: missing hash for %S\n%!" filename;
+            let hash = Hashes.digest_content
+                ~file:filename ~perm:old_perm old_content in
+            Hashes.update ~git:false hashes filename hash;
+        | _ -> ()
+      end;
       false
     end else
       force

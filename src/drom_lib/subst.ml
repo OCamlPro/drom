@@ -181,12 +181,23 @@ let project_brace (_, p) v =
       |> List.map (fun p -> "/" ^ p.name)
       |> String.concat "\n"
   (* for git *)
-  | "packages" -> p.packages |> List.map (fun p -> p.name) |> String.concat " "
+  | "packages" ->
+      List.filter (fun package -> package.kind <> Virtual) p.packages
+      |> List.map (fun p -> p.name)
+      |> String.concat " "
   | "opams" ->
-      p.packages
+      List.filter (fun package -> package.kind <> Virtual) p.packages
       |> List.map (fun p -> Printf.sprintf "./%s.opam" p.name)
       |> String.concat " "
+  | "virtuals" ->
+      List.filter (fun package -> package.kind = Virtual) p.packages
+      |> List.map (fun p -> p.name)
+      |> String.concat " "
   | "libraries" ->
+      List.filter (fun package -> package.kind = Library) p.packages
+      |> List.map (fun p -> p.name)
+      |> String.concat " "
+  | "programs" ->
       List.filter (fun package -> package.kind = Library) p.packages
       |> List.map (fun p -> p.name)
       |> String.concat " "

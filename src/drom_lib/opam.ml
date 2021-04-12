@@ -8,6 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open EzCompat
 open Ez_opam_file.V1
 open Types
 open EzFile.OP
@@ -62,17 +63,40 @@ let opam_of_project kind package =
           var "build"
             (
               OpamParser.FullPos.value_from_string
-                {|
+                (Printf.sprintf "%s%s%s%s"
+                   {|
 [
   ["dune" "subst"] {dev}
   ["sh" "-c" "./scripts/before.sh build '%{name}%'" ]
   ["dune" "build" "-p" name "-j" jobs "@install"
-     "@runtest" {with-test} "@doc" {with-doc}
+|}
+                   (if
+                     match StringMap.find "no-opam-test" package.p_fields with
+                     | exception Not_found -> false
+                     | "false" | "no" -> false
+                     | _ -> true
+                    then
+                      ""
+                    else
+                      {|"@runtest" {with-test}|}
+                      )
+                   (if
+                     match StringMap.find "no-opam-doc" package.p_fields with
+                     | exception Not_found -> false
+                     | "false" | "no" -> false
+                     | _ -> true
+                    then
+                      ""
+                    else
+                      {|"@doc" {with-doc}|}
+                   )
+                   {|
   ]
   ["sh" "-c" "./scripts/after.sh build '%{name}%'" ]
 ]
-|}
-                filename );
+|})
+                filename
+            );
           var "install"
             (
               OpamParser.FullPos.value_from_string
