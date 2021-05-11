@@ -37,6 +37,9 @@ Overview of sub-commands::
   install
     Build & install the project in the project opam switch
   
+  list (since version 0.4.0)
+    List available project or packages skeletons
+  
   lock (since version 0.2.1)
     Generate a .locked file for the project
   
@@ -419,6 +422,29 @@ Where options are:
 * :code:`--upgrade`   Upgrade project files from drom.toml
 
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
+
+
+drom list (since version 0.4.0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+List available project or packages skeletons
+
+
+
+**DESCRIPTION**
+
+
+List available project or packages skeletons
+
+**USAGE**
+::
+  
+  drom list ARGUMENTS [OPTIONS]
+
+Where options are:
+
+
+* :code:`ARGUMENTS`   Use 'projects' or 'packages' to display corresponding skeletons
 
 
 drom lock (since version 0.2.1)

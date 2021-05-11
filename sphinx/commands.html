@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Sub-commands and Arguments &mdash; drom master
- (057f134
-) (2021/03/12 13:02) documentation</title>
+ (1aaf700
+) (2021/05/11 14:03) documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
               <div class="version">
                 master
- (057f134
+ (1aaf700
 )
               </div>
             
@@ -106,6 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#drom-doc">drom doc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-fmt">drom fmt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-install">drom install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#drom-list-since-version-0-4-0">drom list (since version 0.4.0)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-lock-since-version-0-2-1">drom lock (since version 0.2.1)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-new">drom new</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drom-odoc">drom odoc</a></li>
@@ -229,6 +230,9 @@
 
 <span class="n">install</span>
   <span class="nc">Build</span> <span class="o">&amp;</span> <span class="n">install</span> <span class="n">the</span> <span class="n">project</span> <span class="k">in</span> <span class="n">the</span> <span class="n">project</span> <span class="n">opam</span> <span class="n">switch</span>
+
+<span class="kt">list</span> <span class="o">(</span><span class="n">since</span> <span class="n">version</span> <span class="mi">0</span><span class="o">.</span><span class="mi">4</span><span class="o">.</span><span class="mi">0</span><span class="o">)</span>
+  <span class="nc">List</span> <span class="n">available</span> <span class="n">project</span> <span class="ow">or</span> <span class="n">packages</span> <span class="n">skeletons</span>
 
 <span class="n">lock</span> <span class="o">(</span><span class="n">since</span> <span class="n">version</span> <span class="mi">0</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">1</span><span class="o">)</span>
   <span class="nc">Generate</span> <span class="n">a</span> <span class="o">.</span><span class="n">locked</span> <span class="n">file</span> <span class="k">for</span> <span class="n">the</span> <span class="n">project</span>
@@ -480,6 +484,20 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 <li><code class="code docutils literal notranslate"><span class="pre">--switch</span> <span class="pre">OPAM_SWITCH</span></code>   Use global switch SWITCH instead of creating a local switch</li>
 <li><code class="code docutils literal notranslate"><span class="pre">--upgrade</span></code>   Upgrade project files from drom.toml</li>
 <li><code class="code docutils literal notranslate"><span class="pre">-y</span></code> or <code class="code docutils literal notranslate"><span class="pre">--yes</span></code>   Reply yes to all questions</li>
+</ul>
+</div>
+<div class="section" id="drom-list-since-version-0-4-0">
+<h2>drom list (since version 0.4.0)<a class="headerlink" href="#drom-list-since-version-0-4-0" title="Permalink to this headline">¶</a></h2>
+<p>List available project or packages skeletons</p>
+<p><strong>DESCRIPTION</strong></p>
+<p>List available project or packages skeletons</p>
+<p><strong>USAGE</strong></p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">drom</span> <span class="kt">list</span> <span class="nc">ARGUMENTS</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>Where options are:</p>
+<ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">ARGUMENTS</span></code>   Use ‘projects’ or ‘packages’ to display corresponding skeletons</li>
 </ul>
 </div>
 <div class="section" id="drom-lock-since-version-0-2-1">
