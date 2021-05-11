@@ -181,12 +181,23 @@ let project_brace (_, p) v =
       |> List.map (fun p -> "/" ^ p.name)
       |> String.concat "\n"
   (* for git *)
-  | "packages" -> p.packages |> List.map (fun p -> p.name) |> String.concat " "
+  | "packages" ->
+      List.filter (fun package -> package.kind <> Virtual) p.packages
+      |> List.map (fun p -> p.name)
+      |> String.concat " "
   | "opams" ->
-      p.packages
+      List.filter (fun package -> package.kind <> Virtual) p.packages
       |> List.map (fun p -> Printf.sprintf "./%s.opam" p.name)
       |> String.concat " "
+  | "virtuals" ->
+      List.filter (fun package -> package.kind = Virtual) p.packages
+      |> List.map (fun p -> p.name)
+      |> String.concat " "
   | "libraries" ->
+      List.filter (fun package -> package.kind = Library) p.packages
+      |> List.map (fun p -> p.name)
+      |> String.concat " "
+  | "programs" ->
       List.filter (fun package -> package.kind = Library) p.packages
       |> List.map (fun p -> p.name)
       |> String.concat " "
@@ -305,6 +316,12 @@ let package_brace (context, package) v =
   match v with
   | "name"
   | "package-name" -> package.name
+  | "program-name" -> begin
+      match StringMap.find "program-name" package.p_fields with
+      | exception Not_found -> package.name
+      | name -> name
+    end
+
   | "skeleton" -> Misc.package_skeleton package
   | "library-name" -> Misc.library_name package
   | "pack" -> Misc.library_module package

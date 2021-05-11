@@ -8,6 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open EzCompat
 open Ez_opam_file.V1
 open Types
 open EzFile.OP
@@ -62,17 +63,40 @@ let opam_of_project kind package =
           var "build"
             (
               OpamParser.FullPos.value_from_string
-                {|
+                (Printf.sprintf "%s%s%s%s"
+                   {|
 [
   ["dune" "subst"] {dev}
   ["sh" "-c" "./scripts/before.sh build '%{name}%'" ]
   ["dune" "build" "-p" name "-j" jobs "@install"
-     "@runtest" {with-test} "@doc" {with-doc}
+|}
+                   (if
+                     match StringMap.find "no-opam-test" package.p_fields with
+                     | exception Not_found -> false
+                     | "false" | "no" -> false
+                     | _ -> true
+                    then
+                      ""
+                    else
+                      {|"@runtest" {with-test}|}
+                   )
+                   (if
+                     match StringMap.find "no-opam-doc" package.p_fields with
+                     | exception Not_found -> false
+                     | "false" | "no" -> false
+                     | _ -> true
+                    then
+                      ""
+                    else
+                      {|"@doc" {with-doc}|}
+                   )
+                   {|
   ]
   ["sh" "-c" "./scripts/after.sh build '%{name}%'" ]
 ]
-|}
-                filename );
+|})
+                filename
+            );
           var "install"
             (
               OpamParser.FullPos.value_from_string
@@ -124,15 +148,45 @@ let opam_of_project kind package =
           | Single
           | LibraryPart
           | Deps ->
+              let initial_deps =
+                match package.kind with
+                | Virtual ->
+                    begin
+                      match StringMap.find "gen-opam" package.p_fields with
+                      | exception _ -> []
+                      | s -> match String.lowercase s with
+                        | "all" ->
+                            List.map (fun pp ->
+                                OpamParser.FullPos.value_from_string
+                                  ( if package.p_version = pp.p_version then
+                                      Printf.sprintf
+                                        {| "%s" { = version } |} pp.name
+                                    else
+                                      Printf.sprintf
+                                        {| "%s" { = %S } |} pp.name
+                                        (Misc.p_version pp )
+                                  )
+                                  filename ;
+                              )
+                              (List.filter (fun pp -> package != pp
+                                           )
+                                 p.packages)
+                        | "some" -> []
+                        | _ -> []
+                    end
+                | _ -> [
+                    OpamParser.FullPos.value_from_string
+                      (Printf.sprintf {| "ocaml" { >= "%s" } |} p.min_edition)
+                      filename ;
+                    OpamParser.FullPos.value_from_string
+                      (Printf.sprintf {| "dune" { >= "%s" } |}
+                         Globals.current_dune_version)
+                      filename
+                  ]
+              in
               list
-                ( OpamParser.FullPos.value_from_string
-                    (Printf.sprintf {| "ocaml" { >= "%s" } |} p.min_edition)
-                    filename
-                  :: OpamParser.FullPos.value_from_string
-                    (Printf.sprintf {| "dune" { >= "%s" } |}
-                       Globals.current_dune_version)
-                    filename
-                  :: List.map
+                ( initial_deps
+                  @ List.map
                     (fun (name, d) -> depend_of_dep name d)
                     (Misc.p_dependencies package)
                   @ List.map

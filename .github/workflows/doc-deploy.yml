@@ -27,6 +27,9 @@ jobs:
         run: |
           sudo apt install -yqq python3-sphinx python3-sphinx-rtd-theme
           opam install -y dune odoc
+
+      # define opam-repo = "git+https://" to add an extra opam repo
+
       - run: opam pin add . -y --no-action
       - run: opam depext -y drom drom_lib
         if: steps.cache-opam.outputs.cache-hit != 'true'

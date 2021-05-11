@@ -34,6 +34,8 @@ module EZ = struct
 
   let from_string = Toml.Parser.from_string
 
+  let map = Toml.Types.Table.map
+
   let string_of_location loc = loc.Toml.Parser.source
 
   let from_file_exn filename =

@@ -347,7 +347,16 @@ let string_of_package pk =
         ~comment: [ "package tools dependencies" ]
         ( encoding dependencies_encoding pk.p_tools );
       option  "fields"
-        ~comment:[ "package fields (depends on package skeleton)" ]
+        ~comment:[
+          "package fields (depends on package skeleton)";
+          "Examples:";
+          {|  dune-stanzas = "(preprocess (pps ppx_deriving_encoding))" |};
+          {|  dune-libraries = "bigstring" |};
+          {|  dune-trailer = "(install (..))" |};
+          {|  opam-trailer = "pin-depends: [..]" |};
+          {|  no-opam-test = "yes" |};
+          {|  no-opam-doc = "yes" |};
+        ]
         ( encoding fields_encoding pk.p_fields );
     ])
 
