@@ -257,7 +257,7 @@ let update_files ?args ?(git = false) ?(create = false) p =
                  ( match StringMap.find "gen-opam" package.p_fields with
                    | exception _ -> false
                    | s -> match String.lowercase s with
-                     | "y" | "yes" | "true" -> true
+                     | "all" | "some" -> true
                      | _ -> false
                  )
              | _ -> true

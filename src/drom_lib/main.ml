@@ -27,6 +27,7 @@ let main () =
       CommandOdoc.cmd;
       CommandDoc.cmd;
       CommandSphinx.cmd;
+      CommandList.cmd;
       CommandTest.cmd;
       CommandPublish.cmd;
       CommandUpdate.cmd;

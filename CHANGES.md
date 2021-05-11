@@ -1,4 +1,22 @@
 
+## v0.4.0 ( 2021-05-11 )
+* New [fields] in package.toml:
+  * 'gen-opam' to generate the opam file of a virtual package. Possible values
+    are "all" (all sub-packages are dependencies), "some" (you need to specify
+    the dependencies in [dependencies]) or "none" (no opam file is generated,
+    the default).
+  * 'no-opam-test = "no"' to disable tests in the opam package
+  * 'no-opam-doc = "no"' to disable doc in the opam package
+* Add 'rust_binding' skeleton
+* New env variable DROM_VERBOSE_SUBST to debug substitutions
+* New 'skip = [ "file"...]' in package.toml to skip files in src/PACKAGE/
+* New subcommand 'list': "drom list" will list all known skeletons. If
+  an argument is provided, it is either "all", or one of "projects" or
+  "packages".
+
+## v0.3.0
+* More skeletons
+
 ## v0.2.1 ( 2020-11-25 )
 
 * Add table `[file]` in `skeleton.toml` to specify flags for skeleton files

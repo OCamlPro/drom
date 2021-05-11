@@ -150,7 +150,30 @@ let opam_of_project kind package =
           | Deps ->
               let initial_deps =
                 match package.kind with
-                | Virtual -> []
+                | Virtual ->
+                    begin
+                      match StringMap.find "gen-opam" package.p_fields with
+                      | exception _ -> []
+                      | s -> match String.lowercase s with
+                        | "all" ->
+                            List.map (fun pp ->
+                                OpamParser.FullPos.value_from_string
+                                  ( if package.p_version = pp.p_version then
+                                      Printf.sprintf
+                                        {| "%s" { = version } |} pp.name
+                                    else
+                                      Printf.sprintf
+                                        {| "%s" { = %S } |} pp.name
+                                        (Misc.p_version pp )
+                                  )
+                                  filename ;
+                              )
+                              (List.filter (fun pp -> package != pp
+                                           )
+                                 p.packages)
+                        | "some" -> []
+                        | _ -> []
+                    end
                 | _ -> [
                     OpamParser.FullPos.value_from_string
                       (Printf.sprintf {| "ocaml" { >= "%s" } |} p.min_edition)
