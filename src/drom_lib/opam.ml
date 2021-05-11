@@ -79,7 +79,7 @@ let opam_of_project kind package =
                       ""
                     else
                       {|"@runtest" {with-test}|}
-                      )
+                   )
                    (if
                      match StringMap.find "no-opam-doc" package.p_fields with
                      | exception Not_found -> false
@@ -148,15 +148,22 @@ let opam_of_project kind package =
           | Single
           | LibraryPart
           | Deps ->
+              let initial_deps =
+                match package.kind with
+                | Virtual -> []
+                | _ -> [
+                    OpamParser.FullPos.value_from_string
+                      (Printf.sprintf {| "ocaml" { >= "%s" } |} p.min_edition)
+                      filename ;
+                    OpamParser.FullPos.value_from_string
+                      (Printf.sprintf {| "dune" { >= "%s" } |}
+                         Globals.current_dune_version)
+                      filename
+                  ]
+              in
               list
-                ( OpamParser.FullPos.value_from_string
-                    (Printf.sprintf {| "ocaml" { >= "%s" } |} p.min_edition)
-                    filename
-                  :: OpamParser.FullPos.value_from_string
-                    (Printf.sprintf {| "dune" { >= "%s" } |}
-                       Globals.current_dune_version)
-                    filename
-                  :: List.map
+                ( initial_deps
+                  @ List.map
                     (fun (name, d) -> depend_of_dep name d)
                     (Misc.p_dependencies package)
                   @ List.map

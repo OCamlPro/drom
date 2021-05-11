@@ -251,22 +251,31 @@ let update_files ?args ?(git = false) ?(create = false) p =
 
       List.iter
         (fun package ->
-           match package.kind with
-           | Virtual -> ()
-           | _ ->
-               ( match package.p_gen_version with
-                 | None -> ()
-                 | Some file ->
-                     (* TODO : we should put info in this file *)
-                     let version_file = package.dir // file in
-                     if Sys.file_exists version_file then
-                       Sys.remove version_file;
-                     write_file hashes ( version_file ^ "t")
-                       (GenVersion.file package file)
-               );
-               let opam_filename = package.name ^ ".opam" in
-               write_file hashes opam_filename
-                 (Opam.opam_of_project Single package))
+           let gen_opam_file =
+             match package.kind with
+             | Virtual ->
+                 ( match StringMap.find "gen-opam" package.p_fields with
+                   | exception _ -> false
+                   | s -> match String.lowercase s with
+                     | "y" | "yes" | "true" -> true
+                     | _ -> false
+                 )
+             | _ -> true
+           in
+           if gen_opam_file then
+             let opam_filename = package.name ^ ".opam" in
+             ( match package.p_gen_version with
+               | None -> ()
+               | Some file ->
+                   (* TODO : we should put info in this file *)
+                   let version_file = package.dir // file in
+                   if Sys.file_exists version_file then
+                     Sys.remove version_file;
+                   write_file hashes ( version_file ^ "t")
+                     (GenVersion.file package file)
+             );
+             write_file hashes opam_filename
+               (Opam.opam_of_project Single package))
         p.packages;
 
       EzFile.make_dir ~p:true Globals.drom_dir;
