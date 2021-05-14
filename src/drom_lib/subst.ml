@@ -337,7 +337,9 @@ let package_brace (context, package) v =
              match d.depname with
              | None -> name
              | Some name -> name)
-          (Misc.p_dependencies package)
+          (List.filter (fun (_name, d) ->
+               not d.depopt
+             ) ( Misc.p_dependencies package))
       in
       String.concat " " dependencies
   | "dune-stanzas" -> ""

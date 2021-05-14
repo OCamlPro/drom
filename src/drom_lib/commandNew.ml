@@ -88,6 +88,9 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     | Some copyright -> Some copyright
     | None -> Some author
   in
+  let gendep =
+    { depversions = []; depname = None;
+      deptest = true; depdoc = false ; depopt = false } in
   let p =
     { Project.dummy_project with
       package;
@@ -97,18 +100,10 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
       synopsis = Globals.default_synopsis ~name;
       description = Globals.default_description ~name;
       tools =
-        [ ( "ocamlformat",
-            { depversions = []; depname = None; deptest = true; depdoc = false }
-          );
-          ( "ppx_expect",
-            { depversions = []; depname = None; deptest = true; depdoc = false }
-          );
-          ( "ppx_inline_test",
-            { depversions = []; depname = None; deptest = true; depdoc = false }
-          );
-          ( "odoc",
-            { depversions = []; depname = None; deptest = false; depdoc = true }
-          )
+        [ ( "ocamlformat", gendep ) ;
+          ( "ppx_expect", { gendep with deptest = true } ) ;
+          ( "ppx_inline_test", { gendep with deptest = true } ) ;
+          ( "odoc", { gendep with depdoc = true } ) ;
         ];
       github_organization = config.config_github_organization;
       homepage = None;

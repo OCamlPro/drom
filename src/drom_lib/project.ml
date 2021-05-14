@@ -181,19 +181,27 @@ let dependency_encoding =
           else
             table
         in
+        let table =
+          if d.depopt then
+            EzToml.put [ "opt" ] (TBool true) table
+          else
+            table
+        in
         TTable table)
     ~of_toml:(fun ~key v ->
       match v with
       | TString s ->
         let depversions = versions_of_string s in
-        { depname = None; depversions; depdoc = false; deptest = false }
+        { depname = None; depversions;
+          depdoc = false; deptest = false; depopt = false }
       | TTable table ->
         let depname = EzToml.get_string_option table [ "libname" ] in
         let depversions = EzToml.get_string_default table [ "version" ] "" in
         let depversions = versions_of_string depversions in
         let deptest = EzToml.get_bool_default table [ "for-test" ] false in
         let depdoc = EzToml.get_bool_default table [ "for-doc" ] false in
-        { depname; depversions; depdoc; deptest }
+        let depopt = EzToml.get_bool_default table [ "opt" ] false in
+        { depname; depversions; depdoc; deptest ; depopt }
       | _ -> Error.raise "Bad dependency version for %s" (EzToml.key2str key))
 
 let dependencies_encoding =
@@ -846,7 +854,8 @@ let project_of_toml ?file ?default table =
             { depname = None;
               depversions = [ Version ];
               deptest = false;
-              depdoc = false
+              depdoc = false;
+              depopt = false;
             } )
           :: package.p_dependencies;
         package.p_gen_version <- None;
