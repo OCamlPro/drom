@@ -69,42 +69,56 @@ let packages p =
       package.name (Misc.p_synopsis package)
       (Misc.p_description package);
 
-    Printf.bprintf b " (depends\n";
-    Printf.bprintf b "   (ocaml (>= %s))\n" package.project.min_edition;
-    let depend_of_dep name d =
+    let depend_of_dep (name, d) =
       match d.depversions with
       | [] -> Printf.bprintf b "   %s\n" name
       | _ ->
-        Printf.bprintf b "   (%s " name;
-        let rec iter versions =
-          match versions with
-          | [] -> ()
-          | [ version ] -> (
-            match version with
-            | Version -> Printf.bprintf b "(= version)"
-            | NoVersion -> ()
-            | Semantic (major, minor, fix) ->
-              Printf.bprintf b "(and (>= %d.%d.%d) (< %d.0.0))" major minor fix
-                (major + 1)
-            | Lt version -> Printf.bprintf b "( < %s )" version
-            | Le version -> Printf.bprintf b "( <= %s )" version
-            | Eq version -> Printf.bprintf b "( = %s )" version
-            | Ge version -> Printf.bprintf b "( >= %s )" version
-            | Gt version -> Printf.bprintf b "( > %s )" version )
-          | version :: tail ->
-            Printf.bprintf b "(and ";
-            iter [ version ];
-            iter tail;
-            Printf.bprintf b ")"
-        in
-        iter d.depversions;
-        Printf.bprintf b ")\n"
+          Printf.bprintf b "   (%s " name;
+          let rec iter versions =
+            match versions with
+            | [] -> ()
+            | [ version ] -> (
+                match version with
+                | Version -> Printf.bprintf b "(= version)"
+                | NoVersion -> ()
+                | Semantic (major, minor, fix) ->
+                    Printf.bprintf b "(and (>= %d.%d.%d) (< %d.0.0))" major minor fix
+                      (major + 1)
+                | Lt version -> Printf.bprintf b "( < %s )" version
+                | Le version -> Printf.bprintf b "( <= %s )" version
+                | Eq version -> Printf.bprintf b "( = %s )" version
+                | Ge version -> Printf.bprintf b "( >= %s )" version
+                | Gt version -> Printf.bprintf b "( > %s )" version )
+            | version :: tail ->
+                Printf.bprintf b "(and ";
+                iter [ version ];
+                iter tail;
+                Printf.bprintf b ")"
+          in
+          iter d.depversions;
+          Printf.bprintf b ")\n"
     in
-    List.iter
-      (fun (name, d) -> depend_of_dep name d)
-      (Misc.p_dependencies package);
-    List.iter (fun (name, d) -> depend_of_dep name d) (Misc.p_tools package);
-    Printf.bprintf b " ))\n"
+    let depopts = ref [] in
+    let maybe_print_dep (name, d) =
+      if d.depopt then
+        depopts := (name,d) :: !depopts
+      else
+        depend_of_dep (name, d)
+    in
+    Printf.bprintf b " (depends\n";
+    Printf.bprintf b "   (ocaml (>= %s))\n" package.project.min_edition;
+    List.iter maybe_print_dep (Misc.p_dependencies package);
+    List.iter maybe_print_dep (Misc.p_tools package);
+    Printf.bprintf b "  )";
+    begin
+      match !depopts with
+      | [] -> ()
+      | depopts ->
+          Printf.bprintf b "\n (depopts\n";
+          List.iter depend_of_dep depopts;
+          Printf.bprintf b " )";
+    end;
+    Printf.bprintf b "\n )\n";
   in
 
   (* If menhir is used as a generator, prevents dune from modifying

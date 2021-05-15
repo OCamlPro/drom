@@ -108,7 +108,7 @@ let opam_of_project kind package =
             );
         ]
   in
-  let depend_of_dep name d =
+  let depend_of_dep (name, d) =
     let b = Buffer.create 100 in
     Printf.bprintf b {| "%s" { |} name;
     List.iteri
@@ -133,9 +133,9 @@ let opam_of_project kind package =
     OpamParser.FullPos.value_from_string (Buffer.contents b) filename
   in
   let depends =
-    [ var "depends" (
-          match kind with
-          | ProgramPart ->
+    match kind with
+    | ProgramPart ->
+        [ var "depends" (
               list
                 [ OpamParser.FullPos.value_from_string
                     (Printf.sprintf
@@ -144,55 +144,58 @@ let opam_of_project kind package =
 |}
                        (Misc.package_lib package))
                     filename
-                ]
-          | Single
-          | LibraryPart
-          | Deps ->
-              let initial_deps =
-                match package.kind with
-                | Virtual ->
-                    begin
-                      match StringMap.find "gen-opam" package.p_fields with
-                      | exception _ -> []
-                      | s -> match String.lowercase s with
-                        | "all" ->
-                            List.map (fun pp ->
-                                OpamParser.FullPos.value_from_string
-                                  ( if package.p_version = pp.p_version then
-                                      Printf.sprintf
-                                        {| "%s" { = version } |} pp.name
-                                    else
-                                      Printf.sprintf
-                                        {| "%s" { = %S } |} pp.name
-                                        (Misc.p_version pp )
-                                  )
-                                  filename ;
-                              )
-                              (List.filter (fun pp -> package != pp
-                                           )
-                                 p.packages)
-                        | "some" -> []
-                        | _ -> []
-                    end
-                | _ -> [
-                    OpamParser.FullPos.value_from_string
-                      (Printf.sprintf {| "ocaml" { >= "%s" } |} p.min_edition)
-                      filename ;
-                    OpamParser.FullPos.value_from_string
-                      (Printf.sprintf {| "dune" { >= "%s" } |}
-                         Globals.current_dune_version)
-                      filename
-                  ]
-              in
-              list
-                ( initial_deps
-                  @ List.map
-                    (fun (name, d) -> depend_of_dep name d)
-                    (Misc.p_dependencies package)
-                  @ List.map
-                    (fun (name, d) -> depend_of_dep name d)
-                    (Misc.p_tools package) ) )
-    ]
+                ] )]
+    | Single
+    | LibraryPart
+    | Deps ->
+        let initial_deps =
+          match package.kind with
+          | Virtual ->
+              begin
+                match StringMap.find "gen-opam" package.p_fields with
+                | exception _ -> []
+                | s -> match String.lowercase s with
+                  | "all" ->
+                      List.map (fun pp ->
+                          OpamParser.FullPos.value_from_string
+                            ( if package.p_version = pp.p_version then
+                                Printf.sprintf
+                                  {| "%s" { = version } |} pp.name
+                              else
+                                Printf.sprintf
+                                  {| "%s" { = %S } |} pp.name
+                                  (Misc.p_version pp )
+                            )
+                            filename ;
+                        )
+                        (List.filter (fun pp -> package != pp
+                                     )
+                           p.packages)
+                  | "some" -> []
+                  | _ -> []
+              end
+          | _ -> [
+              OpamParser.FullPos.value_from_string
+                (Printf.sprintf {| "ocaml" { >= "%s" } |} p.min_edition)
+                filename ;
+              OpamParser.FullPos.value_from_string
+                (Printf.sprintf {| "dune" { >= "%s" } |}
+                   Globals.current_dune_version)
+                filename
+            ]
+        in
+        let alldeps =
+          (Misc.p_dependencies package) @ (Misc.p_tools package)
+        in
+        let depends, depopts =
+          List.partition (fun  ( _, d ) -> not d.depopt) alldeps
+        in
+        let depends = List.map  depend_of_dep depends in
+        let depopts = List.map  depend_of_dep depopts in
+        [ var "depends" (list ( initial_deps @ depends) ) ]
+        @ ( match depopts with
+            | [] -> []
+            | _ -> [ var "depopts" ( list depopts )])
   in
   let file_contents =
     [ var_string "opam-version" "2.0";

@@ -30,7 +30,7 @@ let print_dep (name, d) =
 let action ~dep
     ~package ~tool
     ~add ~remove
-    ~version ~depname ~deptest ~depdoc ~args =
+    ~version ~depname ~deptest ~depdoc ~depopt ~args =
   let p, _inferred_dir = Project.get () in
   let upgrade = ref args.arg_upgrade in
   let update package_kind dep_kind deps setdeps =
@@ -54,6 +54,9 @@ let action ~dep
                 | None -> false
                 | Some b -> b );
             depdoc = ( match depdoc with
+                | None -> false
+                | Some b -> b );
+            depopt = ( match depopt with
                 | None -> false
                 | Some b -> b );
           } in
@@ -99,6 +102,11 @@ let action ~dep
                     | None -> d
                     | Some depdoc ->
                         upgrade := true; { d with depdoc }
+                  in
+                  let d = match depopt with
+                    | None -> d
+                    | Some depopt ->
+                        upgrade := true; { d with depopt }
                   in
 
                   if not !upgrade then begin
@@ -156,6 +164,7 @@ let cmd =
   let depname = ref None in
   let deptest = ref None in
   let depdoc = ref None in
+  let depopt = ref None in
   let args, specs = Update.update_args () in
   EZCMD.sub cmd_name
     (fun () ->
@@ -164,6 +173,7 @@ let cmd =
          ~add:!add ~remove:!remove
          ~version:!version ~depname:!depname
          ~deptest:!deptest ~depdoc:!depdoc
+         ~depopt:!depopt
          ~args
     )
     ~args: (
@@ -186,6 +196,8 @@ let cmd =
         EZCMD.info "Whether dependency is only for tests" ;
         [ "doc" ], Arg.Bool (fun b -> depdoc := Some b),
         EZCMD.info "Whether dependency is only for doc" ;
+        [ "opt" ], Arg.Bool (fun b -> depopt := Some b),
+        EZCMD.info "Whether dependency is optional or not" ;
         ( [],
           Arg.Anon (0, fun name -> dep := Some name),
           EZCMD.info ~docv:"DEPENDENCY" "Name of dependency" )

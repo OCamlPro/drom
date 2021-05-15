@@ -29,8 +29,9 @@ type dependency =
   { depversions : version list; (* "version" *)
     depname : string option;    (* "libname" *)
     (* for dune if different *)
-    deptest : bool; (* "for-test" *)
-    depdoc : bool (* "for-doc" *)
+    deptest : bool ; (* "for-test" *)
+    depdoc : bool ; (* "for-doc" *)
+    depopt : bool ; (* opt *)
   }
 
 type package =

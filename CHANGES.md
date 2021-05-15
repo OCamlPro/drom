@@ -1,4 +1,9 @@
 
+## v.05.0
+* Add support for optional dependencies:
+  lib = { opt = true, version = "3.1" }
+* Add @ before skip tags: skip = [ "@test" ]
+
 ## v0.4.0 ( 2021-05-11 )
 * New [fields] in package.toml:
   * 'gen-opam' to generate the opam file of a virtual package. Possible values
