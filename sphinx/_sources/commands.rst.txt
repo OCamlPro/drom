@@ -287,6 +287,8 @@ Where options are:
 
 * :code:`--lib LIBNAME`   Dependency should have this libname in dune
 
+* :code:`--opt BOOL`   Whether dependency is optional or not
+
 * :code:`--package PACKAGE`   Attach dependency to this package name
 
 * :code:`--promote-skip`   Promote user-modified files to skip field
