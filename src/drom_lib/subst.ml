@@ -342,7 +342,16 @@ let package_brace (context, package) v =
              ) ( Misc.p_dependencies package))
       in
       String.concat " " dependencies
-  | "dune-stanzas" -> ""
+  | "dune-stanzas" ->
+      let b = ref [] in
+      if package.p_optional = Some true then b := "(optional)" :: !b;
+      begin
+        match package.p_preprocess with
+        | None -> ()
+        | Some s ->
+            b := ( Printf.sprintf "(preprocess (%s))" s ) :: !b;
+      end;
+      String.concat "\n  " !b
   | "package-dune-files" -> Dune.package_dune_files package
   | "package-dune-installs" ->
       let share_files = ref [] in

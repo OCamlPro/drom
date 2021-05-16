@@ -53,6 +53,8 @@ type package =
     mutable p_generators : StringSet.t option;
     mutable p_file : string option ;
     mutable p_skip : string list option ;
+    mutable p_optional : bool option ;
+    mutable p_preprocess : string option ;
   }
 
 and project =
