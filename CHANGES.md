@@ -3,6 +3,11 @@
 * Add support for optional dependencies:
   lib = { opt = true, version = "3.1" }
 * Add @ before skip tags: skip = [ "@test" ]
+* drom uninstall: also unpin all project packages
+* Add support for optional packages:
+  optional = true
+* Add support for preprocessor
+  preprocess = "pps pgocaml_ppx"
 
 ## v0.4.0 ( 2021-05-11 )
 * New [fields] in package.toml:

@@ -73,6 +73,8 @@ and dummy_package =
     p_skeleton = None;
     p_generators = None;
     p_skip = None;
+    p_optional = None ;
+    p_preprocess = None ;
   }
 
 let create_package ~name ~dir ~kind = { dummy_package with name; dir; kind }
@@ -158,51 +160,58 @@ let skip_encoding =
 let dependency_encoding =
   EzToml.encoding
     ~to_toml:(fun d ->
-      let version = TString (string_of_versions d.depversions) in
-      match (d.depname, d.deptest, d.depdoc) with
-      | None, false, false -> version
-      | _ ->
-        let table = EzToml.empty in
-        let table = EzToml.put_string_option [ "libname" ] d.depname table in
-        let table =
-          match d.depversions with
-          | [] -> table
-          | _ -> EzToml.put [ "version" ] version table
-        in
-        let table =
-          if d.deptest then
-            EzToml.put [ "for-test" ] (TBool true) table
-          else
-            table
-        in
-        let table =
-          if d.depdoc then
-            EzToml.put [ "for-doc" ] (TBool true) table
-          else
-            table
-        in
-        let table =
-          if d.depopt then
-            EzToml.put [ "opt" ] (TBool true) table
-          else
-            table
-        in
-        TTable table)
+        let version = TString (string_of_versions d.depversions) in
+
+        if { d with depversions = [] } =
+           {
+             depversions = [] ;
+             depname = None ;
+             deptest = false ;
+             depdoc = false ;
+             depopt = false } then
+          version
+        else
+          let table = EzToml.empty in
+          let table = EzToml.put_string_option [ "libname" ] d.depname table in
+          let table =
+            match d.depversions with
+            | [] -> table
+            | _ -> EzToml.put [ "version" ] version table
+          in
+          let table =
+            if d.deptest then
+              EzToml.put [ "for-test" ] (TBool true) table
+            else
+              table
+          in
+          let table =
+            if d.depdoc then
+              EzToml.put [ "for-doc" ] (TBool true) table
+            else
+              table
+          in
+          let table =
+            if d.depopt then
+              EzToml.put [ "opt" ] (TBool true) table
+            else
+              table
+          in
+          TTable table)
     ~of_toml:(fun ~key v ->
-      match v with
-      | TString s ->
-        let depversions = versions_of_string s in
-        { depname = None; depversions;
-          depdoc = false; deptest = false; depopt = false }
-      | TTable table ->
-        let depname = EzToml.get_string_option table [ "libname" ] in
-        let depversions = EzToml.get_string_default table [ "version" ] "" in
-        let depversions = versions_of_string depversions in
-        let deptest = EzToml.get_bool_default table [ "for-test" ] false in
-        let depdoc = EzToml.get_bool_default table [ "for-doc" ] false in
-        let depopt = EzToml.get_bool_default table [ "opt" ] false in
-        { depname; depversions; depdoc; deptest ; depopt }
-      | _ -> Error.raise "Bad dependency version for %s" (EzToml.key2str key))
+        match v with
+        | TString s ->
+            let depversions = versions_of_string s in
+            { depname = None; depversions;
+              depdoc = false; deptest = false; depopt = false }
+        | TTable table ->
+            let depname = EzToml.get_string_option table [ "libname" ] in
+            let depversions = EzToml.get_string_default table [ "version" ] "" in
+            let depversions = versions_of_string depversions in
+            let deptest = EzToml.get_bool_default table [ "for-test" ] false in
+            let depdoc = EzToml.get_bool_default table [ "for-doc" ] false in
+            let depopt = EzToml.get_bool_default table [ "opt" ] false in
+            { depname; depversions; depdoc; deptest ; depopt }
+        | _ -> Error.raise "Bad dependency version for %s" (EzToml.key2str key))
 
 let dependencies_encoding =
   EzToml.encoding
@@ -333,11 +342,23 @@ let string_of_package pk =
           [ "whether all modules should be packed/wrapped (default is true)" ]
         ~default: {|pack-modules = false|}
         ( bool_option pk.p_pack_modules );
+      option "optional"
+        ~comment:
+          [ "whether the package can be silently skipped if missing deps (default is false)" ]
+        ~default: {|optional = true|}
+        ( bool_option pk.p_optional );
       option "pack"
         ~comment:
           [ "module name used to pack modules (if pack-modules is true)" ]
         ~default: {|pack = "Mylib"|}
         ( string_option pk.p_pack );
+      option "preprocess"
+        ~comment:
+          [ "preprocessing options";
+            {|  preprocess = "per-module (((action (run ./toto.sh %{input-file})) mod))" |}
+          ]
+        ~default: {|preprocess = "pps ppx_deriving_encoding"|}
+        ( string_option pk.p_preprocess );
 
       option "skip"
         ~comment: [ "files to skip while updating at package level" ]
@@ -364,6 +385,7 @@ let string_of_package pk =
           {|  opam-trailer = "pin-depends: [..]" |};
           {|  no-opam-test = "yes" |};
           {|  no-opam-doc = "yes" |};
+          {|  gen-opam = "some" | "all" |};
         ]
         ( encoding fields_encoding pk.p_fields );
     ])
@@ -400,6 +422,9 @@ let package_of_toml ?default ?p_file table =
   let p_pack =
     EzToml.get_string_option table [ "pack" ] ?default:default.p_pack
   in
+  let p_preprocess =
+    EzToml.get_string_option table [ "preprocess" ] ?default:default.p_pack
+  in
   let p_version =
     EzToml.get_string_option table [ "version" ] ?default:default.p_version
   in
@@ -416,6 +441,10 @@ let package_of_toml ?default ?p_file table =
   let p_pack_modules =
     EzToml.get_bool_option table [ "pack-modules" ]
       ?default:default.p_pack_modules
+  in
+  let p_optional =
+    EzToml.get_bool_option table [ "optional" ]
+      ?default:default.p_optional
   in
   let p_dependencies =
     EzToml.get_encoding_default dependencies_encoding table [ "dependencies" ]
@@ -457,6 +486,7 @@ let package_of_toml ?default ?p_file table =
     dir;
     project;
     p_pack;
+    p_preprocess;
     p_file;
     kind;
     p_version;
@@ -471,6 +501,7 @@ let package_of_toml ?default ?p_file table =
     p_skeleton;
     p_generators;
     p_skip;
+    p_optional;
   }
 
 let package_of_toml ?default table =
