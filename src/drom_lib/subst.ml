@@ -30,6 +30,11 @@ let maybe_string = function
   | None -> ""
   | Some s -> s
 
+let with_buffer f =
+  let b = Buffer.create 100 in
+  f b ;
+  Buffer.contents b
+
 let project_brace (_, p) v =
   match v with
   | "name" -> p.package.name
@@ -144,14 +149,24 @@ let project_brace (_, p) v =
             github_organization p.package.name )
   | "sphinx-target" -> Misc.sphinx_target p
   | "odoc-target" -> Misc.odoc_target p
-  | "badge-ci" -> (
-      match p.github_organization with
-      | None -> ""
-      | Some github_organization ->
-          Printf.sprintf
-            "[![Actions \
-             Status](https://github.com/%s/%s/workflows/Main%%20Workflow/badge.svg)](https://github.com/%s/%s/actions)"
-            github_organization p.package.name github_organization p.package.name )
+  | "badge-ci" ->
+      begin
+        match p.github_organization with
+        | None -> ""
+        | Some github_organization ->
+            with_buffer (fun b ->
+                List.iter (fun workflow ->
+                    Printf.bprintf b
+                      "[![Actions \
+                       Status](https://github.com/%s/%s/workflows/%s/badge.svg)](https://github.com/%s/%s/actions)"
+                      github_organization p.package.name
+                      workflow
+                      github_organization p.package.name )
+                  [ "Main%20Workflow";
+                    "doc-deploy"
+                  ]
+              )
+      end
   | "badge-release" -> (
       match p.github_organization with
       | None -> ""

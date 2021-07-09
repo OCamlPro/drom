@@ -6,7 +6,7 @@ on:
 jobs:
   doc-deploy:
     runs-on: !{ci-first-system}
-
+!(github-worlflow-env)
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -39,6 +39,7 @@ jobs:
         if: steps.cache-opam.outputs.cache-hit != 'true'
       - run: opam upgrade --fixup
         if: steps.cache-opam.outputs.cache-hit == 'true'
+!(github-workflow-before-doc)
       - name: build-doc
         run: |
           make doc

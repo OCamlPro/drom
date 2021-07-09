@@ -44,7 +44,7 @@ for-test = true
 [project]
 pack-modules = true
 skip-dirs = []
-skip = "test sphinx github docs ocamlformat ocp-indent"
+skip = "@test @sphinx @docs @ocamlformat @ocp-indent"
 
 [[package]]
 skeleton = "library"

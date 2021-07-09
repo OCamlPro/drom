@@ -27,7 +27,7 @@ jobs:
 ![fi]
 
     runs-on: ${{ matrix.os }}
-
+!(github-worlflow-env)
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -58,19 +58,19 @@ jobs:
       - run: opam pin add . -y --no-action
 
       - run: opam depext -y !{packages}
-        if: steps.cache-opam.outputs.cache-hit != 'true'
+#        if: steps.cache-opam.outputs.cache-hit != 'true'
 
       - run: opam install -y ./*.opam --deps-only --with-test
-        if: steps.cache-opam.outputs.cache-hit != 'true'
+#        if: steps.cache-opam.outputs.cache-hit != 'true'
 
-      - run: opam upgrade --fixup
-        if: steps.cache-opam.outputs.cache-hit == 'true'
+#      - run: opam upgrade --fixup
+#        if: steps.cache-opam.outputs.cache-hit == 'true'
 
       - run: dos2unix scripts/*.sh
         if: matrix.os == 'windows-latest'
-
+!(github-workflow-before-build)
       - run: make build
-
+!(github-workflow-after-build)
       - name: run test suite
         run: |
           ./scripts/before.sh test
