@@ -17,7 +17,8 @@
    ppx_expect
    odoc
    ocamlformat
- ))
+  )
+ )
 
 (package
  (name drom_lib)
@@ -36,5 +37,6 @@
    ppx_expect
    odoc
    ocamlformat
- ))
+  )
+ )
 

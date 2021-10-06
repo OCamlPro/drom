@@ -7,18 +7,28 @@ cd2f56d49b2fb77fd4b009da82e6218d:.
 
 # begin context for .github/workflows/doc-deploy.yml
 # file .github/workflows/doc-deploy.yml
-36728c7f943685259ab337514c0de965:.github/workflows/doc-deploy.yml
+3001f20880a67d3182b9edc8aea2586e:.github/workflows/doc-deploy.yml
 # end context for .github/workflows/doc-deploy.yml
 
 # begin context for .github/workflows/workflow.yml
 # file .github/workflows/workflow.yml
-6d50aa73419e34f381087588a1f1b7e5:.github/workflows/workflow.yml
+405466ca55c994b1444491cda81ddc8c:.github/workflows/workflow.yml
 # end context for .github/workflows/workflow.yml
 
 # begin context for .gitignore
 # file .gitignore
 ae6a87df5770f4f6a09196ec38906d5a:.gitignore
 # end context for .gitignore
+
+# begin context for .ocamlformat
+# file .ocamlformat
+51f788c6dcd47d33ffec6427b686ed4f:.ocamlformat
+# end context for .ocamlformat
+
+# begin context for .ocamlformat-ignore
+# file .ocamlformat-ignore
+a8d1bcd6f62c6b813b77d3ff8959d8d2:.ocamlformat-ignore
+# end context for .ocamlformat-ignore
 
 # begin context for .ocp-indent
 # file .ocp-indent
@@ -42,7 +52,7 @@ d091b81b6155e5fd5d6556fc8bba0094:LICENSE.md
 
 # begin context for README.md
 # file README.md
-8f82018407e6d8849fcabf4bb4a122bf:README.md
+be6fbbbeb5dd7b2e886b169f717f192e:README.md
 # end context for README.md
 
 # begin context for docs/README.txt
@@ -82,7 +92,7 @@ c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 
 # begin context for drom.opam
 # file drom.opam
-6570480228728ea1989823bea5fb4872:drom.opam
+912727ee60f8c2514cfc10831a95b55f:drom.opam
 # end context for drom.opam
 
 # begin context for drom.toml
@@ -92,17 +102,17 @@ c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 
 # begin context for drom_lib.opam
 # file drom_lib.opam
-b8421dbde46f861c6390aba6540a1d7d:drom_lib.opam
+e7ca10e030f264d6a36ac1c7e7f88adc:drom_lib.opam
 # end context for drom_lib.opam
 
 # begin context for dune
 # file dune
-f5ed08bd9458ec38573e43de911b83ad:dune
+fcff7ba13bbb9d857afe45cc5538ed11:dune
 # end context for dune
 
 # begin context for dune-project
 # file dune-project
-f321691e6bc4d17992a53826854de9ea:dune-project
+1fb71735922ad37f0cee0a096267fd2c:dune-project
 # end context for dune-project
 
 # begin context for scripts/after.sh
