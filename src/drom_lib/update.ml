@@ -22,13 +22,24 @@ type update_args =
     mutable arg_diff : bool;
     mutable arg_skip : (bool * string) list;
     mutable arg_promote_skip : bool ;
+    mutable arg_edition : string option ;
+    mutable arg_min_edition : string option ;
+  }
+
+let default_args () =
+  {
+    arg_upgrade = false;
+    arg_force = false;
+    arg_diff = false;
+    arg_skip = [] ;
+    arg_promote_skip = false;
+
+    arg_edition = None ;
+    arg_min_edition = None ;
   }
 
 let update_args () =
-  let args =
-    { arg_upgrade = false; arg_force = false; arg_diff = false;
-      arg_skip = [] ; arg_promote_skip = false }
-  in
+  let args = default_args () in
   let specs =
     [ ( [ "f" ; "force" ],
         Arg.Unit (fun () -> args.arg_force <- true),
@@ -36,14 +47,14 @@ let update_args () =
       ( [ "skip" ],
         Arg.String
           (fun s ->
-            args.arg_skip <- (true, s) :: args.arg_skip;
-            args.arg_upgrade <- true),
+             args.arg_skip <- (true, s) :: args.arg_skip;
+             args.arg_upgrade <- true),
         EZCMD.info ~docv:"FILE" "Add $(docv) to skip list" );
       ( [ "unskip" ],
         Arg.String
           (fun s ->
-            args.arg_skip <- (false, s) :: args.arg_skip;
-            args.arg_upgrade <- true),
+             args.arg_skip <- (false, s) :: args.arg_skip;
+             args.arg_upgrade <- true),
         EZCMD.info ~docv:"FILE" "Remove $(docv) from skip list" );
       ( [ "diff" ],
         Arg.Unit (fun () -> args.arg_diff <- true),
@@ -51,6 +62,12 @@ let update_args () =
       ( [ "promote-skip" ],
         Arg.Unit (fun () -> args.arg_promote_skip <- true),
         EZCMD.info "Promote user-modified files to skip field" );
+
+
+      [ "edition" ], Arg.String (fun s -> args.arg_edition <- Some s),
+      EZCMD.info ~docv:"OCAMLVERSION" "Set project default OCaml version" ;
+      [ "min-edition" ], Arg.String (fun s -> args.arg_min_edition <- Some s),
+      EZCMD.info ~docv:"OCAMLVERSION" "Set project minimal OCaml version" ;
     ]
   in
   (args, specs)
@@ -68,17 +85,22 @@ let compute_config_hash files =
   Hashes.digest_content ~file:"" to_hash
 
 let update_files ?args ?(git = false) ?(create = false) p =
-  let force, upgrade, skip, diff, promote_skip =
+  (*
+  let force, upgrade, skip, diff, promote_skip, edition, min_edition =
     match args with
     | None -> (false, false, [], false, false)
     | Some args ->
         (args.arg_force, args.arg_upgrade, args.arg_skip, args.arg_diff,
          args.arg_promote_skip)
   in
-
+*)
+  let args = match args with
+    | None -> default_args ()
+    | Some args -> args
+  in
   let changed = false in
   let p, changed =
-    match skip with
+    match args.arg_skip with
     | [] -> (p, changed)
     | skip ->
         let skip =
@@ -92,6 +114,16 @@ let update_files ?args ?(git = false) ?(create = false) p =
         in
         let p = { p with skip } in
         (p, true)
+  in
+
+  let p, changed = match args.arg_edition with
+    | None -> p, changed
+    | Some edition -> { p with edition }, true
+  in
+
+  let p, changed = match args.arg_min_edition with
+    | None -> p, changed
+    | Some min_edition -> { p with min_edition }, true
   in
 
   let can_skip = ref [] in
@@ -133,7 +165,7 @@ let update_files ?args ?(git = false) ?(create = false) p =
       end;
       false
     end else
-      force
+      args.arg_force
       ||
       match Hashes.get hashes filename with
       | exception Not_found ->
@@ -150,7 +182,7 @@ let update_files ?args ?(git = false) ?(create = false) p =
           if modified then (
             skipped := filename :: !skipped;
             Printf.eprintf "Skipping modified file %s\n%!" filename;
-            if diff then begin
+            if args.arg_diff then begin
               let basename = Filename.basename filename in
               let dirname = Globals.drom_dir // "temp" in
               let dirname_a = dirname // "a" in
@@ -209,7 +241,7 @@ let update_files ?args ?(git = false) ?(create = false) p =
   let config = Lazy.force Config.config in
 
   let p, changed =
-    if upgrade then
+    if args.arg_upgrade then
       let p, changed =
         match (p.github_organization, config.config_github_organization) with
         | None, Some s -> ({ p with github_organization = Some s }, true)
@@ -307,7 +339,7 @@ let update_files ?args ?(git = false) ?(create = false) p =
         p;
 
       let p, changed =
-        if promote_skip && !skipped <> [] then (
+        if args.arg_promote_skip && !skipped <> [] then (
           let skip = p.skip @ !skipped in
           Printf.eprintf "skip field promotion: %s\n%!"
             (String.concat " " !skipped);
@@ -316,7 +348,7 @@ let update_files ?args ?(git = false) ?(create = false) p =
           (p, changed)
       in
 
-      let upgrade = upgrade || changed in
+      let upgrade = args.arg_upgrade || changed in
       let skip =
         not (upgrade || not (Sys.file_exists "drom.toml"))
       in

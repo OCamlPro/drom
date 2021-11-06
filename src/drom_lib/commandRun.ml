@@ -17,7 +17,6 @@ let action ~args ~cmd ~package =
   if !Globals.verbosity = 1 then decr Globals.verbosity;
   (* By default, `drom run` should be quiet *)
   let p = Build.build ~args () in
-  let cmd = !cmd in
   let cmd =
     match package with
     | Some package -> package :: cmd
@@ -37,7 +36,9 @@ let cmd =
   let package = ref None in
   let args, specs = Build.build_args () in
   EZCMD.sub cmd_name
-    (fun () -> action ~args ~cmd ~package:!package)
+    (fun () ->
+       Printf.eprintf "aaa\n\n%!";
+       action ~args ~cmd:!cmd ~package:!package)
     ~args: (
       [ ( [ "p" ],
           Arg.String (fun s -> package := Some s),

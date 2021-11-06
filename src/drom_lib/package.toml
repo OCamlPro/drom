@@ -21,15 +21,22 @@ kind = "library"
 # name of a file to generate with the current version
 gen-version = "version.ml"
 
-# supported file generators are "ocamllex", "ocamlyacc" and "menhir"
-# default is [ "ocamllex", "ocamlyacc" ]
+# supported file generators are "ocamllex", "ocamlyacc" and "menhir" 
+# default is [ "ocamllex", "ocamlyacc" ] 
 # generators = [ "ocamllex", "menhir" ]
 
 # whether all modules should be packed/wrapped (default is true)
 pack-modules = true
 
+# whether the package can be silently skipped if missing deps (default is false)
+# optional = true
+
 # module name used to pack modules (if pack-modules is true)
 # pack = "Mylib"
+
+# preprocessing options
+#  preprocess = "per-module (((action (run ./toto.sh %{input-file})) mod))" 
+# preprocess = "pps ppx_deriving_encoding"
 
 # files to skip while updating at package level
 # skip = []
@@ -37,7 +44,7 @@ pack-modules = true
 # package library dependencies
 #   [dependencies]
 #   ez_file = ">=0.1 <1.3"
-#   base-unix = { libname = "unix", version = ">=base" }
+#   base-unix = { libname = "unix", version = ">=base" } 
 [dependencies]
 directories = ">=0.2"
 ez_cmdliner = "0.2.0"
@@ -52,5 +59,13 @@ toml = "7.0.0"
 # ...
 
 # package fields (depends on package skeleton)
+#Examples:
+#  dune-stanzas = "(preprocess (pps ppx_deriving_encoding))" 
+#  dune-libraries = "bigstring" 
+#  dune-trailer = "(install (..))" 
+#  opam-trailer = "pin-depends: [..]" 
+#  no-opam-test = "yes" 
+#  no-opam-doc = "yes" 
+#  gen-opam = "some" | "all" 
 [fields]
 dune-libraries = "bigarray"
