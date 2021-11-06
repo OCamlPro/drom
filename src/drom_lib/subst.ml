@@ -162,9 +162,7 @@ let project_brace (_, p) v =
                       github_organization p.package.name
                       workflow
                       github_organization p.package.name )
-                  [ "Main%20Workflow";
-                    "doc-deploy"
-                  ]
+                  [ "Main%20Workflow" ]
               )
       end
   | "badge-release" -> (

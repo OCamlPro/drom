@@ -45,13 +45,18 @@ jobs:
         uses: avsm/setup-ocaml@v2
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          opam-pin: false
+          opam-depext: false
 
       - name: Set git user
         run: |
           git config --global user.name github-actions
           git config --global user.email github-actions-bot@users.noreply.github.com
 ![if:field:opam-repo]
-      - run: opam repo add extra !(opam-repo)
+      - run: |
+         opam repo add extra !(opam-repo)
+         sudo apt-get update
+
 ![else]
       # define opam-repo = "git+https://" to add an extra opam repo
 ![fi]
@@ -87,7 +92,8 @@ jobs:
         if: github.ref == 'refs/heads/master' && matrix.ocaml-compiler == '!{edition}' && matrix.os == '!{ci-first-system}'
         run: |
              sudo apt install -yqq python3-sphinx python3-sphinx-rtd-theme
-             opam install -y dune odoc          make doc
+             opam install -y dune odoc
+             make doc
              touch _drom/docs/.nojekyll
              touch _drom/docs/!{sphinx-target}/.nojekyll
              touch _drom/docs/!{odoc-target}/.nojekyll
