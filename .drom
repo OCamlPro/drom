@@ -2,17 +2,12 @@
 
 # hash of toml configuration files
 # used for generation of all files
-cd2f56d49b2fb77fd4b009da82e6218d:.
+4e750b3e9b0f2ef1b3d4d2227a33d910:.
 # end context for .
-
-# begin context for .github/workflows/doc-deploy.yml
-# file .github/workflows/doc-deploy.yml
-3001f20880a67d3182b9edc8aea2586e:.github/workflows/doc-deploy.yml
-# end context for .github/workflows/doc-deploy.yml
 
 # begin context for .github/workflows/workflow.yml
 # file .github/workflows/workflow.yml
-405466ca55c994b1444491cda81ddc8c:.github/workflows/workflow.yml
+3dce0e06a57ca632fc181c78e4f12601:.github/workflows/workflow.yml
 # end context for .github/workflows/workflow.yml
 
 # begin context for .gitignore
@@ -52,7 +47,7 @@ d091b81b6155e5fd5d6556fc8bba0094:LICENSE.md
 
 # begin context for README.md
 # file README.md
-be6fbbbeb5dd7b2e886b169f717f192e:README.md
+8f82018407e6d8849fcabf4bb4a122bf:README.md
 # end context for README.md
 
 # begin context for docs/README.txt
@@ -92,7 +87,7 @@ c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 
 # begin context for drom.opam
 # file drom.opam
-912727ee60f8c2514cfc10831a95b55f:drom.opam
+49be4d82576a97d124979cb98a528283:drom.opam
 # end context for drom.opam
 
 # begin context for drom.toml
@@ -102,7 +97,7 @@ c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 
 # begin context for drom_lib.opam
 # file drom_lib.opam
-e7ca10e030f264d6a36ac1c7e7f88adc:drom_lib.opam
+5242eb67def1f0e9731f4d2a83999dd2:drom_lib.opam
 # end context for drom_lib.opam
 
 # begin context for dune
@@ -112,7 +107,7 @@ fcff7ba13bbb9d857afe45cc5538ed11:dune
 
 # begin context for dune-project
 # file dune-project
-1fb71735922ad37f0cee0a096267fd2c:dune-project
+7c085d8a3e8320e6f1cf62d641332bda:dune-project
 # end context for dune-project
 
 # begin context for scripts/after.sh
@@ -197,7 +192,7 @@ c629dc904af03262b5deededb0c9f2a4:src/drom_lib/package.toml
 
 # begin context for src/drom_lib/version.mlt
 # file src/drom_lib/version.mlt
-6a3411944251a158f283de8696b8c968:src/drom_lib/version.mlt
+69e7ed09c0de1448e6e2e0e8deba6a48:src/drom_lib/version.mlt
 # end context for src/drom_lib/version.mlt
 
 # begin context for test/expect-tests/dune

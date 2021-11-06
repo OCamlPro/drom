@@ -47,6 +47,8 @@ jobs:
         uses: avsm/setup-ocaml@v2
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          opam-pin: false
+          opam-depext: false
 
       - name: Set git user
         run: |
@@ -87,7 +89,8 @@ jobs:
         if: github.ref == 'refs/heads/master' && matrix.ocaml-compiler == '4.10.0' && matrix.os == 'ubuntu-latest'
         run: |
              sudo apt install -yqq python3-sphinx python3-sphinx-rtd-theme
-             opam install -y dune odoc          make doc
+             opam install -y dune odoc
+             make doc
              touch _drom/docs/.nojekyll
              touch _drom/docs/sphinx/.nojekyll
              touch _drom/docs/doc/.nojekyll
