@@ -189,17 +189,19 @@ let subst s f =
 
 let list_opam_packages dir =
   let packages = ref [] in
-  let files =
-    match Sys.readdir dir with
-    | exception _ -> [||]
-    | files -> files
-  in
-  Array.iter
-    (fun file ->
-      if Filename.check_suffix file ".opam" then
-        let package = Filename.chop_suffix file ".opam" in
-        packages := package :: !packages)
-    files;
+  List.iter (fun dir ->
+      let files =
+        match Sys.readdir dir with
+        | exception _ -> [||]
+        | files -> files
+      in
+      Array.iter
+        (fun file ->
+           if Filename.check_suffix file ".opam" then
+             let package = Filename.chop_suffix file ".opam" in
+             packages := package :: !packages)
+        files;
+    ) [ dir ; dir // "opam" ];
   !packages
 
 let semantic_version version =

@@ -2,12 +2,12 @@
 
 # hash of toml configuration files
 # used for generation of all files
-f721ea8bca78cb1a877aaaeb9a1f0b4f:.
+50b0e294343414fbaa0f8edce9bce9af:.
 # end context for .
 
 # begin context for .github/workflows/workflow.yml
 # file .github/workflows/workflow.yml
-3dce0e06a57ca632fc181c78e4f12601:.github/workflows/workflow.yml
+76600df48f35ce44f8e2883463ab589d:.github/workflows/workflow.yml
 # end context for .github/workflows/workflow.yml
 
 # begin context for .gitignore
@@ -87,7 +87,7 @@ c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 
 # begin context for drom.opam
 # file drom.opam
-cb98847de9a7ce16cbc3f2fbb0fcd0aa:drom.opam
+159d94e9e52aefefb6669b1826a731d3:drom.opam
 # end context for drom.opam
 
 # begin context for drom.toml
@@ -97,7 +97,7 @@ c75f676d1f174e5262b75b203f5a6ecb:drom.toml
 
 # begin context for drom_lib.opam
 # file drom_lib.opam
-36693aa6c673a68d184efb11a4b09168:drom_lib.opam
+b6691ca044fe7a86ec5bf7376316c2d7:drom_lib.opam
 # end context for drom_lib.opam
 
 # begin context for dune
@@ -107,8 +107,18 @@ fcff7ba13bbb9d857afe45cc5538ed11:dune
 
 # begin context for dune-project
 # file dune-project
-32bb9e048af742ac047e65d6eef110a6:dune-project
+4bbb875958191dd914ba10d8b3e96e55:dune-project
 # end context for dune-project
+
+# begin context for opam/drom.opam
+# file opam/drom.opam
+159d94e9e52aefefb6669b1826a731d3:opam/drom.opam
+# end context for opam/drom.opam
+
+# begin context for opam/drom_lib.opam
+# file opam/drom_lib.opam
+b6691ca044fe7a86ec5bf7376316c2d7:opam/drom_lib.opam
+# end context for opam/drom_lib.opam
 
 # begin context for scripts/after.sh
 # file scripts/after.sh
@@ -192,7 +202,7 @@ a4a604d4740d5f79a02ee3acdaae14f6:src/drom/package.toml
 
 # begin context for src/drom_lib/version.mlt
 # file src/drom_lib/version.mlt
-69e7ed09c0de1448e6e2e0e8deba6a48:src/drom_lib/version.mlt
+a908e37f50afa4da52215ce1f1f49b19:src/drom_lib/version.mlt
 # end context for src/drom_lib/version.mlt
 
 # begin context for test/expect-tests/dune

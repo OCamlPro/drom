@@ -13,13 +13,16 @@ open EzFile.OP
 
 let cmd_name = "install"
 
-let action ~args () =
+let action ~args ~packages () =
   if Misc.vendor_packages () <> [] then
     Error.raise "Cannot install project if the project has vendors/ packages";
 
   let _p = Build.build ~args () in
   let y = args.arg_yes in
-  let packages = Misc.list_opam_packages "." in
+  let packages = match packages with
+    | [] -> Misc.list_opam_packages "."
+    | packages -> packages
+  in
   let overlay_dir = "_opam" // ".opam-switch" // "overlay" in
   let some_pinned = ref [] in
   let already_pinned = ref true in
@@ -63,8 +66,16 @@ let action ~args () =
 
 let cmd =
   let args, specs = Build.build_args () in
+  let packages = ref [] in
   EZCMD.sub
     cmd_name
-    (fun () -> action ~args ())
-    ~args: specs
+    (fun () -> action
+        ~args ~packages:!packages ())
+    ~args:
+      ( specs
+        @
+        [
+          [], EZCMD.Anons (fun list -> packages := list),
+          EZCMD.info ~docv:"PACKAGES" "Specify the list of packages to install";
+        ])
     ~doc: "Build & install the project in the project opam switch"
