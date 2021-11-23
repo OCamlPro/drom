@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Sub-commands and Arguments &mdash; drom master
- (2a2e0fb
-) (2021/11/23 12:55) documentation</title>
+ (bb9c4b6
+) (2021/11/23 13:24) documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
               <div class="version">
                 master
- (2a2e0fb
+ (bb9c4b6
 )
               </div>
             
@@ -475,11 +475,12 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 <h2>main.exe install<a class="headerlink" href="#main-exe-install" title="Permalink to this headline">¶</a></h2>
 <p>Build &amp; install the project in the project opam switch</p>
 <p><strong>USAGE</strong></p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">install</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">install</span> <span class="nc">PACKAGES</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">PACKAGES</span></code>   Specify the list of packages to install</li>
 <li><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">VERSION</span></code>   Use this OCaml edition</li>
 <li><code class="code docutils literal notranslate"><span class="pre">--local</span></code>   Create a local switch instead of using a global switch</li>
 <li><code class="code docutils literal notranslate"><span class="pre">--locked</span></code>   (since version 0.2.1) Use .locked file if it exists</li>

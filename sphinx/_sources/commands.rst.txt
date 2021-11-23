@@ -414,10 +414,12 @@ Build & install the project in the project opam switch
 **USAGE**
 ::
   
-  main.exe install [OPTIONS]
+  main.exe install PACKAGES [OPTIONS]
 
 Where options are:
 
+
+* :code:`PACKAGES`   Specify the list of packages to install
 
 * :code:`--edition VERSION`   Use this OCaml edition
 
