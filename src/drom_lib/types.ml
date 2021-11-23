@@ -111,7 +111,7 @@ type config =
     config_license : string option;
     config_copyright : string option;
     config_opam_repo : string option;
-    config_dev_tools : string list;
+    config_dev_tools : string list option;
   }
 
 type opam_kind =

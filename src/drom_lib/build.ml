@@ -347,7 +347,10 @@ had_switch: %b
   let extra_packages =
     if force_dev_deps then
       let config = Lazy.force Config.config in
-      config.config_dev_tools @ extra_packages
+      ( match config.config_dev_tools with
+        | None -> [ "merlin"; "ocp-indent" ]
+        | Some dev_tools -> dev_tools )
+      @ extra_packages
     else
       extra_packages
   in
