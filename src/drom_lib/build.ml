@@ -102,8 +102,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
         | _ -> () ) );
 
   ( if arg_upgrade then
-      let create = false in
-      Update.update_files ~twice:false ~create p
+      Update.update_files ~twice:false ~create:false p
     else
       let hashes = Hashes.load () in
       if

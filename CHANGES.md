@@ -1,5 +1,11 @@
 
-## v.05.0
+
+## v.0.6.0
+* Generate opam files in opam/ instead of top directory
+* `drom install PACKAGES` where PACKAGES is a limited set of project packages
+
+## v.0.5.0
+* Add --edition and --min-edition to `drom new` and `drom project`
 * Add support for optional dependencies:
   lib = { opt = true, version = "3.1" }
 * Add @ before skip tags: skip = [ "@test" ]

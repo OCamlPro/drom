@@ -306,8 +306,16 @@ let update_files ?args ?(git = false) ?(create = false) p =
                    write_file hashes ( version_file ^ "t")
                      (GenVersion.file package file)
              );
-             write_file hashes opam_filename
-               (Opam.opam_of_project Single package))
+             EzFile.make_dir ~p:true "opam";
+             let full_filename = "opam" // opam_filename in
+             write_file hashes full_filename
+               (Opam.opam_of_project Single package);
+             if Sys.file_exists opam_filename then begin
+               Printf.eprintf "Removing deprecated %s (moved to %s)\n%!"
+                 opam_filename full_filename;
+               Sys.remove opam_filename;
+             end
+        )
         p.packages;
 
       EzFile.make_dir ~p:true Globals.drom_dir;

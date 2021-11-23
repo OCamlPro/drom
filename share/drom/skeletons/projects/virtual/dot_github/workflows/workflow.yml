@@ -37,7 +37,7 @@ jobs:
         id: cache-opam
         with:
           path: ~/.opam
-          key: v2-${{ runner.os }}-!{name}-${{ matrix.ocaml-compiler }}-${{ hashFiles('*.opam') }}
+          key: v2-${{ runner.os }}-!{name}-${{ matrix.ocaml-compiler }}-${{ hashFiles('opam/*.opam') }}
 #          restore-keys: |
 #            v2-${{ runner.os }}-opam-${{ matrix.ocaml-compiler }}-
 
@@ -65,7 +65,7 @@ jobs:
       - run: opam depext -y !{packages}
 #        if: steps.cache-opam.outputs.cache-hit != 'true'
 
-      - run: opam install -y ./*.opam --deps-only --with-test
+      - run: opam install -y opam/*.opam --deps-only --with-test
 #        if: steps.cache-opam.outputs.cache-hit != 'true'
 
 #      - run: opam upgrade --fixup
