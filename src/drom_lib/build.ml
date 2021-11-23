@@ -14,6 +14,11 @@ open EZCMD.TYPES
 open EzFile.OP
 open EzCompat
 
+let is_local_directory file =
+  match Unix.lstat file with
+  | exception _ -> false
+  | st -> st.Unix.st_kind = Unix.S_DIR
+
 type build_args =
   { mutable arg_switch : switch_arg option;
     mutable arg_yes : bool;
@@ -160,7 +165,8 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
       let env_switch = Globals.opam_switch_prefix in
 
       ( match Unix.lstat "_opam" with
-        | exception _ -> Opam.run ~y [ "switch"; "create" ] [ "."; "--empty" ]
+        | exception _ -> Opam.run ~y:true
+                           [ "switch"; "create" ] [ "."; "--empty" ]
         | st -> (
             let current_switch =
               match st.Unix.st_kind with
@@ -231,6 +237,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
           | None -> p.edition
           | Some edition -> edition
         in
+        let y = y || is_local_directory "_opam" in
         Opam.run ~y [ "install" ] [ ocaml_nv ];
         Opam.run [ "switch"; "set-base" ] [ ocaml_nv ]
     | v -> (
@@ -324,6 +331,8 @@ had_switch: %b
     EzFile.write_file tmp_opam_filename new_opam_file;
 
     let vendor_packages = Misc.vendor_packages () in
+
+    Printf.eprintf "current dir: %s\n%!" (Sys.getcwd ());
 
     Opam.run ~y [ "install" ]
       ( [ "--deps-only"; "." // tmp_opam_filename ]
