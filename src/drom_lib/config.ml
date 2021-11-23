@@ -31,8 +31,8 @@ let config_of_toml filename =
       EzToml.get_string_option table [ "user"; "opam-repo" ]
     in
     let config_dev_tools =
-      EzToml.get_string_list_default table [ "user"; "dev-tools" ]
-        [ "merlin" ; "ocp-indent" ]
+      EzToml.get_string_list_option table [ "user"; "dev-tools" ]
+      (* [ "merlin" ; "ocp-indent" ] *)
     in
     { config_author;
       config_github_organization;
@@ -55,9 +55,38 @@ let config_template =
 |}
 
 
+let update_with oldc newc =
+  {
+    config_author = ( match newc.config_author, oldc.config_author with
+        | None, oldc -> oldc
+        | newc, _ -> newc ) ;
+    config_github_organization =
+      ( match newc.config_github_organization,
+              oldc.config_github_organization with
+        | None, oldc -> oldc
+        | newc, _ -> newc ) ;
+    config_share_dir = ( match newc.config_share_dir, oldc.config_share_dir with
+        | None, oldc -> oldc
+        | newc, _ -> newc ) ;
+    config_license = ( match newc.config_license, oldc.config_license with
+        | None, oldc -> oldc
+        | newc, _ -> newc ) ;
+    config_copyright = ( match newc.config_copyright, oldc.config_copyright with
+        | None, oldc -> oldc
+        | newc, _ -> newc ) ;
+    config_opam_repo = ( match newc.config_opam_repo, oldc.config_opam_repo with
+        | None, oldc -> oldc
+        | newc, _ -> newc ) ;
+    config_dev_tools = ( match newc.config_dev_tools, oldc.config_dev_tools with
+        | None, oldc -> oldc
+        | newc, _ -> newc ) ;
+  }
+
+let getenv_opt v = match Sys.getenv v with
+  | exception Not_found -> None
+  | s -> Some s
 
 let load () =
-
   let config_file = Globals.config_dir // "config" in
 
   if not @@ Sys.file_exists config_file then begin
@@ -65,39 +94,38 @@ let load () =
     EzFile.write_file config_file config_template
   end;
 
-  let config = config_of_toml config_file in
+  let config_home = config_of_toml config_file in
 
-  let config =
-    match Sys.getenv "DROM_AUTHOR" with
-    | s -> { config with config_author = Some s }
-    | exception Not_found -> config
+  let config_env = {
+    config_author = getenv_opt "DROM_AUTHOR" ;
+    config_github_organization = getenv_opt "DROM_GITHUB_ORGANIZATION" ;
+    config_license = getenv_opt "DROM_GITHUB_ORGANIZATION" ;
+    config_copyright = getenv_opt "DROM_COPYRIGHT" ;
+    config_opam_repo = getenv_opt "DROM_OPAM_REPO" ;
+    config_share_dir = getenv_opt "DROM_SHARE_DIR" ;
+    config_dev_tools = None ;
+  }
   in
-
-  let config =
-    match Sys.getenv "DROM_GITHUB_ORGANIZATION" with
-    | s -> { config with config_github_organization = Some s }
-    | exception Not_found -> config
+  let path = Sys.getcwd () in
+  let rec iter path =
+    let new_path = Filename.dirname path in
+    let config =
+      if new_path <> path then
+        iter new_path
+      else
+        update_with config_home  config_env
+    in
+    let file = path // ".drom.config" in
+    if Sys.file_exists file then begin
+      if !Globals.verbosity > 1 then
+        Printf.eprintf "Loading local user config from %s\n%!" file;
+      let config_local = config_of_toml file in
+      update_with config config_local
+    end
+    else
+      config
   in
-
-  let config =
-    match Sys.getenv "DROM_LICENSE" with
-    | s -> { config with config_license = Some s }
-    | exception Not_found -> config
-  in
-
-  let config =
-    match Sys.getenv "DROM_COPYRIGHT" with
-    | s -> { config with config_copyright = Some s }
-    | exception Not_found -> config
-  in
-
-  let config =
-    match Sys.getenv "DROM_OPAM_REPO" with
-    | s -> { config with config_opam_repo = Some s }
-    | exception Not_found -> config
-  in
-
-  config
+  iter path
 
 let config = lazy (load ())
 
