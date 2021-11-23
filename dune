@@ -322,8 +322,6 @@
     as "skeletons/projects/virtual/docs/sphinx/index.html")
    ( "share/drom/skeletons/projects/virtual/docs/style.css"
     as "skeletons/projects/virtual/docs/style.css")
-   ( "share/drom/skeletons/projects/virtual/dot_github/workflows/doc-deploy.yml"
-    as "skeletons/projects/virtual/dot_github/workflows/doc-deploy.yml")
    ( "share/drom/skeletons/projects/virtual/dot_github/workflows/workflow.yml"
     as "skeletons/projects/virtual/dot_github/workflows/workflow.yml")
    ( "share/drom/skeletons/projects/virtual/dot_gitignore"

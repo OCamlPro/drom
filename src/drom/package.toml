@@ -28,8 +28,15 @@ kind = "program"
 # whether all modules should be packed/wrapped (default is true)
 # pack-modules = false
 
+# whether the package can be silently skipped if missing deps (default is false)
+# optional = true
+
 # module name used to pack modules (if pack-modules is true)
 # pack = "Mylib"
+
+# preprocessing options
+#  preprocess = "per-module (((action (run ./toto.sh %{input-file})) mod))" 
+# preprocess = "pps ppx_deriving_encoding"
 
 # files to skip while updating at package level
 # skip = []
@@ -46,5 +53,13 @@ drom_lib = "version"
 # ...
 
 # package fields (depends on package skeleton)
+#Examples:
+#  dune-stanzas = "(preprocess (pps ppx_deriving_encoding))" 
+#  dune-libraries = "bigstring" 
+#  dune-trailer = "(install (..))" 
+#  opam-trailer = "pin-depends: [..]" 
+#  no-opam-test = "yes" 
+#  no-opam-doc = "yes" 
+#  gen-opam = "some" | "all" 
 [fields]
 # ...

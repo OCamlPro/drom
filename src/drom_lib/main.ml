@@ -80,7 +80,7 @@ let main () =
   try
     EZCMD.main_with_subcommands ~name:Globals.command ~version:Version.version
       ~doc:"Create and manage an OCaml project" ~man:[] ~argv commands
-      ~common_args
+      ~common_args;
   with
   | Error.Error s ->
       Printf.eprintf "Error: %s\n%!" s;
