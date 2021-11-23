@@ -34,6 +34,9 @@ let config_of_toml filename =
       EzToml.get_string_list_option table [ "user"; "dev-tools" ]
       (* [ "merlin" ; "ocp-indent" ] *)
     in
+    let config_auto_upgrade =
+      EzToml.get_bool_option table [ "user"; "auto-upgrade" ]
+    in
     { config_author;
       config_github_organization;
       config_share_dir;
@@ -41,6 +44,7 @@ let config_of_toml filename =
       config_copyright;
       config_opam_repo;
       config_dev_tools;
+      config_auto_upgrade ;
     }
 
 let config_template =
@@ -52,6 +56,7 @@ let config_template =
 # copyright = "Company Ltd"
 # opam-repo = "/home/user/GIT/opam-repository"
 # dev-tools = [ "merlin", "tuareg" ]
+# auto-upgrade = false
 |}
 
 
@@ -80,6 +85,9 @@ let update_with oldc newc =
     config_dev_tools = ( match newc.config_dev_tools, oldc.config_dev_tools with
         | None, oldc -> oldc
         | newc, _ -> newc ) ;
+    config_auto_upgrade = ( match newc.config_auto_upgrade, oldc.config_auto_upgrade with
+        | None, oldc -> oldc
+        | newc, _ -> newc ) ;
   }
 
 let getenv_opt v = match Sys.getenv v with
@@ -104,6 +112,10 @@ let load () =
     config_opam_repo = getenv_opt "DROM_OPAM_REPO" ;
     config_share_dir = getenv_opt "DROM_SHARE_DIR" ;
     config_dev_tools = None ;
+    config_auto_upgrade = ( match getenv_opt "DROM_AUTO_UPGRADE" with
+        | None -> None
+        | Some ( "no" | "0" | "n" | "N" ) -> Some false
+        | _ -> Some true ) ;
   }
   in
   let path = Sys.getcwd () in
@@ -198,3 +210,5 @@ let find_share_dir ?(for_copy=false) () =
 
 let share_dir = lazy ( find_share_dir () )
 let share_dir () = Lazy.force share_dir
+
+let config () = Lazy.force config

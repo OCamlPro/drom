@@ -238,7 +238,7 @@ let update_files ?args ?(git = false) ?(create = false) p =
       EzFile.write_file filename content
   in
 
-  let config = Lazy.force Config.config in
+  let config = Config.config () in
 
   let p, changed =
     if args.arg_upgrade then

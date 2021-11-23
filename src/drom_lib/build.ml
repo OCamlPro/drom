@@ -106,7 +106,9 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
               switch p.min_edition
         | _ -> () ) );
 
-  ( if arg_upgrade then
+  let config = Config.config () in
+
+  ( if arg_upgrade || config.config_auto_upgrade <> Some false then
       Update.update_files ~twice:false ~create:false p
     else
       let hashes = Hashes.load () in
@@ -354,7 +356,7 @@ had_switch: %b
 
   let extra_packages =
     if force_dev_deps then
-      let config = Lazy.force Config.config in
+      let config = Config.config () in
       ( match config.config_dev_tools with
         | None -> [ "merlin"; "ocp-indent" ]
         | Some dev_tools -> dev_tools )

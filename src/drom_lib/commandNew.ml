@@ -202,7 +202,7 @@ Available skeletons are: %s
       exit 2
 
   | Some name -> (
-    let config = Lazy.force Config.config in
+    let config = Config.config () in
     let project = Project.find () in
     match project with
     | None -> create_project ~config ~name ~skeleton ~dir ~inplace ~args

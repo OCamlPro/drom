@@ -3,6 +3,12 @@
 ## v.0.6.0
 * Generate opam files in opam/ instead of top directory
 * `drom install PACKAGES` where PACKAGES is a limited set of project packages
+* `drom build` tries to update program files by default, unless
+   `auto-upgrade: false` is set in user configuration:
+   ```
+   [user]
+   auto-upgrade = false
+   ```
 
 ## v.0.5.0
 * Add --edition and --min-edition to `drom new` and `drom project`

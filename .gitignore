@@ -6,6 +6,6 @@ _build
 /_drom
 /_opam
 /_build
-
+.drom.config
 
 
