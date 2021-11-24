@@ -19,7 +19,7 @@ let about =
 let min_ocaml_edition = "4.07.0"
 let current_ocaml_edition = "4.10.0"
 
-let current_dune_version = "2.6.0"
+let current_dune_version = "2.7.0"
 
 let default_synopsis ~name = Printf.sprintf "The %s project" name
 
@@ -27,6 +27,8 @@ let default_description ~name =
   Printf.sprintf "This is the description\nof the %s OCaml project\n" name
 
 let drom_dir = "_drom"
+
+let build_dir = "_build"
 
 let drom_file = "drom.toml"
 

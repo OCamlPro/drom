@@ -180,7 +180,11 @@ let opam_of_project kind package =
                 filename ;
               OpamParser.FullPos.value_from_string
                 (Printf.sprintf {| "dune" { >= "%s" } |}
-                   Globals.current_dune_version)
+                  (* We insert here the infimum version computed internally instead of copying
+                     the user given specification, if any. This is not a problem since the infimum
+                     meets the given criterias by definition. It also helps opam by giving him
+                     less constraints so it can be seen as optimization. *)
+                   package.project.dune_version)
                 filename
             ]
         in

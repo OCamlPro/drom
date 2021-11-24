@@ -100,6 +100,7 @@ and project =
     mutable tools : (string * dependency) list;
     mutable fields : string StringMap.t;
     year : int;
+    mutable dune_version : string;
   }
 
 and profile = { flags : string StringMap.t }

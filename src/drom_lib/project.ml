@@ -52,6 +52,7 @@ let rec dummy_project =
     share_dirs = [ "share" ] ;
     year = (Misc.date ()).Unix.tm_year;
     generators = StringSet.empty;
+    dune_version = Globals.current_dune_version;
   }
 
 and dummy_package =
@@ -943,6 +944,73 @@ let project_of_toml ?file ?default table =
     ) packages;
   let generators = !generators in
   let year = EzToml.get_int_default table [ project_key; "year" ] d.year in
+
+  (* Check dune specification consistency :
+     - dune version can only be specified at project's level. Defining it
+       at package level has no practical meaning;
+     - it can be given by [dune-lang] key in [fields] section for backward
+       compatibility (this was introduced by the workaround in
+       commit:f8f8f16);
+     - it can be given by an explicit dependency in [tools], which is
+       likely the better way.
+       
+     If no dune version is specified, drom uses the
+     {!Globals.current_dune_version}. *)
+  let dune_version =
+    let find = List.mem_assoc "dune" in
+    (* No dune dependencies in packages tools or dependencies. *)
+    List.iter (fun (p : package) ->
+      if find p.p_dependencies then
+        (* dune is in [p] dependencies which is silly: dune is a tool, not
+           a library. *)
+        Error.raise "Package %s has a dune dependency which has no meaning. Please remove it"
+          p.name;
+      if find p.p_tools then
+        (* dune is in [p] tools which is bad project engineering design. *)
+        Error.raise "Package %s gives dune as a tool dependency. Such dependency should appears at project level, please move it in drom.toml."
+          p.name) packages;
+    (* Legacy dune lang version specification *)
+    let legacy_dune_lang = StringMap.find_opt "dune" p_fields in
+    (* Checking that dune is not in project's dependencies, which has no more 
+       meaning than in packages *)
+    if find dependencies then
+      Error.raise "Project has a dune dependency which has no meaning. Please remove it or move it in [tools].";
+    (* The valid way of overriding dune version. *)
+    let dune_tool_spec = List.assoc_opt "dune" dependencies in
+    (* Normalizing *)
+    let versions = match legacy_dune_lang, dune_tool_spec with
+      | None, None -> [Ge Globals.current_dune_version]
+      | Some legacy, None -> [Ge legacy]
+      | None, Some dep -> dep.depversions
+      | Some legacy, Some dep -> Ge legacy :: dep.depversions in
+    (* The only interesting version is the infimum of possible versions
+       for we need to know if we can use some dune feature or not. We 
+       assume that dune is backward compatible. If it's not, we must
+       track all needed feature dependencies on dune version which is
+       a bit overkill for now. To compute the infimum, we use the
+       bottom "2.0" version which is the initial dune version used 
+       in drom so no support can be expected on lower versions. *)
+    match
+      Misc.infimum
+        ~default:Globals.current_dune_version
+        ~current:version
+        ~bottom:"2.0"
+        versions
+    with
+    | `unknown ->
+      Error.raise
+        "Can't determine the dune minimal version. Please consider less restrictive dune specification."
+    | `conflict (version, constraint_) ->
+      Error.raise
+        "dune version must be (>=%s), which contradicts the (%s) specification"
+        version constraint_
+    | `found version ->
+      version in
+    
+    
+
+
+
   let project =
     { package;
       packages;
@@ -976,6 +1044,7 @@ let project_of_toml ?file ?default table =
       fields;
       generators;
       year;
+      dune_version;
     }
   in
   package.project <- project;
@@ -1006,7 +1075,7 @@ let project_of_filename ?default file =
 
 let lookup () =
   Globals.find_ancestor_file Globals.drom_file
-    (fun ~dir ~path -> (dir,path))
+    (fun ~dir ~path -> Printf.printf "DIR=%s, PATH=%s\n" dir path; (dir,path))
 
 let find ?(display=true) () =
   match lookup () with
