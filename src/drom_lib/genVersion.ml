@@ -27,16 +27,6 @@ let query cmd =
 let commit_hash = query "git show -s --pretty=format:%%H"
 let commit_date = query "git show -s --pretty=format:%%ci"
 let version = %S
-let version =
-  match commit_hash with
-  | Some commit_hash ->
-    let commit_hash =
-      if String.length commit_hash > 8 then
-        String.sub commit_hash 0 8
-      else commit_hash
-    in
-    Printf.sprintf "%%s-%%s" version commit_hash
-  | None -> version
 
 let string_option = function
   | None -> "None"

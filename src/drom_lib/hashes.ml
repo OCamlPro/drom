@@ -18,10 +18,12 @@ type t =
     mutable files : (bool * string * string * int) list;
     (* for git *)
     mutable to_add : StringSet.t;
-    mutable to_remove : StringSet.t
+    mutable to_remove : StringSet.t ;
+    mutable skel_version : string option;
   }
 
 let load () =
+  let version = ref None in
   let hashes =
     if Sys.file_exists ".drom" then (
       let map = ref StringMap.empty in
@@ -37,8 +39,11 @@ let load () =
                    EzString.cut_at line ' '
                    (* only for backward compat *)
                in
-               let digest = Digest.from_hex digest in
-               map := StringMap.add filename digest !map
+               if digest = "version" then
+                 version := Some filename
+               else
+                 let digest = Digest.from_hex digest in
+                 map := StringMap.add filename digest !map
            with exn ->
              Printf.eprintf "Error loading .drom at line %d: %s\n%!"
                (i+1) (Printexc.to_string exn);
@@ -54,7 +59,8 @@ let load () =
     files = [];
     modified = false;
     to_add = StringSet.empty;
-    to_remove = StringSet.empty
+    to_remove = StringSet.empty;
+    skel_version = !version ;
   }
 
 let write t ~record ~perm file content =
@@ -113,6 +119,9 @@ let save ?(git = true) t =
     let b = Buffer.create 1000 in
     Printf.bprintf b
       "# Keep this file in your GIT repo to help drom track generated files\n";
+    Printf.bprintf b "# begin version\n%!";
+    Printf.bprintf b "version:%s\n%!" Version.version;
+    Printf.bprintf b "# end version\n%!";
     StringMap.iter
       (fun filename hash ->
         if Sys.file_exists filename then begin
@@ -150,6 +159,22 @@ let save ?(git = true) t =
 
 let with_ctxt ?git f =
   let t = load () in
+  begin
+    match t.skel_version with
+    | None -> ()
+    | Some version ->
+        if VersionCompare.compare version Version.version > 0 then begin
+          Printf.eprintf
+            "Error: you cannot update this project files:\n%!";
+          Printf.eprintf
+            "  Your version: %s\n%!" Version.version;
+          Printf.eprintf
+            "  Minimal version to update files: %s\n%!" version;
+          Printf.eprintf
+            "  (to force acceptance, update the version line in .drom file)\n%!";
+          exit 2
+        end
+  end;
   match f t with
   | res ->
     save ?git t;
