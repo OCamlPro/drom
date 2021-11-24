@@ -37,6 +37,9 @@ let config_of_toml filename =
     let config_auto_upgrade =
       EzToml.get_bool_option table [ "user"; "auto-upgrade" ]
     in
+    let config_auto_opam_yes =
+      EzToml.get_bool_option table [ "user"; "auto-opam-yes" ]
+    in
     { config_author;
       config_github_organization;
       config_share_dir;
@@ -45,6 +48,7 @@ let config_of_toml filename =
       config_opam_repo;
       config_dev_tools;
       config_auto_upgrade ;
+      config_auto_opam_yes ;
     }
 
 let config_template =
@@ -54,9 +58,13 @@ let config_template =
 # github-organization = "...organization..."
 # license = "...license..."
 # copyright = "Company Ltd"
+## Location of your local project opam-repo:
 # opam-repo = "/home/user/GIT/opam-repository"
 # dev-tools = [ "merlin", "tuareg" ]
+## Do not upgrade project at 'drom build'
 # auto-upgrade = false
+## Do not call opam with -y for local opam switches:
+# auto-opam-yes = false
 |}
 
 
@@ -88,11 +96,20 @@ let update_with oldc newc =
     config_auto_upgrade = ( match newc.config_auto_upgrade, oldc.config_auto_upgrade with
         | None, oldc -> oldc
         | newc, _ -> newc ) ;
+    config_auto_opam_yes = ( match newc.config_auto_opam_yes, oldc.config_auto_opam_yes with
+        | None, oldc -> oldc
+        | newc, _ -> newc ) ;
   }
 
 let getenv_opt v = match Sys.getenv v with
   | exception Not_found -> None
   | s -> Some s
+
+let getenv_bool_opt v =
+  match getenv_opt v with
+  | None -> None
+  | Some ( "no" | "0" | "n" | "N" ) -> Some false
+  | _ -> Some true
 
 let load () =
   let config_file = Globals.config_dir // "config" in
@@ -112,10 +129,8 @@ let load () =
     config_opam_repo = getenv_opt "DROM_OPAM_REPO" ;
     config_share_dir = getenv_opt "DROM_SHARE_DIR" ;
     config_dev_tools = None ;
-    config_auto_upgrade = ( match getenv_opt "DROM_AUTO_UPGRADE" with
-        | None -> None
-        | Some ( "no" | "0" | "n" | "N" ) -> Some false
-        | _ -> Some true ) ;
+    config_auto_upgrade = getenv_bool_opt "DROM_AUTO_UPGRADE" ;
+    config_auto_opam_yes = getenv_bool_opt "DROM_AUTO_OPAM_YES" ;
   }
   in
   let path = Sys.getcwd () in
