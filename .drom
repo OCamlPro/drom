@@ -1,4 +1,7 @@
 # Keep this file in your GIT repo to help drom track generated files
+# begin version
+version:0.6.0~dev
+# end version
 
 # hash of toml configuration files
 # used for generation of all files
@@ -47,7 +50,7 @@ d091b81b6155e5fd5d6556fc8bba0094:LICENSE.md
 
 # begin context for README.md
 # file README.md
-be6fbbbeb5dd7b2e886b169f717f192e:README.md
+5d523350230459e853bc57803b729e29:README.md
 # end context for README.md
 
 # begin context for docs/README.txt
@@ -97,7 +100,7 @@ fcff7ba13bbb9d857afe45cc5538ed11:dune
 
 # begin context for dune-project
 # file dune-project
-4327b55610af27cfe773829d1f53ad4f:dune-project
+adc092bf73260b363577d6acf22c07e7:dune-project
 # end context for dune-project
 
 # begin context for opam/drom.opam
@@ -192,7 +195,7 @@ a4a604d4740d5f79a02ee3acdaae14f6:src/drom/package.toml
 
 # begin context for src/drom_lib/version.mlt
 # file src/drom_lib/version.mlt
-a908e37f50afa4da52215ce1f1f49b19:src/drom_lib/version.mlt
+145c0f4ab4a803e1f5dd644d9845413f:src/drom_lib/version.mlt
 # end context for src/drom_lib/version.mlt
 
 # begin context for test/expect-tests/dune

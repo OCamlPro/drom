@@ -108,7 +108,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
 
   let config = Config.config () in
 
-  ( if arg_upgrade || config.config_auto_upgrade <> Some false then
+  ( if arg_upgrade then
       Update.update_files ~twice:false ~create:false p
     else
       let hashes = Hashes.load () in
@@ -133,10 +133,13 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
             <> Update.compute_config_hash
               (List.map (fun file -> (file, EzFile.read_file file)) files)
       then
-        Printf.eprintf
-          "Warning: 'drom.toml' changed since last update,\n\
-          \  you should run `drom project` to regenerate files.\n\
-           %!" );
+        if config.config_auto_upgrade <> Some false then
+          Update.update_files ~twice:false ~create:false ~git:true p
+        else
+          Printf.eprintf
+            "Warning: 'drom.toml' changed since last update,\n\
+            \  you should run `drom project` to regenerate files.\n\
+             %!" );
 
   EzFile.make_dir ~p:true "_drom";
   let opam_filename = (Globals.drom_dir // p.package.name) ^ "-deps.opam" in
