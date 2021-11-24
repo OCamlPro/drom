@@ -347,3 +347,56 @@ let editor () =
   match Sys.getenv "EDITOR" with
   | exception Not_found -> "emacs"
   | editor -> editor
+
+(** [infimum ~default ~current ~bottom versions] computes the infimum (ie. 
+    lower highest) version according to [versions] constraints. [bottom]
+    is used as the minimal version and [default] and [current] for
+    [NoVersion] and [Version] respectively.
+    
+    @return [`unknown] when no infimum can be infered. For example, with the
+    only constraint (>1.2.3) we can't decide {i a priori} a infimum for it 
+    since we don't know what versions are available after 1.2.3 (maybe 1.2.4
+    or 1.2.7 or whatever). It returns [`found version] when an infimum
+    [version] is found and [`conflict (v, c)] when the infimum found so far [v]
+    doesn't match the constraint [c]. *)
+let infimum : default:string -> ?current:string -> bottom:string -> version list ->
+  [`unknown|`found of string|`conflict of string * string] =
+  fun ~default ?(current = default) ~bottom versions ->
+    let rec loop excluded reference = function
+      | [] -> 
+        if not excluded then `found reference
+        else `unknown
+      | Lt version :: others ->
+        if VersionCompare.compare reference version < 0 then
+          loop false reference others
+        else `conflict (reference, "<" ^ version)
+      | Le version :: others ->
+        if VersionCompare.compare reference version <= 0 then
+          loop false reference others
+        else `conflict (reference, "<=" ^ version)
+      | Eq version :: others ->
+        if VersionCompare.compare reference version >= 0 then
+          loop false reference others
+        else
+          loop false version others
+      | Ge version :: others ->
+        if VersionCompare.compare reference version >= 0 then
+          loop false reference others
+        else
+          loop false version others
+      | Gt version :: others ->
+        if VersionCompare.compare reference version > 0 then
+          loop false reference others
+        else
+          loop true version others
+      | Version :: others ->
+        loop excluded reference (Eq current :: others)
+      | Semantic (major, minor, patch) :: others ->
+        let version = Format.asprintf "%i.%i.%i" major minor patch in
+        loop excluded reference (Eq version :: others)
+      | NoVersion :: others ->
+        if VersionCompare.compare reference default >= 0 then
+          loop excluded reference others
+        else
+          loop false default others in
+    loop false bottom versions

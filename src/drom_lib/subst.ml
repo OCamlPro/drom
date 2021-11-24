@@ -188,7 +188,6 @@ let project_brace (_, p) v =
       match Misc.dev_repo p with
       | Some url -> url
       | None -> "Not yet specified" )
-  (* for dune *)
   | "gitignore-programs" ->
       List.filter (fun package -> package.kind = Program) p.packages
       |> List.map (fun p -> "/" ^ p.name)
@@ -236,6 +235,12 @@ let project_brace (_, p) v =
             | content -> raise (ReplaceContent content)
           end
     )
+  (* for dune *)
+  | "dune-version" -> p.dune_version
+  | "dune-lang" ->
+    String.sub p.dune_version 0 (String.rindex p.dune_version '.')
+  | "dune-cram" -> 
+    if VersionCompare.compare p.dune_version "2.7.0" >= 0 then "(cram enable)" else ""
   | "dune-profiles" ->
       let b = Buffer.create 1000 in
       StringMap.iter
