@@ -239,7 +239,9 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
           | None -> p.edition
           | Some edition -> edition
         in
-        let y = y || is_local_directory "_opam" in
+        let y = y || (
+            config.config_auto_opam_yes <> Some false
+            && is_local_directory "_opam" ) in
         Opam.run ~y [ "install" ] [ ocaml_nv ];
         Opam.run [ "switch"; "set-base" ] [ ocaml_nv ]
     | v -> (
