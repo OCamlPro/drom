@@ -1075,7 +1075,7 @@ let project_of_filename ?default file =
 
 let lookup () =
   Globals.find_ancestor_file Globals.drom_file
-    (fun ~dir ~path -> Printf.printf "DIR=%s, PATH=%s\n" dir path; (dir,path))
+    (fun ~dir ~path -> (dir,path))
 
 let find ?(display=true) () =
   match lookup () with
