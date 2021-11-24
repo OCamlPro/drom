@@ -1,5 +1,5 @@
 
-[![Actions Status](https://github.com/ocamlpro/drom/workflows/Main%20Workflow/badge.svg)](https://github.com/ocamlpro/drom/actions)[![Actions Status](https://github.com/ocamlpro/drom/workflows/doc-deploy/badge.svg)](https://github.com/ocamlpro/drom/actions)
+[![Actions Status](https://github.com/ocamlpro/drom/workflows/Main%20Workflow/badge.svg)](https://github.com/ocamlpro/drom/actions)
 [![Release](https://img.shields.io/github/release/ocamlpro/drom.svg)](https://github.com/ocamlpro/drom/releases)
 
 # drom

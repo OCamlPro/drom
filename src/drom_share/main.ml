@@ -11,9 +11,7 @@
 (**************************************************************************)
 
 
-let () =
-  let exe = Sys.executable_name in
-  match Filename.basename exe |> String.lowercase_ascii with
-  | "opam" | "opam.exe" ->
-      OpamCliMain.main ()
-  | _ -> Drom_lib.Main.main ()
+(* If you delete or rename this file, you should add
+   'src/drom_share/main.ml' to the 'skip' field in "drom.toml" *)
+
+let main () = Printf.printf "Hello world!\n"

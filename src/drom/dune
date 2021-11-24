@@ -3,7 +3,7 @@
   (name main)
   (public_name drom)
   (package drom)
-  (libraries drom_lib )
+  (libraries opam-client drom_lib )
   
   
   )

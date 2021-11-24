@@ -53,6 +53,7 @@ ez_file = "0.2.0"
 ez_opam_file = "0.1.0"
 ez_subst = ">=0.1"
 toml = "7.0.0"
+drom_share = "version"
 
 # package tools dependencies
 [tools]

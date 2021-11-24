@@ -19,7 +19,7 @@
 
 (executable
  (name test2)
- (libraries drom_lib) ; add your own library here
+ (libraries drom_lib drom_share) ; add your own library here
  )
 
 (alias

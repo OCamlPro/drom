@@ -10,10 +10,5 @@
 (*                                                                        *)
 (**************************************************************************)
 
-
-let () =
-  let exe = Sys.executable_name in
-  match Filename.basename exe |> String.lowercase_ascii with
-  | "opam" | "opam.exe" ->
-      OpamCliMain.main ()
-  | _ -> Drom_lib.Main.main ()
+val file_list : string list
+val read : string -> string option
