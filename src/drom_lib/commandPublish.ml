@@ -33,7 +33,7 @@ let select =
     ()
 
 let action ~force ~opam_repo ~use_md5 () =
-  let config = Lazy.force Config.config in
+  let config = Config.config () in
   let opam_repo =
     match !opam_repo with
     | Some repo -> repo

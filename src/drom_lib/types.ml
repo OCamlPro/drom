@@ -113,6 +113,7 @@ type config =
     config_copyright : string option;
     config_opam_repo : string option;
     config_dev_tools : string list option;
+    config_auto_upgrade : bool option ;
   }
 
 type opam_kind =
