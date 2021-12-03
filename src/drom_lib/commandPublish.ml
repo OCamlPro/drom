@@ -47,7 +47,7 @@ let action ~force ~opam_repo ~use_md5 () =
   let opam_packages_dir = opam_repo // "packages" in
   if not (Sys.file_exists opam_packages_dir) then
     Error.raise "packages dir does not exist in repo %S" opam_repo;
-  EzFile.iter_dir ~select
+  EzFile.iter_dir ~select (* search drom.toml files *)
     ~f:(fun file ->
         let p = Project.read file in
         let dir = Filename.dirname file in
@@ -89,37 +89,40 @@ url {
             archive checksum
         in
         Sys.remove output;
-        let files = Sys.readdir dir in
         let created = ref [] in
         try
-          Array.iter
-            (fun file ->
-               if Filename.check_suffix file ".opam" then (
-                 let name = Filename.chop_suffix file ".opam" in
-                 let lines = EzFile.read_lines_to_list file in
-                 let lines = List.filter (fun line ->
-                     line = "" ||
-                     ( line.[0] <> '#' &&
-                       let prefix, _ = EzString.cut_at line ':' in
-                       match prefix with
-                       | "version" | "name" -> false
-                       | _ -> true
-                     )
-                   ) lines
-                 in
-                 let content = String.concat "\n" lines in
-                 let package_dir =
-                   opam_repo // "packages" // name
-                   // Printf.sprintf "%s.%s" name p.version
-                 in
-                 if not force && Sys.file_exists package_dir then
-                   Error.raise "%s already exists" package_dir;
-                 EzFile.make_dir ~p:true package_dir;
-                 EzFile.write_file (package_dir // "opam")
-                   (Printf.sprintf "%s\n%s" content url);
-                 created := package_dir :: !created
-               ))
-            files;
+          List.iter (fun dir ->
+              let files = Sys.readdir dir in
+              Array.iter
+                (fun file ->
+                   if Filename.check_suffix file ".opam" then (
+                     let name = Filename.chop_suffix file ".opam" in
+                     let lines =
+                       EzFile.read_lines_to_list (dir // file) in
+                     let lines = List.filter (fun line ->
+                         line = "" ||
+                         ( line.[0] <> '#' &&
+                           let prefix, _ = EzString.cut_at line ':' in
+                           match prefix with
+                           | "version" | "name" -> false
+                           | _ -> true
+                         )
+                       ) lines
+                     in
+                     let content = String.concat "\n" lines in
+                     let package_dir =
+                       opam_repo // "packages" // name
+                       // Printf.sprintf "%s.%s" name p.version
+                     in
+                     if not force && Sys.file_exists package_dir then
+                       Error.raise "%s already exists" package_dir;
+                     EzFile.make_dir ~p:true package_dir;
+                     EzFile.write_file (package_dir // "opam")
+                       (Printf.sprintf "%s\n%s" content url);
+                     created := package_dir :: !created
+                   ))
+                files;
+            ) [ dir // "opam" ; dir ];
           if !created = [] then Error.raise "No opam file found.";
           List.iter
             (fun package_dir ->
