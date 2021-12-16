@@ -28,26 +28,61 @@ let package_dune_files package =
     | Some generators -> generators
   in
   ( match Sys.readdir package.dir with
-  | exception _ -> ()
-  | files ->
-    Array.iter
-      (fun file ->
-        if Filename.check_suffix file ".mll" then begin
-          if
-            StringSet.mem "ocamllex" p_generators
-          then
-            Printf.bprintf b "(ocamllex %s)\n"
-              (Filename.chop_suffix file ".mll")
-        end else if Filename.check_suffix file ".mly" then
-          if StringSet.mem "ocamlyacc" p_generators then
-            Printf.bprintf b "(ocamlyacc %s)\n"
-              (Filename.chop_suffix file ".mly")
-          else if StringSet.mem "menhir" p_generators then
-            Printf.bprintf b "(menhir (modules %s))\n"
-              (Filename.chop_suffix file ".mly")
-          else
-            Printf.eprintf "no generator for %s\n%!" file)
-      files );
+    | exception _ -> ()
+    | files ->
+        Array.iter
+          (fun file ->
+             if Filename.check_suffix file ".mll" then begin
+
+               if StringSet.mem "ocamllex" p_generators then begin
+
+                 match StringMap.find "ocamllex-mode" package.p_fields with
+                 | exception Not_found ->
+                     Printf.bprintf b "(ocamllex %s)\n"
+                       (Filename.chop_suffix file ".mll");
+                 | mode ->
+                     Printf.bprintf b "(ocamllex (modules %s)"
+                       (Filename.chop_suffix file ".mll");
+                     Printf.bprintf b "\n  (mode %s)" mode;
+                     Printf.bprintf b ")\n";
+
+               end
+
+             end
+             else if Filename.check_suffix file ".mly" then begin
+
+               if StringSet.mem "ocamlyacc" p_generators then begin
+
+                 match StringMap.find "ocamlyacc-mode" package.p_fields with
+                 | exception Not_found ->
+                     Printf.bprintf b "(ocamlyacc %s)\n"
+                       (Filename.chop_suffix file ".mly");
+                 | mode ->
+                     Printf.bprintf b "(ocamlyacc (modules %s)"
+                       (Filename.chop_suffix file ".mly");
+                     Printf.bprintf b "\n  (mode %s)" mode;
+                     Printf.bprintf b ")\n";
+
+               end
+               else if StringSet.mem "menhir" p_generators then begin
+
+                 Printf.bprintf b "(menhir (modules %s)"
+                   (Filename.chop_suffix file ".mly");
+                 List.iter (fun ext ->
+                     match StringMap.find ( "menhir-" ^ ext )
+                             package.p_fields with
+                     | exception Not_found -> ()
+                     | s ->
+                         Printf.bprintf b "\n  (%s %s)" ext s
+                   ) [ "flags" ; "into" ; "infer" ];
+                 Printf.bprintf b ")\n";
+
+               end else
+                 Printf.eprintf "no generator for %s\n%!" file
+
+             end
+          )
+          files );
   begin
     match package.p_gen_version with
     | None -> ()
