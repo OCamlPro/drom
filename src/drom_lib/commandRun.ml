@@ -36,9 +36,7 @@ let cmd =
   let package = ref None in
   let args, specs = Build.build_args () in
   EZCMD.sub cmd_name
-    (fun () ->
-       Printf.eprintf "aaa\n\n%!";
-       action ~args ~cmd:!cmd ~package:!package)
+    (fun () -> action ~args ~cmd:!cmd ~package:!package)
     ~args: (
       [ ( [ "p" ],
           Arg.String (fun s -> package := Some s),
