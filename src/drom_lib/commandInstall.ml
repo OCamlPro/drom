@@ -19,9 +19,16 @@ let action ~args ~packages () =
 
   let _p = Build.build ~args () in
   let y = args.arg_yes in
+  let all_packages = Misc.list_opam_packages "." in
   let packages = match packages with
-    | [] -> Misc.list_opam_packages "."
-    | packages -> packages
+    | [] -> all_packages
+    | packages ->
+        List.iter (fun p ->
+            if not (List.mem p all_packages) then
+              Error.raise "Package %s is not defined locally (among: %s)"
+                p ( String.concat " " all_packages )
+          ) packages;
+        packages
   in
   let overlay_dir = "_opam" // ".opam-switch" // "overlay" in
   let some_pinned = ref [] in
