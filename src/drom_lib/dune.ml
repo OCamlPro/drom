@@ -153,6 +153,12 @@ let packages p =
           List.iter depend_of_dep depopts;
           Printf.bprintf b " )";
     end;
+    begin
+      match StringMap.find "dune-project-stanzas" package.p_fields with
+      | exception _ -> ()
+      | s ->
+          Printf.bprintf b "\n %s" s
+    end;
     Printf.bprintf b "\n )\n";
   in
 
