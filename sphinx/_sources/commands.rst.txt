@@ -34,6 +34,9 @@ Overview of sub-commands::
   fmt
     Format sources with ocamlformat
   
+  headers
+    Check all headers in project
+  
   install
     Build & install the project in the project opam switch
   
@@ -403,6 +406,31 @@ Where options are:
 * :code:`--upgrade`   Upgrade project files from drom.toml
 
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
+
+
+main.exe headers
+~~~~~~~~~~~~~~~~~~
+
+Check all headers in project
+
+
+**USAGE**
+::
+  
+  main.exe headers [OPTIONS]
+
+Where options are:
+
+
+* :code:`--add-default HEADER_ID`   Add this header as the default for these files
+
+* :code:`--from HEADER_ID`   Replace this header
+
+* :code:`--replace SRC:DST`   Replace header SRC by header DST
+
+* :code:`--replace-by HEADER_ID`   Replace by this header
+
+* :code:`--skip HEADER_ID`   skip this header when printing headers
 
 
 main.exe install
