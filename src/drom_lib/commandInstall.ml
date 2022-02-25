@@ -82,7 +82,7 @@ let cmd =
       ( specs
         @
         [
-          [], EZCMD.Anons (fun list -> packages := list),
+          [], EZCMD.TYPES.Arg.Anons (fun list -> packages := list),
           EZCMD.info ~docv:"PACKAGES" "Specify the list of packages to install";
         ])
     ~doc: "Build & install the project in the project opam switch"
