@@ -23,11 +23,27 @@ let action ~args () =
        | Library -> ()
        | Virtual -> ()
        | Program ->
-           if Sys.file_exists package.name then Sys.remove package.name;
+           let exe_name =
+             if Sys.file_exists package.name then
+               if Sys.is_directory package.name
+               then
+                 let new_name = package.name ^ ".exe" in
+                 let () =
+                   if Sys.file_exists new_name then
+                     Sys.remove new_name
+                 in
+                 new_name
+               else begin
+                 Sys.remove package.name;
+                 package.name
+               end
+             else
+               package.name
+           in
            let src = "_build/default" // package.dir // "main.exe" in
            if Sys.file_exists src then (
              let s = EzFile.read_file src in
-             EzFile.write_file package.name s;
+             EzFile.write_file exe_name s;
              incr n;
              Unix.chmod package.name 0o755
            ) )
