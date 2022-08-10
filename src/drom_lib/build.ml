@@ -11,6 +11,7 @@
 open Types
 open Ezcmd.V2
 open EZCMD.TYPES
+open Ez_file.V1
 open EzFile.OP
 open EzCompat
 

@@ -11,6 +11,7 @@
 open Ezcmd.V2
 open Types
 open EZCMD.TYPES
+open Ez_file.V1
 open EzFile.OP
 open Update
 

@@ -11,6 +11,7 @@
 open Ez_subst (* .V1 *)
 open Types
 open EzCompat
+open Ez_file.V1
 open EzFile.OP
 
 exception ReplaceContent of string
@@ -239,7 +240,7 @@ let project_brace (_, p) v =
   | "dune-version" -> p.dune_version
   | "dune-lang" ->
     String.sub p.dune_version 0 (String.rindex p.dune_version '.')
-  | "dune-cram" -> 
+  | "dune-cram" ->
     if VersionCompare.compare p.dune_version "2.7.0" >= 0 then "(cram enable)" else ""
   | "dune-profiles" ->
       let b = Buffer.create 1000 in

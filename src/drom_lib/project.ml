@@ -11,6 +11,7 @@
 open EzToml.TYPES
 open Types
 open EzCompat
+open Ez_file.V1
 open EzFile.OP
 
 let verbose_subst =
@@ -953,7 +954,7 @@ let project_of_toml ?file ?default table =
        commit:f8f8f16);
      - it can be given by an explicit dependency in [tools], which is
        likely the better way.
-       
+
      If no dune version is specified, drom uses the
      {!Globals.current_dune_version}. *)
   let dune_version =
@@ -971,7 +972,7 @@ let project_of_toml ?file ?default table =
           p.name) packages;
     (* Legacy dune lang version specification *)
     let legacy_dune_lang = StringMap.find_opt "dune" p_fields in
-    (* Checking that dune is not in project's dependencies, which has no more 
+    (* Checking that dune is not in project's dependencies, which has no more
        meaning than in packages *)
     if find dependencies then
       Error.raise "Project has a dune dependency which has no meaning. Please remove it or move it in [tools].";
@@ -984,11 +985,11 @@ let project_of_toml ?file ?default table =
       | None, Some dep -> dep.depversions
       | Some legacy, Some dep -> Ge legacy :: dep.depversions in
     (* The only interesting version is the infimum of possible versions
-       for we need to know if we can use some dune feature or not. We 
+       for we need to know if we can use some dune feature or not. We
        assume that dune is backward compatible. If it's not, we must
        track all needed feature dependencies on dune version which is
        a bit overkill for now. To compute the infimum, we use the
-       bottom "2.0" version which is the initial dune version used 
+       bottom "2.0" version which is the initial dune version used
        in drom so no support can be expected on lower versions. *)
     match
       Misc.infimum
@@ -1006,8 +1007,8 @@ let project_of_toml ?file ?default table =
         version constraint_
     | `found version ->
       version in
-    
-    
+
+
 
 
 

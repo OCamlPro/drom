@@ -11,6 +11,7 @@
 open EzCompat
 open Ez_opam_file.V1
 open Types
+open Ez_file.V1
 open EzFile.OP
 
 module OpamParser = struct

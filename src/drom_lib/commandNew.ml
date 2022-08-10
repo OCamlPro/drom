@@ -12,6 +12,7 @@ open Types
 open Ezcmd.V2
 open EZCMD.TYPES
 open EzCompat
+open Ez_file.V1
 open EzFile.OP
 
 let cmd_name = "new"

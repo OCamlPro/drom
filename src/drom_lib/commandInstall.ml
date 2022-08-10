@@ -9,6 +9,7 @@
 (**************************************************************************)
 
 open Ezcmd.V2
+open Ez_file.V1
 open EzFile.OP
 
 let cmd_name = "install"

@@ -8,6 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ez_file.V1
 open EzCompat
 
 (* Management of .drom file of hashes *)

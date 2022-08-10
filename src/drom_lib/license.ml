@@ -10,6 +10,7 @@
 
 open EzCompat
 open Types
+open Ez_file.V1
 open EzFile.OP
 
 (* Most used licenses in the opam repository:

@@ -8,6 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ez_file.V1
 open EzFile.OP
 open EzCompat
 
@@ -348,13 +349,13 @@ let editor () =
   | exception Not_found -> "emacs"
   | editor -> editor
 
-(** [infimum ~default ~current ~bottom versions] computes the infimum (ie. 
+(** [infimum ~default ~current ~bottom versions] computes the infimum (ie.
     lower highest) version according to [versions] constraints. [bottom]
     is used as the minimal version and [default] and [current] for
     [NoVersion] and [Version] respectively.
-    
+
     @return [`unknown] when no infimum can be infered. For example, with the
-    only constraint (>1.2.3) we can't decide {i a priori} a infimum for it 
+    only constraint (>1.2.3) we can't decide {i a priori} a infimum for it
     since we don't know what versions are available after 1.2.3 (maybe 1.2.4
     or 1.2.7 or whatever). It returns [`found version] when an infimum
     [version] is found and [`conflict (v, c)] when the infimum found so far [v]
@@ -363,7 +364,7 @@ let infimum : default:string -> ?current:string -> bottom:string -> version list
   [`unknown|`found of string|`conflict of string * string] =
   fun ~default ?(current = default) ~bottom versions ->
     let rec loop excluded reference = function
-      | [] -> 
+      | [] ->
         if not excluded then `found reference
         else `unknown
       | Lt version :: others ->
