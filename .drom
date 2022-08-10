@@ -1,11 +1,11 @@
 # Keep this file in your GIT repo to help drom track generated files
 # begin version
-version:0.6.0~dev
+version:0.6.0
 # end version
 
 # hash of toml configuration files
 # used for generation of all files
-5ccc5920cc1b492c3e51d10a7e205aee:.
+a754205a9a39a2b425dde729acad208b:.
 # end context for .
 
 # begin context for .github/workflows/workflow.yml
@@ -100,17 +100,17 @@ fcff7ba13bbb9d857afe45cc5538ed11:dune
 
 # begin context for dune-project
 # file dune-project
-0f66928e9cdc45ba315808ad50670690:dune-project
+6691a479369191ef0334eb2f88e1146c:dune-project
 # end context for dune-project
 
 # begin context for opam/drom.opam
 # file opam/drom.opam
-a90881c88814897654920a1e2c599a18:opam/drom.opam
+d8afc1ae7dea9595734a48f02f5d3443:opam/drom.opam
 # end context for opam/drom.opam
 
 # begin context for opam/drom_lib.opam
 # file opam/drom_lib.opam
-425b3d800e69213b30c9870845a36f0e:opam/drom_lib.opam
+8df50f9013d852bc01e24cb266070de0:opam/drom_lib.opam
 # end context for opam/drom_lib.opam
 
 # begin context for scripts/after.sh
@@ -195,7 +195,7 @@ a4a604d4740d5f79a02ee3acdaae14f6:src/drom/package.toml
 
 # begin context for src/drom_lib/version.mlt
 # file src/drom_lib/version.mlt
-26b5f446d163b4a31781a5e30b3a1a8c:src/drom_lib/version.mlt
+566611b394040cbde930b73c930e0759:src/drom_lib/version.mlt
 # end context for src/drom_lib/version.mlt
 
 # begin context for test/expect-tests/dune
