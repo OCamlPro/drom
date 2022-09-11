@@ -412,7 +412,13 @@ let find_package ?default name =
 let package_of_toml ?default ?p_file table =
   let dir = EzToml.get_string_option table [ "dir" ] in
   let name = try EzToml.get_string table [ "name" ] with Not_found ->
-    Printf.eprintf "Error: Missing field 'name' in package.toml\n%!";
+    ( match dir with
+      | Some dir_path ->
+        let package_path = dir_path // "package.toml" in
+        if Sys.file_exists package_path
+        then Printf.eprintf "Error: Missing field 'name' in %s\n%!" package_path
+        else Printf.eprintf "Error: %s is missing \n%!" package_path
+      | None -> Printf.eprintf "Error: Missing field 'name' for a package in drom.toml\n%!" );
     exit 2
   in
   let default = find_package ?default name in
