@@ -82,6 +82,11 @@ two actions:
 
           share-dir = "/home/user/.opam/4.10.0/share/drom"
 
+.. note::
+  On MacOS the configuration file is can be found in the following location:
+  :: 
+      $HOME/Library/Application Support/com.ocamlpro.drom/config
+
 Note that you can also copy :code:`drom`'s share directory to a global
 location if don't want the files to be removed accidentally by an
 :code:`opam` operation.
