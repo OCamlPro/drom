@@ -195,6 +195,11 @@ let find_share_dir ?(for_copy=false) () =
         | None -> []
         | Some share_dir -> [ Some "user config share_dir", share_dir ]
     )
+    @
+    (
+      if for_copy then [] else
+        [ Some "ocamlup share/drom", Globals.home_dir // ".ocamlup" // "share" // "drom" ]
+    )
   in
   let rec iter msgs = function
       [] ->

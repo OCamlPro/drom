@@ -18,4 +18,12 @@
 (documentation
   (package drom_lib))
 
+(rule
+ (target share.ml)
+ (deps
+  (source_tree share))
+ (action
+  (with-stdout-to
+   %{null}
+   (run ocaml-crunch -m plain share -o %{target}))))
 

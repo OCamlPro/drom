@@ -11,7 +11,7 @@ license = "LGPL2"
 min-edition = "4.07.0"
 name = "drom"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
-version = "0.6.1"
+version = "0.7.0"
 
 # keys that you could also define:
 # odoc-target = "...odoc-target..."
@@ -53,7 +53,7 @@ for-test = true
 skip-dirs = ["drom-test"]
 
 # dirs to scan for share/ folders (with package names)
-share-dirs = ["share"]
+share-dirs = ["src/drom_lib/share"]
 
 # build profile to use by default
 # build-profile = ...
