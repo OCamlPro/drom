@@ -56,7 +56,7 @@ toml = "7.0.0"
 
 # package tools dependencies
 [tools]
-# ...
+crunch = ">=3.2.0"
 
 # package fields (depends on package skeleton)
 #Examples:
@@ -69,3 +69,13 @@ toml = "7.0.0"
 #  gen-opam = "some" | "all" 
 [fields]
 dune-libraries = "bigarray"
+dune-trailer = """
+(rule
+ (target share.ml)
+ (deps
+  (source_tree share))
+ (action
+  (with-stdout-to
+   %{null}
+   (run ocaml-crunch -m plain share -o %{target}))))
+"""

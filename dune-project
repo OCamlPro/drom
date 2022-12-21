@@ -5,7 +5,7 @@
 (name drom)
 (allow_approximate_merlin)
 (generate_opam_files false)
-(version 0.6.1)
+(version 0.7.0)
 (formatting (enabled_for ocaml reason))
 
 (package
@@ -35,6 +35,7 @@
    (ez_config (and (>= 0.1.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.2.0) (< 1.0.0)))
    (directories ( >= 0.2 ))
+   (crunch ( >= 3.2.0 ))
    ppx_inline_test
    ppx_expect
    odoc
