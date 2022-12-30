@@ -1,51 +1,7 @@
-[project]
-drom-version = "0.1.0"
+# Everything above is inherited from 'virtual' skeleton 
 
 [project]
-authors = [!{authors-for-toml}]
-copyright = "!{copyright}"
-edition = "!{edition}"
-github-organization = "!{github-organization}"
-license = "!{license-name}"
-min-edition = "!{min-edition}"
-mode = "binary"
-name = "!{name}"
-synopsis = "The !{name} project"
-version = "0.1.0"
-windows-ci = true
-
-# keys that you could also define:
-# sphinx-target = "...sphinx-target..."
-# archive = "...archive..."
-# dev-repo = "...dev-repo..."
-# bug-reports = "...bug-reports..."
-# doc-api = "...doc-api..."
-# doc-gen = "...doc-gen..."
-# homepage = "...homepage..."
-
-[project]
-description = """
-This is the description
-of the !{name} OCaml project
-"""
-
-[drom]
-skip = ""
-
-[dependencies]
-
-[tools.ocamlformat]
-for-test = true
-[tools.odoc]
-for-doc = true
-[tools.ppx_expect]
-for-test = true
-[tools.ppx_inline_test]
-for-test = true
-
-[project]
-pack-modules = true
-skip-dirs = []
+skeleton := "menhir"
 
 [[package]]
 skeleton = "driver"
@@ -54,7 +10,6 @@ name = "!{name}"
 
 [package.dependencies]
 !{name:alpha}_lib = "version"
-
 
 [[package]]
 skeleton = "menhir_lib"

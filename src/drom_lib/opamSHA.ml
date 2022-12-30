@@ -298,28 +298,28 @@ module Make_SHA256 (I : InputSig with type elt = int32) = struct
       (logor (shift_right_logical x 2) (shift_left x (32 - 2)))
       (logxor
          (logor (shift_right_logical x 13) (shift_left x (32 - 13)))
-         (logor (shift_right_logical x 22) (shift_left x (32 - 22))))
+         (logor (shift_right_logical x 22) (shift_left x (32 - 22))) )
 
   let sum1 x =
     logxor
       (logor (shift_right_logical x 6) (shift_left x (32 - 6)))
       (logxor
          (logor (shift_right_logical x 11) (shift_left x (32 - 11)))
-         (logor (shift_right_logical x 25) (shift_left x (32 - 25))))
+         (logor (shift_right_logical x 25) (shift_left x (32 - 25))) )
 
   let lsig0 x =
     logxor
       (logor (shift_right_logical x 7) (shift_left x (32 - 7)))
       (logxor
          (logor (shift_right_logical x 18) (shift_left x (32 - 18)))
-         (logor (shift_right_logical x 3) (shift_right_logical x 3)))
+         (logor (shift_right_logical x 3) (shift_right_logical x 3)) )
 
   let lsig1 x =
     logxor
       (logor (shift_right_logical x 17) (shift_left x (32 - 17)))
       (logxor
          (logor (shift_right_logical x 19) (shift_left x (32 - 19)))
-         (logor (shift_right_logical x 10) (shift_right_logical x 10)))
+         (logor (shift_right_logical x 10) (shift_right_logical x 10)) )
 
   let sha_init =
     ( 0x6a09e667l,

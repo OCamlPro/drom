@@ -36,15 +36,16 @@ let action () =
       match d.depversions with
       | []
       | [ Version ] ->
-          let _, counter, _ = Hashtbl.find h name in
-          incr counter
+        let _, counter, _ = Hashtbl.find h name in
+        incr counter
       | _ -> ()
-    with Not_found -> ()
+    with
+    | Not_found -> ()
   in
   List.iter
     (fun package ->
-       List.iter add_dep package.p_dependencies;
-       List.iter add_dep package.p_tools)
+      List.iter add_dep package.p_dependencies;
+      List.iter add_dep package.p_tools )
     p.packages;
 
   let rec tree_of_dep kind (name, d) =
@@ -52,22 +53,26 @@ let action () =
       match d.depversions with
       | []
       | [ Version ] ->
-          let package, counter, printed = Hashtbl.find h name in
-          if (not !printed) && !counter = 1 then (
-            printed := true;
-            tree_of_package package
-          ) else
-            raise Not_found
+        let package, counter, printed = Hashtbl.find h name in
+        if (not !printed) && !counter = 1 then (
+          printed := true;
+          tree_of_package package
+        ) else
+          raise Not_found
       | _ -> raise Not_found
-    with Not_found ->
+    with
+    | Not_found ->
       let dep_descr =
         Printf.sprintf "%s%s %s" name kind
           (String.concat " " (List.map string_of_version d.depversions))
       in
       Branch (dep_descr, [])
   and tree_of_package package =
-    let package_descr = Printf.sprintf "%s %s (/%s)"
-        ( Misc.string_of_kind package.kind ) package.name package.dir in
+    let package_descr =
+      Printf.sprintf "%s %s (/%s)"
+        (Misc.string_of_kind package.kind)
+        package.name package.dir
+    in
     Branch
       ( package_descr,
         List.map (tree_of_dep "") package.p_dependencies
@@ -88,31 +93,37 @@ let action () =
     p.packages;
   let print_deps kind list =
     branches :=
-      (Branch
-         (Printf.sprintf "[%s]" kind,
+      Branch
+        ( Printf.sprintf "[%s]" kind,
           List.map
             (fun (name, d) ->
-               Branch (
-                 Printf.sprintf "%s %s" name
-                   (String.concat " " (List.map string_of_version d.depversions)), []) )
-            list)) :: !branches;
+              Branch
+                ( Printf.sprintf "%s %s" name
+                    (String.concat " "
+                       (List.map string_of_version d.depversions) ),
+                  [] ) )
+            list )
+      :: !branches
   in
   print_deps "dependencies" p.dependencies;
   print_deps "tools" p.tools;
   print_tree "" (Branch ("File drom.toml", List.rev !branches));
   ()
 
-let cmd = EZCMD.sub cmd_name action
-    ~doc: "Display a tree of dependencies"
-    ~man:[
-      `S "DESCRIPTION";
-
-      `Blocks [
-        `P "Print the project as a tree of dependencies, i.e. dependencies are printed as branches of the package they are dependencies of. If a package is itself a dependency of another package, it will be printed there.";
-      ];
-
-      `S "EXAMPLE";
-      `Pre {|
+let cmd =
+  EZCMD.sub cmd_name action ~doc:"Display a tree of dependencies"
+    ~man:
+      [ `S "DESCRIPTION";
+        `Blocks
+          [ `P
+              "Print the project as a tree of dependencies, i.e. dependencies \
+               are printed as branches of the package they are dependencies \
+               of. If a package is itself a dependency of another package, it \
+               will be printed there."
+          ];
+        `S "EXAMPLE";
+        `Pre
+          {|
 └──drom (/src/drom)
    └──drom_lib (/src/drom_lib)
       └──toml 5.0.0
@@ -127,5 +138,5 @@ let cmd = EZCMD.sub cmd_name action
 └── ppx_expect
 └── odoc
 └── ocamlformat
-|};
-    ]
+|}
+      ]

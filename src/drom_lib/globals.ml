@@ -18,6 +18,7 @@ let about =
     Version.version
 
 let min_ocaml_edition = "4.07.0"
+
 let current_ocaml_edition = "4.10.0"
 
 let current_dune_version = "2.7.0"
@@ -35,24 +36,31 @@ let drom_file = "drom.toml"
 
 module App_id = struct
   let qualifier = "com"
+
   let organization = "OCamlPro"
+
   let application = "drom"
 end
+
 module Base_dirs = Directories.Base_dirs ()
+
 module Project_dirs = Directories.Project_dirs (App_id)
 
 let home_dir =
   match Base_dirs.home_dir with
   | None ->
-      Format.eprintf "Error: can't compute HOME path, make sure it is well defined !@.";
-      exit 2
+    Format.eprintf
+      "Error: can't compute HOME path, make sure it is well defined !@.";
+    exit 2
   | Some home_dir -> home_dir
 
 let config_dir =
   match Project_dirs.config_dir with
   | None ->
-      Format.eprintf "Error: can't compute configuration path, make sure your HOME and other environment variables are well defined !@.";
-      exit 2
+    Format.eprintf
+      "Error: can't compute configuration path, make sure your HOME and other \
+       environment variables are well defined !@.";
+    exit 2
   | Some config_dir -> config_dir
 
 let min_drom_version = "0.1"
@@ -69,7 +77,7 @@ let find_ancestor_file file f =
   let rec iter dir path =
     let drom_file = dir // file in
     if Sys.file_exists drom_file then
-      Some ( f ~dir ~path )
+      Some (f ~dir ~path)
     else
       let updir = Filename.dirname dir in
       if updir <> dir then
@@ -79,9 +87,89 @@ let find_ancestor_file file f =
   in
   iter dir ""
 
+let opam_root =
+  lazy
+    ( try Sys.getenv "OPAMROOT" with
+    | Not_found -> home_dir // ".opam" )
 
-let opam_root = lazy (
-  try Sys.getenv "OPAMROOT"
-  with Not_found -> home_dir // ".opam"
-)
 let opam_root () = Lazy.force opam_root
+
+let verbose_subst =
+  try
+    ignore (Sys.getenv "DROM_VERBOSE_SUBST");
+    true
+  with
+  | Not_found -> false
+
+let verbose i = !verbosity >= i
+
+let editor =
+  match Sys.getenv "EDITOR" with
+  | exception Not_found -> "emacs"
+  | editor -> editor
+
+let key_LGPL2 = "LGPL2"
+
+let default_ci_systems = [ "ubuntu-latest"; "macos-latest"; "windows-latest" ]
+
+open EzCompat
+open Types
+
+let rec dummy_project =
+  { package = dummy_package;
+    packages = [];
+    skeleton = None;
+    edition = current_ocaml_edition;
+    min_edition = min_ocaml_edition;
+    github_organization = None;
+    homepage = None;
+    license = key_LGPL2;
+    copyright = None;
+    bug_reports = None;
+    dev_repo = None;
+    doc_gen = None;
+    doc_api = None;
+    skip = [];
+    version = "0.1.0";
+    authors = [];
+    synopsis = "dummy_project.synopsis ";
+    description = "dummy_project.description";
+    dependencies = [];
+    tools = [];
+    archive = None;
+    sphinx_target = None;
+    odoc_target = None;
+    ci_systems = default_ci_systems;
+    profiles = StringMap.empty;
+    skip_dirs = [];
+    fields = StringMap.empty;
+    profile = None;
+    file = None;
+    share_dirs = [ "share" ];
+    year = (Misc.date ()).Unix.tm_year;
+    generators = StringSet.empty;
+    dune_version = current_dune_version
+  }
+
+and dummy_package =
+  { name = "dummy_package";
+    dir = "dummy_package.dir";
+    project = dummy_project;
+    p_file = None;
+    p_pack = None;
+    kind = Library;
+    p_version = None;
+    p_authors = None;
+    p_synopsis = None;
+    p_description = None;
+    p_dependencies = [];
+    p_tools = [];
+    p_pack_modules = None;
+    p_gen_version = None;
+    p_fields = StringMap.empty;
+    p_skeleton = None;
+    p_generators = None;
+    p_skip = None;
+    p_optional = None;
+    p_preprocess = None
+  }

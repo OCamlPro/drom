@@ -47,12 +47,12 @@ pack-modules = true
 #   base-unix = { libname = "unix", version = ">=base" } 
 [dependencies]
 directories = ">=0.2"
+drom_toml = "7.0.0"
 ez_cmdliner = "0.2.0"
 ez_config = "0.1.0"
 ez_file = "0.3.0"
 ez_opam_file = "0.1.0"
 ez_subst = ">=0.1"
-toml = "7.0.0"
 
 # package tools dependencies
 [tools]
@@ -69,8 +69,7 @@ crunch = ">=3.2.0"
 #  gen-opam = "some" | "all" 
 [fields]
 dune-libraries = "bigarray"
-dune-trailer = """
-(rule
+dune-trailer = """(rule
  (target share.ml)
  (deps
   (source_tree share))

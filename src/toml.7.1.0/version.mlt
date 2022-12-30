@@ -1,0 +1,30 @@
+#!/usr/bin/env ocaml
+;;
+#load "unix.cma"
+
+let query cmd =
+  let chan = Unix.open_process_in cmd in
+  try
+    let out = input_line chan in
+     if Unix.close_process_in chan = Unix.WEXITED 0 then
+       Some out
+     else None
+   with End_of_file -> None
+
+let commit_hash = query "git show -s --pretty=format:%H"
+let commit_date = query "git show -s --pretty=format:%ci"
+let version = "7.1.0"
+
+let string_option = function
+  | None -> "None"
+  | Some s -> Printf.sprintf "Some %S" s
+
+let () =
+  Format.printf "@[<v>";
+  Format.printf "let version = %S@," version;
+  Format.printf
+    "let commit_hash = %s@," (string_option commit_hash);
+  Format.printf
+    "let commit_date = %s@," (string_option commit_date);
+  Format.printf "@]@.";
+  ()

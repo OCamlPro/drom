@@ -1,16 +1,16 @@
 # Keep this file in your GIT repo to help drom track generated files
 # begin version
-version:0.6.1
+version:0.8.0
 # end version
 
 # hash of toml configuration files
 # used for generation of all files
-643e76dcabc04db7d3f116cc6142b743:.
+ee6c9d38a4485d9342140818e2a0eb5a:.
 # end context for .
 
 # begin context for .github/workflows/workflow.yml
 # file .github/workflows/workflow.yml
-6043af7c02afc9427855c92c04e6cb8b:.github/workflows/workflow.yml
+4e451e2c97c685e0d1e5a7617d2df8b7:.github/workflows/workflow.yml
 # end context for .github/workflows/workflow.yml
 
 # begin context for .gitignore
@@ -25,7 +25,7 @@ version:0.6.1
 
 # begin context for .ocamlformat-ignore
 # file .ocamlformat-ignore
-a8d1bcd6f62c6b813b77d3ff8959d8d2:.ocamlformat-ignore
+892b3a237f9064adbe81b078237b4b5c:.ocamlformat-ignore
 # end context for .ocamlformat-ignore
 
 # begin context for .ocp-indent
@@ -45,7 +45,7 @@ a056153b3ebfa635cd0350ea16081078:LICENSE.md
 
 # begin context for Makefile
 # file Makefile
-603b9d0e2c3041e2569ead8c62ce91bd:Makefile
+20473ad87e42d8860a8bdd33a79842ad:Makefile
 # end context for Makefile
 
 # begin context for README.md
@@ -90,7 +90,7 @@ c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 
 # begin context for drom.toml
 # file drom.toml
-c75f676d1f174e5262b75b203f5a6ecb:drom.toml
+b475b0b0637472408fe198f106595d9e:drom.toml
 # end context for drom.toml
 
 # begin context for dune
@@ -100,27 +100,32 @@ b9f2c87e2fd71a152b79fac4a7ba7c8e:dune
 
 # begin context for dune-project
 # file dune-project
-269676288bbf596489ffbda15efe2329:dune-project
+7331f4d6f7e5ebe7cfbd1655fa4f14fa:dune-project
 # end context for dune-project
 
 # begin context for opam/drom.opam
 # file opam/drom.opam
-2ae5e82faa6b01ff4b6c941a7071902d:opam/drom.opam
+0b787578e0a8e491132bf269bc32c56b:opam/drom.opam
 # end context for opam/drom.opam
 
 # begin context for opam/drom_lib.opam
 # file opam/drom_lib.opam
-2341d4a4fe402102710fdc7aac224a16:opam/drom_lib.opam
+7e857bb00dd7378f322ce9899870aca2:opam/drom_lib.opam
 # end context for opam/drom_lib.opam
+
+# begin context for opam/drom_toml.opam
+# file opam/drom_toml.opam
+2bdee46c3a1826f3abb44cc05d789040:opam/drom_toml.opam
+# end context for opam/drom_toml.opam
 
 # begin context for scripts/after.sh
 # file scripts/after.sh
-1112fbe7067fce342365a25613b5659d:scripts/after.sh
+62c6489217feef26dac343e709b89c1a:scripts/after.sh
 # end context for scripts/after.sh
 
 # begin context for scripts/before.sh
 # file scripts/before.sh
-ae050b3099ac0b43d7c7f4295f6b2319:scripts/before.sh
+371e627833d9ac7ae2f906b5ec97aae2:scripts/before.sh
 # end context for scripts/before.sh
 
 # begin context for scripts/copy-bin.sh
@@ -180,7 +185,7 @@ a4a604d4740d5f79a02ee3acdaae14f6:src/drom/package.toml
 
 # begin context for src/drom_lib/dune
 # file src/drom_lib/dune
-5bc775a60e0c21612927e7a3b69284f7:src/drom_lib/dune
+00e1984908cd2d51ca87929d9e2aef80:src/drom_lib/dune
 # end context for src/drom_lib/dune
 
 # begin context for src/drom_lib/index.mld
@@ -190,17 +195,42 @@ a4a604d4740d5f79a02ee3acdaae14f6:src/drom/package.toml
 
 # begin context for src/drom_lib/package.toml
 # file src/drom_lib/package.toml
-0d246d92a05ff2cd9798318192be69ff:src/drom_lib/package.toml
+13986788a940f2b0d60f974aaf70f334:src/drom_lib/package.toml
 # end context for src/drom_lib/package.toml
 
 # begin context for src/drom_lib/version.mlt
 # file src/drom_lib/version.mlt
-2eadd8673ebc31ceedd3c7433dc51fab:src/drom_lib/version.mlt
+959d160d86aff863e3d46e620d4c23f0:src/drom_lib/version.mlt
 # end context for src/drom_lib/version.mlt
+
+# begin context for src/toml.7.1.0/dune
+# file src/toml.7.1.0/dune
+876a51deaf99ad390a0b2f8d24565a2f:src/toml.7.1.0/dune
+# end context for src/toml.7.1.0/dune
+
+# begin context for src/toml.7.1.0/index.mld
+# file src/toml.7.1.0/index.mld
+d1b05207fce876a1b44a8b268bcaf226:src/toml.7.1.0/index.mld
+# end context for src/toml.7.1.0/index.mld
+
+# begin context for src/toml.7.1.0/main.ml
+# file src/toml.7.1.0/main.ml
+851b011bec6348ac8e7b628f1d6bb82b:src/toml.7.1.0/main.ml
+# end context for src/toml.7.1.0/main.ml
+
+# begin context for src/toml.7.1.0/package.toml
+# file src/toml.7.1.0/package.toml
+986791b406c5a9f90d24301860a2f5e5:src/toml.7.1.0/package.toml
+# end context for src/toml.7.1.0/package.toml
+
+# begin context for src/toml.7.1.0/version.mlt
+# file src/toml.7.1.0/version.mlt
+d07fed9ff80a7378441fba007c70d3e9:src/toml.7.1.0/version.mlt
+# end context for src/toml.7.1.0/version.mlt
 
 # begin context for test/expect-tests/dune
 # file test/expect-tests/dune
-9cf0e01efb4bea474a5703755d4f1fba:test/expect-tests/dune
+d7e2675a767e30edf28d061c94f0ec62:test/expect-tests/dune
 # end context for test/expect-tests/dune
 
 # begin context for test/expect-tests/dune_
@@ -215,7 +245,7 @@ f15fedac6f43c154bcd0348b776ac08c:test/expect-tests/dune_
 
 # begin context for test/inline-tests/dune
 # file test/inline-tests/dune
-3cce4d97192d1a92063ae78c044baab8:test/inline-tests/dune
+a0d7baa94246a5122e55a255dcefa9d0:test/inline-tests/dune
 # end context for test/inline-tests/dune
 
 # begin context for test/inline-tests/dune_
@@ -230,7 +260,7 @@ f15fedac6f43c154bcd0348b776ac08c:test/expect-tests/dune_
 
 # begin context for test/output-tests/dune
 # file test/output-tests/dune
-40e6555111f0ec83d97bae15a6dfa807:test/output-tests/dune
+b5ea41e29d37e997b482b1bf7f5953d7:test/output-tests/dune
 # end context for test/output-tests/dune
 
 # begin context for test/output-tests/dune_

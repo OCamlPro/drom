@@ -1,6 +1,19 @@
 
+## v0.8.0
+* Improve templates to inherit values from drom.toml/package.toml inherited
+   files
+* drom_toml: because `drom` requires additional features in toml that do not
+   fit in the standard `toml` library, we forked `toml.0.7.1` into `drom_toml`.
+   Additional features:
+   * New operators: == (init value if never set), := (override value),
+       -= (delete/clear value)
+* Fix ocamlformat stuck at 0.15
+* Make .ocamlformat-ignore always ignore share-dirs
 
-## v.0.6.0
+## v0.7.0
+* temporary version, never released
+
+## v0.6.0
 * Generate opam files in opam/ instead of top directory
 * `drom install PACKAGES` where PACKAGES is a limited set of project packages
 * `drom build` tries to update program files by default, unless
@@ -10,7 +23,7 @@
    auto-upgrade = false
    ```
 
-## v.0.5.0
+## v0.5.0
 * Add --edition and --min-edition to `drom new` and `drom project`
 * Add support for optional dependencies:
   lib = { opt = true, version = "3.1" }

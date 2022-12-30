@@ -24,6 +24,6 @@ COMMAND=$1
 shift
 SCRIPT=./scripts/before-${COMMAND}.sh
 
-if [ -e ${SCRIPT} ]; then
+if [ -f ${SCRIPT} ]; then
    exec ${SCRIPT} $*
 fi

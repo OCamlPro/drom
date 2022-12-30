@@ -29,7 +29,7 @@ let action ~args ~cmd ~package =
   Misc.before_hook "run" ~args:cmd;
   Misc.call
     (Array.of_list
-       ("opam" :: "exec" :: "--" :: "dune" :: "exec" :: "--" :: cmd))
+       ("opam" :: "exec" :: "--" :: "dune" :: "exec" :: "--" :: cmd) )
 
 let cmd =
   let cmd = ref [] in
@@ -37,23 +37,30 @@ let cmd =
   let args, specs = Build.build_args () in
   EZCMD.sub cmd_name
     (fun () -> action ~args ~cmd:!cmd ~package:!package)
-    ~args: (
-      [ ( [ "p" ],
-          Arg.String (fun s -> package := Some s),
-          EZCMD.info ~docv:"PACKAGE" "Package to run" );
-        ( [],
-          Arg.Anons (fun list -> cmd := list),
-          EZCMD.info "Arguments to the command" )
+    ~args:
+      ( [ ( [ "p" ],
+            Arg.String (fun s -> package := Some s),
+            EZCMD.info ~docv:"PACKAGE" "Package to run" );
+          ( [],
+            Arg.Anons (fun list -> cmd := list),
+            EZCMD.info "Arguments to the command" )
+        ]
+      @ specs )
+    ~doc:"Execute the project"
+    ~man:
+      [ `S "DESCRIPTION";
+        `Blocks
+          [ `P "This command performs the following actions:";
+            `I ("1.", "Decrease verbosity level to display nothing during build");
+            `I
+              ( "2.",
+                "Build the project packages (see $(b,drom build) for info)." );
+            `I
+              ( "3.",
+                "Call $(b,opam exec -- drun exec -- [PACKAGE] [ARGUMENTS]), \
+                 where $(b,[PACKAGE]) is either the package name specified \
+                 with the $(b,-p PACKAGE) argument or the main package of the \
+                 project if it is a program, $(b,[ARGUMENTS]) are the \
+                 arguments specified with $(b,drom run)" )
+          ]
       ]
-      @ specs
-    )
-    ~doc: "Execute the project"
-    ~man: [
-      `S "DESCRIPTION";
-      `Blocks [
-        `P "This command performs the following actions:";
-        `I ("1.", "Decrease verbosity level to display nothing during build");
-        `I ("2.", "Build the project packages (see $(b,drom build) for info).");
-        `I ("3.", "Call $(b,opam exec -- drun exec -- [PACKAGE] [ARGUMENTS]), where $(b,[PACKAGE]) is either the package name specified with the $(b,-p PACKAGE) argument or the main package of the project if it is a program, $(b,[ARGUMENTS]) are the arguments specified with $(b,drom run)");
-      ]
-    ]

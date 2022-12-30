@@ -25,24 +25,30 @@ let action ~skeleton ~edit ~args =
         Error.raise
           "No project found. Maybe you need to create a project first with 'drom \
            new PROJECT'"
-    | Some (dir, _) ->
+    | Some (dir, _) -> (
         if edit then
-          let editor = Misc.editor () in
-          match Printf.kprintf Sys.command "%s '%s'" editor ( dir // "drom.toml" ) with
+          let editor = Globals.editor in
+          match
+            Printf.kprintf Sys.command "%s '%s'" editor (dir // "drom.toml")
+          with
           | 0 -> ()
-          | _ -> Error.raise "Editing command returned a non-zero status"
+          | _ -> Error.raise "Editing command returned a non-zero status" )
   end;
 
   let project = Project.find () in
   match project with
   | None -> assert false
   | Some (p, _) ->
+      let skeleton = match skeleton with
+        | None -> Misc.project_skeleton p.skeleton
+        | Some skeleton -> skeleton
+      in
       let _sk = Skeleton.lookup_project skeleton in
       let args =
         { args with
           arg_upgrade =
-            ( if p.skeleton <> skeleton then begin
-                  p.skeleton <- skeleton;
+            ( if p.skeleton <> Some skeleton then begin
+                  p.skeleton <- Some skeleton;
                   true
                 end else
                 args.arg_upgrade )
@@ -55,51 +61,58 @@ let cmd =
   let args, specs = Update.update_args () in
   let edit = ref false in
   EZCMD.sub cmd_name
-    (fun () ->
-       action ~skeleton:!skeleton ~edit:!edit ~args)
-    ~args: (
-      specs
+    (fun () -> action ~skeleton:!skeleton ~edit:!edit ~args)
+    ~args:
+      ( specs
       @ [ ( [ "library" ],
             Arg.Unit
               (fun () ->
-                 skeleton := Some "library";
-                 args.arg_upgrade <- true),
-            EZCMD.info "Project contains only a library. Equivalent to $(b,--skeleton library)" );
+                skeleton := Some "library";
+                args.arg_upgrade <- true ),
+            EZCMD.info
+              "Project contains only a library. Equivalent to $(b,--skeleton \
+               library)" );
           ( [ "program" ],
             Arg.Unit
               (fun () ->
-                 skeleton := Some "program";
-                 args.arg_upgrade <- true),
-            EZCMD.info "Project contains a program. Equivalent to $(b,--skeleton program). The generated project will be composed of a $(i,library) package and a $(i,driver) package calling the $(b,Main.main) of the library." );
+                skeleton := Some "program";
+                args.arg_upgrade <- true ),
+            EZCMD.info
+              "Project contains a program. Equivalent to $(b,--skeleton \
+               program). The generated project will be composed of a \
+               $(i,library) package and a $(i,driver) package calling the \
+               $(b,Main.main) of the library." );
           ( [ "virtual" ],
             Arg.Unit
               (fun () ->
-                 skeleton := Some "virtual";
-                 args.arg_upgrade <- true),
-            EZCMD.info "Package is virtual, i.e. no code. Equivalent to $(b,--skeleton virtual)." );
+                skeleton := Some "virtual";
+                args.arg_upgrade <- true ),
+            EZCMD.info
+              "Package is virtual, i.e. no code. Equivalent to $(b,--skeleton \
+               virtual)." );
           ( [ "skeleton" ],
             Arg.String
               (fun s ->
-                 skeleton := Some s;
-                 args.arg_upgrade <- true),
-            EZCMD.info
-              ~docv:"SKELETON"
+                skeleton := Some s;
+                args.arg_upgrade <- true ),
+            EZCMD.info ~docv:"SKELETON"
               "Create project using a predefined skeleton or one specified in \
                ~/.config/drom/skeletons/" );
           ( [ "upgrade" ],
             Arg.Unit (fun () -> args.arg_upgrade <- true),
-            EZCMD.info "Force upgrade of the drom.toml file from the skeleton" );
-          ( [ "edit" ],
-            Arg.Set edit,
-            EZCMD.info "Edit project description" );
-        ]
-    )
-    ~doc: "Update an existing project"
+            EZCMD.info "Force upgrade of the drom.toml file from the skeleton"
+          );
+          ([ "edit" ], Arg.Set edit, EZCMD.info "Edit project description")
+        ] )
+    ~doc:"Update an existing project"
     ~man:
-      [
-        `S "DESCRIPTION";
-        `Blocks [
-          `P "This command is used to regenerate the files of a project after updating its description.";
-          `P "With argument $(b,--upgrade), it can also be used to reformat the toml files, from their skeletons.";
-        ];
+      [ `S "DESCRIPTION";
+        `Blocks
+          [ `P
+              "This command is used to regenerate the files of a project after \
+               updating its description.";
+            `P
+              "With argument $(b,--upgrade), it can also be used to reformat \
+               the toml files, from their skeletons."
+          ]
       ]

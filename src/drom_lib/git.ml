@@ -20,7 +20,9 @@ let email () =
 
 let call args = Misc.call (Array.of_list ("git" :: args))
 
-let run args = try call args with _ -> ()
+let run args =
+  try call args with
+  | _ -> ()
 
 let update_submodules () =
   if Sys.file_exists ".gitmodules" then

@@ -1,8 +1,7 @@
-name = "!{name}"
-dir = "!{dir}"
-skeleton = "wasm_binding"
-kind = "library"
-gen-version = "version.ml"
+# Everything above is inherited from 'virtual' package skeleton
+
+skeleton := "wasm_binding"
+kind := "library"
 
 [fields]
 package-dune-libraries = "bigstring"

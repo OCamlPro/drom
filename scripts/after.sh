@@ -6,6 +6,6 @@ COMMAND=$1
 shift
 SCRIPT=./scripts/after-${COMMAND}.sh
 
-if [ -e ${SCRIPT} ]; then
+if [ -f ${SCRIPT} ]; then
    exec ${SCRIPT} $*
 fi

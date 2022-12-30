@@ -27,8 +27,9 @@
     same debian version, even when they differ in syntax, as for instance
     "0:1.2.00" and "1.02-0". *)
 
-(** @return [true] iff the two strings define the same version. Hence, the
-    result may be true even when the two string differ syntactically. *)
+(** @return
+      [true] iff the two strings define the same version. Hence, the result may
+      be true even when the two string differ syntactically. *)
 val equal : string -> string -> bool
 
 (** [compare x y] returns 0 if x is eqivalent to y, -1 if x is smaller than y,

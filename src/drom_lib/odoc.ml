@@ -20,7 +20,7 @@ let subst ?(more = fun v -> Printf.sprintf "${%s}" v) package s =
       | "synopsis" -> Misc.p_synopsis package
       | "description" -> Misc.p_description package
       | "modules" -> String.concat " " (Misc.modules package)
-      | v -> more v)
+      | v -> more v )
     s;
   Buffer.contents b
 

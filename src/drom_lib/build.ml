@@ -25,8 +25,8 @@ type build_args =
     mutable arg_yes : bool;
     mutable arg_edition : string option;
     mutable arg_upgrade : bool;
-    mutable arg_locked : bool ;
-    mutable arg_profile : string option;
+    mutable arg_locked : bool;
+    mutable arg_profile : string option
   }
 
 let build_args () =
@@ -36,15 +36,14 @@ let build_args () =
       arg_edition = None;
       arg_upgrade = false;
       arg_locked = false;
-      arg_profile = None ;
+      arg_profile = None
     }
   in
   let specs =
     [ ( [ "switch" ],
         Arg.String (fun s -> args.arg_switch <- Some (Global s)),
         EZCMD.info ~docv:"OPAM_SWITCH"
-          "Use global switch SWITCH instead of creating a local switch"
-      );
+          "Use global switch SWITCH instead of creating a local switch" );
       ( [ "local" ],
         Arg.Unit (fun () -> args.arg_switch <- Some Local),
         EZCMD.info "Create a local switch instead of using a global switch" );
@@ -59,12 +58,10 @@ let build_args () =
         EZCMD.info "Upgrade project files from drom.toml" );
       ( [ "locked" ],
         Arg.Unit (fun () -> args.arg_locked <- true),
-        EZCMD.info
-          ~version:"0.2.1" "Use .locked file if it exists" );
+        EZCMD.info ~version:"0.2.1" "Use .locked file if it exists" );
       ( [ "profile" ],
         Arg.String (fun s -> args.arg_profile <- Some s),
-        EZCMD.info ~docv:"PROFILE" "Build profile to use" );
-
+        EZCMD.info ~docv:"PROFILE" "Build profile to use" )
     ]
   in
   (args, specs)
@@ -72,75 +69,75 @@ let build_args () =
 let build ~args ?(setup_opam = true) ?(build_deps = true)
     ?(force_build_deps = false)
     ?((* only for `drom build-deps` *)
-    dev_deps = false) ?(force_dev_deps = false)
-    ?((* only for `drom dev-deps` *) build = true)
-    ?(extra_packages = [])
-    () =
+      dev_deps = false) ?(force_dev_deps = false)
+    ?((* only for `drom dev-deps` *) build = true) ?(extra_packages = []) () =
   let p, _inferred_dir = Project.get () in
 
-  let { arg_switch ;
-        arg_yes = y ;
-        arg_edition = edition ;
-        arg_upgrade ;
-        arg_locked ;
-        arg_profile ;} = args in
+  let { arg_switch;
+        arg_yes = y;
+        arg_edition = edition;
+        arg_upgrade;
+        arg_locked;
+        arg_profile
+      } =
+    args
+  in
   ( match edition with
-    | None -> ()
-    | Some edition -> (
-        match VersionCompare.compare p.min_edition edition with
-        | 1 ->
-            Error.raise
-              "Option --edition %s should specify a version compatible with the \
-               project, whose min-edition is currently %s"
-              edition p.min_edition
-        | _ -> () ) );
+  | None -> ()
+  | Some edition -> (
+    match VersionCompare.compare p.min_edition edition with
+    | 1 ->
+      Error.raise
+        "Option --edition %s should specify a version compatible with the \
+         project, whose min-edition is currently %s"
+        edition p.min_edition
+    | _ -> () ) );
   ( match arg_switch with
-    | None
-    | Some Local ->
-        ()
-    | Some (Global switch) -> (
-        match VersionCompare.compare p.min_edition switch with
-        | 1 ->
-            Error.raise
-              "Option --switch %s should specify a version compatible with the \
-               project, whose min-edition is currently %s"
-              switch p.min_edition
-        | _ -> () ) );
+  | None
+  | Some Local ->
+    ()
+  | Some (Global switch) -> (
+    match VersionCompare.compare p.min_edition switch with
+    | 1 ->
+      Error.raise
+        "Option --switch %s should specify a version compatible with the \
+         project, whose min-edition is currently %s"
+        switch p.min_edition
+    | _ -> () ) );
 
   let config = Config.config () in
 
   ( if arg_upgrade then
-      Update.update_files ~twice:false ~create:false p
-    else
-      let hashes = Hashes.load () in
-      if
-        match Hashes.get hashes "." with
-        | exception Not_found -> true
-        | old_hash ->
-            let files =
-              ( match p.file with
-                | None -> assert false
-                | Some file -> file )
-              :: List.flatten
-                ( List.map
-                    (fun package ->
-                       match package.p_file with
-                       | None -> []
-                       | Some file -> [ file ] )
-                    p.packages
-                )
-            in
-            old_hash
-            <> Update.compute_config_hash
-              (List.map (fun file -> (file, EzFile.read_file file)) files)
-      then
-        if config.config_auto_upgrade <> Some false then
-          Update.update_files ~twice:false ~create:false ~git:true p
-        else
-          Printf.eprintf
-            "Warning: 'drom.toml' changed since last update,\n\
-            \  you should run `drom project` to regenerate files.\n\
-             %!" );
+    Update.update_files ~twice:false ~create:false p
+  else
+    let hashes = Hashes.load () in
+    if
+      match Hashes.get hashes "." with
+      | exception Not_found -> true
+      | old_hash ->
+        let files =
+          ( match p.file with
+          | None -> assert false
+          | Some file -> file )
+          :: List.flatten
+               (List.map
+                  (fun package ->
+                    match package.p_file with
+                    | None -> []
+                    | Some file -> [ file ] )
+                  p.packages )
+        in
+        old_hash
+        <> Update.compute_config_hash
+             (List.map (fun file -> (file, EzFile.read_file file)) files)
+    then
+      if config.config_auto_upgrade <> Some false then
+        Update.update_files ~twice:false ~create:false ~git:true p
+      else
+        Printf.eprintf
+          "Warning: 'drom.toml' changed since last update,\n\
+          \  you should run `drom project` to regenerate files.\n\
+           %!" );
 
   EzFile.make_dir ~p:true "_drom";
   let opam_filename = (Globals.drom_dir // p.package.name) ^ "-deps.opam" in
@@ -151,52 +148,53 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
         match arg_switch with
         | None -> Sys.file_exists "_opam"
         | Some Local ->
-            (try Sys.remove "_opam" with _ -> ());
-            Sys.file_exists "_opam"
+          ( try Sys.remove "_opam" with
+          | _ -> () );
+          Sys.file_exists "_opam"
         | Some (Global switch) ->
-            ( match Unix.lstat "_opam" with
-              | exception _ -> ()
-              | st -> (
-                  match st.Unix.st_kind with
-                  | Unix.S_DIR ->
-                      Error.raise
-                        "You must remove the local switch `_opam` before using option \
-                         --switch"
-                  | Unix.S_LNK -> ()
-                  | _ -> Error.raise "Corrupted local switch '_opam'" ) );
-            Opam.run ~y ~switch ?edition [ "switch"; "link" ] [ switch ];
-            false
+          ( match Unix.lstat "_opam" with
+          | exception _ -> ()
+          | st -> (
+            match st.Unix.st_kind with
+            | Unix.S_DIR ->
+              Error.raise
+                "You must remove the local switch `_opam` before using option \
+                 --switch"
+            | Unix.S_LNK -> ()
+            | _ -> Error.raise "Corrupted local switch '_opam'" ) );
+          Opam.run ~y ~switch ?edition [ "switch"; "link" ] [ switch ];
+          false
       in
 
       let env_switch = Globals.opam_switch_prefix in
 
       ( match Unix.lstat "_opam" with
-        | exception _ -> Opam.run ~y:true
-                           [ "switch"; "create" ] [ "."; "--empty" ]
-        | st -> (
-            let current_switch =
-              match st.Unix.st_kind with
-              | Unix.S_LNK -> Filename.basename (Unix.readlink "_opam")
-              (* | Unix.S_DIR *)
-              | _ -> Unix.getcwd () // "_opam"
-            in
-            if Misc.verbose 1 then
-              Printf.eprintf "In opam switch %s\n%!" current_switch;
-            match env_switch with
-            | None -> ()
-            | Some env_switch ->
-                let env_switch =
-                  if Filename.basename env_switch = "_opam" then
-                    env_switch
-                  else
-                    Filename.basename env_switch
-                in
-                if env_switch <> current_switch then
-                  Printf.eprintf
-                    "Warning: your current environment contains a different opam \
-                     switch %S, be careful.\n\
-                     %!"
-                    env_switch ) );
+      | exception _ ->
+        Opam.run ~y:true [ "switch"; "create" ] [ "."; "--empty" ]
+      | st -> (
+        let current_switch =
+          match st.Unix.st_kind with
+          | Unix.S_LNK -> Filename.basename (Unix.readlink "_opam")
+          (* | Unix.S_DIR *)
+          | _ -> Unix.getcwd () // "_opam"
+        in
+        if Globals.verbose 1 then
+          Printf.eprintf "In opam switch %s\n%!" current_switch;
+        match env_switch with
+        | None -> ()
+        | Some env_switch ->
+          let env_switch =
+            if Filename.basename env_switch = "_opam" then
+              env_switch
+            else
+              Filename.basename env_switch
+          in
+          if env_switch <> current_switch then
+            Printf.eprintf
+              "Warning: your current environment contains a different opam \
+               switch %S, be careful.\n\
+               %!"
+              env_switch ) );
 
       let packages_dir = "_opam" // ".opam-switch" // "packages" in
       let packages =
@@ -207,9 +205,9 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
       let map = ref StringMap.empty in
       Array.iter
         (fun nv ->
-           let n, v = EzString.cut_at nv '.' in
-           map := StringMap.add n v !map;
-           map := StringMap.add nv v !map)
+          let n, v = EzString.cut_at nv '.' in
+          map := StringMap.add n v !map;
+          map := StringMap.add nv v !map )
         packages;
       (had_switch, !map)
     ) else
@@ -231,39 +229,41 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
     }
 }
 |}
-           (Sys.getcwd ()))
+           (Sys.getcwd ()) )
     );
 
     match StringMap.find "ocaml" switch_packages with
     | exception Not_found ->
-        let ocaml_nv =
-          "ocaml."
-          ^
-          match edition with
-          | None -> p.edition
-          | Some edition -> edition
-        in
-        let y = y || (
-            config.config_auto_opam_yes <> Some false
-            && is_local_directory "_opam" ) in
-        Opam.run ~y [ "install" ] [ ocaml_nv ];
-        Opam.run [ "switch"; "set-base" ] [ ocaml_nv ]
-    | v -> (
+      let ocaml_nv =
+        "ocaml."
+        ^
         match edition with
-        | Some edition ->
-            if edition = v then
-              Error.raise
-                "Switch edition %s is not compatible with option --edition %s. You \
-                 should remove the switch first."
-                v edition
-        | None -> (
-            match VersionCompare.compare p.min_edition v with
-            | 1 ->
-                Error.raise
-                  "Wrong ocaml version %S in _opam. Expecting %S. You may want to \
-                   remove _opam, or change the project min-edition field."
-                  v p.min_edition
-            | _ -> () ) )
+        | None -> p.edition
+        | Some edition -> edition
+      in
+      let y =
+        y
+        || config.config_auto_opam_yes <> Some false
+           && is_local_directory "_opam"
+      in
+      Opam.run ~y [ "install" ] [ ocaml_nv ];
+      Opam.run [ "switch"; "set-base" ] [ ocaml_nv ]
+    | v -> (
+      match edition with
+      | Some edition ->
+        if edition = v then
+          Error.raise
+            "Switch edition %s is not compatible with option --edition %s. You \
+             should remove the switch first."
+            v edition
+      | None -> (
+        match VersionCompare.compare p.min_edition v with
+        | 1 ->
+          Error.raise
+            "Wrong ocaml version %S in _opam. Expecting %S. You may want to \
+             remove _opam, or change the project min-edition field."
+            v p.min_edition
+        | _ -> () ) )
   );
 
   let deps_package = Misc.deps_package p in
@@ -276,8 +276,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
     | exception _ -> Deps_build
     | "devel-deps" -> Deps_devel
     | "build-deps" -> Deps_build
-    | "locked-deps" ->
-        Deps_locked
+    | "locked-deps" -> Deps_locked
     | _ -> Deps_build
   in
   let former_opam_file =
@@ -288,31 +287,34 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
   in
   let locked_opam_filename = p.package.name ^ "-deps.opam.locked" in
   let new_deps_status =
-    if dev_deps then Deps_devel else
-    if arg_locked then Deps_locked else
+    if dev_deps then
+      Deps_devel
+    else if arg_locked then
+      Deps_locked
+    else
       match former_deps_status with
-      | Deps_locked when not ( Sys.file_exists locked_opam_filename ) ->
-          Deps_build
+      | Deps_locked when not (Sys.file_exists locked_opam_filename) ->
+        Deps_build
       | _ -> former_deps_status
   in
   let new_opam_file =
     match new_deps_status with
     | Deps_locked ->
-        if not ( Sys.file_exists locked_opam_filename ) then
-          Error.raise "File %s required by --locked does not exist\n%!"
-            locked_opam_filename;
-        EzFile.read_file locked_opam_filename
+      if not (Sys.file_exists locked_opam_filename) then
+        Error.raise "File %s required by --locked does not exist\n%!"
+          locked_opam_filename;
+      EzFile.read_file locked_opam_filename
     | _ -> EzFile.read_file opam_filename
   in
   let need_update =
     force_build_deps || force_dev_deps
     || (build_deps || dev_deps)
        && (former_opam_file <> Some new_opam_file || not had_switch)
-    || ( former_deps_status <> new_deps_status )
+    || former_deps_status <> new_deps_status
   in
   let need_dev_deps =
-    dev_deps || force_dev_deps ||
-    ( former_deps_status = Deps_devel && not force_build_deps)
+    dev_deps || force_dev_deps
+    || (former_deps_status = Deps_devel && not force_build_deps)
   in
   (*
   Printf.eprintf
@@ -344,28 +346,28 @@ had_switch: %b
 
     Opam.run ~y [ "install" ]
       ( [ "--deps-only"; "." // tmp_opam_filename ]
-        @ ( if need_dev_deps then
-              [ "--with-doc"; "--with-test" ]
-            else
-              [] )
-        @ vendor_packages );
+      @ ( if need_dev_deps then
+          [ "--with-doc"; "--with-test" ]
+        else
+          [] )
+      @ vendor_packages );
 
-    (try Sys.remove drom_opam_filename with _ -> ());
+    ( try Sys.remove drom_opam_filename with
+    | _ -> () );
     Sys.rename tmp_opam_filename drom_opam_filename;
     EzFile.write_file drom_opam_deps
       ( match new_deps_status with
-        | Deps_devel -> "devel-deps"
-        | Deps_build -> "build-deps"
-        | Deps_locked -> "locked-deps"
-      )
+      | Deps_devel -> "devel-deps"
+      | Deps_build -> "build-deps"
+      | Deps_locked -> "locked-deps" )
   );
 
   let extra_packages =
     if force_dev_deps then
       let config = Config.config () in
       ( match config.config_dev_tools with
-        | None -> [ "merlin"; "ocp-indent" ]
-        | Some dev_tools -> dev_tools )
+      | None -> [ "merlin"; "ocp-indent" ]
+      | Some dev_tools -> dev_tools )
       @ extra_packages
     else
       extra_packages
@@ -373,37 +375,34 @@ had_switch: %b
   begin
     match extra_packages with
     | [] -> ()
-    | _ ->
-        let to_install = ref [] in
-        List.iter (fun nv ->
-            if not ( StringMap.mem nv switch_packages ) then
-              to_install := nv :: !to_install
-          ) extra_packages ;
-        match !to_install with
-        | [] -> ()
-        | packages ->
-            Opam.run ~y [ "install" ] packages
+    | _ -> (
+      let to_install = ref [] in
+      List.iter
+        (fun nv ->
+          if not (StringMap.mem nv switch_packages) then
+            to_install := nv :: !to_install )
+        extra_packages;
+      match !to_install with
+      | [] -> ()
+      | packages -> Opam.run ~y [ "install" ] packages )
   end;
 
   if build then begin
     Misc.before_hook "build";
     Opam.run [ "exec" ]
       ( [ "--"; "dune"; "build"; "@install" ]
-        @
-        ( match arg_profile with
-          | Some profile ->  [ "--profile"; profile ]
-          | None -> match p.profile with
-            | None -> []
-            | Some profile -> [ "--profile"; profile ] )
-        @
-        ( match !Globals.verbosity with
-          | 0 -> [ "--display=quiet" ]
-          | 1 -> []
-          | 2 -> [ "--display=short" ]
-          | _ -> [ "--display=verbose" ]
-        )
-
-      );
-    Misc.after_hook "build";
+      @ ( match arg_profile with
+        | Some profile -> [ "--profile"; profile ]
+        | None -> (
+          match p.profile with
+          | None -> []
+          | Some profile -> [ "--profile"; profile ] ) )
+      @
+      match !Globals.verbosity with
+      | 0 -> [ "--display=quiet" ]
+      | 1 -> []
+      | 2 -> [ "--display=short" ]
+      | _ -> [ "--display=verbose" ] );
+    Misc.after_hook "build"
   end;
   p

@@ -81,11 +81,8 @@ let get_string table keys =
   match get table keys with
   | TString s -> s
   | _ ->
-      failwith
-        "Wrong key type %s: expexted String in %s"
-        ( String.concat "." keys )
-        ( Toml.Printer.string_of_table table )
-
+    failwith "Wrong key type %s: expexted String in %s" (String.concat "." keys)
+      (Toml.Printer.string_of_table table)
   | exception _exn -> raise Not_found
 
 let get_string_default table keys default =
@@ -190,7 +187,7 @@ let get_string_list_option ?default table key =
   match get table key with
   | TArray (NodeString v) -> Some v
   | TString "" -> default
-  | TString s -> Some [s]
+  | TString s -> Some [ s ]
   | _ -> failwith "Wrong type for field %S" (key2str key)
   | exception Not_found -> default
 
@@ -199,7 +196,7 @@ let get_string_list_default table key default =
   | TArray NodeEmpty -> []
   | TArray (NodeString v) -> v
   | TString "" -> default
-  | TString s -> [s]
+  | TString s -> [ s ]
   | _ -> failwith "Wrong type for field %S" (key2str key)
   | exception Not_found -> default
 
@@ -223,7 +220,7 @@ let expect_string ~key v =
 let expect_string_list ~key v =
   match v with
   | TArray (NodeString v) -> v
-  | TString v -> [v]
+  | TString v -> [ v ]
   | _ -> failwith "wrong type for key %s (string list expected)" (key2str key)
 
 let expect_bool ~key v =
@@ -236,7 +233,7 @@ let enum_encoding ~to_string ~of_string =
     ~to_toml:(fun v -> TString (to_string v))
     ~of_toml:(fun ~key v ->
       let s = expect_string ~key v in
-      of_string ~key s)
+      of_string ~key s )
 
 let string_encoding =
   encoding
@@ -245,7 +242,7 @@ let string_encoding =
 
 (* [union table1 table2] merges 2 configurations, with a preference
    for table2 in case of conflict.  Recursive on tables and arrays of
-   similar types.  *)
+   similar types. *)
 
 let rec union table1 table2 =
   let table = ref table1 in
@@ -272,109 +269,101 @@ let rec union table1 table2 =
               _ ) ->
             v2 )
       in
-      table := Table.add key v !table)
+      table := Table.add key v !table )
     table2;
   !table
 
 module ENCODING = struct
-
   let stringMap enc =
     encoding
       ~to_toml:(fun map ->
-          let table = ref empty in
-          StringMap.iter
-            (fun name s -> table := put [ name ] (enc.to_toml s) !table)
-            map;
-          TTable !table)
+        let table = ref empty in
+        StringMap.iter
+          (fun name s -> table := put [ name ] (enc.to_toml s) !table)
+          map;
+        TTable !table )
       ~of_toml:(fun ~key v ->
-          let table = expect_table ~key ~name:"profile" v in
-          let map = ref StringMap.empty in
-          iter
-            (fun k v ->
-               map := StringMap.add k (enc.of_toml ~key:(key @ [ k ]) v) !map)
-            table;
-          !map)
-
+        let table = expect_table ~key ~name:"profile" v in
+        let map = ref StringMap.empty in
+        iter
+          (fun k v ->
+            map := StringMap.add k (enc.of_toml ~key:(key @ [ k ]) v) !map )
+          table;
+        !map )
 end
 
-type file_option = {
-  option_name : string ;
-  option_value : Toml.Types.value option ;
-  option_comment : string list option ;
-  option_default : string option ;
-}
+type file_option =
+  { option_name : string;
+    option_value : Toml.Types.value option;
+    option_comment : string list option;
+    option_default : string option
+  }
 
-type file = {
-  mutable options : file_option list;
-}
+type file = { mutable options : file_option list }
 
 let new_file () = { options = [] }
 
-let add file options =
-  file.options <- file.options @ options
+let add file options = file.options <- file.options @ options
 
 let string_of_file file =
   let b = Buffer.create 1000 in
-  List.iter (fun o ->
-      (
-        (match o.option_comment with
-         | None -> ()
-         | Some s ->
-             Printf.bprintf b "\n# %s\n" (String.concat "\n#" s)
-        );
-        Buffer.add_string b (
-          match o.option_value with
-          | Some v -> begin
-              match v with
-                TTable x when Table.is_empty x ->
-                  Printf.sprintf "[%s]\n# ...\n" o.option_name
-              | _ ->
-                  empty |> put [ o.option_name ] v |> to_string
-            end
-          | None ->
-              match o.option_default with
-              | Some s ->
-                  Printf.sprintf "# %s\n" s
-              | None ->
-                  Printf.sprintf "# %s = ...\n" o.option_name
-        );
-
-      )
-    ) file.options ;
+  List.iter
+    (fun o ->
+      ( match o.option_comment with
+      | None -> ()
+      | Some s -> Printf.bprintf b "\n# %s\n" (String.concat "\n#" s) );
+      Buffer.add_string b
+        ( match o.option_value with
+        | Some v -> begin
+          match v with
+          | TTable x when Table.is_empty x ->
+            Printf.sprintf "[%s]\n# ...\n" o.option_name
+          | _ -> empty |> put [ o.option_name ] v |> to_string
+        end
+        | None -> (
+          match o.option_default with
+          | Some s -> Printf.sprintf "# %s\n" s
+          | None -> Printf.sprintf "# %s = ...\n" o.option_name ) ) )
+    file.options;
   Buffer.contents b
 
-
 module CONST = struct
-  let string s = Some ( TString s )
+  let string s = Some (TString s)
+
   let string_option = function
     | None -> None
     | Some s -> string s
-  let string_list l = Some ( TArray ( NodeString l ))
+
+  let string_list l = Some (TArray (NodeString l))
+
   let string_list_option = function
     | None -> None
     | Some l -> string_list l
-  let encoding enc v = Some ( enc.to_toml v )
+
+  let encoding enc v = Some (enc.to_toml v)
+
   let encoding_option enc = function
     | None -> None
     | Some b -> encoding enc b
+
   let bool b = Some (TBool b)
+
   let bool_option = function
     | None -> None
     | Some b -> bool b
+
   let option option_name ?comment ?default option_value =
-      {
-        option_name ;
-        option_value ;
-        option_comment = comment ;
-        option_default = default ;
-      }
+    { option_name;
+      option_value;
+      option_comment = comment;
+      option_default = default
+    }
+
   let s_ ?section options =
     let file = new_file () in
     add file options;
     let s = string_of_file file in
     match section with
-     | None -> s
-     | Some section ->
-         Printf.sprintf "[%s]\n%s" section s
-
+    | None -> s
+    | Some section -> Printf.sprintf "[%s]\n%s" section s
 end

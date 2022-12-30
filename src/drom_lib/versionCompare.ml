@@ -39,7 +39,8 @@ let extract_epoch x =
     let epoch = String.sub x 0 ci
     and rest = String.sub x (ci + 1) (String.length x - ci - 1) in
     (epoch, rest)
-  with Not_found -> ("", x)
+  with
+  | Not_found -> ("", x)
 
 (* splits a version into (prefix,revision). The revision starts on the
  * right-most occurrence of '-', or is empty in case the version does
@@ -50,7 +51,8 @@ let extract_revision x =
     let before = String.sub x 0 di in
     let after = String.sub x (di + 1) (String.length x - di - 1) in
     (before, after)
-  with Not_found -> (x, "")
+  with
+  | Not_found -> (x, "")
 
 (* character comparison uses a modified character ordering: '~' first,
    then letters, then anything else *)

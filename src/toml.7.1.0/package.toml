@@ -1,0 +1,65 @@
+
+# name of package
+name = "drom_toml"
+skeleton = "library"
+
+# version if different from project version
+version = "7.1.0"
+
+# synopsis if different from project synopsis
+# synopsis = ...
+
+# description if different from project description
+# description = ...
+
+# kind is either "library", "program" or "virtual"
+kind = "library"
+
+# authors if different from project authors
+# authors = [ "Me <me@metoo.org>" ]
+
+# name of a file to generate with the current version
+gen-version = "version.ml"
+
+# supported file generators are "ocamllex", "ocamlyacc" and "menhir" 
+# default is [ "ocamllex", "ocamlyacc" ] 
+generators = ["menhir", "ocamllex"]
+
+# whether all modules should be packed/wrapped (default is true)
+# pack-modules = false
+
+# whether the package can be silently skipped if missing deps (default is false)
+# optional = true
+
+# module name used to pack modules (if pack-modules is true)
+# pack = "Mylib"
+
+# preprocessing options
+#  preprocess = "per-module (((action (run ./toto.sh %{input-file})) mod))" 
+# preprocess = "pps ppx_deriving_encoding"
+
+# files to skip while updating at package level
+# skip = []
+
+# package library dependencies
+#   [dependencies]
+#   ez_file = ">=0.1 <1.3"
+#   base-unix = { libname = "unix", version = ">=base" } 
+[dependencies]
+ISO8601 = ""
+
+# package tools dependencies
+[tools]
+# ...
+
+# package fields (depends on package skeleton)
+#Examples:
+#  dune-stanzas = "(preprocess (pps ppx_deriving_encoding))" 
+#  dune-libraries = "bigstring" 
+#  dune-trailer = "(install (..))" 
+#  opam-trailer = "pin-depends: [..]" 
+#  no-opam-test = "yes" 
+#  no-opam-doc = "yes" 
+#  gen-opam = "some" | "all" 
+[fields]
+dune-libraries = "str unix"

@@ -59,7 +59,7 @@ jobs:
 
       - run: opam pin add . -y --no-action
 
-      - run: opam depext -y drom drom_lib
+      - run: opam depext -y drom drom_lib drom_toml
 #        if: steps.cache-opam.outputs.cache-hit != 'true'
 
       - run: opam install -y opam/*.opam --deps-only --with-test

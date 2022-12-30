@@ -10,12 +10,17 @@ SPHINX_TARGET:=_drom/docs/sphinx
 ODOC_TARGET:=_drom/docs/doc/.
 
 
+# Use these non-generated files to include more rules here (and
+# Makefile.trailer at the end)
+-include Makefile.header
+-include Makefile.config
+
 all: build
 
 build:
 	./scripts/before.sh build
 	opam exec -- dune build @install
-	./scripts/copy-bin.sh drom drom_lib
+	./scripts/copy-bin.sh drom drom_lib drom_toml
 	./scripts/after.sh build
 
 build-deps:
@@ -79,4 +84,5 @@ distclean: clean
 	rm -rf _opam _drom
 	./scripts/after.sh distclean
 
+-include Makefile.trailer
 

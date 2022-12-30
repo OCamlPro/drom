@@ -18,8 +18,7 @@ let buffer b s =
     | '\'' -> add "&apos;"
     | '\"' -> add "&quot;"
     | '@' -> add "&commat;"
-    | c ->
-        Buffer.add_char b c
+    | c -> Buffer.add_char b c
   done
 
 let string s =
