@@ -65,3 +65,5 @@ menhir = ">2019"
 #  gen-opam = "some" | "all" 
 [fields]
 dune-libraries = "str unix"
+no-opam-test = "yes"
+no-opam-doc = "yes"
