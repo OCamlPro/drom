@@ -4,7 +4,7 @@ name = "drom_toml"
 skeleton = "library"
 
 # version if different from project version
-version = "7.1.0"
+# version = "7.1.0"
 
 # synopsis if different from project synopsis
 # synopsis = ...
