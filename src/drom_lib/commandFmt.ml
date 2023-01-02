@@ -23,7 +23,7 @@ let action ~args ~auto_promote () =
        if auto_promote then
          [ "--auto-promote" ]
        else
-         [] ));
+         [] ) );
   Misc.after_hook "fmt";
   ()
 
@@ -32,10 +32,10 @@ let cmd =
   let args, specs = Build.build_args () in
   EZCMD.sub cmd_name
     (fun () -> action ~args ~auto_promote:!auto_promote ())
-    ~args: (
-      [ ( [ "auto-promote" ],
-          Arg.Set auto_promote,
-          EZCMD.info "Promote detected changes immediately" )
-      ]
+    ~args:
+      ( [ ( [ "auto-promote" ],
+            Arg.Set auto_promote,
+            EZCMD.info "Promote detected changes immediately" )
+        ]
       @ specs )
-    ~doc: "Format sources with ocamlformat"
+    ~doc:"Format sources with ocamlformat"

@@ -20,8 +20,6 @@ let action ~args () =
 
 let cmd =
   let args, specs = Build.build_args () in
-  EZCMD.sub
-    cmd_name
+  EZCMD.sub cmd_name
     (fun () -> action ~args ())
-    ~args: specs
-    ~doc: "Install build dependencies only"
+    ~args:specs ~doc:"Install build dependencies only"

@@ -1,6 +1,6 @@
 [license]
 key = "LGPL2"
-name = "LGPL-2.1-only with OCaml-LGPL-linking-exception"
+name = "LGPL-2.1-only WITH OCaml-LGPL-linking-exception"
 header = """
 This file is distributed under the terms of the GNU Lesser General
 Public License version 2.1, with the special exception on linking

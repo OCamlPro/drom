@@ -20,5 +20,5 @@ let cmd =
   let args, specs = Build.build_args () in
   EZCMD.sub cmd_name
     (fun () -> action ~args ())
-    ~args: specs
-    ~doc: "Promote detected changes after running drom test or drom fmt"
+    ~args:specs
+    ~doc:"Promote detected changes after running drom test or drom fmt"

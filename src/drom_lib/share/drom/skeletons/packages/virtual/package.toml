@@ -1,4 +1,7 @@
+# This package skeleton is inherited by most other package skeletons
+
 name = "!{name}"
 dir = "!{dir}"
 skeleton = "virtual"
 kind = "virtual"
+gen-version = "version.ml"

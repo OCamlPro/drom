@@ -14,24 +14,23 @@ open EZCMD.TYPES
 let cmd_name = "clean"
 
 let action ~distclean =
-  let _p,_ = Project.get () in
+  let _p, _ = Project.get () in
   Printf.eprintf "Removing _build...\n%!";
   ignore (Sys.command "rm -rf _build");
   Misc.after_hook "clean";
   if !distclean then (
     ignore (Sys.command "rm -rf _drom");
     ignore (Sys.command "rm -rf _opam");
-    Misc.after_hook "distclean";
+    Misc.after_hook "distclean"
   )
 
 let cmd =
   let distclean = ref false in
-  EZCMD.sub
-    cmd_name
+  EZCMD.sub cmd_name
     (fun () -> action ~distclean)
     ~args:
       [ ( [ "distclean" ],
           Arg.Set distclean,
           EZCMD.info "Also remove _opam/ (local switch) and _drom/" )
       ]
-    ~doc: "Clean the project from build files"
+    ~doc:"Clean the project from build files"

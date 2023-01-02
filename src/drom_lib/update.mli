@@ -15,9 +15,9 @@ type update_args =
     mutable arg_force : bool;
     mutable arg_diff : bool;
     mutable arg_skip : (bool * string) list;
-    mutable arg_promote_skip : bool ;
+    mutable arg_promote_skip : bool;
     mutable arg_edition : string option;
-    mutable arg_min_edition : string option;
+    mutable arg_min_edition : string option
   }
 
 val update_args :

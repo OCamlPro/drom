@@ -16,18 +16,22 @@ val write_files :
   record:bool ->
   skip:bool ->
   perm:int ->
-  unit) ->
+  unit ) ->
   Types.project ->
   unit
 
-val lookup_project : string option -> Types.skeleton
+val lookup_project : string -> Types.skeleton
 
 val lookup_package : string -> Types.skeleton
 
 val known_skeletons : unit -> string
 
 val default_flags : string -> Types.flags
+
 val subst_package_file : Types.flags -> string -> Types.package -> string
 
 val project_skeletons : unit -> Types.skeleton list
+
 val package_skeletons : unit -> Types.skeleton list
+
+val to_string : Types.skeleton -> string

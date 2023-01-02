@@ -21,26 +21,28 @@ let make_odoc p =
   let odoc_target = Format.sprintf "_drom/docs/%s" dir in
   EzFile.make_dir ~p:true odoc_target;
   Misc.call
-    [| "rsync"; "-auv"; "--delete"; "_build/default/_doc/_html/."; odoc_target |];
+    [| "rsync";
+       "-auv";
+       "--delete";
+       "_build/default/_doc/_html/.";
+       odoc_target
+    |];
   odoc_target
 
 let action ~args ~open_www () =
   let (p : Types.project) = Build.build ~dev_deps:true ~args () in
   let odoc_target = make_odoc p in
-  if !open_www then
-    Misc.call [| "xdg-open"; odoc_target // "index.html" |]
+  if !open_www then Misc.call [| "xdg-open"; odoc_target // "index.html" |]
 
 let cmd =
   let args, specs = Build.build_args () in
   let open_www = ref false in
   EZCMD.sub cmd_name
     (fun () -> action ~args ~open_www ())
-    ~args: (
-      [ ( [ "view" ],
-          Arg.Set open_www,
-          EZCMD.info "Open a browser on the documentation" )
-      ]
-      @ specs
-    )
-    ~doc:
-      "Generate API documentation using odoc in the _drom/docs/doc directory"
+    ~args:
+      ( [ ( [ "view" ],
+            Arg.Set open_www,
+            EZCMD.info "Open a browser on the documentation" )
+        ]
+      @ specs )
+    ~doc:"Generate API documentation using odoc in the _drom/docs/doc directory"

@@ -27,11 +27,11 @@ type version =
 
 type dependency =
   { depversions : version list; (* "version" *)
-    depname : string option;    (* "libname" *)
+    depname : string option; (* "libname" *)
     (* for dune if different *)
-    deptest : bool ; (* "for-test" *)
-    depdoc : bool ; (* "for-doc" *)
-    depopt : bool ; (* opt *)
+    deptest : bool; (* "for-test" *)
+    depdoc : bool; (* "for-doc" *)
+    depopt : bool (* opt *)
   }
 
 type package =
@@ -51,10 +51,10 @@ type package =
     mutable p_gen_version : string option;
     mutable p_fields : string StringMap.t;
     mutable p_generators : StringSet.t option;
-    mutable p_file : string option ;
-    mutable p_skip : string list option ;
-    mutable p_optional : bool option ;
-    mutable p_preprocess : string option ;
+    mutable p_file : string option;
+    mutable p_skip : string list option;
+    mutable p_optional : bool option;
+    mutable p_preprocess : string option
   }
 
 and project =
@@ -62,9 +62,7 @@ and project =
     (* The list of all packages, including the main package *)
     mutable packages : package list;
     mutable file : string option; (* name of the file *)
-    mutable generators : StringSet.t;
-    (* sub-packages *)
-
+    mutable generators : StringSet.t; (* sub-packages *)
     (* common fields *)
     mutable skeleton : string option;
     edition : string;
@@ -95,12 +93,12 @@ and project =
     authors : string list;
     synopsis : string;
     description : string;
-    share_dirs : string list ;
+    share_dirs : string list;
     mutable dependencies : (string * dependency) list;
     mutable tools : (string * dependency) list;
     mutable fields : string StringMap.t;
     year : int;
-    mutable dune_version : string;
+    mutable dune_version : string
   }
 
 and profile = { flags : string StringMap.t }
@@ -113,8 +111,8 @@ type config =
     config_copyright : string option;
     config_opam_repo : string option;
     config_dev_tools : string list option;
-    config_auto_upgrade : bool option ;
-    config_auto_opam_yes : bool option ;
+    config_auto_upgrade : bool option;
+    config_auto_opam_yes : bool option
   }
 
 type opam_kind =
@@ -134,27 +132,27 @@ type flags =
     mutable flag_create : bool;
     mutable flag_record : bool;
     mutable flag_skips : string list;
-    mutable flag_skip : bool ;
-    mutable flag_subst : bool ;
-    mutable flag_perm : int ;
-    flag_skipper : bool list ref ;
+    mutable flag_skip : bool;
+    mutable flag_subst : bool;
+    mutable flag_perm : int;
+    flag_skipper : bool list ref
   }
 
 type skeleton =
   { skeleton_inherits : string option;
-    skeleton_toml : string list;
+    skeleton_toml : string list; (* content of drom.toml or package.toml file *)
     skeleton_files : (string * string * int) list;
     skeleton_flags : flags StringMap.t;
-    skeleton_drom : bool ;
-    skeleton_name : string ;
+    skeleton_drom : bool;
+    skeleton_name : string
   }
 
-type license = {
-  license_key : string ;
-  license_name : string ;
-  license_header : string list ;
-  license_contents : string ;
-}
+type license =
+  { license_key : string;
+    license_name : string;
+    license_header : string list;
+    license_contents : string
+  }
 
 type deps_status =
   | Deps_build

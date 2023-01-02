@@ -1,8 +1,4 @@
 !{global-ocamlformat}
-version=0.15.0
-align-cases=false
-align-constructors-decl=false
-align-variants-decl=false
 assignment-operator=end-line
 break-before-in=fit-or-vertical
 break-cases=all
@@ -37,7 +33,6 @@ let-and=sparse
 let-binding-indent=2
 let-binding-spacing=compact
 let-module=compact
-let-open=preserve
 margin=80
 match-indent=0
 match-indent-nested=never

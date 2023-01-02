@@ -1,7 +1,7 @@
-name = "!{name}"
-dir = "!{dir}"
-kind = "program"
-skeleton = "js_driver"
+# Everything above is inherited from 'virtual' package skeleton
+
+kind := "program"
+skeleton := "js_driver"
 
 [dependencies]
 !{name:alpha}_lib = "version"

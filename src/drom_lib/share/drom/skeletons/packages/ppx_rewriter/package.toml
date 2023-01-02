@@ -1,8 +1,7 @@
-name = "!{name}"
-dir = "!{dir}"
-skeleton = "ppx_rewriter"
-kind = "library"
-gen-version = "version.ml"
+# Everything above is inherited from 'virtual' package skeleton
+
+skeleton := "ppx_rewriter"
+kind := "library"
 
 [dependencies]
 ppxlib = "0.15"

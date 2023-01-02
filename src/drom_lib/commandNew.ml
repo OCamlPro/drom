@@ -17,35 +17,38 @@ open EzFile.OP
 
 let cmd_name = "new"
 
-
 let print_dir name dir =
   let open EzPrintTree in
   let rec iter name dir =
     let files = Sys.readdir dir in
     Array.sort compare files;
     let files = Array.to_list files in
-    Branch (name,
-            List.map (fun file ->
-                let dir = dir // file in
-                if Sys.is_directory dir then
-                  iter (file ^ "/") dir
-                else
-                  let file =
-                    match file with
-                    | ".drom" -> ".drom             (drom state, do not edit)"
-                    | "drom.toml" -> "drom.toml    <────────── project config EDIT !"
-                    | "package.toml" -> "package.toml    <────────── package config EDIT !"
-                    | _ -> file
-                  in
-                  Branch (file, [])
-              )
-              (List.filter (function
-                   | ".git"
-                   | "_drom"
-                   | "_build"
-                     -> false
-                   | _ -> true
-                 ) files ))
+    Branch
+      ( name,
+        List.map
+          (fun file ->
+            let dir = dir // file in
+            if Sys.is_directory dir then
+              iter (file ^ "/") dir
+            else
+              let file =
+                match file with
+                | ".drom" -> ".drom             (drom state, do not edit)"
+                | "drom.toml" ->
+                  "drom.toml    <────────── project config EDIT !"
+                | "package.toml" ->
+                  "package.toml    <────────── package config EDIT !"
+                | _ -> file
+              in
+              Branch (file, []) )
+          (List.filter
+             (function
+               | ".git"
+               | "_drom"
+               | "_build" ->
+                 false
+               | _ -> true )
+             files ) )
   in
   let tree = iter name dir in
   print_tree "" tree
@@ -54,17 +57,20 @@ let rec find_project_package name packages =
   match packages with
   | [] -> Error.raise "Cannot find main package %S" name
   | package :: packages ->
-      if package.name = name then package else
-        find_project_package name packages
+    if package.name = name then
+      package
+    else
+      find_project_package name packages
 
 let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
-  let skeleton_name = match skeleton with
+  let skeleton_name =
+    match skeleton with
     | None -> "program"
     | Some skeleton -> skeleton
   in
   let license =
     match config.config_license with
-    | None -> License.key_LGPL2
+    | None -> Globals.key_LGPL2
     | Some license -> license
   in
   let dir =
@@ -72,15 +78,16 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     | None -> "src" // name
     | Some dir -> dir
   in
-  Printf.eprintf
-    "Creating project %S with skeleton %S, license %S\n"
-    name skeleton_name license;
-  Printf.eprintf
-    "  and sources in %s:\n%!" dir;
-  let skeleton = Skeleton.lookup_project ( Some skeleton_name ) in
+  Printf.eprintf "Creating project %S with skeleton %S, license %S\n" name
+    skeleton_name license;
+  Printf.eprintf "  and sources in %s:\n%!" dir;
+  let skeleton = Skeleton.lookup_project skeleton_name in
+  if Globals.verbose 2 then
+    Printf.eprintf "Skeleton %s = %s\n%!" skeleton_name
+      (Skeleton.to_string skeleton);
 
   let package, packages =
-    let package = Project.create_package ~kind:Virtual ~name ~dir in
+    let package = Package.create ~kind:Virtual ~name ~dir in
     (package, [ package ])
   in
   let author = Project.find_author config in
@@ -89,11 +96,16 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     | Some copyright -> Some copyright
     | None -> Some author
   in
-  let gendep =
-    { depversions = []; depname = None;
-      deptest = true; depdoc = false ; depopt = false } in
+  let gendep_for_test =
+    { depversions = [];
+      depname = None;
+      deptest = true;
+      depdoc = false;
+      depopt = false
+    }
+  in
   let p =
-    { Project.dummy_project with
+    { Globals.dummy_project with
       package;
       packages;
       skeleton = Some skeleton_name;
@@ -101,10 +113,10 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
       synopsis = Globals.default_synopsis ~name;
       description = Globals.default_description ~name;
       tools =
-        [ ( "ocamlformat", gendep ) ;
-          ( "ppx_expect", { gendep with deptest = true } ) ;
-          ( "ppx_inline_test", { gendep with deptest = true } ) ;
-          ( "odoc", { gendep with depdoc = true } ) ;
+        [ ("ocamlformat", { gendep_for_test with depversions = [ Eq "0.15" ] });
+          ("ppx_expect", gendep_for_test);
+          ("ppx_inline_test", gendep_for_test);
+          ("odoc", { gendep_for_test with depdoc = true })
         ];
       github_organization = config.config_github_organization;
       homepage = None;
@@ -118,7 +130,7 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
       archive = None;
       sphinx_target = None;
       odoc_target = None;
-      ci_systems = Misc.default_ci_systems;
+      ci_systems = Globals.default_ci_systems;
       profiles = StringMap.empty;
       skip_dirs = [];
       fields = StringMap.empty
@@ -139,14 +151,15 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     match list with
     | [] -> (p, None)
     | content :: super ->
-        let p,_ = iter_skeleton super in
+        let p, _ = iter_skeleton super in
         let content = Subst.project () p content in
-        Project.of_string ~msg:"toml template" ~default:p content, Some content
+        Toml.with_override (fun () ->
+            let p = Project.of_string ~msg:"drom.toml template" ~default:p content in
+            (p, Some content) )
   in
   let p, p_content = iter_skeleton skeleton.skeleton_toml in
 
   (* second, resolve package skeletons *)
-
   let rec iter_skeleton package list =
     match list with
     | [] -> package
@@ -154,35 +167,36 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
         let package = iter_skeleton package super in
         let flags = Skeleton.default_flags "package.toml" in
         let content = Skeleton.subst_package_file flags content package in
-        match EzToml.from_string content with
-        | `Ok table ->
-            Project.package_of_toml ~default:p table
-        | `Error (s, loc) ->
-            Error.raise "Could not parse:\n<<<\n%s>>>\n %s at %s"
-              content s
-              (EzToml.string_of_location loc)
-
+        Toml.with_override (fun () ->
+            let package =
+              Package.of_string ~msg:"package.toml template" ~default:p content
+            in
+            package )
   in
-  let packages = List.map (fun package ->
-      let skeleton = Misc.package_skeleton package in
-      Printf.eprintf "Using skeleton %S for package %S\n%!"
-        skeleton package.name;
-      let skeleton = Skeleton.lookup_package skeleton in
-      iter_skeleton package skeleton.skeleton_toml) p.packages in
+  let packages =
+    List.map
+      (fun package ->
+         let skeleton = Misc.package_skeleton package in
+         Printf.eprintf "Using skeleton %S for package %S\n%!" skeleton
+           package.name;
+         let skeleton = Skeleton.lookup_package skeleton in
+         iter_skeleton package skeleton.skeleton_toml )
+      p.packages
+  in
 
   (* create new project with correct packages *)
-  let project = {
-    p with
-    package = find_project_package p.package.name packages;
-    packages }
+  let project =
+    { p with package = find_project_package p.package.name packages; packages }
   in
   List.iter (fun p -> p.project <- project) packages;
 
   (* third, extract project again, but with knowledge of packages *)
-  let p = match p_content with
+  let p =
+    match p_content with
     | None -> project
     | Some content ->
-        Project.of_string ~msg:"toml template" ~default:project content
+        Toml.with_override (fun () ->
+            Project.of_string ~msg:"drom.toml template" ~default:project content )
   in
 
   Update.update_files ~twice:true ~create:true ~git:true ~args p;
@@ -192,16 +206,17 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
 let action ~skeleton ~name ~inplace ~dir ~args =
   match name with
   | None ->
-      Printf.eprintf {|You must specify the name of the project to create:
+    Printf.eprintf
+      {|You must specify the name of the project to create:
 
 drom new PROJECT --skeleton SKELETON
 
 Available skeletons are: %s
-|} (Skeleton.project_skeletons ()
-    |> List.map (fun s -> s.skeleton_name)
-    |> String.concat " ");
-      exit 2
-
+|}
+      ( Skeleton.project_skeletons ()
+      |> List.map (fun s -> s.skeleton_name)
+      |> String.concat " " );
+    exit 2
   | Some name -> (
     let config = Config.config () in
     let project = Project.find () in
@@ -222,52 +237,56 @@ let cmd =
   args.arg_upgrade <- true;
   EZCMD.sub cmd_name
     ~args:
-      (
-        specs
-        @ [ ( [ "dir" ],
-              Arg.String (fun s -> dir := Some s),
-              EZCMD.info ~docv:"DIRECTORY"
-                "Dir where package sources are stored (src by default)"
-            );
-            ( [ "library" ],
-              Arg.Unit (fun () -> skeleton := Some "library"),
-              EZCMD.info "Project contains only a library" );
-            ( [ "program" ],
-              Arg.Unit (fun () -> skeleton := Some "program"),
-              EZCMD.info "Project contains only a program" );
-            ( [ "virtual" ],
-              Arg.Unit (fun () -> skeleton := Some "virtual"),
-              EZCMD.info "Package is virtual, i.e. no code" );
-            ( [ "skeleton" ],
-              Arg.String (fun s -> skeleton := Some s),
-              EZCMD.info
-                ~docv:"SKELETON"
-                "Create project using a predefined skeleton or one specified in \
-                 ~/.config/drom/skeletons/" );
-            ( [ "inplace" ],
-              Arg.Set inplace,
-              EZCMD.info "Create project in the the current directory" );
-            ( [],
-              Arg.Anon (0, fun name -> project_name := Some name),
-              EZCMD.info ~docv:"PROJECT" "Name of the project" )
-          ])
+      ( specs
+      @ [ ( [ "dir" ],
+            Arg.String (fun s -> dir := Some s),
+            EZCMD.info ~docv:"DIRECTORY"
+              "Dir where package sources are stored (src by default)" );
+          ( [ "library" ],
+            Arg.Unit (fun () -> skeleton := Some "library"),
+            EZCMD.info "Project contains only a library" );
+          ( [ "program" ],
+            Arg.Unit (fun () -> skeleton := Some "program"),
+            EZCMD.info "Project contains only a program" );
+          ( [ "virtual" ],
+            Arg.Unit (fun () -> skeleton := Some "virtual"),
+            EZCMD.info "Package is virtual, i.e. no code" );
+          ( [ "skeleton" ],
+            Arg.String (fun s -> skeleton := Some s),
+            EZCMD.info ~docv:"SKELETON"
+              "Create project using a predefined skeleton or one specified in \
+               ~/.config/drom/skeletons/" );
+          ( [ "inplace" ],
+            Arg.Set inplace,
+            EZCMD.info "Create project in the the current directory" );
+          ( [],
+            Arg.Anon (0, fun name -> project_name := Some name),
+            EZCMD.info ~docv:"PROJECT" "Name of the project" )
+        ] )
     ~doc:"Create a new project"
     (fun () ->
-       action ~name:!project_name ~skeleton:!skeleton ~dir:!dir
-         ~inplace:!inplace ~args)
-    ~man: [
-      `S "DESCRIPTION";
-      `Blocks [
-        `P "This command creates a new project, with name $(b,PROJECT) in a directory $(b,PROJECT) (unless the $(b,--inplace) argument was provided).";
-
-      ];
-      `S "EXAMPLE";
-      `P "The following command creates a project containing library $(b,my_lib) in $(b,src/my_lib):";
-      `Pre {|
+      action ~name:!project_name ~skeleton:!skeleton ~dir:!dir ~inplace:!inplace
+        ~args )
+    ~man:
+      [ `S "DESCRIPTION";
+        `Blocks
+          [ `P
+              "This command creates a new project, with name $(b,PROJECT) in a \
+               directory $(b,PROJECT) (unless the $(b,--inplace) argument was \
+               provided)."
+          ];
+        `S "EXAMPLE";
+        `P
+          "The following command creates a project containing library \
+           $(b,my_lib) in $(b,src/my_lib):";
+        `Pre {|
 drom new my_lib --skeleton library
 |};
-      `P "The following command creates a project containing a library $(b,hello_lib) in $(b,src/hello_lib) and a program $(b,hello) in $(b,src/hello) calling the library:";
-      `Pre {|
+        `P
+          "The following command creates a project containing a library \
+           $(b,hello_lib) in $(b,src/hello_lib) and a program $(b,hello) in \
+           $(b,src/hello) calling the library:";
+        `Pre {|
 drom new hello --skeleton program
 |}
-    ]
+      ]

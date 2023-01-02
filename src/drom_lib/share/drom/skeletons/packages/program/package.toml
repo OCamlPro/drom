@@ -1,5 +1,5 @@
-name = "!{name}"
-dir = "!{dir}"
-skeleton = "program"
-kind = "program"
-gen-version = "version.ml"
+# Everything above is inherited from 'virtual' package skeleton
+
+skeleton := "program"
+kind := "program"
+

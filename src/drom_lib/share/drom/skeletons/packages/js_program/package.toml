@@ -1,8 +1,7 @@
-name = "!{name}"
-dir = "!{dir}"
-kind = "program"
-skeleton = "js_program"
-gen-version = "version.ml"
+# Everything above is inherited from 'virtual' package skeleton
+
+kind := "program"
+skeleton := "js_program"
 
 [dependencies]
 js_of_ocaml = "3.0"

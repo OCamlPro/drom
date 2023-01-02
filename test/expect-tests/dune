@@ -6,5 +6,5 @@
   (pps ppx_expect))
  (inline_tests
   (modes best)) ; add js for testing with nodejs
- (libraries drom_lib) ; add your project libraries here
+ (libraries drom_lib drom_toml) ; add your project libraries here
  )

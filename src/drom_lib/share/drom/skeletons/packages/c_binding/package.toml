@@ -1,8 +1,7 @@
-name = "!{name}"
-dir = "!{dir}"
-skeleton = "c_binding"
-kind = "library"
-gen-version = "version.ml"
+# Everything above is inherited from 'virtual' package skeleton
+
+skeleton := "c_binding"
+kind := "library"
 
 [fields]
 c-names = "!{name}_stubs"

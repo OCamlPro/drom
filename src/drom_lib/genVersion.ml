@@ -8,10 +8,9 @@
 (*                                                                        *)
 (**************************************************************************)
 
-
 let file package _file =
   Printf.sprintf
-{|#!/usr/bin/env ocaml
+    {|#!/usr/bin/env ocaml
 ;;
 #load "unix.cma"
 
@@ -42,15 +41,14 @@ let () =
   Format.printf "@]@.";
   ()
 |}
-  (Misc.p_version package)
+    (Misc.p_version package)
 
 let dune _package file =
   Printf.sprintf
-  {|
+    {|
 (rule
     (targets %s)
     (deps (:script %st) package.toml)
     (action (with-stdout-to %%{targets} (run %%{ocaml} unix.cma %%{script}))))
 |}
-  file
-  file
+    file file

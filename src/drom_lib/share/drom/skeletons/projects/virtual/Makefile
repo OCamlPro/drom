@@ -10,6 +10,11 @@ SPHINX_TARGET:=_drom/docs/!{sphinx-target}
 ODOC_TARGET:=_drom/docs/!{odoc-target}/.
 ![fi]
 
+# Use these non-generated files to include more rules here (and
+# Makefile.trailer at the end)
+-include Makefile.header
+-include Makefile.config
+
 all: build
 
 build:
@@ -79,4 +84,5 @@ distclean: clean
 	rm -rf _opam _drom
 	./scripts/after.sh distclean
 
+-include Makefile.trailer
 !(makefile-trailer)

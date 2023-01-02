@@ -10,8 +10,9 @@ github-organization = "ocamlpro"
 license = "LGPL2"
 min-edition = "4.07.0"
 name = "drom"
+skeleton = "program"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
-version = "0.7.0"
+version = "0.8.0"
 
 # keys that you could also define:
 # odoc-target = "...odoc-target..."
@@ -24,8 +25,7 @@ version = "0.7.0"
 # homepage = "...homepage..."
 
 [project]
-description = """
-The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like
+description = """The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like
 user experience. It can be used to create full OCaml projects with
 sphinx and odoc documentation. It has specific knowledge of Github and
 will generate files for Github Actions CI and Github pages.
@@ -78,4 +78,8 @@ dir = "src/drom"
 [[package]]
 dir = "src/drom_lib"
 # edit 'src/drom_lib/package.toml' for package-specific options
+
+[[package]]
+dir = "src/toml.7.1.0"
+# edit 'src/toml.7.1.0/package.toml' for package-specific options
 

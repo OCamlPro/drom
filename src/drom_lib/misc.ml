@@ -37,11 +37,11 @@ let option_value o ~default =
   | None -> default
   | Some v -> v
 
-let verbose i = !Globals.verbosity >= i
-
 let call ?(stdout = Unix.stdout) args =
-  if verbose 1 then
+  (*
+  if Globals.verbose 1 then
     Printf.eprintf "Calling %s\n%!" (String.concat " " (Array.to_list args));
+*)
   let pid = Unix.create_process args.(0) args Unix.stdin stdout Unix.stderr in
   let rec iter () =
     match Unix.waitpid [] pid with
@@ -94,11 +94,9 @@ let homepage p =
         (Printf.sprintf "https://%s.github.io/%s" organization p.package.name)
     | None -> None )
 
-let sphinx_target p =
-  option_value p.sphinx_target ~default:"sphinx"
+let sphinx_target p = option_value p.sphinx_target ~default:"sphinx"
 
-let odoc_target p =
-  option_value p.odoc_target ~default:"doc"
+let odoc_target p = option_value p.odoc_target ~default:"doc"
 
 let doc_api p =
   match p.doc_api with
@@ -107,20 +105,20 @@ let doc_api p =
     match p.github_organization with
     | Some organization ->
       Some
-        (Printf.sprintf "https://%s.github.io/%s/%s" organization
-           p.package.name (odoc_target p))
+        (Printf.sprintf "https://%s.github.io/%s/%s" organization p.package.name
+           (odoc_target p) )
     | None -> None )
 
 let doc_gen p =
   match p.doc_gen with
   | Some s -> Some s
-  | None ->
-      match p.github_organization with
-      | Some organization ->
-          Some
-            (Printf.sprintf "https://%s.github.io/%s/%s" organization
-               p.package.name (sphinx_target p))
-      | None -> None
+  | None -> (
+    match p.github_organization with
+    | Some organization ->
+      Some
+        (Printf.sprintf "https://%s.github.io/%s/%s" organization p.package.name
+           (sphinx_target p) )
+    | None -> None )
 
 let p_dependencies package =
   package.p_dependencies @ package.project.dependencies
@@ -180,7 +178,7 @@ let bug_reports p =
     | Some organization ->
       Some
         (Printf.sprintf "https://github.com/%s/%s/issues" organization
-           p.package.name)
+           p.package.name )
     | None -> None )
 
 let subst s f =
@@ -190,7 +188,8 @@ let subst s f =
 
 let list_opam_packages dir =
   let packages = ref [] in
-  List.iter (fun dir ->
+  List.iter
+    (fun dir ->
       let files =
         match Sys.readdir dir with
         | exception _ -> [||]
@@ -198,18 +197,18 @@ let list_opam_packages dir =
       in
       Array.iter
         (fun file ->
-           if Filename.check_suffix file ".opam" then
-             let package = Filename.chop_suffix file ".opam" in
-             packages := package :: !packages)
-        files;
-    ) [ dir ; dir // "opam" ];
+          if Filename.check_suffix file ".opam" then
+            let package = Filename.chop_suffix file ".opam" in
+            packages := package :: !packages )
+        files )
+    [ dir; dir // "opam" ];
   !packages
 
 let semantic_version version =
   match EzString.split version '.' with
   | [ major; minor; fix ] -> (
-    try Some (int_of_string major, int_of_string minor, int_of_string fix)
-    with Failure _ -> None )
+    try Some (int_of_string major, int_of_string minor, int_of_string fix) with
+    | Failure _ -> None )
   | _ -> None
 
 let underscorify s =
@@ -257,7 +256,10 @@ let deps_package p =
   }
 
 let modules package =
-  let files = try Sys.readdir package.dir with _ -> [||] in
+  let files =
+    try Sys.readdir package.dir with
+    | _ -> [||]
+  in
   let set = ref StringSet.empty in
   let add_module file =
     let m = String.capitalize file in
@@ -273,7 +275,7 @@ let modules package =
         | None -> (
           match EzString.chop_suffix file ~suffix:".mly" with
           | Some file -> add_module file
-          | None -> () ) ))
+          | None -> () ) ) )
     files;
   StringSet.to_list !set
 
@@ -294,22 +296,24 @@ let dev_repo p =
 
 let vendor_packages () =
   let vendors_dir = "vendors" in
-  (try Sys.readdir vendors_dir with _ -> [||])
+  ( try Sys.readdir vendors_dir with
+  | _ -> [||] )
   |> Array.map (fun dir ->
          let dir = vendors_dir // dir in
-         (try Sys.readdir dir with Not_found -> [||])
+         ( try Sys.readdir dir with
+         | Not_found -> [||] )
          |> Array.map (fun file ->
                 if Filename.check_suffix file ".opam" then
                   Some (dir // file)
                 else
-                  None)
+                  None )
          |> Array.to_list
          |> List.filter (function
               | None -> false
-              | Some _file -> true)
+              | Some _file -> true )
          |> List.map (function
               | None -> assert false
-              | Some file -> file))
+              | Some file -> file ) )
   |> Array.to_list |> List.flatten
 
 let library_module p =
@@ -331,9 +335,8 @@ let package_skeleton package =
   | Some skeleton -> skeleton
   | None -> string_of_kind package.kind
 
-let hook ?(args=[]) script =
-  if Sys.file_exists script then
-    call ( Array.of_list (script :: args) )
+let hook ?(args = []) script =
+  if Sys.file_exists script then call (Array.of_list (script :: args))
 
 let before_hook ?args command =
   hook ?args (Printf.sprintf "./scripts/before-%s.sh" command)
@@ -341,63 +344,64 @@ let before_hook ?args command =
 let after_hook ?args command =
   hook ?args (Printf.sprintf "./scripts/after-%s.sh" command)
 
-let default_ci_systems =
-  [ "ubuntu-latest" ; "macos-latest" ; "windows-latest" ]
+(** [infimum ~default ~current ~bottom versions] computes the infimum (ie. lower
+    highest) version according to [versions] constraints. [bottom] is used as
+    the minimal version and [default] and [current] for [NoVersion] and
+    [Version] respectively.
 
-let editor () =
-  match Sys.getenv "EDITOR" with
-  | exception Not_found -> "emacs"
-  | editor -> editor
-
-(** [infimum ~default ~current ~bottom versions] computes the infimum (ie.
-    lower highest) version according to [versions] constraints. [bottom]
-    is used as the minimal version and [default] and [current] for
-    [NoVersion] and [Version] respectively.
-
-    @return [`unknown] when no infimum can be infered. For example, with the
-    only constraint (>1.2.3) we can't decide {i a priori} a infimum for it
-    since we don't know what versions are available after 1.2.3 (maybe 1.2.4
-    or 1.2.7 or whatever). It returns [`found version] when an infimum
-    [version] is found and [`conflict (v, c)] when the infimum found so far [v]
-    doesn't match the constraint [c]. *)
-let infimum : default:string -> ?current:string -> bottom:string -> version list ->
-  [`unknown|`found of string|`conflict of string * string] =
-  fun ~default ?(current = default) ~bottom versions ->
-    let rec loop excluded reference = function
-      | [] ->
-        if not excluded then `found reference
-        else `unknown
-      | Lt version :: others ->
-        if VersionCompare.compare reference version < 0 then
-          loop false reference others
-        else `conflict (reference, "<" ^ version)
-      | Le version :: others ->
-        if VersionCompare.compare reference version <= 0 then
-          loop false reference others
-        else `conflict (reference, "<=" ^ version)
-      | Eq version :: others ->
-        if VersionCompare.compare reference version >= 0 then
-          loop false reference others
-        else
-          loop false version others
-      | Ge version :: others ->
-        if VersionCompare.compare reference version >= 0 then
-          loop false reference others
-        else
-          loop false version others
-      | Gt version :: others ->
-        if VersionCompare.compare reference version > 0 then
-          loop false reference others
-        else
-          loop true version others
-      | Version :: others ->
-        loop excluded reference (Eq current :: others)
-      | Semantic (major, minor, patch) :: others ->
-        let version = Format.asprintf "%i.%i.%i" major minor patch in
-        loop excluded reference (Eq version :: others)
-      | NoVersion :: others ->
-        if VersionCompare.compare reference default >= 0 then
-          loop excluded reference others
-        else
-          loop false default others in
-    loop false bottom versions
+    @return
+      [`unknown] when no infimum can be infered. For example, with the only
+      constraint (>1.2.3) we can't decide {i a priori} a infimum for it since we
+      don't know what versions are available after 1.2.3 (maybe 1.2.4 or 1.2.7
+      or whatever). It returns [`found version] when an infimum [version] is
+      found and [`conflict (v, c)] when the infimum found so far [v] doesn't
+      match the constraint [c]. *)
+let infimum :
+    default:string ->
+    ?current:string ->
+    bottom:string ->
+    version list ->
+    [ `unknown | `found of string | `conflict of string * string ] =
+ fun ~default ?(current = default) ~bottom versions ->
+  let rec loop excluded reference = function
+    | [] ->
+      if not excluded then
+        `found reference
+      else
+        `unknown
+    | Lt version :: others ->
+      if VersionCompare.compare reference version < 0 then
+        loop false reference others
+      else
+        `conflict (reference, "<" ^ version)
+    | Le version :: others ->
+      if VersionCompare.compare reference version <= 0 then
+        loop false reference others
+      else
+        `conflict (reference, "<=" ^ version)
+    | Eq version :: others ->
+      if VersionCompare.compare reference version >= 0 then
+        loop false reference others
+      else
+        loop false version others
+    | Ge version :: others ->
+      if VersionCompare.compare reference version >= 0 then
+        loop false reference others
+      else
+        loop false version others
+    | Gt version :: others ->
+      if VersionCompare.compare reference version > 0 then
+        loop false reference others
+      else
+        loop true version others
+    | Version :: others -> loop excluded reference (Eq current :: others)
+    | Semantic (major, minor, patch) :: others ->
+      let version = Format.asprintf "%i.%i.%i" major minor patch in
+      loop excluded reference (Eq version :: others)
+    | NoVersion :: others ->
+      if VersionCompare.compare reference default >= 0 then
+        loop excluded reference others
+      else
+        loop false default others
+  in
+  loop false bottom versions

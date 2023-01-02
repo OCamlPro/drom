@@ -1,8 +1,8 @@
-name = "!{name}"
-dir = "!{dir}"
-skeleton = "ctypes_lib_stubs"
-kind = "library"
-gen-version = "version.ml"
+# Everything above is inherited from 'virtual' package skeleton
+
+skeleton := "ctypes_lib_stubs"
+kind := "library"
+
 pack-modules = false
 
 [dependencies]
