@@ -4,7 +4,7 @@
   (name drom_toml)
   (public_name drom_toml)
   (wrapped true)
-  (libraries ISO8601 str unix)
+  (libraries menhirLib ISO8601 str unix)
   
   
   )

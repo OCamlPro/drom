@@ -50,7 +50,9 @@
  (description "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like\nuser experience. It can be used to create full OCaml projects with\nsphinx and odoc documentation. It has specific knowledge of Github and\nwill generate files for Github Actions CI and Github pages.\n")
  (depends
    (ocaml (>= 4.07.0))
-   ISO8601
+   (menhirLib ( > 2019 ))
+   (ISO8601 ( >= 0.2 ))
+   (menhir ( > 2019 ))
    ppx_inline_test
    ppx_expect
    odoc

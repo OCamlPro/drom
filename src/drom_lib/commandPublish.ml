@@ -28,6 +28,7 @@ let select =
         &&
         match basename with
         | "test" -> false
+        | "share" -> false
         | _ -> true
       else
         basename = "drom.toml" )

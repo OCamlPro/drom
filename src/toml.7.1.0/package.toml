@@ -46,11 +46,13 @@ generators = ["menhir", "ocamllex"]
 #   ez_file = ">=0.1 <1.3"
 #   base-unix = { libname = "unix", version = ">=base" } 
 [dependencies]
-ISO8601 = ""
+ISO8601 = "0.2"
+menhirLib = ">2019"
 
 # package tools dependencies
 [tools]
-# ...
+menhir = ">2019"
+
 
 # package fields (depends on package skeleton)
 #Examples:
