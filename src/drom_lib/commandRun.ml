@@ -26,8 +26,8 @@ let action ~args ~cmd ~package =
       | Program -> p.package.name :: cmd
       | Virtual -> cmd )
   in
-  Misc.before_hook "run" ~args:cmd;
-  Misc.call
+  Call.before_hook "run" ~args:cmd;
+  Call.call
     (Array.of_list
        ("opam" :: "exec" :: "--" :: "dune" :: "exec" :: "--" :: cmd) )
 

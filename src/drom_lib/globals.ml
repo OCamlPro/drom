@@ -108,9 +108,12 @@ let editor =
   | exception Not_found -> "emacs"
   | editor -> editor
 
+let main_branch = "master"
+
 let key_LGPL2 = "LGPL2"
 
-let default_ci_systems = [ "ubuntu-latest"; "macos-latest"; "windows-latest" ]
+let default_ci_systems =
+  [ "ubuntu-latest"; "macos-latest"; "windows-latest" ]
 
 open EzCompat
 open Types
@@ -118,6 +121,8 @@ open Types
 let rec dummy_project =
   { package = dummy_package;
     packages = [];
+    project_share_repo = None;
+    project_share_version = None;
     skeleton = None;
     edition = current_ocaml_edition;
     min_edition = min_ocaml_edition;
@@ -148,7 +153,7 @@ let rec dummy_project =
     share_dirs = [ "share" ];
     year = (Misc.date ()).Unix.tm_year;
     generators = StringSet.empty;
-    dune_version = current_dune_version
+    dune_version = current_dune_version ;
   }
 
 and dummy_package =

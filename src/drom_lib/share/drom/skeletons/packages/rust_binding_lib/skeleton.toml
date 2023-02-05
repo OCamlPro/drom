@@ -1,9 +1,0 @@
-[skeleton]
-name = "rust_binding_lib"
-inherits = "virtual"
-
-[file]
-dune_ = { file = "dune", skips = "@dune" }
-"index.mld" = { skips = [ "@docs" ] }
-"main.ml" = { skips = [ "@code" ], create = true }
-"lib.rs" = { skips = [ "@code" ], create = true }

@@ -8,31 +8,28 @@
 (*                                                                        *)
 (**************************************************************************)
 
-val write_files :
-  (string ->
-  create:bool ->
-  skips:string list ->
-  content:string ->
-  record:bool ->
-  skip:bool ->
-  perm:int ->
-  unit ) ->
-  ('a, Types.project) Subst.state ->
-  unit
+type hash
 
-val lookup_project : Types.share -> string -> Types.skeleton
+val digest_content : ?perm:int -> file:string -> content:string -> unit -> hash
+val digest_file : string -> hash
+val to_string : hash -> string
+val perm_equal : int -> int -> bool
 
-val lookup_package : Types.share -> string -> Types.skeleton
+val old_string_hash : string -> hash
 
-val known_skeletons : Types.share -> string
+type t
 
-val default_flags : string -> Types.flags
+(* load .drom file *)
+val load : unit -> t
 
-val subst_package_file : Types.flags -> string ->
-  ('a,  Types.package) Subst.state -> string
+val remove : t -> string -> unit
+val get : t -> string -> hash
+val write : t -> record:bool -> perm:int -> file:string -> content:string -> unit
+val rename : t -> src:string -> dst:string -> unit
+val with_ctxt : ?git:bool -> (t -> 'a) -> 'a
+val update : ?git:bool -> t -> string -> hash -> unit
 
-val project_skeletons : Types.share -> Types.skeleton list
+(* read file either from Hashes of from disk *)
+val read : t -> file:string -> string
 
-val package_skeletons : Types.share -> Types.skeleton list
-
-val to_string : Types.skeleton -> string
+val set_version : t -> string -> unit

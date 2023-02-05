@@ -1,5 +1,0 @@
-# Everything above is inherited from 'virtual' package skeleton
-
-skeleton := "program"
-kind := "program"
-

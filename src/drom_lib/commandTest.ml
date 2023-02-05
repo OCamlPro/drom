@@ -42,7 +42,7 @@ let action ~all ~args () =
     end else
       []
   in
-  Misc.call
+  Call.call
     (Array.of_list
        ([ "opam"; "exec"; "--"; "dune"; "build"; "@runtest" ] @ workspace) );
   Printf.eprintf "Tests OK\n%!";

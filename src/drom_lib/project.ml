@@ -80,6 +80,10 @@ let to_files p =
   let version =
     EzToml.empty
     |> EzToml.put_string [ "project"; "drom-version" ] Globals.min_drom_version
+    |> EzToml.put_string_option [ "project"; "share-repo" ]
+      p.project_share_repo
+    |> EzToml.put_string_option [ "project"; "share-version" ]
+      p.project_share_version
     |> EzToml.to_string
   in
   let package =
@@ -180,7 +184,14 @@ let to_files p =
               ]
             (encoding (EzToml.ENCODING.stringMap profile_encoding) p.profiles);
           option "fields"
-            ~comment:[ "project-wide fields (depends on project skeleton)" ]
+            ~comment:[
+              "project-wide fields (depends on project skeleton)";
+              " examples:";
+              {|  docker-alpine-image = "ocamlpro/ocaml:4.13"|};
+              {|  dune-lang = "2.1"|};
+              {|  readme-trailer = "..."|};
+              {|  dot-gitignore-trailer = "..."|};
+            ]
             (encoding Package.fields_encoding p.fields)
         ] )
   in
@@ -305,6 +316,22 @@ let project_of_toml ?file ?default table =
   let description =
     EzToml.get_string_default table [ project_key; "description" ] d.description
   in
+  let project_share_repo =
+    EzToml.get_string_option table [ project_key; "share-repo" ]
+  in
+  let project_share_version =
+    EzToml.get_string_option table [ project_key; "share-version" ]
+  in
+
+  begin
+    match project_share_repo, project_share_version with
+    | None, None -> () (* old format 0.8.0 *)
+    | Some _, Some _ -> () (* ok *)
+    | _ ->
+        Error.raise
+          "Invalid drom.toml: both 'share-repo' and 'share-version' must be specified."
+  end;
+
   let skeleton =
     EzToml.get_string_option table
       [ project_key; "skeleton" ]
@@ -562,6 +589,8 @@ let project_of_toml ?file ?default table =
   let project =
     { package;
       packages;
+      project_share_repo;
+      project_share_version;
       file;
       version;
       skeleton;
@@ -592,7 +621,7 @@ let project_of_toml ?file ?default table =
       fields;
       generators;
       year;
-      dune_version
+      dune_version;
     }
   in
   package.project <- project;

@@ -2,7 +2,7 @@
 # Do not modify, or add to the `skip` field of `drom.toml`.
 opam-version: "2.0"
 name: "drom"
-version: "0.8.0"
+version: "0.9.0"
 license: "LGPL-2.1-only WITH OCaml-LGPL-linking-exception"
 synopsis:
   "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
@@ -53,3 +53,4 @@ depends: [
   "odoc" {with-doc}
   "ocamlformat" {with-test}
 ]
+# Content of `opam-trailer` field:

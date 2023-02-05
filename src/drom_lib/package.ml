@@ -270,7 +270,9 @@ let to_string pk =
               {|  opam-trailer = "pin-depends: [..]" |};
               {|  no-opam-test = "yes" |};
               {|  no-opam-doc = "yes" |};
-              {|  gen-opam = "some" | "all" |}
+              {|  gen-opam = "some" | "all" |};
+              {|  dune-stanzas = "(flags (:standard (:include linking.sexp)))" |};
+              {|  static-clibs = "unix" |};
             ]
           (encoding fields_encoding pk.p_fields)
       ] )

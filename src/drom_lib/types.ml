@@ -65,6 +65,8 @@ and project =
     mutable generators : StringSet.t; (* sub-packages *)
     (* common fields *)
     mutable skeleton : string option;
+    project_share_repo : string option ;
+    project_share_version : string option ;
     edition : string;
     min_edition : string;
     (* not that ocamlformat => ocaml.4.04.0 *)
@@ -105,7 +107,7 @@ and profile = { flags : string StringMap.t }
 
 type config =
   { config_author : string option;
-    config_share_dir : string option;
+    config_share_repo : string option;
     config_github_organization : string option;
     config_license : string option;
     config_copyright : string option;
@@ -144,7 +146,8 @@ type skeleton =
     skeleton_files : (string * string * int) list;
     skeleton_flags : flags StringMap.t;
     skeleton_drom : bool;
-    skeleton_name : string
+    skeleton_name : string;
+    skeleton_version : string;
   }
 
 type license =
@@ -153,6 +156,15 @@ type license =
     license_header : string list;
     license_contents : string
   }
+
+(* The content of the share-repo. Options are loaded on demand *)
+type share = {
+  share_dir : string ;
+  share_version : string ;
+  mutable share_licenses : license StringMap.t option ;
+  mutable share_projects : skeleton StringMap.t option ;
+  mutable share_packages : skeleton StringMap.t option ;
+}
 
 type deps_status =
   | Deps_build

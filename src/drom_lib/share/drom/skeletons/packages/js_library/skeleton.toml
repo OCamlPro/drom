@@ -1,7 +1,0 @@
-[skeleton]
-name = "js_library"
-inherits = "virtual"
-
-[file]
-dune_ = { file = "dune", skips = [ "@dune" ] }
-"main.ml" = { skips = [ "@code" ] }

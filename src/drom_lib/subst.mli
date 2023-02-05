@@ -10,20 +10,36 @@
 
 open Ez_subst (* .V1 *)
 
-val package :
+exception Postpone
+
+type ('context, 'p) state = {
+  context : 'context;
+  p : 'p;
+  share : Types.share ;
+  postpone : bool ; (* can some operations be postponed (raise Postpone) *)
+  hashes : Hashes.t option;
+}
+
+val state :
+  ?postpone:bool ->
+  ?hashes:Hashes.t ->
   'context ->
-  ?bracket:('context * Types.package) EZ_SUBST.t ->
+  Types.share ->
+  'p ->
+  ('context, 'p) state
+
+val package :
+  ?bracket:('context, Types.package) state EZ_SUBST.t ->
   ?skipper:bool list ref ->
-  Types.package ->
+  ('context,Types.package) state ->
   string ->
   string
 
 val project :
-  'context ->
-  ?bracket:('context * Types.project) EZ_SUBST.t ->
+  ?bracket:('context, Types.project) state EZ_SUBST.t ->
   ?skipper:bool list ref ->
-  Types.project ->
+  ('context,Types.project) state ->
   string ->
   string
 
-val package_paren : 'a * Types.package -> string -> string
+val package_paren : ('a, Types.package) state -> string -> string

@@ -45,7 +45,7 @@ let action ~force ~opam_repo ~use_md5 () =
       | None ->
         Error.raise "You must specify the path to a copy of opam-repository" )
   in
-  Misc.before_hook "publish" ~args:[ opam_repo ];
+  Call.before_hook "publish" ~args:[ opam_repo ];
   let opam_packages_dir = opam_repo // "packages" in
   if not (Sys.file_exists opam_packages_dir) then
     Error.raise "packages dir does not exist in repo %S" opam_repo;
@@ -71,7 +71,7 @@ let action ~force ~opam_repo ~use_md5 () =
           | s -> Error.raise "Unknown archive variable %S" s )
       in
       let output = Filename.temp_file "archive" ".tgz" in
-      Misc.wget ~url:archive ~output;
+      Call.wget ~url:archive ~output;
       let checksum =
         if use_md5 then
           let md5 = Digest.file output in
@@ -148,7 +148,7 @@ url {
           !created;
         raise exn )
     ".";
-  Misc.after_hook "publish" ~args:[ opam_repo ];
+  Call.after_hook "publish" ~args:[ opam_repo ];
   ()
 
 let cmd =

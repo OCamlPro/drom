@@ -2,7 +2,7 @@
 # Do not modify, or add to the `skip` field of `drom.toml`.
 opam-version: "2.0"
 name: "drom_lib"
-version: "0.8.0"
+version: "0.9.0"
 license: "LGPL-2.1-only WITH OCaml-LGPL-linking-exception"
 synopsis:
   "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
@@ -47,6 +47,7 @@ install: [
 depends: [
   "ocaml" {>= "4.07.0"}
   "dune" {>= "2.7.0"}
+  "omd" {>= "2.0"}
   "ez_subst" {>= "0.1"}
   "ez_opam_file" {>= "0.1.0" & < "1.0.0"}
   "ez_file" {>= "0.3.0" & < "1.0.0"}
@@ -54,9 +55,9 @@ depends: [
   "ez_cmdliner" {>= "0.2.0" & < "1.0.0"}
   "drom_toml" {= version}
   "directories" {>= "0.2"}
-  "crunch" {>= "3.2.0"}
   "ppx_inline_test" {with-test}
   "ppx_expect" {with-test}
   "odoc" {with-doc}
   "ocamlformat" {with-test}
 ]
+# Content of `opam-trailer` field:

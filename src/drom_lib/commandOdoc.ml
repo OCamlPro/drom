@@ -16,11 +16,11 @@ open EzFile.OP
 let cmd_name = "odoc"
 
 let make_odoc p =
-  Misc.call [| "opam"; "exec"; "--"; "dune"; "build"; "@doc" |];
+  Call.call [| "opam"; "exec"; "--"; "dune"; "build"; "@doc" |];
   let dir = Misc.odoc_target p in
   let odoc_target = Format.sprintf "_drom/docs/%s" dir in
   EzFile.make_dir ~p:true odoc_target;
-  Misc.call
+  Call.call
     [| "rsync";
        "-auv";
        "--delete";
@@ -32,7 +32,7 @@ let make_odoc p =
 let action ~args ~open_www () =
   let (p : Types.project) = Build.build ~dev_deps:true ~args () in
   let odoc_target = make_odoc p in
-  if !open_www then Misc.call [| "xdg-open"; odoc_target // "index.html" |]
+  if !open_www then Call.call [| "xdg-open"; odoc_target // "index.html" |]
 
 let cmd =
   let args, specs = Build.build_args () in

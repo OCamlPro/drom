@@ -4,7 +4,7 @@
   (name drom_lib)
   (public_name drom_lib)
   (wrapped true)
-  (libraries ez_subst ez_opam_file ez_file ez_config ez_cmdliner drom_toml directories bigarray)
+  (libraries omd ez_subst ez_opam_file ez_file ez_config ez_cmdliner drom_toml directories bigarray)
   
   
   )
@@ -18,12 +18,4 @@
 (documentation
   (package drom_lib))
 
-(rule
- (target share.ml)
- (deps
-  (source_tree share))
- (action
-  (with-stdout-to
-   %{null}
-   (run ocaml-crunch -m plain share -o %{target}))))
 

@@ -1,8 +1,0 @@
-[skeleton]
-name = "vue_library"
-inherits = "virtual"
-
-[file]
-dune_ = { file = "dune", skips = [ "@dune" ] }
-"main.ml" = { skips = [ "@code" ], create = true }
-"templates/dune_" = { file = "templates/dune" }

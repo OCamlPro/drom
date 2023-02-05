@@ -14,6 +14,25 @@ open EzCompat
 open Ez_file.V1
 open EzFile.OP
 
+exception Postpone
+
+type ('context, 'p) state = {
+  context : 'context;
+  p : 'p; (* Types.project or Types.package *)
+  share : Types.share ; (* used mostly for licenses *)
+  postpone : bool ; (* some operations can be postponed (`raise
+                       Postpone`), for example if they depend on
+                       another file that has to be generated
+                       before. *)
+  hashes : Hashes.t option; (* When reading files, files may not exist
+                               yet until `Hashes.save` has been
+                               called, so we need a way to read them
+                               before they are committed to disk *)
+}
+
+let state ?(postpone=false) ?hashes context share p =
+  { context ; p ; share ; postpone ; hashes }
+
 exception ReplaceContent of string
 
 let rec find_top_dir dir =
@@ -39,7 +58,7 @@ let with_buffer f =
   f b;
   Buffer.contents b
 
-let project_brace (_, p) v =
+let project_brace ({ p; _ }  as state ) v =
   match v with
   | "name" -> p.package.name
   | "synopsis" -> p.synopsis
@@ -57,12 +76,12 @@ let project_brace (_, p) v =
     match p.copyright with
     | Some copyright -> copyright
     | None -> String.concat ", " p.authors )
-  | "license" -> License.license p
+  | "license" -> License.license state.share p
   | "license-name" -> p.license
-  | "header-ml" -> License.header_ml p
-  | "header-c" -> License.header_c p
-  | "header-mly" -> License.header_mly p
-  | "header-mll" -> License.header_mll p
+  | "header-ml" -> License.header_ml state.share p
+  | "header-c" -> License.header_c state.share p
+  | "header-mly" -> License.header_mly state.share p
+  | "header-mll" -> License.header_mll state.share p
   | "authors-ampersand" -> String.concat " & " p.authors
   (* general *)
   | "start_year" -> string_of_int p.year
@@ -102,6 +121,7 @@ let project_brace (_, p) v =
     | None -> "unspecified"
     | Some copyright -> copyright )
   | "random" ->
+      (* TODO:deprecate as it is not determinist *)
     Random.int 1_000_000_000 |> string_of_int |> Digest.string |> Digest.to_hex
   | "li-authors" ->
     String.concat "\n"
@@ -330,14 +350,26 @@ let project_brace (_, p) v =
     Printf.eprintf "Error: no project substitution for %S\n%!" s;
     raise Not_found
 
-let project_paren (_, p) name =
-  match StringMap.find name p.fields with
-  | exception Not_found ->
-    if verbose_subst then Printf.eprintf "Warning: no project field %S\n%!" name;
-    ""
+let project_paren state name =
+  let name, default =
+    if String.contains name ':' then
+      let name, default = EzString.cut_at name ':' in
+      name, Some default
+    else
+      name, None
+  in
+  match StringMap.find name state.p.fields with
   | s -> s
+  | exception Not_found ->
+      match default with
+      | None ->
+          if verbose_subst then
+            Printf.eprintf "Warning: no project field %S\n%!" name;
+          ""
+      | Some default -> default
 
-let package_brace (context, package) v =
+let package_brace state v =
+  let package = state.p in
   match v with
   | "name"
   | "package-name" ->
@@ -402,18 +434,19 @@ let package_brace (context, package) v =
         ] )
   | _ -> (
     match Misc.EzString.chop_prefix v ~prefix:"project-" with
-    | Some v -> project_brace (context, package.project) v
-    | None -> project_brace (context, package.project) v )
+    | Some v -> project_brace { state with p = package.project } v
+    | None -> project_brace { state with p = package.project } v )
 
-let package_paren (context, package) name =
+let package_paren state name =
+  let package = state.p in
   match Misc.EzString.chop_prefix ~prefix:"project-" name with
-  | Some name -> project_paren (context, package.project) name
+  | Some name -> project_paren { state with p = package.project } name
   | None -> (
     match StringMap.find name package.p_fields with
     | s -> s
     | exception Not_found -> (
       match Misc.EzString.chop_prefix ~prefix:"package-" name with
-      | None -> project_paren (context, package.project) name
+      | None -> project_paren { state with p = package.project } name
       | Some name -> (
         match StringMap.find name package.p_fields with
         | s -> s
@@ -422,65 +455,83 @@ let package_paren (context, package) name =
             Printf.eprintf "Warning: no package field %S\n%!" name;
           "" ) ) )
 
-let subst_encode p_subst escape p s =
+let subst_encode p_subst escape state s =
   match EzString.split s ':' with
   | [] ->
-    Printf.eprintf "Warning: empty expression\n%!";
-    raise Not_found
+      Printf.eprintf "Warning: empty expression\n%!";
+      raise Not_found
   | [ "escape"; "true" ] ->
-    escape := true;
-    ""
+      escape := true;
+      ""
   | [ "escape"; "false" ] ->
-    escape := false;
-    ""
-  | var :: encodings ->
-    let var = p_subst p var in
-    let rec iter encodings var =
-      match encodings with
-      | [] -> var
-      | "default" :: default :: encodings ->
-        let var =
-          if var = "" then
-            default
-          else
-            var
-        in
-        iter encodings var
-      | encoding :: encodings ->
-        let var =
-          match encoding with
-          | "html" -> EzHtml.string var
-          | "cap" -> String.capitalize var
-          | "uncap" -> String.uncapitalize var
-          | "low" -> String.lowercase var
-          | "up"
-          | "upp" ->
-            String.uppercase var
-          | "alpha" -> Misc.underscorify var
-          | _ ->
-            Printf.eprintf "Error: unknown encoding %S\n%!" encoding;
-            raise Not_found
-        in
-        iter encodings var
-    in
-    iter encodings var
+      escape := false;
+      ""
+  | list ->
+      let s, encodings = match list with
+        | [] -> assert false
+        | s :: ">" :: encodings ->
+            s, encodings
+        | var :: encodings ->
+            let s = p_subst state var in
+            s, encodings
+      in
+      let rec iter encodings var =
+        match encodings with
+        | [] -> var
+        | "default" :: default ->
+            if var = "" then
+              String.concat ":" default
+            else
+              var
+        | encoding :: encodings ->
+            let var =
+              match encoding with
+              | "read" ->
+                  begin
+                    if state.postpone then
+                      raise Postpone
+                    else
+                      match state.hashes with
+                      | None ->
+                          EzFile.read_file var
+                      | Some hashes ->
+                          Hashes.read hashes ~file:var
+                  end
+              | "md5" -> Digest.string var |> Digest.to_hex
+              | "html" -> EzHtml.string var
+              | "cap" -> String.capitalize var
+              | "uncap" -> String.uncapitalize var
+              | "low" -> String.lowercase var
+              | "up"
+              | "upp" ->
+                  String.uppercase var
+              | "alpha" -> Misc.underscorify var
+              | "md-to-html" ->
+                  Omd.of_string var |> Omd.to_html
+              | _ ->
+                  Printf.eprintf "Error: unknown encoding %S\n%!" encoding;
+                  raise Not_found
+            in
+            iter encodings var
+      in
+      iter encodings s
 
-let project context ?bracket ?skipper p s =
+let project ?bracket ?skipper state s =
   try
     let escape = ref false in
     EZ_SUBST.string ~sep:'!' ~escape
       ~brace:(subst_encode project_brace escape)
       ~paren:(subst_encode project_paren (ref true))
-      ?bracket ?skipper ~ctxt:(context, p) s
+      ?bracket ?skipper ~ctxt:state s
   with
   | ReplaceContent content -> content
 
-let package context ?bracket ?skipper p s =
+let package ?bracket ?skipper state s =
   try
     let escape = ref false in
     EZ_SUBST.string ~sep:'!' ~escape
       ~brace:(subst_encode package_brace escape)
       ~paren:(subst_encode package_paren (ref true))
-      ?bracket ?skipper ~ctxt:(context, p) s
+      ?bracket ?skipper ~ctxt:state s
   with
   | ReplaceContent content -> content

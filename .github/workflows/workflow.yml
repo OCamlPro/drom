@@ -1,5 +1,6 @@
 name: Main Workflow
 
+# use fields.git-main-branch to change from master
 on:
   pull_request:
     branches:
@@ -30,6 +31,8 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
+    # use fields.github-workflow-env to add something here
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -55,7 +58,7 @@ jobs:
           git config --global user.name github-actions
           git config --global user.email github-actions-bot@users.noreply.github.com
 
-      # define opam-repo = "git+https://" to add an extra opam repo
+      # use fields.opam-repo = "git+https://" to add an 'extra' opam repository
 
       - run: opam pin add . -y --no-action
 
@@ -65,13 +68,18 @@ jobs:
       - run: opam install -y opam/*.opam --deps-only --with-test
 #        if: steps.cache-opam.outputs.cache-hit != 'true'
 
-#      - run: opam upgrade --fixup
+#     - run: opam upgrade --fixup
 #        if: steps.cache-opam.outputs.cache-hit == 'true'
 
-      - run: dos2unix scripts/*.sh
+      # Use fields.build-scripts to add more scripts to convert here
+      - run: dos2unix scripts/*.sh 
         if: matrix.os == 'windows-latest'
 
+      # Use fields.github-workflow-before-build to add something here
+
       - run: make build
+
+      # Use fields.github-workflow-after-build to add something here
 
       - name: run test suite
         run: |
@@ -79,6 +87,8 @@ jobs:
           opam exec -- dune build @runtest
           ./scripts/after.sh test
         if: matrix.skip_test  != 'true'
+
+      # Use fields.github-workflow-after-test to add something here
 
       - name: test source is well formatted
         run: make fmt
@@ -103,3 +113,6 @@ jobs:
           BRANCH: gh-pages
           FOLDER: _drom/docs/
           CLEAN: true
+
+# Use fields.github-workflow-trailer to add a trailer here
+

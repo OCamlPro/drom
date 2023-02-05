@@ -29,7 +29,8 @@ open EzFile.OP
    2785 license: "MIT"
 *)
 
-let load_licenses_dir map dir =
+let load_licenses_dir dir =
+  let map = StringMap.empty in
   if Sys.file_exists dir then (
     let map = ref map in
     EzFile.make_select EzFile.iter_dir ~deep:true dir ~kinds:[ S_REG; S_LNK ]
@@ -57,35 +58,29 @@ let load_licenses_dir map dir =
   ) else
     map
 
-let licenses =
-  lazy
-    (let map = StringMap.empty in
-     let map =
-       match Config.share_dir () with
-       | Some dir ->
-         let global_licenses_dir = dir // "licenses" in
-         load_licenses_dir map global_licenses_dir
-       | None ->
-         Printf.eprintf
-           "Warning: could not load licenses from share/%s/licenses\n%!"
-           Globals.command;
-         map
-     in
-     let user_licenses_dir = Globals.config_dir // "licenses" in
-     load_licenses_dir map user_licenses_dir )
+let licenses share =
+  match share.share_licenses with
+  | None ->
+      let dir = share.share_dir in
+      let global_licenses_dir = dir // "licenses" in
+      let licenses = load_licenses_dir global_licenses_dir in
+      share.share_licenses <- Some licenses ;
+      licenses
+  | Some licenses -> licenses
 
-let known_licenses () =
+let known_licenses share =
+  let licenses = licenses share in
   let b = Buffer.create 100 in
   Printf.bprintf b "Licenses known by drom:\n";
   StringMap.iter
     (fun key m -> Printf.bprintf b "* %s -> %s\n" key m.license_name)
-    (Lazy.force licenses);
+    licenses;
   Buffer.contents b
 
-let name p =
+let name share p =
   let license = p.license in
   try
-    let m = StringMap.find license (Lazy.force licenses) in
+    let m = StringMap.find license (licenses share) in
     m.license_name
   with
   | Not_found ->
@@ -99,7 +94,7 @@ let c_sep = ("/*", '*', "*/")
 
 let ml_sep = ("(*", '*', "*)")
 
-let header ?(sep = ml_sep) p =
+let header share ?(sep = ml_sep) p =
   let boc, sec, eoc = sep in
   let boc_len = String.length boc in
   assert (boc_len = 2);
@@ -109,7 +104,7 @@ let header ?(sep = ml_sep) p =
   let lines =
     let license = p.license in
     try
-      let m = StringMap.find license (Lazy.force licenses) in
+      let m = StringMap.find license (licenses share) in
       m.license_header
     with
     | Not_found ->
@@ -143,18 +138,18 @@ let header ?(sep = ml_sep) p =
     @ List.map line lines
     @ [ line ""; starline; "" ] )
 
-let header_ml p = header p
+let header_ml share p = header share p
 
-let header_mll p = header p
+let header_mll share p = header share p
 
-let header_mly p = header ~sep:c_sep p
+let header_mly share p = header ~sep:c_sep share p
 
-let header_c p = header ~sep:c_sep p
+let header_c share p = header ~sep:c_sep share p
 
-let license p =
+let license share p =
   let key = p.license in
   try
-    let m = StringMap.find key (Lazy.force licenses) in
+    let m = StringMap.find key ( licenses share ) in
     m.license_contents
   with
   | Not_found ->

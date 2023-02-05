@@ -9,7 +9,3 @@
 (**************************************************************************)
 
 val config : unit -> Types.config
-
-val share_dir : unit -> string option
-
-val find_share_dir : ?for_copy:bool -> unit -> string option

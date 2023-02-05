@@ -30,7 +30,7 @@ let print_dep (name, d) =
 let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
     ~depopt ~args =
   let p, _inferred_dir = Project.get () in
-  let upgrade = ref args.arg_upgrade in
+  let upgrade = ref (fst args).arg_upgrade in
   let update package_kind dep_kind deps setdeps =
     match dep with
     | None ->
@@ -166,8 +166,15 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
   end;
 
   if !upgrade then (
-    let args = { args with arg_upgrade = !upgrade } in
-    Update.update_files ~twice:false ~create:false ~git:true p ~args;
+    let args, share_args = args in
+    let share = Share.load ~args:share_args ~p () in
+    let args = { args with
+                 arg_share_version = Some share.share_version ;
+                 arg_share_repo = share_args.arg_repo ;
+                 arg_upgrade = !upgrade ;
+               }
+    in
+    Update.update_files share ~twice:false ~create:false ~git:true p ~args;
     ()
   )
 
@@ -182,7 +189,10 @@ let cmd =
   let deptest = ref None in
   let depdoc = ref None in
   let depopt = ref None in
-  let args, specs = Update.update_args () in
+  let update_args, update_specs = Update.args () in
+  let share_args, share_specs = Share.args ~set:true () in
+  let args = (update_args, share_args) in
+  let specs = update_specs @ share_specs in
   EZCMD.sub cmd_name
     (fun () ->
       action ~dep:!dep ~package:!package ~tool:!tool ~add:!add ~remove:!remove
