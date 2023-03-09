@@ -20,29 +20,40 @@ let action ~args () =
   let n = ref 0 in
   List.iter
     (fun package ->
-      match package.kind with
-      | Library -> ()
-      | Virtual -> ()
-      | Program ->
-        if Sys.file_exists package.name then Sys.remove package.name;
-        let src = "_build/default" // package.dir // "main.exe" in
-        if Sys.file_exists src then (
-          let s = EzFile.read_file src in
-          EzFile.write_file package.name s;
-          incr n;
-          Unix.chmod package.name 0o755
-        ) )
+       match package.kind with
+       | Library -> ()
+       | Virtual -> ()
+       | Program ->
+           try
+             let src = "_build/default" // package.dir // "main.exe" in
+             if Sys.file_exists package.name then begin
+               if Sys.is_directory package.name then begin
+                 Printf.eprintf "Warning: %S is an existing directory. Could not copy %s\n%!" package.name src;
+                 Printf.eprintf "  You should rename this directory to another name.\n%!";
+                 raise Exit
+               end;
+               Sys.remove package.name;
+             end;
+             if Sys.file_exists src then begin
+               let s = EzFile.read_file src in
+               EzFile.write_file package.name s;
+               incr n;
+               Unix.chmod package.name 0o755
+
+             end;
+           with Exit -> ()
+    )
     p.packages;
   if !Globals.verbosity > 0 then
     Printf.eprintf "\nBuild OK%s\n%!"
       ( if !n > 0 then
-        Printf.sprintf " ( %d command%s generated )" !n
-          ( if !n > 1 then
-            "s"
-          else
-            "" )
-      else
-        "" )
+          Printf.sprintf " ( %d command%s generated )" !n
+            ( if !n > 1 then
+                "s"
+              else
+                "" )
+        else
+          "" )
 
 let cmd =
   let args, specs = Build.build_args () in
