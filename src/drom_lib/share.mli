@@ -8,28 +8,23 @@
 (*                                                                        *)
 (**************************************************************************)
 
-type args =
-  { mutable arg_upgrade : bool;
-    mutable arg_force : bool;
-    mutable arg_diff : bool;
-    mutable arg_skip : (bool * string) list;
-    mutable arg_promote_skip : bool;
-    mutable arg_edition : string option;
-    mutable arg_min_edition : string option;
 
-    arg_share_version : string option;
-    arg_share_repo : string option;
-  }
+type args = {
+  mutable arg_reclone : bool ;
+  mutable arg_no_fetch : bool ;
+  mutable arg_version : string option ;
+  mutable arg_repo : string option ;
+}
 
-val args : unit ->  args * Ezcmd.V2.EZCMD.TYPES.arg_list
+(* Use `~set:true` if you want to be able to set `--share-version` and
+   `--share-repo`, otherwise only `--reclone-share` and
+   `--no-fetch-share` are provided. *)
 
-val update_files :
-  Types.share ->
-  twice:bool ->
+val args : ?set:bool -> unit -> args * Ezcmd.V2.EZCMD.TYPES.arg_list
+
+val load :
   ?args:args ->
-  ?git:bool ->
-  ?create:bool ->
-  Types.project ->
-  unit
+  ?p:Types.project -> unit ->
+  Types.share
 
-val compute_config_hash : (string * string) list -> Hashes.hash
+val share_repo_default : unit -> string

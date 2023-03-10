@@ -1,5 +1,7 @@
 [project]
 drom-version = "0.1"
+share-repo = "https://github.com/OCamlPro/drom-share"
+share-version = "0.9.0"
 
 [project]
 authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>", "Léo Andrès <leo.andres@ocamlpro.com>"]
@@ -12,7 +14,7 @@ min-edition = "4.07.0"
 name = "drom"
 skeleton = "program"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
-version = "0.8.0"
+version = "0.9.0"
 
 # keys that you could also define:
 # odoc-target = "...odoc-target..."
@@ -53,7 +55,7 @@ for-test = true
 skip-dirs = ["drom-test"]
 
 # dirs to scan for share/ folders (with package names)
-share-dirs = ["src/drom_lib/share"]
+share-dirs = []
 
 # build profile to use by default
 # build-profile = ...
@@ -63,13 +65,63 @@ share-dirs = ["src/drom_lib/share"]
 #    dev = { ocaml-flags = "-w +a-4-40-41-42-44" }
 #    release = { ocaml-flags = "-w -a" }
 [profile.dev]
-ocaml-flags = "-w +a-4-40-41-42-44"
+ocaml-flags = "-w +a-4-40-41-42-44-70"
 [profile.release]
 ocaml-flags = "-w -a"
 
 # project-wide fields (depends on project skeleton)
+# examples:
+#  docker-alpine-image = "ocamlpro/ocaml:4.13"
+#  dune-lang = "2.1"
+#  readme-trailer = "..."
+#  dot-gitignore-trailer = "..."
 [fields]
 dune-lang = "2.1"
+readme-trailer = '''
+
+## Simple Example
+
+You can create a new OCaml project with:
+
+```
+$ drom new my-client --skeleton mini_prg
+Creating project "my-client" with skeleton "mini_prg", license "LGPL2"
+  and sources in src/my-client:
+Creating directory my-client
+Using skeleton "program" for package "my-client"
+[master (root-commit) 8d83262] Initial commit
+
+└── my-client/
+    ├── .drom             (drom state, do not edit)
+    ├── .github/
+    │   └── workflows/
+    │       └── workflow.yml
+    ├── .gitignore
+    ├── CHANGES.md
+    ├── LICENSE.md
+    ├── Makefile
+    ├── README.md
+    ├── drom.toml    <────────── project config EDIT !
+    ├── dune
+    ├── dune-project
+    ├── opam/
+    │   └── my-client.opam
+    ├── scripts/
+    │   ├── after.sh
+    │   ├── before.sh
+    │   └── copy-bin.sh
+    └── src/
+        └── my-client/
+            ├── dune
+            ├── main.ml
+            ├── package.toml    <────────── package config EDIT !
+            └── version.mlt
+```
+
+This project uses the minimalist `mini_prg` skeleton, but other skeletons
+like `program` or `library` have more files.
+
+'''
 
 [[package]]
 dir = "src/drom"

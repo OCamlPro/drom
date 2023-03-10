@@ -8,28 +8,20 @@
 (*                                                                        *)
 (**************************************************************************)
 
-type args =
-  { mutable arg_upgrade : bool;
-    mutable arg_force : bool;
-    mutable arg_diff : bool;
-    mutable arg_skip : (bool * string) list;
-    mutable arg_promote_skip : bool;
-    mutable arg_edition : string option;
-    mutable arg_min_edition : string option;
+open EzCompat
 
-    arg_share_version : string option;
-    arg_share_repo : string option;
-  }
+val licenses : Types.share -> Types.license StringMap.t
 
-val args : unit ->  args * Ezcmd.V2.EZCMD.TYPES.arg_list
+val name : Types.share -> Types.project -> string (* Short name of license *)
 
-val update_files :
-  Types.share ->
-  twice:bool ->
-  ?args:args ->
-  ?git:bool ->
-  ?create:bool ->
-  Types.project ->
-  unit
+val header : Types.share -> ?sep:string * char * string -> Types.project -> string
+val header_mll : Types.share -> Types.project -> string
+val header_mly : Types.share -> Types.project -> string
+val header_ml : Types.share -> Types.project -> string
+val header_c : Types.share -> Types.project -> string
 
-val compute_config_hash : (string * string) list -> Hashes.hash
+(* license text *)
+val license : Types.share -> Types.project -> string
+
+(* list of known licenses *)
+val known_licenses : Types.share -> string

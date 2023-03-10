@@ -53,10 +53,11 @@ ez_config = "0.1.0"
 ez_file = "0.3.0"
 ez_opam_file = "0.1.0"
 ez_subst = ">=0.1"
+omd = ">=2.0"
 
 # package tools dependencies
 [tools]
-crunch = ">=3.2.0"
+# ...
 
 # package fields (depends on package skeleton)
 #Examples:
@@ -67,14 +68,8 @@ crunch = ">=3.2.0"
 #  no-opam-test = "yes" 
 #  no-opam-doc = "yes" 
 #  gen-opam = "some" | "all" 
+#  dune-stanzas = "(flags (:standard (:include linking.sexp)))" 
+#  static-clibs = "unix" 
 [fields]
 dune-libraries = "bigarray"
-dune-trailer = """(rule
- (target share.ml)
- (deps
-  (source_tree share))
- (action
-  (with-stdout-to
-   %{null}
-   (run ocaml-crunch -m plain share -o %{target}))))
-"""
+dune-trailer = ""

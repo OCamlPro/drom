@@ -22,8 +22,8 @@ let config_of_toml filename =
       EzToml.get_string_option table [ "user"; "github-organization" ]
     in
     let config_license = EzToml.get_string_option table [ "user"; "license" ] in
-    let config_share_dir =
-      EzToml.get_string_option table [ "user"; "share-dir" ]
+    let config_share_repo =
+      EzToml.get_string_option table [ "user"; "share-repo" ]
     in
     let config_copyright =
       EzToml.get_string_option table [ "user"; "copyright" ]
@@ -43,7 +43,7 @@ let config_of_toml filename =
     in
     { config_author;
       config_github_organization;
-      config_share_dir;
+      config_share_repo;
       config_license;
       config_copyright;
       config_opam_repo;
@@ -79,8 +79,8 @@ let update_with oldc newc =
         with
       | None, oldc -> oldc
       | newc, _ -> newc );
-    config_share_dir =
-      ( match (newc.config_share_dir, oldc.config_share_dir) with
+    config_share_repo =
+      ( match (newc.config_share_repo, oldc.config_share_repo) with
       | None, oldc -> oldc
       | newc, _ -> newc );
     config_license =
@@ -136,7 +136,7 @@ let load () =
       config_license = getenv_opt "DROM_GITHUB_ORGANIZATION";
       config_copyright = getenv_opt "DROM_COPYRIGHT";
       config_opam_repo = getenv_opt "DROM_OPAM_REPO";
-      config_share_dir = getenv_opt "DROM_SHARE_DIR";
+      config_share_repo = getenv_opt "DROM_SHARE_REPO";
       config_dev_tools = None;
       config_auto_upgrade = getenv_bool_opt "DROM_AUTO_UPGRADE";
       config_auto_opam_yes = getenv_bool_opt "DROM_AUTO_OPAM_YES"
@@ -163,78 +163,4 @@ let load () =
   iter path
 
 let config = lazy (load ())
-
-let find_share_dir ?(for_copy = false) () =
-  let share_dirs =
-    ( if for_copy then
-      []
-    else
-      match Sys.getenv "DROM_SHARE_DIR" with
-      | share_dir -> [ (Some "env var DROM_SHARE_DIR", share_dir) ]
-      | exception Not_found -> [] )
-    @ ( match Globals.find_ancestor_file "share" (fun ~dir ~path:_ -> dir) with
-      | None -> []
-      | Some dir -> [ (Some "local ./share/drom", dir // "share" // "drom") ] )
-    @ ( if for_copy then
-        []
-      else
-        [ (None, Globals.opam_root () // "plugins" // "opam-drom") ] )
-    @ ( match Globals.opam_switch_prefix with
-      | Some opam_switch_prefix ->
-        let share_dir = opam_switch_prefix // "share" // Globals.command in
-        [ (Some "OPAM_SWITCH_PREFIX", share_dir) ]
-      | None -> [] )
-    @ ( if for_copy then
-        []
-      else
-        let config = Lazy.force config in
-        match config.config_share_dir with
-        | None -> []
-        | Some share_dir -> [ (Some "user config share_dir", share_dir) ] )
-    @
-    if for_copy then
-      []
-    else
-      [ ( Some "ocamlup share/drom",
-          Globals.home_dir // ".ocamlup" // "share" // "drom" )
-      ]
-  in
-  let rec iter msgs = function
-    | [] ->
-      if !Globals.verbosity > 0 then begin
-        Printf.eprintf
-          "Warning: drom is not correctly configured, no share_dir found\n%!";
-        List.iter
-          (fun (msg, dir) ->
-            Printf.eprintf "   * %s points to directory with missing %S\n%!" msg
-              dir )
-          msgs
-      end;
-      None
-    | (msg, share_dir) :: dirs ->
-      let skeletons_dir = share_dir // "skeletons" in
-      if not (Sys.file_exists skeletons_dir) then begin
-        let msgs =
-          match msg with
-          | None -> msgs
-          | Some msg -> (msg, skeletons_dir) :: msgs
-        in
-        iter msgs dirs
-      end else
-        Some share_dir
-  in
-  iter [] share_dirs
-
-let share_dir =
-  lazy
-    (let dir = find_share_dir () in
-     if Globals.verbose 2 then
-       Printf.eprintf "share_dir: %s\n%!"
-         ( match dir with
-         | None -> "NOT FOUND"
-         | Some s -> s );
-     dir )
-
-let share_dir () = Lazy.force share_dir
-
 let config () = Lazy.force config

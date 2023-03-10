@@ -1,8 +1,0 @@
-# Everything above is inherited from 'virtual' package skeleton
-
-skeleton := "c_binding"
-kind := "library"
-
-[fields]
-c-names = "!{name}_stubs"
-c-library-flags = "-lgsl"

@@ -63,6 +63,7 @@ let rec find_project_package name packages =
       find_project_package name packages
 
 let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
+  let args, share_args = args in
   let skeleton_name =
     match skeleton with
     | None -> "program"
@@ -81,7 +82,10 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
   Printf.eprintf "Creating project %S with skeleton %S, license %S\n" name
     skeleton_name license;
   Printf.eprintf "  and sources in %s:\n%!" dir;
-  let skeleton = Skeleton.lookup_project skeleton_name in
+
+  let share = Share.load ~args:share_args () in
+  let skeleton = Skeleton.lookup_project share skeleton_name in
+
   if Globals.verbose 2 then
     Printf.eprintf "Skeleton %s = %s\n%!" skeleton_name
       (Skeleton.to_string skeleton);
@@ -108,6 +112,8 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     { Globals.dummy_project with
       package;
       packages;
+      project_share_repo = Some ( Share.share_repo_default () );
+      project_share_version = Some share.share_version ;
       skeleton = Some skeleton_name;
       authors = [ author ];
       synopsis = Globals.default_synopsis ~name;
@@ -152,9 +158,10 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     | [] -> (p, None)
     | content :: super ->
         let p, _ = iter_skeleton super in
-        let content = Subst.project () p content in
+        let content = Subst.project (Subst.state () share p) content in
         Toml.with_override (fun () ->
-            let p = Project.of_string ~msg:"drom.toml template" ~default:p content in
+            let p = Project.of_string
+                ~msg:"drom.toml template" ~default:p content in
             (p, Some content) )
   in
   let p, p_content = iter_skeleton skeleton.skeleton_toml in
@@ -166,7 +173,8 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     | content :: super ->
         let package = iter_skeleton package super in
         let flags = Skeleton.default_flags "package.toml" in
-        let content = Skeleton.subst_package_file flags content package in
+        let content = Skeleton.subst_package_file flags content
+            (Subst.state () share package) in
         Toml.with_override (fun () ->
             let package =
               Package.of_string ~msg:"package.toml template" ~default:p content
@@ -179,7 +187,7 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
          let skeleton = Misc.package_skeleton package in
          Printf.eprintf "Using skeleton %S for package %S\n%!" skeleton
            package.name;
-         let skeleton = Skeleton.lookup_package skeleton in
+         let skeleton = Skeleton.lookup_package share skeleton in
          iter_skeleton package skeleton.skeleton_toml )
       p.packages
   in
@@ -199,45 +207,56 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
             Project.of_string ~msg:"drom.toml template" ~default:project content )
   in
 
-  Update.update_files ~twice:true ~create:true ~git:true ~args p;
+  (* Set fields that are not in templates *)
+  let p = {
+    p with
+    project_share_repo = Some ( Share.share_repo_default () );
+    project_share_version = Some share.share_version ;
+  } in
+
+  Update.update_files share ~twice:true ~create:true ~git:true ~args p;
   print_dir (name ^ "/") "."
 
 (* lookup for "drom.toml" and update it *)
 let action ~skeleton ~name ~inplace ~dir ~args =
   match name with
   | None ->
-    Printf.eprintf
-      {|You must specify the name of the project to create:
+      let _update_args, args = args in
+      let share = Share.load ~args () in
+      Printf.eprintf
+        {|You must specify the name of the project to create:
 
 drom new PROJECT --skeleton SKELETON
 
 Available skeletons are: %s
 |}
-      ( Skeleton.project_skeletons ()
-      |> List.map (fun s -> s.skeleton_name)
-      |> String.concat " " );
-    exit 2
+        ( Skeleton.project_skeletons share
+          |> List.map (fun s -> s.skeleton_name)
+          |> String.concat " " );
+      exit 2
   | Some name -> (
-    let config = Config.config () in
-    let project = Project.find () in
-    match project with
-    | None -> create_project ~config ~name ~skeleton ~dir ~inplace ~args
-    | Some (p, _) ->
-      Error.raise
-        "Cannot create a project within another project %S. Maybe you want to \
-         use 'drom package PACKAGE --new' instead?"
-        p.package.name )
+      let config = Config.config () in
+      let project = Project.find () in
+      match project with
+      | None -> create_project ~config ~name ~skeleton ~dir ~inplace ~args
+      | Some (p, _) ->
+          Error.raise
+            "Cannot create a project within another project %S. Maybe you want to \
+             use 'drom package PACKAGE --new' instead?"
+            p.package.name )
 
 let cmd =
   let project_name = ref None in
   let inplace = ref false in
   let skeleton = ref None in
   let dir = ref None in
-  let args, specs = Update.update_args () in
-  args.arg_upgrade <- true;
+  let update_args, update_specs = Update.args () in
+  let share_args, share_specs = Share.args ~set:true () in
+  update_args.arg_upgrade <- true;
+  let args = ( update_args, share_args ) in
   EZCMD.sub cmd_name
     ~args:
-      ( specs
+      ( update_specs @ share_specs
       @ [ ( [ "dir" ],
             Arg.String (fun s -> dir := Some s),
             EZCMD.info ~docv:"DIRECTORY"
@@ -265,7 +284,11 @@ let cmd =
         ] )
     ~doc:"Create a new project"
     (fun () ->
-      action ~name:!project_name ~skeleton:!skeleton ~dir:!dir ~inplace:!inplace
+       action
+         ~name:!project_name
+         ~skeleton:!skeleton
+         ~dir:!dir
+         ~inplace:!inplace
         ~args )
     ~man:
       [ `S "DESCRIPTION";

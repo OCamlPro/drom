@@ -17,11 +17,11 @@ let action ~distclean =
   let _p, _ = Project.get () in
   Printf.eprintf "Removing _build...\n%!";
   ignore (Sys.command "rm -rf _build");
-  Misc.after_hook "clean";
+  Call.after_hook "clean";
   if !distclean then (
     ignore (Sys.command "rm -rf _drom");
     ignore (Sys.command "rm -rf _opam");
-    Misc.after_hook "distclean"
+    Call.after_hook "distclean"
   )
 
 let cmd =

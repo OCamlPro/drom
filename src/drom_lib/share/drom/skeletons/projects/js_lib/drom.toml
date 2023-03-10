@@ -1,9 +1,0 @@
-# Everything above is inherited from 'virtual' skeleton 
-
-[project]
-skeleton := "js_lib"
-
-[[package]]
-skeleton = "js_library"
-dir = "src/!{name}"
-name = "!{name}"

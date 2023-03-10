@@ -1,4 +1,0 @@
-# Everything above is inherited from 'virtual' package skeleton
-
-skeleton := "rust_binding_test"
-kind := "program"

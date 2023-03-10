@@ -49,8 +49,8 @@ let rename_dir hashes src dst =
       if Sys.is_directory src_file then
         EzFile.make_dir ~p:true dst_file
       else begin
-        Misc.call [| "mv"; "-f"; src_file; dst_file |];
-        Hashes.rename hashes src_file dst_file
+        Call.call [| "mv"; "-f"; src_file; dst_file |];
+        Hashes.rename hashes ~src:src_file ~dst:dst_file
       end );
 
   EzFile.make_select EzFile.iter_dir src ~deep:true ~dft:`After ~f:(fun path ->
@@ -73,7 +73,7 @@ let rename_package hashes package new_name =
 
   { package with dir = new_dir; name = new_name }
 
-let upgrade_package package ~upgrade ~kind ~files =
+let upgrade_package package licenses ~upgrade ~kind ~files =
   ( match kind with
   | None -> ()
   | Some kind ->
@@ -97,14 +97,14 @@ let upgrade_package package ~upgrade ~kind ~files =
             | "c"
             | "h"
             | "cpp" ->
-              License.header_mly package.project
-            | _ -> License.header_ml package.project
+              License.header_mly licenses package.project
+            | _ -> License.header_ml licenses package.project
           in
           let content = header ^ "\n\nlet () = ()\n" in
 
           EzFile.write_file new_file content )
         files;
-      Misc.call (Array.of_list ([ "git"; "add" ] @ List.rev !new_files))
+      Call.call (Array.of_list ([ "git"; "add" ] @ List.rev !new_files))
   end;
   ()
 
@@ -122,6 +122,7 @@ let find_package_name () =
 
 let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
     () =
+  let args, share_args = args in
   let package_name =
     match package_name with
     | Some _ -> package_name
@@ -164,8 +165,10 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
     ) else
       p
   in
+  let share = Share.load ~args:share_args ~p () in
   let upgrade =
     Hashes.with_ctxt ~git:true (fun hashes ->
+
         if remove then begin
           if create <> None then
             Error.raise "--remove and --create are incompatible";
@@ -216,10 +219,11 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
                 | [] -> package
                 | content :: super ->
                   let package = iter_skeleton super in
-                  let content = Subst.package () package content in
+                  let content = Subst.package
+                      (Subst.state () share package) content in
                   Package.of_string ~msg:"package.toml template" content
               in
-              let skeleton = Skeleton.lookup_package skeleton in
+              let skeleton = Skeleton.lookup_package share skeleton in
               let package = iter_skeleton skeleton.skeleton_toml in
               p.packages <- p.packages @ [ package ];
               true
@@ -255,13 +259,13 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
           List.iter
             (fun package ->
               if package.name = name then
-                upgrade_package package ~upgrade ~kind ~files )
+                upgrade_package package share ~upgrade ~kind ~files )
             p.packages;
           !upgrade )
   in
   let args = { args with arg_upgrade = upgrade } in
   let twice = create <> None in
-  Update.update_files ~twice ~create:false ~git:true p ~args;
+  Update.update_files share ~twice ~create:false ~git:true p ~args;
   ()
 
 let cmd =
@@ -272,7 +276,10 @@ let cmd =
   let remove = ref false in
   let rename = ref None in
   let edit = ref false in
-  let args, specs = Update.update_args () in
+  let update_args, update_specs = Update.args () in
+  let share_args, share_specs = Share.args () in
+  let args = (update_args, share_args) in
+  let specs = update_specs @ share_specs in
   let files = ref [] in
   EZCMD.sub cmd_name
     (fun () ->

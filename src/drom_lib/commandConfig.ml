@@ -75,26 +75,21 @@ let string_of_skeleton s =
 type action =
   | PrintPackageSkeletons
   | PrintProjectSkeletons
-  | PrintDromProjectSkeletons
 
-let action = function
+let action ~args act =
+  match act with
   | PrintPackageSkeletons ->
-    Printf.printf "%s\n%!"
-      ( Skeleton.package_skeletons ()
-      |> List.map string_of_skeleton
-      |> String.concat "\n" )
+      let share = Share.load ~args () in
+      Printf.printf "%s\n%!"
+        ( Skeleton.package_skeletons share
+          |> List.map string_of_skeleton
+          |> String.concat "\n" )
   | PrintProjectSkeletons ->
-    Printf.printf "%s\n%!"
-      ( Skeleton.project_skeletons ()
-      |> List.map string_of_skeleton
-      |> String.concat "\n" )
-  | PrintDromProjectSkeletons ->
-    let skeletons = Skeleton.project_skeletons () in
-    decr Globals.verbosity;
-    Printf.printf "%s\n%!"
-      ( List.filter (fun s -> s.skeleton_drom) skeletons
-      |> List.map string_of_skeleton
-      |> String.concat "\n" )
+      let share = Share.load ~args () in
+      Printf.printf "%s\n%!"
+        ( Skeleton.project_skeletons share
+          |> List.map string_of_skeleton
+          |> String.concat "\n" )
 
 let cmd =
   let todo = ref None in
@@ -107,8 +102,10 @@ let cmd =
         old_name;
       exit 2
   in
+  let args, specs = Share.args ~set:true () in
   EZCMD.sub cmd_name
     ~args:
+    ( specs @
       [ ( [ "package-skeletons" ],
           Arg.Unit
             (fun () -> set_action "package-skeletons" PrintPackageSkeletons),
@@ -117,19 +114,14 @@ let cmd =
           Arg.Unit
             (fun () -> set_action "project-skeletons" PrintProjectSkeletons),
           EZCMD.info "List available project skeletons" );
-        ( [ "drom-project-skeletons" ],
-          Arg.Unit
-            (fun () ->
-              set_action "drom-project-skeletons" PrintDromProjectSkeletons ),
-          EZCMD.info "List available project skeletons from drom" )
-      ]
+      ])
     ~doc:"Read/write configuration"
     (fun () ->
       match !todo with
       | None ->
         Printf.eprintf "You must specify an action to perform\n%!";
         exit 2
-      | Some (_, todo) -> action todo )
+      | Some (_, todo) -> action ~args todo )
     ~man:
       [ `S "DESCRIPTION";
         `Blocks [ `P "This command is useful to read/write drom configuration" ];

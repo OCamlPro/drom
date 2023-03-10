@@ -5,12 +5,27 @@
   (package drom)
   (libraries drom_lib )
   
-  
+  (flags (:standard (:include linking.sexp)))
   )
+
+; Use `static-clibs` to specify static C libs (without lib prefix)
+; and `static-macos-clibs` and `static-alpine-clibs` for system specific deps
+(rule
+  (targets linking.sexp)
+  (enabled_if (<> %{ocaml-config:system} mingw64))
+  (deps (file linking_flags.sh))
+  (action  (with-stdout-to %{targets}
+    (run bash linking_flags.sh linking.sexp %{env:LINKING_MODE=dynamic} %{ocaml-config:system} ))))
+
+(rule
+  (targets linking.sexp)
+  (enabled_if (= %{ocaml-config:system} mingw64))
+  (deps (file linking_flags.sh))
+  (action  (with-stdout-to %{targets}
+    (run bash -c "echo '()' > linking.sexp"))))
 
 
 (documentation
   (package drom))
-
 
 

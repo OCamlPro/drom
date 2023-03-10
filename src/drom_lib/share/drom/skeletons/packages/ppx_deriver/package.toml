@@ -1,8 +1,0 @@
-# Everything above is inherited from 'virtual' package skeleton
-
-skeleton := "ppx_deriver"
-kind := "library"
-
-[dependencies]
-ppxlib = "0.15"
-

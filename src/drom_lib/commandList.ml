@@ -14,44 +14,49 @@ open EZCMD.TYPES
 
 let cmd_name = "list"
 
+(* TODO: add licenses *)
 let all_kinds = [ "projects"; "packages" ]
 
 let cmd =
-  let args = ref [] in
+  let kinds = ref [] in
+  let args, specs = Share.args ~set:true () in
   EZCMD.sub cmd_name
     (fun () ->
-      let args =
-        match !args with
-        | []
-        | [ "all" ] ->
-          all_kinds
-        | args -> args
-      in
-      List.iter
-        (function
-          | "projects" ->
-            Printf.printf "Known project skeletons: %s\n%!"
-              (String.concat " "
-                 (List.map
-                    (fun s -> s.skeleton_name)
-                    (Skeleton.project_skeletons ()) ) )
-          | "packages" ->
-            Printf.printf "Known packages skeletons: %s\n%!"
-              (String.concat " "
-                 (List.map
-                    (fun s -> s.skeleton_name)
-                    (Skeleton.package_skeletons ()) ) )
-          | s ->
-            Printf.eprintf "Error: unknown kind: %S. Possible kinds: %s\n%!" s
-              (String.concat " " all_kinds);
-            exit 2 )
-        args )
+       let kinds =
+         match !kinds with
+         | []
+         | [ "all" ] ->
+             all_kinds
+         | kinds -> kinds
+       in
+       List.iter
+         (function
+           | "projects" ->
+               let share = Share.load ~args () in
+               Printf.printf "Known project skeletons: %s\n%!"
+                 (String.concat " "
+                    (List.map
+                       (fun s -> s.skeleton_name)
+                       (Skeleton.project_skeletons share) ) )
+           | "packages" ->
+               let share = Share.load ~args () in
+               Printf.printf "Known packages skeletons: %s\n%!"
+                 (String.concat " "
+                    (List.map
+                       (fun s -> s.skeleton_name)
+                       (Skeleton.package_skeletons share) ) )
+           | s ->
+               Printf.eprintf "Error: unknown kind: %S. Possible kinds: %s\n%!" s
+                 (String.concat " " all_kinds);
+               exit 2 )
+         kinds )
     ~args:
-      [ ( [],
-          Arg.Anons (fun list -> args := list),
-          EZCMD.info
-            "Use 'projects' or 'packages' to display corresponding skeletons" )
-      ]
+      ( specs @
+        [ ( [],
+            Arg.Anons (fun list -> kinds := list),
+            EZCMD.info
+              "Use 'projects' or 'packages' to display corresponding skeletons" )
+        ])
     ~doc:"List available project or packages skeletons" ~version:"0.4.0"
     ~man:
       [ `S "DESCRIPTION";

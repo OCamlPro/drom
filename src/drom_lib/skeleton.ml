@@ -25,7 +25,7 @@ let default_flags =
   }
 
 let bracket flags eval_cond =
-  let bracket flags ((), p) s =
+  let bracket flags state s =
     match EzString.split s ':' with
     (* set the name of the file *)
     | [ "file"; v ] ->
@@ -51,7 +51,7 @@ let bracket flags eval_cond =
       flags.flag_perm <- int_of_string ("0o" ^ v);
       ""
     | "if" :: cond ->
-      flags.flag_skipper := not (eval_cond p cond) :: !(flags.flag_skipper);
+      flags.flag_skipper := not (eval_cond state.Subst.p cond) :: !(flags.flag_skipper);
       ""
     | [ "else" ] ->
       (flags.flag_skipper :=
@@ -62,7 +62,7 @@ let bracket flags eval_cond =
     | "elif" :: cond ->
       (flags.flag_skipper :=
          match !(flags.flag_skipper) with
-         | _cond :: tail -> not (eval_cond p cond) :: tail
+         | _cond :: tail -> not (eval_cond state.Subst.p cond) :: tail
          | [] -> failwith "elif without if" );
       ""
     | [ ("fi" | "endif") ] ->
@@ -101,7 +101,7 @@ let flags_encoding =
         table;
       flags )
 
-let load_skeleton ~drom ~dir ~toml ~kind =
+let load_skeleton ~version ~drom ~dir ~toml ~kind =
   let table =
     match EzToml.from_file toml with
     | `Ok table -> table
@@ -172,18 +172,19 @@ let load_skeleton ~drom ~dir ~toml ~kind =
       skeleton_files;
       skeleton_flags;
       skeleton_drom = drom;
-      skeleton_name = name
+      skeleton_name = name;
+      skeleton_version =  version;
     } )
 
-let load_dir_skeletons ~drom map kind dir =
+let load_dir_skeletons ~version ~drom kind dir =
+  let map = ref StringMap.empty in
   if Sys.file_exists dir then begin
-    let map = ref map in
     EzFile.iter_dir dir ~f:(fun file ->
         let dir = dir // file in
         let toml = dir // "skeleton.toml" in
         if Sys.file_exists toml then
           try
-            let name, skeleton = load_skeleton ~drom ~dir ~toml ~kind in
+            let name, skeleton = load_skeleton ~version ~drom ~dir ~toml ~kind in
             if !Globals.verbosity > 0 && StringMap.mem name !map then
               Printf.eprintf "Warning: %s skeleton %S overwritten in %s\n%!"
                 kind name dir;
@@ -195,32 +196,17 @@ let load_dir_skeletons ~drom map kind dir =
               kind dir (Printexc.to_string exn) );
     !map
   end else
-    map
+    !map
 
 let kind_dir ~kind = ("skeletons" // kind) ^ "s"
 
-let load_system_skeletons map kind =
-  match Config.share_dir () with
-  | Some dir ->
-    let global_skeletons_dir = dir // kind_dir ~kind in
-    load_dir_skeletons ~drom:true map kind global_skeletons_dir
-  | None ->
-    Printf.eprintf
-      "Warning: could not load skeletons from share/%s/skeletons/%s\n%!"
-      Globals.command kind;
-    map
+(* TODO: the project should be able to specify its own URL for the skeleton repo *)
+let load_skeletons share kind =
+  let dir = share.share_dir in
+  let version = share.share_version in
+  let global_skeletons_dir = dir // kind_dir ~kind in
+  load_dir_skeletons ~version ~drom:true kind global_skeletons_dir
 
-let load_user_skeletons map kind =
-  let user_skeletons_dir = Globals.config_dir // kind_dir ~kind in
-  load_dir_skeletons ~drom:false map kind user_skeletons_dir
-
-let load_skeletons kind =
-  let map = load_system_skeletons StringMap.empty kind in
-  load_user_skeletons map kind
-
-let project_skeletons = lazy (load_skeletons "project")
-
-let package_skeletons = lazy (load_skeletons "package")
 
 let rec inherit_files self_files super_files =
   match (self_files, super_files) with
@@ -238,36 +224,39 @@ let rec inherit_files self_files super_files =
       (super_file, super_content, super_mode)
       :: inherit_files self_files super_files_tail
 
-let lookup_skeleton ?(project = false) skeletons name =
-  let skeletons = Lazy.force skeletons in
+let lookup_skeleton skeletons name =
   let rec iter name =
     match StringMap.find name skeletons with
-    | exception Not_found -> download_skeleton name
+    | exception Not_found ->
+        Error.raise "Missing skeleton %S" name
     | self -> (
-      match self.skeleton_inherits with
-      | None -> self
-      | Some super ->
-        let super = iter super in
-        let skeleton_toml =
-          [ String.concat "\n" (super.skeleton_toml @ self.skeleton_toml) ]
-        in
-        let skeleton_files =
-          inherit_files self.skeleton_files super.skeleton_files
-        in
-        let skeleton_flags =
-          StringMap.union
-            (fun _ x _ -> Some x)
-            self.skeleton_flags super.skeleton_flags
-        in
-        { skeleton_name = name;
-          skeleton_inherits = None;
-          skeleton_toml;
-          skeleton_files;
-          skeleton_drom = false;
-          skeleton_flags
-        } )
-  and download_skeleton name =
-    if project then (
+        match self.skeleton_inherits with
+        | None -> self
+        | Some super ->
+            let super = iter super in
+            let skeleton_toml =
+              [ String.concat "\n" (super.skeleton_toml @ self.skeleton_toml) ]
+            in
+            let skeleton_files =
+              inherit_files self.skeleton_files super.skeleton_files
+            in
+            let skeleton_flags =
+              StringMap.union
+                (fun _ x _ -> Some x)
+                self.skeleton_flags super.skeleton_flags
+            in
+            { skeleton_name = name;
+              skeleton_inherits = None;
+              skeleton_toml;
+              skeleton_files;
+              skeleton_drom = false;
+              skeleton_flags;
+              skeleton_version = self.skeleton_version;
+            } )
+
+  (* This should be deprecated in favor of using a skeleton database
+     and download_skeleton name =
+     if project then (
       match EzString.chop_prefix name ~prefix:"gh:" with
       | None -> Error.raise "Missing skeleton %S" name
       | Some github_project ->
@@ -286,18 +275,20 @@ let lookup_skeleton ?(project = false) skeletons name =
         if not (Sys.file_exists toml) then
           EzFile.write_file toml
             (Printf.sprintf {|[skeleton]
-name = "%s"
-|} name );
+     name = "%s"
+     |} name );
+        let version = Config.share_version dir in
         let skel_name, skeleton =
-          load_skeleton ~drom:false ~dir ~toml ~kind:"project"
+          load_skeleton ~version ~drom:false ~dir ~toml ~kind:"project"
         in
         if skel_name = name then
           skeleton
         else
           Error.raise "Wrong remote skeleton %S instead of %S in %s\n" skel_name
             name dir
-    ) else
+     ) else
       Error.raise "Missing skeleton %S" name
+  *)
   in
   iter name
 
@@ -308,11 +299,29 @@ let backup_skeleton file content ~perm =
   EzFile.write_file drom_file content;
   Unix.chmod drom_file perm
 
-let lookup_project skeleton =
-  lookup_skeleton ~project:true project_skeletons skeleton
-(*    (Misc.project_skeleton skeleton) *)
+let project_skeletons share =
+  match share.share_projects with
+  | Some skeletons -> skeletons
+  | None ->
+      let skeletons = load_skeletons share "project" in
+      share.share_projects <- Some skeletons ;
+      skeletons
 
-let lookup_package skeleton = lookup_skeleton package_skeletons skeleton
+let package_skeletons share =
+  match share.share_packages with
+  | Some skeletons -> skeletons
+  | None ->
+      let skeletons = load_skeletons share "package" in
+      share.share_packages <- Some skeletons ;
+      skeletons
+
+let lookup_project share skeleton =
+  let project_skeletons = project_skeletons share in
+  lookup_skeleton project_skeletons skeleton
+
+let lookup_package share skeleton =
+  let package_skeletons = package_skeletons share in
+  lookup_skeleton package_skeletons skeleton
 
 let rec eval_project_cond p cond =
   match cond with
@@ -402,47 +411,64 @@ let skeleton_flags skeleton file perm =
     flags.flag_perm <- flags.flag_perm lor 0o111;
   flags
 
-let write_project_files write_file p =
-  let skeleton = lookup_project
-      (Misc.project_skeleton p.skeleton) in
-  List.iter
-    (fun (file, content, perm) ->
-      (* Printf.eprintf "File %s perm %o\n%!" file perm; *)
-      backup_skeleton file content ~perm;
-      let flags = skeleton_flags skeleton file perm in
-      let bracket = bracket flags eval_project_cond in
-      let content =
-        if flags.flag_subst then
-          try
-            Subst.project () ~bracket ~skipper:flags.flag_skipper p content
-          with
-          | Not_found ->
+let write_project_files write_file state =
+  let p = state.Subst.p in
+  let skeleton = lookup_project state.share (Misc.project_skeleton p.skeleton) in
+  let postponed_items = ref [] in
+
+  let write_project_file ~postpone (file, content, perm) =
+    (* Printf.eprintf "File %s perm %o\n%!" file perm; *)
+    backup_skeleton file content ~perm;
+    let flags = skeleton_flags skeleton file perm in
+    let bracket = bracket flags eval_project_cond in
+    let content =
+      if flags.flag_subst then
+        try
+          Subst.project { state with postpone }
+            ~bracket ~skipper:flags.flag_skipper content
+        with
+        | Not_found ->
             Printf.kprintf failwith "Exception Not_found in %S\n%!" file
-        else
-          content
-      in
-      let { flag_file;
-            flag_create = create;
-            flag_skips = skips;
-            flag_record = record;
-            flag_skip = skip;
-            flag_perm = perm;
-            flag_skipper = _;
-            flag_subst = _
-          } =
-        flags
-      in
-      let flag_file = Subst.project () p flag_file in
-      write_file flag_file ~create ~skips ~content ~record ~skip ~perm )
+      else
+        content
+    in
+    (* name of file can also be substituted *)
+    let { flag_file;
+          flag_create = create;
+          flag_skips = skips;
+          flag_record = record;
+          flag_skip = skip;
+          flag_perm = perm;
+          flag_skipper = _;
+          flag_subst = _
+        } =
+      flags
+    in
+    let flag_file = Subst.project state flag_file in
+    write_file flag_file ~create ~skips ~content ~record ~skip ~perm
+  in
+  List.iter
+    (fun file_item ->
+       try
+         write_project_file ~postpone:true file_item
+       with Subst.Postpone ->
+         postponed_items := file_item :: !postponed_items
+    )
+    skeleton.skeleton_files;
+  List.iter
+    (fun file_item ->
+       write_project_file ~postpone:false file_item
+    )
     skeleton.skeleton_files;
   ()
 
-let subst_package_file flags content package =
+let subst_package_file flags content state =
   let bracket = bracket flags eval_package_cond in
   let content =
     if flags.flag_subst then
       try
-        Subst.package () ~bracket ~skipper:flags.flag_skipper package content
+        Subst.package state
+          ~bracket ~skipper:flags.flag_skipper content
       with
       | Not_found ->
         Printf.kprintf failwith "Exception Not_found in %S\n%!" flags.flag_file
@@ -451,15 +477,15 @@ let subst_package_file flags content package =
   in
   content
 
-let write_package_files write_file package =
-  let skeleton = lookup_package (Misc.package_skeleton package) in
-
+let write_package_files write_file state =
+  let package = state.Subst.p in
+  let skeleton = lookup_package state.share (Misc.package_skeleton package) in
   List.iter
     (fun (file, content, perm) ->
       (* Printf.eprintf "File %s perm %o\n%!" file perm; *)
       backup_skeleton file content ~perm;
       let flags = skeleton_flags skeleton file perm in
-      let content = subst_package_file flags content package in
+      let content = subst_package_file flags content state in
       let { flag_file;
             flag_create = create;
             flag_skips = skips;
@@ -471,27 +497,31 @@ let write_package_files write_file package =
           } =
         flags
       in
-      let flag_file = Subst.package () package flag_file in
+      let flag_file = Subst.package state flag_file in
       let file = package.dir // flag_file in
       write_file file ~create ~skips ~content ~record ~skip ~perm )
     skeleton.skeleton_files
 
-let write_files write_file p =
-  write_project_files write_file p;
-  List.iter (fun package -> write_package_files write_file package) p.packages
+let write_files write_file state =
+  write_project_files write_file state;
+  List.iter (fun package ->
+      write_package_files write_file { state with p = package })
+    state.Subst.p.packages
 
-let project_skeletons () =
-  Lazy.force project_skeletons |> StringMap.to_list |> List.map snd
+let project_skeletons share =
+  project_skeletons share
+  |> StringMap.to_list |> List.map snd
 
-let package_skeletons () =
-  Lazy.force package_skeletons |> StringMap.to_list |> List.map snd
+let package_skeletons share =
+  package_skeletons share
+  |> StringMap.to_list |> List.map snd
 
-let known_skeletons () =
+let known_skeletons share =
   Printf.sprintf "project skeletons: %s\npackage skeletons: %s\n"
-    ( project_skeletons ()
+    ( project_skeletons share
     |> List.map (fun s -> s.skeleton_name)
     |> String.concat " " )
-    ( package_skeletons ()
+    ( package_skeletons share
     |> List.map (fun s -> s.skeleton_name)
     |> String.concat " " )
 

@@ -8,23 +8,28 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Types
 open Ezcmd.V2
 open EZCMD.TYPES
 open Ez_file.V1
 open EzFile.OP
 open EzCompat
 
+open Types
+
 exception Skip
 
-type update_args =
+type args =
   { mutable arg_upgrade : bool;
     mutable arg_force : bool;
     mutable arg_diff : bool;
     mutable arg_skip : (bool * string) list;
     mutable arg_promote_skip : bool;
     mutable arg_edition : string option;
-    mutable arg_min_edition : string option
+    mutable arg_min_edition : string option;
+
+    (* Not settable through standard args, only in `drom project` *)
+    arg_share_version : string option;
+    arg_share_repo : string option;
   }
 
 let default_args () =
@@ -34,10 +39,12 @@ let default_args () =
     arg_skip = [];
     arg_promote_skip = false;
     arg_edition = None;
-    arg_min_edition = None
+    arg_min_edition = None;
+    arg_share_version = None;
+    arg_share_repo = None;
   }
 
-let update_args () =
+let args () =
   let args = default_args () in
   let specs =
     [ ( [ "f"; "force" ],
@@ -69,7 +76,7 @@ let update_args () =
         EZCMD.info ~docv:"OCAMLVERSION" "Set project default OCaml version" );
       ( [ "min-edition" ],
         Arg.String (fun s -> args.arg_min_edition <- Some s),
-        EZCMD.info ~docv:"OCAMLVERSION" "Set project minimal OCaml version" )
+        EZCMD.info ~docv:"OCAMLVERSION" "Set project minimal OCaml version" );
     ]
   in
   (args, specs)
@@ -78,16 +85,16 @@ let compute_config_hash files =
   let files = List.sort compare files in
   let files =
     List.map
-      (fun (file, content) -> (file, Hashes.digest_content ~file content))
+      (fun (file, content) -> (file, Hashes.digest_content ~file ~content () |> Hashes.to_string ))
       files
   in
   let to_hash =
     String.concat "?"
       (List.map (fun (file, hash) -> Printf.sprintf "%s^%s" file hash) files)
   in
-  Hashes.digest_content ~file:"" to_hash
+  Hashes.digest_content ~file:"" ~content:to_hash ()
 
-let update_files ?args ?(git = false) ?(create = false) p =
+let update_files share ?args ?(git = false) ?(create = false) p =
   (*
   let force, upgrade, skip, diff, promote_skip, edition, min_edition =
     match args with
@@ -107,17 +114,17 @@ let update_files ?args ?(git = false) ?(create = false) p =
     match args.arg_skip with
     | [] -> (p, changed)
     | skip ->
-      let skip =
-        List.fold_left
-          (fun skips (bool, elem) ->
-            if bool then
-              elem :: skips
-            else
-              EzList.remove elem skips )
-          p.skip skip
-      in
-      let p = { p with skip } in
-      (p, true)
+        let skip =
+          List.fold_left
+            (fun skips (bool, elem) ->
+               if bool then
+                 elem :: skips
+               else
+                 EzList.remove elem skips )
+            p.skip skip
+        in
+        let p = { p with skip } in
+        (p, true)
   in
 
   let p, changed =
@@ -131,6 +138,28 @@ let update_files ?args ?(git = false) ?(create = false) p =
     | None -> (p, changed)
     | Some min_edition -> ({ p with min_edition }, true)
   in
+  let p, changed =
+    match args.arg_share_version with
+    | None -> (p, changed)
+    | project_share_version ->
+        if args.arg_share_version <> p.project_share_version then
+          let project_share_repo = match p.project_share_repo with
+            | None -> Some ( Share.share_repo_default () )
+            | Some project_share_repo -> Some project_share_repo
+          in
+          ({ p with project_share_version ; project_share_repo }, true)
+        else
+          (p, changed)
+  in
+  let p, changed =
+    match args.arg_share_repo with
+    | None -> (p, changed)
+    | project_share_repo ->
+        if args.arg_share_repo <> p.project_share_repo then
+          ({ p with project_share_repo }, true)
+        else
+          (p, changed)
+  in
 
   let can_skip = ref [] in
 
@@ -138,13 +167,13 @@ let update_files ?args ?(git = false) ?(create = false) p =
   List.iter (fun skip -> skip_set := StringSet.add skip !skip_set) p.skip;
   List.iter
     (fun pk ->
-      match pk.p_skip with
-      | None -> ()
-      | Some list ->
-        List.iter
-          (fun skip ->
-            skip_set := StringSet.add (Filename.concat pk.dir skip) !skip_set )
-          list )
+       match pk.p_skip with
+       | None -> ()
+       | Some list ->
+           List.iter
+             (fun skip ->
+                skip_set := StringSet.add (Filename.concat pk.dir skip) !skip_set )
+             list )
     p.packages;
   let skip_set = !skip_set in
   let not_skipped s =
@@ -153,7 +182,7 @@ let update_files ?args ?(git = false) ?(create = false) p =
   in
   let skipped = ref [] in
   let write_file ?(record = true) ~perm hashes filename content =
-    Hashes.write hashes ~record ~perm filename content
+    Hashes.write hashes ~record ~perm ~file:filename ~content
   in
   let can_update ~filename ~perm hashes content =
     let old_content = EzFile.read_file filename in
@@ -162,11 +191,12 @@ let update_files ?args ?(git = false) ?(create = false) p =
       begin
         match Hashes.get hashes filename with
         | exception Not_found ->
-          Printf.eprintf "Warning: .drom: missing hash for %S\n%!" filename;
-          let hash =
-            Hashes.digest_content ~file:filename ~perm:old_perm old_content
-          in
-          Hashes.update ~git:false hashes filename hash
+            Printf.eprintf "Warning: .drom: missing hash for %S\n%!" filename;
+            let hash =
+              Hashes.digest_content ~file:filename ~perm:old_perm
+                ~content:old_content ()
+            in
+            Hashes.update ~git:false hashes filename hash
         | _ -> ()
       end;
       false
@@ -175,39 +205,39 @@ let update_files ?args ?(git = false) ?(create = false) p =
       ||
       match Hashes.get hashes filename with
       | exception Not_found ->
-        skipped := filename :: !skipped;
-        Printf.eprintf "Skipping existing file %s\n%!" filename;
-        false
-      | former_hash ->
-        let hash =
-          Hashes.digest_content ~file:filename ~perm:old_perm old_content
-        in
-        let modified =
-          former_hash <> hash
-          && (* compatibility with former hashing system *)
-          former_hash <> Digest.string old_content
-        in
-        if modified then (
           skipped := filename :: !skipped;
-          Printf.eprintf "Skipping modified file %s\n%!" filename;
-          if args.arg_diff then begin
-            let basename = Filename.basename filename in
-            let dirname = Globals.drom_dir // "temp" in
-            let dirname_a = dirname // "a" in
-            let dirname_b = dirname // "b" in
-            EzFile.make_dir ~p:true dirname_a;
-            EzFile.make_dir ~p:true dirname_b;
-            let file_a = dirname_a // basename in
-            let file_b = dirname_b // basename in
-            EzFile.write_file file_a old_content;
-            EzFile.write_file file_b content;
-            ( try Misc.call [| "diff"; "-u"; file_a; file_b |] with
-            | _ -> () );
-            Sys.remove file_a;
-            Sys.remove file_b
-          end
-        );
-        not modified
+          Printf.eprintf "Skipping existing file %s\n%!" filename;
+          false
+      | former_hash ->
+          let hash =
+            Hashes.digest_content ~file:filename ~perm:old_perm ~content:old_content ()
+          in
+          let modified =
+            former_hash <> hash
+            && (* compatibility with former hashing system *)
+            former_hash <> Hashes.old_string_hash old_content
+          in
+          if modified then (
+            skipped := filename :: !skipped;
+            Printf.eprintf "Skipping modified file %s\n%!" filename;
+            if args.arg_diff then begin
+              let basename = Filename.basename filename in
+              let dirname = Globals.drom_dir // "temp" in
+              let dirname_a = dirname // "a" in
+              let dirname_b = dirname // "b" in
+              EzFile.make_dir ~p:true dirname_a;
+              EzFile.make_dir ~p:true dirname_b;
+              let file_a = dirname_a // basename in
+              let file_b = dirname_b // basename in
+              EzFile.write_file file_a old_content;
+              EzFile.write_file file_b content;
+              ( try Call.call [| "diff"; "-u"; file_a; file_b |] with
+                | _ -> () );
+              Sys.remove file_a;
+              Sys.remove file_b
+            end
+          );
+          not modified
   in
 
   let write_file ?((* add to git/.drom *) record = true)
@@ -221,11 +251,11 @@ let update_files ?args ?(git = false) ?(create = false) p =
         Printf.eprintf "Forced Update of file %s\n%!" filename;
         write_file hashes filename content ~perm
       ) else if
-          (* the file should not be to skip *)
-          not_skipped filename
-          && (* all tags attached to this file should also not be to skip *)
-          List.for_all not_skipped skips
-        then
+        (* the file should not be to skip *)
+        not_skipped filename
+        && (* all tags attached to this file should also not be to skip *)
+        List.for_all not_skipped skips
+      then
         if not record then
           write_file ~record:false hashes filename content ~perm
         else if not (Sys.file_exists filename) then (
@@ -243,9 +273,9 @@ let update_files ?args ?(git = false) ?(create = false) p =
         raise Skip
     with
     | Skip ->
-      let filename = "_drom" // "skipped" // filename in
-      EzFile.make_dir ~p:true (Filename.dirname filename);
-      EzFile.write_file filename content
+        let filename = "_drom" // "skipped" // filename in
+        EzFile.make_dir ~p:true (Filename.dirname filename);
+        EzFile.write_file filename content
   in
 
   let config = Config.config () in
@@ -274,77 +304,84 @@ let update_files ?args ?(git = false) ?(create = false) p =
   List.iter (fun package -> package.project <- p) p.packages;
 
   Hashes.with_ctxt ~git (fun hashes ->
+
+      begin
+        match p.project_share_version with
+        | Some _ ->
+            Hashes.set_version hashes "0.9.0"
+        | None -> ()
+      end;
+
       if create then
         if git && not (Sys.file_exists ".git") then (
           Git.call [ "init"; "-q" ];
           match config.config_github_organization with
           | None -> ()
           | Some organization ->
-            Git.call
-              [ "remote";
-                "add";
-                "origin";
-                Printf.sprintf "git@github.com:%s/%s" organization
-                  p.package.name
-              ];
-            if Sys.file_exists "README.md" then Git.call [ "add"; "README.md" ];
-            Git.call [ "commit"; "--allow-empty"; "-m"; "Initial commit" ]
+              Git.call
+                [ "remote";
+                  "add";
+                  "origin";
+                  Printf.sprintf "git@github.com:%s/%s" organization
+                    p.package.name
+                ];
+              if Sys.file_exists "README.md" then Git.call [ "add"; "README.md" ];
+              Git.call [ "commit"; "--allow-empty"; "-m"; "Initial commit" ]
         );
 
       List.iter
         (fun package ->
-          let gen_opam_file =
-            match package.kind with
-            | Virtual -> (
-              match StringMap.find "gen-opam" package.p_fields with
-              | exception _ -> false
-              | s -> (
-                match String.lowercase s with
-                | "all"
-                | "some" ->
-                  true
-                | _ -> false ) )
-            | _ -> true
-          in
-          if gen_opam_file then (
-            let opam_filename = package.name ^ ".opam" in
-            ( match package.p_gen_version with
-            | None -> ()
-            | Some file ->
-              (* TODO : we should put info in this file *)
-              let version_file = package.dir // file in
-              if Sys.file_exists version_file then Sys.remove version_file;
-              write_file hashes (version_file ^ "t")
-                (GenVersion.file package file) );
-            EzFile.make_dir ~p:true "opam";
-            let full_filename = "opam" // opam_filename in
-            write_file hashes full_filename
-              (Opam.opam_of_project Single package);
-            if Sys.file_exists opam_filename then begin
-              Printf.eprintf "Removing deprecated %s (moved to %s)\n%!"
-                opam_filename full_filename;
-              Sys.remove opam_filename
-            end
-          ) )
+           let gen_opam_file =
+             match package.kind with
+             | Virtual -> (
+                 match StringMap.find "gen-opam" package.p_fields with
+                 | exception _ -> false
+                 | s -> (
+                     match String.lowercase s with
+                     | "all"
+                     | "some" ->
+                         true
+                     | _ -> false ) )
+             | _ -> true
+           in
+           if gen_opam_file then (
+             let opam_filename = package.name ^ ".opam" in
+             ( match package.p_gen_version with
+               | None -> ()
+               | Some file ->
+                   (* TODO : we should put info in this file *)
+                   let version_file = package.dir // file in
+                   if Sys.file_exists version_file then Sys.remove version_file;
+                   write_file hashes (version_file ^ "t")
+                     (GenVersion.file package file) );
+             EzFile.make_dir ~p:true "opam";
+             let full_filename = "opam" // opam_filename in
+             write_file hashes full_filename
+               (Opam.opam_of_project Single share package);
+             if Sys.file_exists opam_filename then begin
+               Printf.eprintf "Removing deprecated %s (moved to %s)\n%!"
+                 opam_filename full_filename;
+               Sys.remove opam_filename
+             end
+           ) )
         p.packages;
-
       EzFile.make_dir ~p:true Globals.drom_dir;
 
       EzFile.write_file
         (Globals.drom_dir // "known-licences.txt")
-        (License.known_licenses ());
+        (License.known_licenses share);
 
       EzFile.write_file
         (Globals.drom_dir // "known-skeletons.txt")
-        (Skeleton.known_skeletons ());
+        (Skeleton.known_skeletons share);
 
-      EzFile.write_file (Globals.drom_dir // "header.ml") (License.header_ml p);
+      EzFile.write_file (Globals.drom_dir // "header.ml") (License.header_ml share p);
       EzFile.write_file
         (Globals.drom_dir // "header.mll")
-        (License.header_mll p);
+        (License.header_mll share p);
       EzFile.write_file
         (Globals.drom_dir // "header.mly")
-        (License.header_mly p);
+        (License.header_mly share p);
 
       EzFile.write_file
         (Globals.drom_dir // "maximum-skip-field.txt")
@@ -353,8 +390,8 @@ let update_files ?args ?(git = false) ?(create = false) p =
       (* Most of the files are created using Skeleton *)
       Skeleton.write_files
         (fun file ~create ~skips ~content ~record ~skip ~perm ->
-          write_file hashes ~perm file ~create ~skips ~record ~skip content )
-        p;
+           write_file hashes ~perm file ~create ~skips ~record ~skip content )
+        ( Subst.state ~hashes () share p );
 
       let p, changed =
         if args.arg_promote_skip && !skipped <> [] then (
@@ -372,15 +409,15 @@ let update_files ?args ?(git = false) ?(create = false) p =
       let files =
         List.map
           (fun (file, content) ->
-            let content =
-              if upgrade then begin
-                write_file ~skip ~force:upgrade hashes file content;
-                content
-              end else
-                try EzFile.read_file file with
-                | Sys_error _ -> ""
-            in
-            (file, content) )
+             let content =
+               if upgrade then begin
+                 write_file ~skip ~force:upgrade hashes file content;
+                 content
+               end else
+                 try EzFile.read_file file with
+                 | Sys_error _ -> ""
+             in
+             (file, content) )
           files
       in
 
@@ -391,12 +428,12 @@ let update_files ?args ?(git = false) ?(create = false) p =
          detect need for update. We use '.' for the associated name,
          because it must be an existent file, otherwise `Hashes.save`
          will discard it. *)
-      Hashes.update ~git:false hashes "." hash );
-  ()
+      Hashes.update ~git:false hashes "." hash;
+      )
 
-let update_files ~twice ?args ?(git = false) ?(create = false) p =
-  update_files ?args ~git ~create p;
+let update_files share ~twice ?args ?(git = false) ?(create = false) p =
+  update_files share ?args ~git ~create p ;
   if twice then begin
     Printf.eprintf "Re-iterate file generation for consistency...\n%!";
-    update_files ?args ~git p
+    update_files share ?args ~git p
   end
