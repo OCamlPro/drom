@@ -261,7 +261,23 @@ Yet, it is possible to inline these fields also in the
 :code:`drom project --upgrade`). You can check the list of available
 fields in the documentation of :code:`package.toml`.
 
+The :code:`[fields]` table
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The :code:`fields` table contains fields that will be added to the
+the :code:`dune-project` file. There is two fields may be used :
+
+* :code:`dune-project-header`
+* :code:`dune-project-trailer`
+
+The first one add verbatim content to the :code:`dune-project` file, right
+after the :code:`(lang dune X.Y)` line. The second one add verbatim content
+at the end of file.
+
+Using those fields may be required when using very specific :code:`dune` 
+build feature that are not handled by :code:`drom`. For example, using 
+the parser generator :code:`menhir` for non trivial cases will likely need 
+such tuning.
 
 The :code:`package.toml` Files
 ------------------------------

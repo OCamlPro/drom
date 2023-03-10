@@ -17,6 +17,7 @@ Welcome to drom doc
    reference
    commands
    config
+   usecases
    github
    licenses
    install
