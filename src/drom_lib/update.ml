@@ -231,7 +231,7 @@ let update_files share ?args ?(git = false) ?(create = false) p =
               let file_b = dirname_b // basename in
               EzFile.write_file file_a old_content;
               EzFile.write_file file_b content;
-              ( try Call.call [| "diff"; "-u"; file_a; file_b |] with
+              ( try Call.call [ "diff"; "-u"; file_a; file_b ] with
                 | _ -> () );
               Sys.remove file_a;
               Sys.remove file_b
@@ -314,19 +314,21 @@ let update_files share ?args ?(git = false) ?(create = false) p =
 
       if create then
         if git && not (Sys.file_exists ".git") then (
-          Git.call [ "init"; "-q" ];
+          Git.call "init" [ "-q" ];
           match config.config_github_organization with
           | None -> ()
           | Some organization ->
               Git.call
-                [ "remote";
+                "remote"
+                [
                   "add";
                   "origin";
                   Printf.sprintf "git@github.com:%s/%s" organization
                     p.package.name
                 ];
-              if Sys.file_exists "README.md" then Git.call [ "add"; "README.md" ];
-              Git.call [ "commit"; "--allow-empty"; "-m"; "Initial commit" ]
+              if Sys.file_exists "README.md" then
+                Git.call "add" [ "README.md" ];
+              Git.call "commit" [ "--allow-empty"; "-m"; "Initial commit" ]
         );
 
       List.iter
@@ -429,7 +431,7 @@ let update_files share ?args ?(git = false) ?(create = false) p =
          because it must be an existent file, otherwise `Hashes.save`
          will discard it. *)
       Hashes.update ~git:false hashes "." hash;
-      )
+    )
 
 let update_files share ~twice ?args ?(git = false) ?(create = false) p =
   update_files share ?args ~git ~create p ;

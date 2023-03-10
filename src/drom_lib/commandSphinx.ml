@@ -16,16 +16,16 @@ let cmd_name = "sphinx"
 let make_sphinx p =
   let dir = Misc.sphinx_target p in
   let sphinx_target = Format.sprintf "_drom/docs/%s" dir in
-  Call.before_hook "sphinx" ~args:[ sphinx_target ];
-  Call.call [| "sphinx-build"; "sphinx"; sphinx_target |];
-  Call.after_hook "sphinx" ~args:[ sphinx_target ];
+  Call.before_hook ~command:"sphinx" ~args:[ sphinx_target ] ();
+  Call.call [ "sphinx-build"; "sphinx"; sphinx_target ];
+  Call.after_hook ~command:"sphinx" ~args:[ sphinx_target ] ();
   sphinx_target
 
 let action ~args ~open_www () =
   let (p : Types.project) = Build.build ~dev_deps:true ~args () in
   let sphinx_target = make_sphinx p in
   if !open_www then
-    Call.call [| "xdg-open"; Filename.concat sphinx_target "index.html" |]
+    Call.call [ "xdg-open"; Filename.concat sphinx_target "index.html" ]
 
 let cmd =
   let args, specs = Build.build_args () in

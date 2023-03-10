@@ -393,7 +393,7 @@ had_switch: %b
   end;
 
   if build then begin
-    Call.before_hook "build";
+    Call.before_hook ~command:"build" ();
     Opam.run [ "exec" ]
       ( [ "--"; "dune"; "build"; "@install" ]
         @ ( match arg_profile with
@@ -408,6 +408,6 @@ had_switch: %b
         | 1 -> []
         | 2 -> [ "--display=short" ]
         | _ -> [ "--display=verbose" ] );
-    Call.after_hook "build"
+    Call.after_hook ~command:"build" ()
   end;
   p

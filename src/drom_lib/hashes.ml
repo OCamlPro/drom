@@ -177,13 +177,13 @@ let save ?(git = true) t =
         (fun file ->
           if not (Sys.file_exists file) then to_remove := file :: !to_remove )
         t.to_remove;
-      if !to_remove <> [] then Git.run ("rm" :: "-f" :: !to_remove);
+      if !to_remove <> [] then Git.silent_fail "rm" ("-f" :: !to_remove);
 
       let to_add = ref [] in
       StringSet.iter
         (fun file -> if Sys.file_exists file then to_add := file :: !to_add)
         t.to_add;
-      Git.run ("add" :: ".drom" :: !to_add)
+      Git.silent_fail "add" (".drom" :: !to_add)
     );
     t.to_add <- StringSet.empty;
     t.to_remove <- StringSet.empty;

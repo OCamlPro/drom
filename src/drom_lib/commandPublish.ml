@@ -45,7 +45,7 @@ let action ~force ~opam_repo ~use_md5 () =
       | None ->
         Error.raise "You must specify the path to a copy of opam-repository" )
   in
-  Call.before_hook "publish" ~args:[ opam_repo ];
+  Call.before_hook ~command:"publish" ~args:[ opam_repo ] ();
   let opam_packages_dir = opam_repo // "packages" in
   if not (Sys.file_exists opam_packages_dir) then
     Error.raise "packages dir does not exist in repo %S" opam_repo;
@@ -148,7 +148,7 @@ url {
           !created;
         raise exn )
     ".";
-  Call.after_hook "publish" ~args:[ opam_repo ];
+  Call.after_hook ~command:"publish" ~args:[ opam_repo ] ();
   ()
 
 let cmd =

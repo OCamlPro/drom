@@ -22,11 +22,11 @@ let action ~remove () =
   let plugins_bin_exe = plugins_bin_dir // "opam-drom" in
   let plugins_drom_dir = plugins_dir // "opam-drom" in
   if remove then begin
-    Call.call [| "rm"; "-f"; plugins_bin_exe |];
-    Call.call [| "rm"; "-rf"; plugins_drom_dir |]
+    Call.call [ "rm"; "-f"; plugins_bin_exe ];
+    Call.call [ "rm"; "-rf"; plugins_drom_dir ]
   end else begin
     EzFile.make_dir ~p:true plugins_bin_dir;
-    Call.call [| "cp"; "-f"; Sys.executable_name; plugins_bin_exe |];
+    Call.call [ "cp"; "-f"; Sys.executable_name; plugins_bin_exe ];
     Printf.printf "drom has been installed as an opam plugin:\n";
     Printf.printf "  You can now call it with 'opam drom COMMAND'\n%!"
   end

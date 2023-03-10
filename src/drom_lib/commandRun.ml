@@ -26,10 +26,9 @@ let action ~args ~cmd ~package =
       | Program -> p.package.name :: cmd
       | Virtual -> cmd )
   in
-  Call.before_hook "run" ~args:cmd;
+  Call.before_hook ~command:"run" ~args:cmd ();
   Call.call
-    (Array.of_list
-       ("opam" :: "exec" :: "--" :: "dune" :: "exec" :: "--" :: cmd) )
+    ("opam" :: "exec" :: "--" :: "dune" :: "exec" :: "--" :: cmd)
 
 let cmd =
   let cmd = ref [] in

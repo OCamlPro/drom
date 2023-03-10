@@ -43,8 +43,7 @@ let action ~all ~args () =
       []
   in
   Call.call
-    (Array.of_list
-       ([ "opam"; "exec"; "--"; "dune"; "build"; "@runtest" ] @ workspace) );
+    ([ "opam"; "exec"; "--"; "dune"; "build"; "@runtest" ] @ workspace) ;
   Printf.eprintf "Tests OK\n%!";
   ()
 

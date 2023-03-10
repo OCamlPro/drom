@@ -246,13 +246,12 @@ let () = Unix.putenv "OPAMCLI" "2.0"
 
 let exec ?(y = false) cmd args =
   Call.call
-    (Array.of_list
-       ( [ "opam" ] @ cmd
-       @ ( if y then
-           [ "-y" ]
-         else
-           [] )
-       @ args ) )
+    ( [ "opam" ] @ cmd
+      @ ( if y then
+            [ "-y" ]
+          else
+            [] )
+      @ args )
 
 let init ?y ?switch ?edition () =
   let opam_root = Globals.opam_root () in
