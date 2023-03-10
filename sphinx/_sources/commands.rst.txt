@@ -217,11 +217,17 @@ The following displays the list of project skeletons:
 Where options are:
 
 
-* :code:`--drom-project-skeletons`   List available project skeletons from drom
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
 
 * :code:`--package-skeletons`   List available package skeletons
 
 * :code:`--project-skeletons`   List available project skeletons
+
+* :code:`--reclone-share`   Reclone share repository
+
+* :code:`--share-repo SHARE_REPO`   Set the repository URL of the share database (use 'default' for default repo)
+
+* :code:`--share-version SHARE_VERSION`   Set the version of share database (use 'latest' for latest version)
 
 
 main.exe dep (since version 0.2.1)
@@ -298,13 +304,21 @@ Where options are:
 
 * :code:`--min-edition OCAMLVERSION`   Set project minimal OCaml version
 
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
+
 * :code:`--opt BOOL`   Whether dependency is optional or not
 
 * :code:`--package PACKAGE`   Attach dependency to this package name
 
 * :code:`--promote-skip`   Promote user-modified files to skip field
 
+* :code:`--reclone-share`   Reclone share repository
+
 * :code:`--remove`   Remove this dependency
+
+* :code:`--share-repo SHARE_REPO`   Set the repository URL of the share database (use 'default' for default repo)
+
+* :code:`--share-version SHARE_VERSION`   Set the version of share database (use 'latest' for latest version)
 
 * :code:`--skip FILE`   Add FILE to skip list
 
@@ -486,6 +500,14 @@ Where options are:
 
 * :code:`ARGUMENTS`   Use 'projects' or 'packages' to display corresponding skeletons
 
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
+
+* :code:`--reclone-share`   Reclone share repository
+
+* :code:`--share-repo SHARE_REPO`   Set the repository URL of the share database (use 'default' for default repo)
+
+* :code:`--share-version SHARE_VERSION`   Set the version of share database (use 'latest' for latest version)
+
 
 main.exe lock (since version 0.2.1)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -580,9 +602,17 @@ Where options are:
 
 * :code:`--min-edition OCAMLVERSION`   Set project minimal OCaml version
 
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
+
 * :code:`--program`   Project contains only a program
 
 * :code:`--promote-skip`   Promote user-modified files to skip field
+
+* :code:`--reclone-share`   Reclone share repository
+
+* :code:`--share-repo SHARE_REPO`   Set the repository URL of the share database (use 'default' for default repo)
+
+* :code:`--share-version SHARE_VERSION`   Set the version of share database (use 'latest' for latest version)
 
 * :code:`--skeleton SKELETON`   Create project using a predefined skeleton or one specified in ~/.config/drom/skeletons/
 
@@ -687,9 +717,13 @@ Where options are:
 
 * :code:`--new-file FILENAME`   (since version 0.2.1) Add new source file
 
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
+
 * :code:`--program`   Package is a program
 
 * :code:`--promote-skip`   Promote user-modified files to skip field
+
+* :code:`--reclone-share`   Reclone share repository
 
 * :code:`--remove`   (since version 0.2.1) Remove a package from the project
 
@@ -736,9 +770,17 @@ Where options are:
 
 * :code:`--min-edition OCAMLVERSION`   Set project minimal OCaml version
 
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
+
 * :code:`--program`   Project contains a program. Equivalent to **--skeleton program**. The generated project will be composed of a *library* package and a *driver* package calling the **Main.main** of the library.
 
 * :code:`--promote-skip`   Promote user-modified files to skip field
+
+* :code:`--reclone-share`   Reclone share repository
+
+* :code:`--share-repo SHARE_REPO`   Set the repository URL of the share database (use 'default' for default repo)
+
+* :code:`--share-version SHARE_VERSION`   Set the version of share database (use 'latest' for latest version)
 
 * :code:`--skeleton SKELETON`   Create project using a predefined skeleton or one specified in ~/.config/drom/skeletons/
 

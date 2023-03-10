@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>drom</title>
-    <link rel="stylesheet" href="style.css?v=5d7320a9a8657af61f899c84ec3bdcb7"/>
+    <link rel="stylesheet" href="style.css?v=1eb62145308aed80e0f86b959d6f7fd0"/>
     <link rel="icon" type="image/png" sizes="804x804"  href="favicon.png" />
   </head>
   <body>
@@ -30,6 +30,46 @@ will generate files for Github Actions CI and Github pages.
         <p>Authors:</p>
         <ul>  <li><p>Fabrice Le Fessant &lt;fabrice.le_fessant&commat;origin-labs.com&gt;</p></li>
   <li><p>Léo Andrès &lt;leo.andres&commat;ocamlpro.com&gt;</p></li></ul>
+      </div>
+      <div class="section">
+	<h2 id="simple-example">Simple Example</h2>
+<p>You can create a new OCaml project with:</p>
+<pre><code>$ drom new my-client --skeleton mini_prg
+Creating project &quot;my-client&quot; with skeleton &quot;mini_prg&quot;, license &quot;LGPL2&quot;
+  and sources in src/my-client:
+Creating directory my-client
+Using skeleton &quot;program&quot; for package &quot;my-client&quot;
+[master (root-commit) 8d83262] Initial commit
+
+└── my-client/
+    ├── .drom             (drom state, do not edit)
+    ├── .github/
+    │   └── workflows/
+    │       └── workflow.yml
+    ├── .gitignore
+    ├── CHANGES.md
+    ├── LICENSE.md
+    ├── Makefile
+    ├── README.md
+    ├── drom.toml    &lt;────────── project config EDIT !
+    ├── dune
+    ├── dune-project
+    ├── opam/
+    │   └── my-client.opam
+    ├── scripts/
+    │   ├── after.sh
+    │   ├── before.sh
+    │   └── copy-bin.sh
+    └── src/
+        └── my-client/
+            ├── dune
+            ├── main.ml
+            ├── package.toml    &lt;────────── package config EDIT !
+            └── version.mlt
+</code></pre>
+<p>This project uses the minimalist <code>mini_prg</code> skeleton, but other skeletons
+like <code>program</code> or <code>library</code> have more files.</p>
+
       </div>
       <div class="trailer">
         <hr/>

@@ -5,8 +5,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sub-commands and Arguments &mdash; drom master
- (98e47a9
-) (2023/03/10 11:00) documentation</title>
+ (dfef7bd
+) (2023/03/10 15:26) documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
@@ -32,7 +32,7 @@
           </a>
               <div class="version">
                 master
- (98e47a9
+ (dfef7bd
 )
               </div>
 <div role="search">
@@ -278,9 +278,12 @@ If build was ok, copy executable in the top directory of the project</p></li>
 </div>
 <p>Where options are:</p>
 <ul class="simple">
-<li><p><code class="code docutils literal notranslate"><span class="pre">--drom-project-skeletons</span></code>   List available project skeletons from drom</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--no-fetch-share</span></code>   Prevent fetching updates from the share repo (in particular without network connection</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--package-skeletons</span></code>   List available package skeletons</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--project-skeletons</span></code>   List available project skeletons</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--reclone-share</span></code>   Reclone share repository</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--share-repo</span> <span class="pre">SHARE_REPO</span></code>   Set the repository URL of the share database (use ‘default’ for default repo)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--share-version</span> <span class="pre">SHARE_VERSION</span></code>   Set the version of share database (use ‘latest’ for latest version)</p></li>
 </ul>
 </section>
 <section id="main-exe-dep-since-version-0-2-1">
@@ -324,10 +327,14 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 <li><p><code class="code docutils literal notranslate"><span class="pre">-f</span></code> or <code class="code docutils literal notranslate"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--lib</span> <span class="pre">LIBNAME</span></code>   Dependency should have this libname in dune</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--min-edition</span> <span class="pre">OCAMLVERSION</span></code>   Set project minimal OCaml version</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--no-fetch-share</span></code>   Prevent fetching updates from the share repo (in particular without network connection</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--opt</span> <span class="pre">BOOL</span></code>   Whether dependency is optional or not</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--package</span> <span class="pre">PACKAGE</span></code>   Attach dependency to this package name</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--reclone-share</span></code>   Reclone share repository</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--remove</span></code>   Remove this dependency</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--share-repo</span> <span class="pre">SHARE_REPO</span></code>   Set the repository URL of the share database (use ‘default’ for default repo)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--share-version</span> <span class="pre">SHARE_VERSION</span></code>   Set the version of share database (use ‘latest’ for latest version)</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--test</span> <span class="pre">BOOL</span></code>   Whether dependency is only for tests</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--tool</span></code>   Dependency is a tool, not a library</p></li>
@@ -438,6 +445,10 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 <p>Where options are:</p>
 <ul class="simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">ARGUMENTS</span></code>   Use ‘projects’ or ‘packages’ to display corresponding skeletons</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--no-fetch-share</span></code>   Prevent fetching updates from the share repo (in particular without network connection</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--reclone-share</span></code>   Reclone share repository</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--share-repo</span> <span class="pre">SHARE_REPO</span></code>   Set the repository URL of the share database (use ‘default’ for default repo)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--share-version</span> <span class="pre">SHARE_VERSION</span></code>   Set the version of share database (use ‘latest’ for latest version)</p></li>
 </ul>
 </section>
 <section id="main-exe-lock-since-version-0-2-1">
@@ -489,8 +500,12 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 <li><p><code class="code docutils literal notranslate"><span class="pre">--inplace</span></code>   Create project in the the current directory</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--library</span></code>   Project contains only a library</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--min-edition</span> <span class="pre">OCAMLVERSION</span></code>   Set project minimal OCaml version</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--no-fetch-share</span></code>   Prevent fetching updates from the share repo (in particular without network connection</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--program</span></code>   Project contains only a program</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--reclone-share</span></code>   Reclone share repository</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--share-repo</span> <span class="pre">SHARE_REPO</span></code>   Set the repository URL of the share database (use ‘default’ for default repo)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--share-version</span> <span class="pre">SHARE_VERSION</span></code>   Set the version of share database (use ‘latest’ for latest version)</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--skeleton</span> <span class="pre">SKELETON</span></code>   Create project using a predefined skeleton or one specified in ~/.config/drom/skeletons/</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--unskip</span> <span class="pre">FILE</span></code>   Remove FILE from skip list</p></li>
@@ -555,8 +570,10 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 <li><p><code class="code docutils literal notranslate"><span class="pre">--min-edition</span> <span class="pre">OCAMLVERSION</span></code>   Set project minimal OCaml version</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--new</span> <span class="pre">SKELETON</span></code>   Add a new package to the project with skeleton NAME</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--new-file</span> <span class="pre">FILENAME</span></code>   (since version 0.2.1) Add new source file</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--no-fetch-share</span></code>   Prevent fetching updates from the share repo (in particular without network connection</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--program</span></code>   Package is a program</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--reclone-share</span></code>   Reclone share repository</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--remove</span></code>   (since version 0.2.1) Remove a package from the project</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--rename</span> <span class="pre">NEW_NAME</span></code>   Rename secondary package to a new name</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</p></li>
@@ -582,8 +599,12 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 <li><p><code class="code docutils literal notranslate"><span class="pre">-f</span></code> or <code class="code docutils literal notranslate"><span class="pre">--force</span></code>   Force overwriting modified files (otherwise, they would be skipped)</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--library</span></code>   Project contains only a library. Equivalent to <strong>–skeleton library</strong></p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--min-edition</span> <span class="pre">OCAMLVERSION</span></code>   Set project minimal OCaml version</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--no-fetch-share</span></code>   Prevent fetching updates from the share repo (in particular without network connection</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--program</span></code>   Project contains a program. Equivalent to <strong>–skeleton program</strong>. The generated project will be composed of a <em>library</em> package and a <em>driver</em> package calling the <strong>Main.main</strong> of the library.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--promote-skip</span></code>   Promote user-modified files to skip field</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--reclone-share</span></code>   Reclone share repository</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--share-repo</span> <span class="pre">SHARE_REPO</span></code>   Set the repository URL of the share database (use ‘default’ for default repo)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--share-version</span> <span class="pre">SHARE_VERSION</span></code>   Set the version of share database (use ‘latest’ for latest version)</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--skeleton</span> <span class="pre">SKELETON</span></code>   Create project using a predefined skeleton or one specified in ~/.config/drom/skeletons/</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--skip</span> <span class="pre">FILE</span></code>   Add FILE to skip list</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--unskip</span> <span class="pre">FILE</span></code>   Remove FILE from skip list</p></li>
