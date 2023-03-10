@@ -5,8 +5,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Project Description &mdash; drom master
- (9aaccb2
-) (2023/01/02 18:15) documentation</title>
+ (98e47a9
+) (2023/03/10 11:00) documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
@@ -32,7 +32,7 @@
           </a>
               <div class="version">
                 master
- (9aaccb2
+ (98e47a9
 )
               </div>
 <div role="search">
@@ -54,6 +54,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#the-dependencies-table">The <code class="code docutils literal notranslate"><span class="pre">[dependencies]</span></code> table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-tools-table">The <code class="code docutils literal notranslate"><span class="pre">[tools]</span></code> table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-package-table">The <code class="code docutils literal notranslate"><span class="pre">[package]</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-fields-table">The <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> table</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#the-package-toml-files">The <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> Files</a></li>
@@ -67,6 +68,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Sub-commands and Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">User Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usecases.html">Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="github.html">Github Projects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="licenses.html">Managing Licenses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">How to install</a></li>
@@ -339,6 +341,22 @@ information on the packages.</p>
 <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> file if you ask it to upgrade the file (using
 <code class="code docutils literal notranslate"><span class="pre">drom</span> <span class="pre">project</span> <span class="pre">--upgrade</span></code>). You can check the list of available
 fields in the documentation of <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code>.</p>
+</section>
+<section id="the-fields-table">
+<h3>The <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> table<a class="headerlink" href="#the-fields-table" title="Permalink to this headline"></a></h3>
+<p>The <code class="code docutils literal notranslate"><span class="pre">fields</span></code> table contains fields that will be added to the
+the <code class="code docutils literal notranslate"><span class="pre">dune-project</span></code> file. There is two fields may be used :</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">dune-project-header</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">dune-project-trailer</span></code></p></li>
+</ul>
+<p>The first one add verbatim content to the <code class="code docutils literal notranslate"><span class="pre">dune-project</span></code> file, right
+after the <code class="code docutils literal notranslate"><span class="pre">(lang</span> <span class="pre">dune</span> <span class="pre">X.Y)</span></code> line. The second one add verbatim content
+at the end of file.</p>
+<p>Using those fields may be required when using very specific <code class="code docutils literal notranslate"><span class="pre">dune</span></code>
+build feature that are not handled by <code class="code docutils literal notranslate"><span class="pre">drom</span></code>. For example, using
+the parser generator <code class="code docutils literal notranslate"><span class="pre">menhir</span></code> for non trivial cases will likely need
+such tuning.</p>
 </section>
 </section>
 <section id="the-package-toml-files">

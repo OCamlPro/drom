@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Use Cases &mdash; drom master
+ (98e47a9
+) (2023/03/10 11:00) documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Github Projects" href="github.html" />
+    <link rel="prev" title="User Configuration" href="config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> drom
+          </a>
+              <div class="version">
+                master
+ (98e47a9
+)
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://ocamlpro.github.io/drom">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Project Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Sub-commands and Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">User Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Use Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-menhir">Using <code class="code docutils literal notranslate"><span class="pre">menhir</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="github.html">Github Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Managing Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">How to install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="skeletons.html">Contributing Your Own Skeletons</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ocamlpro.github.io/drom/doc">API doc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Copyright and License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ocamlpro/drom">Devel and Issues on Github</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">drom</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Use Cases</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/usecases.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="use-cases">
+<h1>Use Cases<a class="headerlink" href="#use-cases" title="Permalink to this headline"></a></h1>
+<p>This sections describes how the handle common use cases with <code class="code docutils literal notranslate"><span class="pre">drom</span></code>.</p>
+<section id="using-menhir">
+<h2>Using <code class="code docutils literal notranslate"><span class="pre">menhir</span></code><a class="headerlink" href="#using-menhir" title="Permalink to this headline"></a></h2>
+<p>Whereas <code class="code docutils literal notranslate"><span class="pre">ocamlyacc</span></code> is the legacy parser generator for OCaml,
+<code class="code docutils literal notranslate"><span class="pre">menhir</span></code> is much more powerful and probably more prevalent nowadays.</p>
+<p>For trivial usage where there is a simple <code class="code docutils literal notranslate"><span class="pre">parser.mly</span></code> file in your
+package, setting:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">generators</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;menhir&quot;</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>into the corresponding <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> will likely work. However, if
+you have multiple <code class="code docutils literal notranslate"><span class="pre">.mly</span></code> files, or
+need to specify custom <code class="code docutils literal notranslate"><span class="pre">menhir</span></code> flags, you’ll probably need to tune
+the <code class="code docutils literal notranslate"><span class="pre">dune</span></code> generation. A good way to properly do that is to disable
+the default <code class="code docutils literal notranslate"><span class="pre">dune</span></code> generation for and add your own <code class="code docutils literal notranslate"><span class="pre">dune</span></code> stanzas
+for parsing generators. First, add <code class="code docutils literal notranslate"><span class="pre">(using</span> <span class="pre">menhir</span> <span class="pre">X.Y)</span></code> in the
+<code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code>’s ‘<code class="code docutils literal notranslate"><span class="pre">dune-project-header</span></code> field. For example:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">[</span><span class="n">fields</span><span class="o">]</span>
+<span class="n">dune</span><span class="o">-</span><span class="n">project</span><span class="o">-</span><span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;(using menhir 2.1)&quot;</span>
+</pre></div>
+</div>
+<p>Then split your parsing code into at least two files <code class="code docutils literal notranslate"><span class="pre">tokens.mly</span></code> and
+<code class="code docutils literal notranslate"><span class="pre">parser.mly</span></code>. The first one will contain the tokens definitions and the
+second one the parsing rules. Doing this allows to parametrize the parser in
+a modular fashion by using the <code class="code docutils literal notranslate"><span class="pre">%parameter</span> <span class="pre">&lt;&gt;</span></code> directive, if needed.
+Then replace the <code class="code docutils literal notranslate"><span class="pre">generators</span> <span class="pre">=</span> <span class="pre">[&quot;menhir&quot;]</span></code> line by the following:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">generators</span> <span class="o">=</span> <span class="bp">[]</span>
+</pre></div>
+</div>
+<p>in <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> to disable the default <code class="code docutils literal notranslate"><span class="pre">dune</span></code> stanzas generation.
+Finally, add the following <code class="code docutils literal notranslate"><span class="pre">dune</span></code> stanzas to your
+<code class="code docutils literal notranslate"><span class="pre">dune-trailer</span></code> field:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">[</span><span class="n">fields</span><span class="o">]</span>
+<span class="n">dune</span><span class="o">-</span><span class="n">trailer</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">(menhir</span>
+<span class="s2">  (modules tokens)</span>
+<span class="s2">  (flags --only-tokens)</span>
+<span class="s2">)</span>
+
+<span class="s2">(menhir</span>
+<span class="s2">  (modules tokens parser)</span>
+<span class="s2">  (merge_into parser)</span>
+<span class="s2">  (flags --external-tokens Tokens)</span>
+<span class="s2">)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Of course, this is just a basic tuning and you can modify the flags or
+targets as needed. The overall result will likely fit in most
+of <code class="code docutils literal notranslate"><span class="pre">menhir</span></code> usages in <code class="code docutils literal notranslate"><span class="pre">drom</span></code> projects waiting for a better
+<code class="code docutils literal notranslate"><span class="pre">menhir</span></code> support.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="config.html" class="btn btn-neutral float-left" title="User Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="github.html" class="btn btn-neutral float-right" title="Github Projects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright OCamlPro SAS &amp; Origin Labs SAS.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
