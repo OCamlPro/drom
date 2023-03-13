@@ -43,9 +43,6 @@ Overview of sub-commands::
   list (since version 0.4.0)
     List available project or packages skeletons
   
-  lock (since version 0.2.1)
-    Generate a .locked file for the project
-  
   new
     Create a new project
   
@@ -128,8 +125,6 @@ Where options are:
 
 * :code:`--local`   Create a local switch instead of using a global switch
 
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
-
 * :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
@@ -156,8 +151,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -349,8 +342,6 @@ Where options are:
 
 * :code:`--local`   Create a local switch instead of using a global switch
 
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
-
 * :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
@@ -377,8 +368,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -410,8 +399,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -467,8 +454,6 @@ Where options are:
 
 * :code:`--local`   Create a local switch instead of using a global switch
 
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
-
 * :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
@@ -507,43 +492,6 @@ Where options are:
 * :code:`--share-repo SHARE_REPO`   Set the repository URL of the share database (use 'default' for default repo)
 
 * :code:`--share-version SHARE_VERSION`   Set the version of share database (use 'latest' for latest version)
-
-
-main.exe lock (since version 0.2.1)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Generate a .locked file for the project
-
-
-
-**DESCRIPTION**
-
-
-This command will build the project and call **opam lock** to generate a file *${project}-deps.opam.locked* with the exact dependencies used during the build, and that file will be added to the git-managed files of the project to be committed.
-
-The generated .locked file can be used by other developers to build in the exact same environment by calling **drom build --locked** to build the current project.
-
-**USAGE**
-::
-  
-  main.exe lock [OPTIONS]
-
-Where options are:
-
-
-* :code:`--edition VERSION`   Use this OCaml edition
-
-* :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
-
-* :code:`--profile PROFILE`   Build profile to use
-
-* :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
-
-* :code:`--upgrade`   Upgrade project files from drom.toml
-
-* :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
 main.exe new
@@ -640,8 +588,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -811,8 +757,6 @@ Where options are:
 
 * :code:`--local`   Create a local switch instead of using a global switch
 
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
-
 * :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
@@ -930,8 +874,6 @@ Where options are:
 
 * :code:`--local`   Create a local switch instead of using a global switch
 
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
-
 * :code:`-p PACKAGE`   Package to run
 
 * :code:`--profile PROFILE`   Build profile to use
@@ -979,8 +921,6 @@ Where options are:
 
 * :code:`--local`   Create a local switch instead of using a global switch
 
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
-
 * :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
@@ -1026,8 +966,6 @@ Where options are:
 
 * :code:`--local`   Create a local switch instead of using a global switch
 
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
-
 * :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
@@ -1056,8 +994,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -1130,8 +1066,6 @@ Where options are:
 
 * :code:`--local`   Create a local switch instead of using a global switch
 
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
-
 * :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
@@ -1176,8 +1110,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
