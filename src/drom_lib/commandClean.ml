@@ -16,13 +16,15 @@ let cmd_name = "clean"
 let action ~distclean =
   let _p, _ = Project.get () in
   Printf.eprintf "Removing _build...\n%!";
+  Call.before_hook ~command:"clean" ();
   ignore (Sys.command "rm -rf _build");
-  Call.after_hook "clean";
-  if !distclean then (
+  Call.after_hook ~command:"clean" ();
+  if !distclean then begin
+    Call.before_hook ~command:"distclean" ();
     ignore (Sys.command "rm -rf _drom");
     ignore (Sys.command "rm -rf _opam");
-    Call.after_hook "distclean"
-  )
+    Call.after_hook ~command:"distclean" ()
+  end
 
 let cmd =
   let distclean = ref false in

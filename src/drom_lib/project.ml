@@ -457,7 +457,8 @@ let project_of_toml ?file ?default table =
             depversions = [ Version ];
             deptest = false;
             depdoc = false;
-            depopt = false
+            depopt = false;
+            dep_pin = None;
           } )
         :: package.p_dependencies;
       package.p_gen_version <- None;

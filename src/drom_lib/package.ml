@@ -106,13 +106,15 @@ let dependency_encoding =
             depname = None;
             deptest = false;
             depdoc = false;
-            depopt = false
+            depopt = false;
+            dep_pin = None;
           }
       then
         version
       else
         let table = EzToml.empty in
         let table = EzToml.put_string_option [ "libname" ] d.depname table in
+        let table = EzToml.put_string_option [ "pin" ] d.dep_pin table in
         let table =
           match d.depversions with
           | [] -> table
@@ -145,16 +147,18 @@ let dependency_encoding =
           depversions;
           depdoc = false;
           deptest = false;
-          depopt = false
+          depopt = false;
+          dep_pin = None;
         }
       | TTable table ->
         let depname = EzToml.get_string_option table [ "libname" ] in
+        let dep_pin = EzToml.get_string_option table [ "pin" ] in
         let depversions = EzToml.get_string_default table [ "version" ] "" in
         let depversions = versions_of_string depversions in
         let deptest = EzToml.get_bool_default table [ "for-test" ] false in
         let depdoc = EzToml.get_bool_default table [ "for-doc" ] false in
         let depopt = EzToml.get_bool_default table [ "opt" ] false in
-        { depname; depversions; depdoc; deptest; depopt }
+        { depname; depversions; depdoc; deptest; depopt; dep_pin; }
       | _ -> Error.raise "Bad dependency version for %s" (EzToml.key2str key) )
 
 let dependencies_encoding =

@@ -27,7 +27,7 @@ let action ~args cmd =
       let stdout =
         Unix.openfile init_file [ Unix.O_CREAT; Unix.O_WRONLY ] 0o644
       in
-      Call.call ~stdout [| "opam"; "exec"; "--"; "dune"; "top" |];
+      Opam.exec ~stdout [ "dune"; "top" ];
       Unix.close stdout;
       "utop" :: "-init" :: init_file :: cmd
   in
@@ -36,7 +36,7 @@ let action ~args cmd =
     let oc = open_out utop_history in
     close_out oc
   end;
-  Call.call (Array.of_list ("opam" :: "exec" :: "--" :: args))
+  Opam.exec ~exec:true args
 
 let cmd =
   let cmd = ref [] in

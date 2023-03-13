@@ -58,7 +58,8 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
             depopt =
               ( match depopt with
               | None -> false
-              | Some b -> b )
+              | Some b -> b );
+            dep_pin = None ; (* TODO *)
           }
         in
         upgrade := true;

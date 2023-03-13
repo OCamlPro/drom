@@ -231,7 +231,7 @@ let update_files share ?args ?(git = false) ?(create = false) p =
               let file_b = dirname_b // basename in
               EzFile.write_file file_a old_content;
               EzFile.write_file file_b content;
-              ( try Call.call [| "diff"; "-u"; file_a; file_b |] with
+              ( try Call.call [ "diff"; "-u"; file_a; file_b ] with
                 | _ -> () );
               Sys.remove file_a;
               Sys.remove file_b
@@ -240,10 +240,15 @@ let update_files share ?args ?(git = false) ?(create = false) p =
           not modified
   in
 
-  let write_file ?((* add to git/.drom *) record = true)
+  let write_file
+      ?((* add to git/.drom *) record = true)
       ?((* only create, never update *) create = false)
-      ?((* force to skip *) skip = false) ?((* force to write *) force = false)
-      ?((* tests for skipping *) skips = []) ?(perm = 0o644) hashes filename
+      ?((* force to skip *) skip = false)
+      ?((* force to write *) force = false)
+      ?((* tests for skipping *) skips = [])
+      ?(perm = 0o644)
+      hashes
+      filename
       content =
     try
       if skip then raise Skip;
@@ -314,19 +319,21 @@ let update_files share ?args ?(git = false) ?(create = false) p =
 
       if create then
         if git && not (Sys.file_exists ".git") then (
-          Git.call [ "init"; "-q" ];
+          Git.call "init" [ "-q" ];
           match config.config_github_organization with
           | None -> ()
           | Some organization ->
               Git.call
-                [ "remote";
+                "remote"
+                [
                   "add";
                   "origin";
                   Printf.sprintf "git@github.com:%s/%s" organization
                     p.package.name
                 ];
-              if Sys.file_exists "README.md" then Git.call [ "add"; "README.md" ];
-              Git.call [ "commit"; "--allow-empty"; "-m"; "Initial commit" ]
+              if Sys.file_exists "README.md" then
+                Git.call "add" [ "README.md" ];
+              Git.call "commit" [ "--allow-empty"; "-m"; "Initial commit" ]
         );
 
       List.iter
@@ -357,11 +364,11 @@ let update_files share ?args ?(git = false) ?(create = false) p =
              EzFile.make_dir ~p:true "opam";
              let full_filename = "opam" // opam_filename in
              write_file hashes full_filename
-               (Opam.opam_of_project Single share package);
+               (Opam.opam_of_package Single share package);
              if Sys.file_exists opam_filename then begin
                Printf.eprintf "Removing deprecated %s (moved to %s)\n%!"
                  opam_filename full_filename;
-               Sys.remove opam_filename
+               Hashes.remove hashes opam_filename
              end
            ) )
         p.packages;
@@ -429,7 +436,7 @@ let update_files share ?args ?(git = false) ?(create = false) p =
          because it must be an existent file, otherwise `Hashes.save`
          will discard it. *)
       Hashes.update ~git:false hashes "." hash;
-      )
+    )
 
 let update_files share ~twice ?args ?(git = false) ?(create = false) p =
   update_files share ?args ~git ~create p ;

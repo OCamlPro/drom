@@ -29,7 +29,7 @@ let dev_repo p =
   | Some s -> Some (Printf.sprintf "git+%s.git" s)
   | None -> None
 
-let opam_of_project kind share package =
+let opam_of_package kind share package =
   let p = package.project in
   let open OpamParserTypes.FullPos in
   let filename = "opam" in
@@ -54,6 +54,8 @@ let opam_of_project kind share package =
       | None -> None
       | Some github_organization ->
           Some (Printf.sprintf "org:%s" github_organization) );
+
+  let pin_depends = ref [] in
 
   let build_commands =
     match (kind, package.kind) with
@@ -130,21 +132,28 @@ let opam_of_project kind share package =
     if d.depdoc then Printf.bprintf b " with-doc ";
     Printf.bprintf b "}\n";
     (*  Printf.eprintf "parse: %s\n%!" s; *)
+
+    begin match d.dep_pin, d.depversions with
+      | None, _ -> ()
+      | Some url, [ Eq v ] ->
+          pin_depends := (name, Some v, url) :: !pin_depends ;
+      | Some url, _ ->
+          pin_depends := (name, None, url) :: !pin_depends ;
+    end;
     OpamParser.FullPos.value_from_string (Buffer.contents b) filename
   in
   let depends =
     match kind with
     | ProgramPart ->
-        [ var "depends"
-            (list
-               [ OpamParser.FullPos.value_from_string
-                   (Printf.sprintf
-                      {|
+        [ var_list "depends"
+            [ OpamParser.FullPos.value_from_string
+                (Printf.sprintf
+                   {|
                                 "%s" { = version }
 |}
-                      (Misc.package_lib package) )
-                   filename
-               ] )
+                   (Misc.package_lib package) )
+                filename
+            ]
         ]
     | Single
     | LibraryPart
@@ -190,11 +199,25 @@ let opam_of_project kind share package =
         in
         let depends = List.map depend_of_dep depends in
         let depopts = List.map depend_of_dep depopts in
-        [ var "depends" (list (initial_deps @ depends)) ]
+        [ var_list "depends" (initial_deps @ depends) ]
         @
         match depopts with
         | [] -> []
-        | _ -> [ var "depopts" (list depopts) ] )
+        | _ -> [ var_list "depopts" depopts ] )
+  in
+  let pin_depends = match !pin_depends with
+    | [] -> []
+    | pin_depends ->
+        [ var_list "pin-depends"
+            (List.map (fun (name, version, url) ->
+                 list [
+                   string (match version with
+                     | None -> name
+                     | Some version ->
+                         Printf.sprintf "%s.%s" name version) ;
+                     string url ;
+                   ]
+               ) pin_depends)]
   in
   let file_contents =
     [ var_string "opam-version" "2.0";
@@ -218,7 +241,10 @@ let opam_of_project kind share package =
       var_list "authors" (List.map string (Misc.p_authors package));
       var_list "maintainer" (List.map string p.authors)
     ]
-    @ List.rev !optionals @ build_commands @ depends
+    @ List.rev !optionals
+    @ build_commands
+    @ depends
+    @ pin_depends
   in
   let f = { file_contents; file_name = filename } in
   let s = OpamPrinter.FullPos.opamfile f in
@@ -242,17 +268,14 @@ let opam_of_project kind share package =
           "# Content of `opam-trailer` field:" :: s
     )
 
-let () = Unix.putenv "OPAMCLI" "2.0"
-
-let exec ?(y = false) cmd args =
-  Call.call
-    (Array.of_list
-       ( [ "opam" ] @ cmd
-       @ ( if y then
-           [ "-y" ]
-         else
-           [] )
-       @ args ) )
+let call ?exec ?stdout ?(y = false) cmd args =
+  Call.call ?exec ?stdout
+    ( [ "opam" ; "--cli=2.1" ] @ cmd
+      @ ( if y then
+            [ "-y" ]
+          else
+            [] )
+      @ args )
 
 let init ?y ?switch ?edition () =
   let opam_root = Globals.opam_root () in
@@ -263,14 +286,14 @@ let init ?y ?switch ?edition () =
       | None -> [ "--bare" ]
       | Some switch -> [ "--comp"; switch ]
     in
-    exec ?y [ "init" ] args
+    call ?y [ "init" ] args
   else
     match switch with
     | None -> ()
     | Some switch ->
       if Filename.is_relative switch then
         if not (Sys.file_exists (opam_root // switch)) then
-          exec ?y [ "switch"; "create" ]
+          call ?y [ "switch"; "create" ]
             ( match edition with
             | None -> [ switch ]
             | Some edition -> [ switch; edition ] )
@@ -278,7 +301,10 @@ let init ?y ?switch ?edition () =
 let run ?y ?error ?switch ?edition cmd args =
   init ?y ?switch ?edition ();
   match error with
-  | None -> exec ?y cmd args
+  | None -> call ?y cmd args
   | Some error -> (
-    try exec ?y cmd args with
+    try call ?y cmd args with
     | exn -> error := Some exn )
+
+let exec ?exec ?stdout args =
+  call ?exec ?stdout [ "exec" ] ( "--" :: args )

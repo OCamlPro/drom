@@ -8,29 +8,17 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.V2
-open Types
+val call :
+  ?exec:bool ->
+  ?stdout:Unix.file_descr ->
+  ?stderr:Unix.file_descr ->
+  ?print_args:string list -> string list -> unit
+val silent : ?print_args:string list -> string list -> unit
 
-type build_args =
-  { mutable arg_switch : switch_arg option;
-    mutable arg_yes : bool;
-    mutable arg_edition : string option;
-    mutable arg_upgrade : bool;
-    mutable arg_profile : string option
-  }
+val call_get_fst_line : string -> string option
 
-val build_args :
-  unit ->
-  build_args * (string list * EZCMD.TYPES.Arg.spec * EZCMD.TYPES.info) list
+val wget : url:string -> output:string -> unit
 
-val build :
-  args:build_args ->
-  ?setup_opam:bool ->
-  ?build_deps:bool ->
-  ?force_build_deps:bool ->
-  ?dev_deps:bool ->
-  ?force_dev_deps:bool ->
-  ?build:bool ->
-  ?extra_packages:string list ->
-  unit ->
-  Types.project
+
+val before_hook : ?args:string list -> command:string -> unit -> unit
+val after_hook : ?args:string list -> command:string -> unit -> unit

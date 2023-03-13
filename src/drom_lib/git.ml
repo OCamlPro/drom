@@ -18,21 +18,34 @@ let email () =
   | Some email -> email
   | None -> raise Not_found
 
-let call args = Call.call (Array.of_list ("git" :: args))
+let call ?cd cmd args =
+  match cd with
+  | Some cd ->
+      let print_args = "git" :: cmd :: args in
+      let args = "git" :: "-C" :: cd :: cmd :: args in
+      Call.call ~print_args args
+  | None -> Call.call ("git" :: cmd :: args)
 
-let run args =
-  try call args with
-  | _ -> ()
+let silent ?cd cmd args =
+  match cd with
+  | Some cd ->
+      let print_args = "git" :: cmd :: args in
+      let args = "git" :: "-C" :: cd :: cmd :: args in
+      Call.silent ~print_args args
+  | None -> Call.silent ("git" :: cmd :: args)
+
+let silent_fail cmd args =
+  try call cmd args with | _ -> ()
 
 let update_submodules () =
   if Sys.file_exists ".gitmodules" then
-    run [ "submodule"; "update"; "--init"; "--recursive" ]
+    silent_fail "submodule" [ "update"; "--init"; "--recursive" ]
 
 let remove dir =
-  Call.call [| "rm"; "-rf"; dir |];
-  run [ "rm"; "-rf"; dir ]
+  Call.call [ "rm"; "-rf"; dir ];
+  silent_fail "rm" [ "-rf"; dir ]
 
 let rename old_dir new_dir =
-  Call.call [| "mv"; old_dir; new_dir |];
-  run [ "rm"; "-rf"; old_dir ];
-  run [ "add"; new_dir ]
+  Call.call [ "mv"; old_dir; new_dir ];
+  silent_fail "rm" [ "-rf"; old_dir ];
+  silent_fail "add" [ new_dir ]

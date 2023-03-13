@@ -112,13 +112,21 @@ let load ?(args=default_args()) ?p () =
 
   let share_dir = shares_dir // hash in
   if Sys.file_exists share_dir && args.arg_reclone then
-    Call.call [| "rm"; "-rf" ; share_dir |];
+    Call.call [ "rm"; "-rf" ; share_dir ];
 
+  let git = Git.silent in
   if not ( Sys.file_exists share_dir ) then begin
-    Git.call [ "clone"; repo ; share_dir ];
+    git "clone" [ repo ; share_dir ];
   end;
 
-  let git cmd args = Git.call ( "-C" :: share_dir :: cmd :: args ) in
+  let first_git = ref true in
+  let git cmd args =
+    if !first_git then begin
+      Printf.eprintf "In share-repo at %s:\n%!" share_dir;
+      first_git := false;
+    end;
+    git ~cd:share_dir cmd args
+  in
   let git_silent_fail cmd args =
     try git cmd args with _ -> ()
   in

@@ -26,12 +26,20 @@ type version =
   | NoVersion
 
 type dependency =
-  { depversions : version list; (* "version" *)
-    depname : string option; (* "libname" *)
-    (* for dune if different *)
-    deptest : bool; (* "for-test" *)
-    depdoc : bool; (* "for-doc" *)
-    depopt : bool (* opt *)
+  {
+    (* 'version': a list of space-separated version constraints, where
+       "version" is the current version. *)
+    depversions : version list;
+    (* 'libname': name of version to used as a library *)
+    depname : string option;
+    (* 'for-test': for dune if different *)
+    deptest : bool;
+    (* 'for-doc': only for documentation *)
+    depdoc : bool;
+    (* 'opt': optional dependency *)
+    depopt : bool;
+    (* 'pin': pin-dependency *)
+    dep_pin: string option;
   }
 
 type package =
@@ -169,4 +177,3 @@ type share = {
 type deps_status =
   | Deps_build
   | Deps_devel
-  | Deps_locked

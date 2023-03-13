@@ -20,8 +20,8 @@ let action ~args () =
 
   let opam_basename = p.package.name ^ "-deps.opam" in
   let opam_filename = Globals.drom_dir // opam_basename in
-  Call.call [| "opam"; "lock"; opam_filename |];
-  Call.call [| "git"; "add"; opam_basename ^ ".locked" |];
+  Opam.run [ "lock" ] [ opam_filename ];
+  Git.call "add" [ opam_basename ^ ".locked" ];
   ()
 
 let cmd =

@@ -49,7 +49,7 @@ let rename_dir hashes src dst =
       if Sys.is_directory src_file then
         EzFile.make_dir ~p:true dst_file
       else begin
-        Call.call [| "mv"; "-f"; src_file; dst_file |];
+        Call.call [ "mv"; "-f"; src_file; dst_file ];
         Hashes.rename hashes ~src:src_file ~dst:dst_file
       end );
 
@@ -104,7 +104,7 @@ let upgrade_package package licenses ~upgrade ~kind ~files =
 
           EzFile.write_file new_file content )
         files;
-      Call.call (Array.of_list ([ "git"; "add" ] @ List.rev !new_files))
+      Call.call ([ "git"; "add" ] @ List.rev !new_files)
   end;
   ()
 
