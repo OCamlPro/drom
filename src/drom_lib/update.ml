@@ -240,10 +240,15 @@ let update_files share ?args ?(git = false) ?(create = false) p =
           not modified
   in
 
-  let write_file ?((* add to git/.drom *) record = true)
+  let write_file
+      ?((* add to git/.drom *) record = true)
       ?((* only create, never update *) create = false)
-      ?((* force to skip *) skip = false) ?((* force to write *) force = false)
-      ?((* tests for skipping *) skips = []) ?(perm = 0o644) hashes filename
+      ?((* force to skip *) skip = false)
+      ?((* force to write *) force = false)
+      ?((* tests for skipping *) skips = [])
+      ?(perm = 0o644)
+      hashes
+      filename
       content =
     try
       if skip then raise Skip;
@@ -359,11 +364,11 @@ let update_files share ?args ?(git = false) ?(create = false) p =
              EzFile.make_dir ~p:true "opam";
              let full_filename = "opam" // opam_filename in
              write_file hashes full_filename
-               (Opam.opam_of_project Single share package);
+               (Opam.opam_of_package Single share package);
              if Sys.file_exists opam_filename then begin
                Printf.eprintf "Removing deprecated %s (moved to %s)\n%!"
                  opam_filename full_filename;
-               Sys.remove opam_filename
+               Hashes.remove hashes opam_filename
              end
            ) )
         p.packages;

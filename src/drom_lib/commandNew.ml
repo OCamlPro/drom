@@ -105,7 +105,8 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
       depname = None;
       deptest = true;
       depdoc = false;
-      depopt = false
+      depopt = false;
+      dep_pin = None;
     }
   in
   let p =

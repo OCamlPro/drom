@@ -16,7 +16,6 @@ type build_args =
     mutable arg_yes : bool;
     mutable arg_edition : string option;
     mutable arg_upgrade : bool;
-    mutable arg_locked : bool;
     mutable arg_profile : string option
   }
 

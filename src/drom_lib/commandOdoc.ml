@@ -16,7 +16,7 @@ open EzFile.OP
 let cmd_name = "odoc"
 
 let make_odoc p =
-  Call.call [ "opam"; "exec"; "--"; "dune"; "build"; "@doc" ];
+  Opam.exec [ "dune"; "build"; "@doc" ];
   let dir = Misc.odoc_target p in
   let odoc_target = Format.sprintf "_drom/docs/%s" dir in
   EzFile.make_dir ~p:true odoc_target;

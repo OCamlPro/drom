@@ -9,6 +9,7 @@
 (**************************************************************************)
 
 val call :
+  ?exec:bool ->
   ?stdout:Unix.file_descr ->
   ?stderr:Unix.file_descr ->
   ?print_args:string list -> string list -> unit

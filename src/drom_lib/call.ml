@@ -12,6 +12,7 @@ open Ez_file.V1
 open EzCompat
 
 let call
+    ?(exec=false)
     ?(stdout = Unix.stdout)
     ?(stderr = Unix.stderr)
     ?print_args
@@ -23,23 +24,27 @@ let call
           | None -> args
           | Some args -> args));
   let targs = Array.of_list args in
-  let pid = Unix.create_process targs.(0) targs
-      Unix.stdin stdout stderr in
-  let rec iter () =
-    match Unix.waitpid [] pid with
-    | exception Unix.Unix_error (EINTR, _, _) -> iter ()
-    | _pid, status -> (
-      match status with
-      | WEXITED 0 -> ()
-      | _ ->
-        Error.raise "Command '%s' exited with error code %s"
-          (String.concat " " args)
-          ( match status with
-          | WEXITED n -> string_of_int n
-          | WSIGNALED n -> Printf.sprintf "SIGNAL %d" n
-          | WSTOPPED n -> Printf.sprintf "STOPPED %d" n ) )
-  in
-  iter ()
+  if exec then begin
+    (* TODO : redirect stdout and stderr *)
+    Unix.execvp targs.(0) targs
+  end else
+    let pid = Unix.create_process targs.(0) targs
+        Unix.stdin stdout stderr in
+    let rec iter () =
+      match Unix.waitpid [] pid with
+      | exception Unix.Unix_error (EINTR, _, _) -> iter ()
+      | _pid, status -> (
+          match status with
+          | WEXITED 0 -> ()
+          | _ ->
+              Error.raise "Command '%s' exited with error code %s"
+                (String.concat " " args)
+                ( match status with
+                  | WEXITED n -> string_of_int n
+                  | WSIGNALED n -> Printf.sprintf "SIGNAL %d" n
+                  | WSTOPPED n -> Printf.sprintf "STOPPED %d" n ) )
+    in
+    iter ()
 
 (** run a cmd and return the first line of output *)
 let call_get_fst_line cmd =

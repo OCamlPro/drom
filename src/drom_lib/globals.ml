@@ -19,7 +19,7 @@ let about =
 
 let min_ocaml_edition = "4.07.0"
 
-let current_ocaml_edition = "4.10.0"
+let current_ocaml_edition = "4.13.0"
 
 let current_dune_version = "2.7.0"
 

@@ -14,7 +14,7 @@ let cmd_name = "promote"
 
 let action ~args () =
   let (_p : Types.project) = Build.build ~dev_deps:true ~build:false ~args () in
-  Call.call [ "opam"; "exec"; "--"; "dune"; "promote" ]
+  Opam.exec [ "dune"; "promote" ]
 
 let cmd =
   let args, specs = Build.build_args () in

@@ -33,7 +33,7 @@ let main () =
       CommandUpdate.cmd;
       CommandTree.cmd;
       CommandPromote.cmd;
-      CommandLock.cmd;
+      (* CommandLock.cmd;           DEPRECATED *)
       CommandDep.cmd;
       CommandOpamPlugin.cmd;
       CommandConfig.cmd;

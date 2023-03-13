@@ -16,13 +16,13 @@ let cmd_name = "fmt"
 let action ~args ~auto_promote () =
   let (_p : Types.project) = Build.build ~dev_deps:true ~build:false ~args () in
   Call.before_hook ~command:"fmt" ();
-  Call.call
-       ( [ "opam"; "exec"; "--"; "dune"; "build"; "@fmt" ]
-       @
-       if auto_promote then
-         [ "--auto-promote" ]
-       else
-         [] );
+  Opam.exec
+    ( [ "dune"; "build"; "@fmt" ]
+      @
+      if auto_promote then
+        [ "--auto-promote" ]
+      else
+        [] );
   Call.after_hook ~command:"fmt" ();
   ()
 

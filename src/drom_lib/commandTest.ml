@@ -42,8 +42,7 @@ let action ~all ~args () =
     end else
       []
   in
-  Call.call
-    ([ "opam"; "exec"; "--"; "dune"; "build"; "@runtest" ] @ workspace) ;
+  Opam.exec ([ "dune"; "build"; "@runtest" ] @ workspace) ;
   Printf.eprintf "Tests OK\n%!";
   ()
 

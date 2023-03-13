@@ -1,4 +1,33 @@
 
+## v0.9.0
+* Split `drom-share` into another repository:
+  * Use `https://github.com/OCamlPro/drom-share` by default
+  * Add fields `share-repo` and `share-version` in `drom.toml` to manage the
+    repo and version of skeletons, independantly of the version of `drom`
+  * Add command-line arguments:
+    * `--share-version VERSION`: set the version of the repo to use (`VERSION`
+       should be a tag). Available in `drom project` and `drom new`.
+       * Use `branch:BRANCH` or `branch:REMOTE:BRANCH` to use a branch
+         instead of a tagged version (only to test new versions of `drom-share`)
+    * `--share-repo URL`: set the git url of the repo to use.
+       Available in `drom project` and `drom new`.
+    * `--no-fetch-share`: do not access the network with `git` when looking
+       up the latest version (i.e. use the most recent local version)
+    * `--reclone-share`: reclone with `git` the share repository
+  * Repositories are cloned into `$HOME/.config/drom/shares/`, with a md5
+      of their url as directory name
+* Support for `pin-depends` in dependencies:
+  * `d = { pin = "..." }` will translate to `[ "d"  "..." ]`
+  * `d = { version = "=1.0", pin = "..." }` will translate to
+     `[ "d.1.0"  "..." ]` (notice the explicit use of `=` inside the version)
+* Automatic use of locked files:
+  * `opam install` is always called with `--locked`, and will generate a file
+    `$PROJECT-deps.opam.locked` at the root of the source tree
+  * If a file `$PROJECT-deps.opam.locked` is available at the root of the source
+    tree, it will be provided to `opam install` (projects with binaries should
+    `git add` this file, while other projects should `.gitignore` it)
+* Requires use of `opam>=2.1`
+
 ## v0.8.0
 * Improve templates to inherit values from drom.toml/package.toml inherited
    files
