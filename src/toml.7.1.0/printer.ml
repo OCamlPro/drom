@@ -1,6 +1,6 @@
 open Types
 
-let maybe_escape_char formatter ch =
+let simple_escape_char formatter ch =
   match ch with
   | '"' -> Format.pp_print_string formatter "\\\""
   | '\\' -> Format.pp_print_string formatter "\\\\"
@@ -26,33 +26,39 @@ let print_float formatter value =
     Format.pp_print_float formatter value
 
 let print_string formatter value =
-  let has_newline = ref false in
-  let has_quote = ref false in
-  let has_doublequote = ref false in
-  String.iter
-    (function
-      | '\n' -> has_newline := true
-      | '\'' -> has_quote := true
-      | '"' -> has_doublequote := true
-      | _ -> () )
-    value;
-  match (!has_newline, !has_doublequote, !has_quote) with
-  | true, false, _ ->
+  let has_newline = String.contains value '"' in
+  if has_newline then begin
     Format.pp_print_string formatter {|"""|};
-    String.iter
-      (function
-        | '\n' -> Format.pp_print_newline formatter ()
-        | c -> maybe_escape_char formatter c )
-      value;
+    Format.pp_print_newline formatter ();
+    let rec iter nquotes value pos len =
+      if pos < len then
+        let c = value.[pos] in
+        match c with
+        | '"' ->
+            let nquotes =
+              if nquotes = 2 then begin
+                simple_escape_char formatter c;
+                0
+              end else begin
+                Format.pp_print_char formatter '"';
+                nquotes+1
+              end
+            in
+            iter nquotes value (pos+1) len
+        | '\n' ->
+            Format.pp_print_newline formatter ();
+            iter 0 value (pos+1) len
+        | c ->
+            simple_escape_char formatter c;
+            iter 0 value (pos+1) len
+    in
+    iter 0 value 0 (String.length value);
     Format.pp_print_string formatter {|"""|}
-  | true, true, false ->
-    Format.pp_print_string formatter "'''\n";
-    Format.pp_print_string formatter value;
-    Format.pp_print_string formatter "'''"
-  | _ ->
+  end else begin
     Format.pp_print_char formatter '"';
-    String.iter (maybe_escape_char formatter) value;
+    String.iter (simple_escape_char formatter) value;
     Format.pp_print_char formatter '"'
+  end
 
 let print_date fmt d = ISO8601.Permissive.pp_datetimezone fmt (d, 0.)
 
