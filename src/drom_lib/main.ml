@@ -13,7 +13,9 @@ open EZCMD.TYPES
 
 let main () =
   let commands =
-    [ CommandNew.cmd;
+    [
+      CommandToml.cmd;
+      CommandNew.cmd;
       CommandProject.cmd;
       CommandPackage.cmd;
       CommandBuild.cmd;
