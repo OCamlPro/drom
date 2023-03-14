@@ -139,26 +139,32 @@ let update_files share ?args ?(git = false) ?(create = false) p =
     | Some min_edition -> ({ p with min_edition }, true)
   in
   let p, changed =
-    match args.arg_share_version with
-    | None -> (p, changed)
-    | project_share_version ->
-        if args.arg_share_version <> p.project_share_version then
-          let project_share_repo = match p.project_share_repo with
-            | None -> Some ( Share.share_repo_default () )
-            | Some project_share_repo -> Some project_share_repo
-          in
-          ({ p with project_share_version ; project_share_repo }, true)
-        else
-          (p, changed)
-  in
-  let p, changed =
-    match args.arg_share_repo with
-    | None -> (p, changed)
-    | project_share_repo ->
-        if args.arg_share_repo <> p.project_share_repo then
-          ({ p with project_share_repo }, true)
-        else
-          (p, changed)
+    match args, p with
+      { arg_share_version = Some "0.8.0" ; arg_share_repo = None ; _ },
+      { project_share_version = (None | Some "0.8.0"); project_share_repo = None ; _ } ->
+        p, changed     (* do nothing for compatibility with version = 0.8.0 *)
+    | _ ->
+        let p, changed =
+          match args.arg_share_version with
+          | None -> (p, changed)
+          | Some arg_share_version ->
+              if args.arg_share_version <> p.project_share_version then
+                let project_share_repo = match p.project_share_repo with
+                  | None -> Some ( Share.share_repo_default () )
+                  | Some project_share_repo -> Some project_share_repo
+                in
+                let project_share_version = Some arg_share_version in
+                ({ p with project_share_version ; project_share_repo }, true)
+              else
+                (p, changed)
+        in
+        match args.arg_share_repo with
+        | None -> (p, changed)
+        | project_share_repo ->
+            if args.arg_share_repo <> p.project_share_repo then
+              ({ p with project_share_repo }, true)
+            else
+              (p, changed)
   in
 
   let can_skip = ref [] in
