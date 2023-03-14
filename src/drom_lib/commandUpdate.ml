@@ -9,6 +9,8 @@
 (**************************************************************************)
 
 open Ezcmd.V2
+open Ez_file.V1
+open EzFile.OP
 
 let cmd_name = "update"
 
@@ -24,6 +26,11 @@ let action ~args () =
   Opam.run ~y [ "install" ] [ deps_package ];
   let error = ref None in
   Opam.run ~y ~error [ "upgrade" ] [];
+
+  (* Generate lock file *)
+  let drom_project_deps_opam =
+    (Globals.drom_dir // p.package.name) ^ "-deps.opam" in
+  Opam.run ~y [ "lock" ] [ "." // drom_project_deps_opam ];
   Opam.run ~error [ "unpin" ] [ "-y"; deps_package ];
   match !error with
   | None -> Printf.eprintf "Switch Update OK\n%!"
