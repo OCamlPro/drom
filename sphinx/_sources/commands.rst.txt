@@ -73,6 +73,9 @@ Overview of sub-commands::
   test
     Run tests
   
+  toml
+    Read TOML files and print them back on stdout
+  
   top
     Run the ocaml toplevel
   
@@ -973,6 +976,29 @@ Where options are:
 * :code:`--upgrade`   Upgrade project files from drom.toml
 
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
+
+
+main.exe toml
+~~~~~~~~~~~~~~~
+
+Read TOML files and print them back on stdout
+
+
+
+**DESCRIPTION**
+
+
+Test the TOML parser/printer:
+
+**USAGE**
+::
+  
+  main.exe toml FILE [OPTIONS]
+
+Where options are:
+
+
+* :code:`FILE`   Parse FILE and write it back on stdout
 
 
 main.exe top
