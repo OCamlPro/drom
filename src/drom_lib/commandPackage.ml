@@ -104,7 +104,7 @@ let upgrade_package package licenses ~upgrade ~kind ~files =
 
           EzFile.write_file new_file content )
         files;
-      Call.call ([ "git"; "add" ] @ List.rev !new_files)
+      Git.add (List.rev !new_files)
   end;
   ()
 

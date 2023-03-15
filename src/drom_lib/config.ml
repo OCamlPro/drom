@@ -41,6 +41,9 @@ let config_of_toml filename =
     let config_auto_opam_yes =
       EzToml.get_bool_option table [ "user"; "auto-opam-yes" ]
     in
+    let config_git_stage =
+      EzToml.get_bool_option table [ "user"; "git-stage" ]
+    in
     { config_author;
       config_github_organization;
       config_share_repo;
@@ -49,7 +52,8 @@ let config_of_toml filename =
       config_opam_repo;
       config_dev_tools;
       config_auto_upgrade;
-      config_auto_opam_yes
+      config_auto_opam_yes;
+      config_git_stage;
     }
 
 let config_template =
@@ -66,6 +70,8 @@ let config_template =
 # auto-upgrade = false
 ## Do not call opam with -y for local opam switches:
 # auto-opam-yes = false
+## Do not automatically stage files with git
+# git-stage = false
 |}
 
 let update_with oldc newc =
@@ -106,7 +112,11 @@ let update_with oldc newc =
     config_auto_opam_yes =
       ( match (newc.config_auto_opam_yes, oldc.config_auto_opam_yes) with
       | None, oldc -> oldc
-      | newc, _ -> newc )
+      | newc, _ -> newc );
+    config_git_stage =
+      ( match (newc.config_git_stage, oldc.config_git_stage) with
+      | None, oldc -> oldc
+      | newc, _ -> newc );
   }
 
 let getenv_opt v =
@@ -139,7 +149,8 @@ let load () =
       config_share_repo = getenv_opt "DROM_SHARE_REPO";
       config_dev_tools = None;
       config_auto_upgrade = getenv_bool_opt "DROM_AUTO_UPGRADE";
-      config_auto_opam_yes = getenv_bool_opt "DROM_AUTO_OPAM_YES"
+      config_auto_opam_yes = getenv_bool_opt "DROM_AUTO_OPAM_YES";
+      config_git_stage = getenv_bool_opt "DROM_GIT_STAGE";
     }
   in
   let path = Sys.getcwd () in
@@ -163,4 +174,4 @@ let load () =
   iter path
 
 let config = lazy (load ())
-let config () = Lazy.force config
+let get () = Lazy.force config

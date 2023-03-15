@@ -122,7 +122,8 @@ type config =
     config_opam_repo : string option;
     config_dev_tools : string list option;
     config_auto_upgrade : bool option;
-    config_auto_opam_yes : bool option
+    config_auto_opam_yes : bool option;
+    config_git_stage : bool option;
   }
 
 type opam_kind =

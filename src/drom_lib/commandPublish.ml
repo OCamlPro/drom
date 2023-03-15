@@ -35,7 +35,7 @@ let select =
     ()
 
 let action ~force ~opam_repo ~use_md5 () =
-  let config = Config.config () in
+  let config = Config.get () in
   let opam_repo =
     match !opam_repo with
     | Some repo -> repo

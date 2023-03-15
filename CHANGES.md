@@ -26,6 +26,11 @@
   * If a file `$PROJECT-deps.opam.locked` is available at the root of the source
     tree, it will be provided to `opam install` (projects with binaries should
     `git add` this file, while other projects should `.gitignore` it)
+* Configuration file `$HOME/.config/drom/config`:
+  * Add option `git-stage: true/false` to decide whether `drom` should
+    call `git add` and `git rm` after every modification
+* Support for git conflicts in `.drom`: accept multiple hash for a file
+  to decide whether it has been modified by the user or by drom
 * Requires use of `opam>=2.1`
 
 ## v0.8.0
