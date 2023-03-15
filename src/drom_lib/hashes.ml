@@ -55,7 +55,7 @@ end
 include HASH
 
 type t =
-  { mutable hashes : hash StringMap.t;
+  { mutable hashes : hash list StringMap.t;
     mutable modified : bool;
     mutable files : (bool * string * int) StringMap.t;
     (* for git *)
@@ -72,26 +72,36 @@ let load () =
       (* Printf.eprintf "Loading .drom\n%!"; *)
       Array.iteri
         (fun i line ->
-          try
-            if line <> "" && line.[0] <> '#' then
-              let digest, filename =
-                if String.contains line ':' then
-                  EzString.cut_at line ':'
-                else
-                  EzString.cut_at line ' '
-                (* only for backward compat *)
-              in
-              if digest = "version" then
-                version := Some filename
-              else
-                let digest = HASH.from_hex digest in
-                map := StringMap.add filename digest !map
-          with
-          | exn ->
-            Printf.eprintf "Error loading .drom at line %d: %s\n%!" (i + 1)
-              (Printexc.to_string exn);
-            Printf.eprintf " on line: %s\n%!" line;
-            exit 2 )
+           try
+             let len = String.length line in
+             if len > 2 && match line.[0] with
+               | '#'
+               | '=' | '<' | '>' (* git conflict ! *)
+                 -> false
+               | _ -> true then
+               let digest, filename =
+                 if String.contains line ':' then
+                   EzString.cut_at line ':'
+                 else
+                   EzString.cut_at line ' '
+                   (* only for backward compat *)
+               in
+               if digest = "version" then
+                 version := Some filename
+               else
+                 let digest = HASH.from_hex digest in
+                 let hashes =
+                   match StringMap.find filename !map with
+                   | exception Not_found -> []
+                   | hashes -> hashes
+                 in
+                 map := StringMap.add filename (digest :: hashes) !map
+           with
+           | exn ->
+               Printf.eprintf "Error loading .drom at line %d: %s\n%!" (i + 1)
+                 (Printexc.to_string exn);
+               Printf.eprintf " on line: %s\n%!" line;
+               exit 2 )
         (EzFile.read_lines ".drom");
       !map
     ) else
@@ -116,8 +126,8 @@ let read t ~file =
 
 let get t file = StringMap.find file t.hashes
 
-let update ?(git = true) t file hash =
-  t.hashes <- StringMap.add file hash t.hashes;
+let update ?(git = true) t file hashes =
+  t.hashes <- StringMap.add file hashes t.hashes;
   if git then t.to_add <- StringSet.add file t.to_add;
   t.modified <- true
 
@@ -144,7 +154,7 @@ let save ?(git = true) t =
         if not (Sys.file_exists dirname) then EzFile.make_dir ~p:true dirname;
         EzFile.write_file file content;
         Unix.chmod file perm;
-        if record then update t file (digest_content ~file ~perm ~content ()) )
+        if record then update t file [digest_content ~file ~perm ~content ()] )
       t.files;
 
     let b = Buffer.create 1000 in
@@ -156,7 +166,7 @@ let save ?(git = true) t =
         | Some version -> version);
     Printf.bprintf b "# end version\n%!";
     StringMap.iter
-      (fun filename hash ->
+      (fun filename hashes ->
         if Sys.file_exists filename then begin
           if filename = "." then begin
             Printf.bprintf b "\n# hash of toml configuration files\n";
@@ -165,7 +175,9 @@ let save ?(git = true) t =
             Printf.bprintf b "\n# begin context for %s\n" filename;
             Printf.bprintf b "# file %s\n" filename
           end;
-          Printf.bprintf b "%s:%s\n" (HASH.to_hex hash) filename;
+          List.iter (fun hash ->
+              Printf.bprintf b "%s:%s\n" (HASH.to_hex hash) filename
+            ) (List.rev hashes);
           Printf.bprintf b "# end context for %s\n" filename
         end )
       t.hashes;
@@ -177,13 +189,14 @@ let save ?(git = true) t =
         (fun file ->
           if not (Sys.file_exists file) then to_remove := file :: !to_remove )
         t.to_remove;
-      if !to_remove <> [] then Git.silent_fail "rm" ("-f" :: !to_remove);
+      if !to_remove <> [] then
+        Git.remove ~silent:true ("-f" :: !to_remove);
 
       let to_add = ref [] in
       StringSet.iter
         (fun file -> if Sys.file_exists file then to_add := file :: !to_add)
         t.to_add;
-      Git.silent_fail "add" (".drom" :: !to_add)
+      Git.add ~silent:true (".drom" :: !to_add)
     );
     t.to_add <- StringSet.empty;
     t.to_remove <- StringSet.empty;

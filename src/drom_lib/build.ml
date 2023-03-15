@@ -99,7 +99,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
               switch p.min_edition
         | _ -> () ) );
 
-  let config = Config.config () in
+  let config = Config.get () in
 
   let share = Share.load ~p () in
   begin
@@ -111,7 +111,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
         if
           match Hashes.get hashes "." with
           | exception Not_found -> true
-          | old_hash ->
+          | old_hashes ->
               let files =
                 ( match p.file with
                   | None -> assert false
@@ -124,9 +124,11 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
                         | Some file -> [ file ] )
                      p.packages )
               in
-              old_hash
-              <> Update.compute_config_hash
-                (List.map (fun file -> (file, EzFile.read_file file)) files)
+              let new_hash =
+                Update.compute_config_hash
+                  (List.map (fun file -> (file, EzFile.read_file file)) files)
+              in
+              List.for_all ( (<>) new_hash ) old_hashes
         then
           if config.config_auto_upgrade <> Some false then
             Update.update_files share ~twice:false ~create:false ~git:true p
@@ -323,7 +325,7 @@ had_switch: %b
   let to_install =
     let extra_packages =
       if force_dev_deps then
-        let config = Config.config () in
+        let config = Config.get () in
         ( match config.config_dev_tools with
           | None -> [ "merlin"; "ocp-indent" ]
           | Some dev_tools -> dev_tools )

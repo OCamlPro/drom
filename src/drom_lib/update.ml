@@ -202,7 +202,7 @@ let update_files share ?args ?(git = false) ?(create = false) p =
               Hashes.digest_content ~file:filename ~perm:old_perm
                 ~content:old_content ()
             in
-            Hashes.update ~git:false hashes filename hash
+            Hashes.update ~git:false hashes filename [hash]
         | _ -> ()
       end;
       false
@@ -214,14 +214,15 @@ let update_files share ?args ?(git = false) ?(create = false) p =
           skipped := filename :: !skipped;
           Printf.eprintf "Skipping existing file %s\n%!" filename;
           false
-      | former_hash ->
+      | former_hashes ->
           let hash =
             Hashes.digest_content ~file:filename ~perm:old_perm ~content:old_content ()
           in
           let modified =
-            former_hash <> hash
+            List.for_all ((<>) hash) former_hashes
             && (* compatibility with former hashing system *)
-            former_hash <> Hashes.old_string_hash old_content
+            let old_hash = Hashes.old_string_hash old_content in
+            List.for_all ((<>) old_hash) former_hashes
           in
           if modified then (
             skipped := filename :: !skipped;
@@ -289,7 +290,7 @@ let update_files share ?args ?(git = false) ?(create = false) p =
         EzFile.write_file filename content
   in
 
-  let config = Config.config () in
+  let config = Config.get () in
 
   let p, changed =
     if args.arg_upgrade then
@@ -441,7 +442,7 @@ let update_files share ?args ?(git = false) ?(create = false) p =
          detect need for update. We use '.' for the associated name,
          because it must be an existent file, otherwise `Hashes.save`
          will discard it. *)
-      Hashes.update ~git:false hashes "." hash;
+      Hashes.update ~git:false hashes "." [hash];
     )
 
 let update_files share ~twice ?args ?(git = false) ?(create = false) p =

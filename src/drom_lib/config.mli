@@ -8,4 +8,4 @@
 (*                                                                        *)
 (**************************************************************************)
 
-val config : unit -> Types.config
+val get : unit -> Types.config

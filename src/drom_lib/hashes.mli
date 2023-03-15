@@ -23,11 +23,11 @@ type t
 val load : unit -> t
 
 val remove : t -> string -> unit
-val get : t -> string -> hash
+val get : t -> string -> hash list
 val write : t -> record:bool -> perm:int -> file:string -> content:string -> unit
 val rename : t -> src:string -> dst:string -> unit
 val with_ctxt : ?git:bool -> (t -> 'a) -> 'a
-val update : ?git:bool -> t -> string -> hash -> unit
+val update : ?git:bool -> t -> string -> hash list -> unit
 
 (* read file either from Hashes of from disk *)
 val read : t -> file:string -> string

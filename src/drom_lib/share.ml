@@ -20,7 +20,7 @@ open Types
 let share_repo_default = "https://github.com/OCamlPro/drom-share"
 
 let share_repo_default () =
-  match ( Config.config () ). config_share_repo with
+  match ( Config.get () ). config_share_repo with
   | None -> share_repo_default
   | Some repo -> repo
 
@@ -103,7 +103,7 @@ let load ?(args=default_args()) ?p () =
   (* version = None => use latest version *)
 
   (* Used to ensure `shares_dir` is created *)
-  let _config = Config.config () in
+  let _config = Config.get () in
 
   let hash = Digest.to_hex (Digest.string repo) in
   let shares_dir = Globals.config_dir // "shares" in

@@ -236,7 +236,7 @@ Available skeletons are: %s
           |> String.concat " " );
       exit 2
   | Some name -> (
-      let config = Config.config () in
+      let config = Config.get () in
       let project = Project.find () in
       match project with
       | None -> create_project ~config ~name ~skeleton ~dir ~inplace ~args

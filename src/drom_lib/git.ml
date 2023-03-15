@@ -41,11 +41,32 @@ let update_submodules () =
   if Sys.file_exists ".gitmodules" then
     silent_fail "submodule" [ "update"; "--init"; "--recursive" ]
 
-let remove dir =
-  Call.call [ "rm"; "-rf"; dir ];
-  silent_fail "rm" [ "-rf"; dir ]
+let add ?(silent=false) files =
+  let config = Config.get () in
+  match config.config_git_stage with
+  | Some false -> ()
+  | None | Some true ->
+      if silent then
+        silent_fail "add" files
+      else
+        call "add" files
+
+let remove ?(silent=false) files =
+  Call.call ("rm" :: "-rf" :: files );
+  let config = Config.get () in
+  match config.config_git_stage with
+  | Some false -> ()
+  | None | Some true ->
+      if silent then
+        silent_fail "rm" ("-rf" :: files)
+      else
+        call "rm" ("-rf" :: files)
 
 let rename old_dir new_dir =
   Call.call [ "mv"; old_dir; new_dir ];
-  silent_fail "rm" [ "-rf"; old_dir ];
-  silent_fail "add" [ new_dir ]
+  let config = Config.get () in
+  match config.config_git_stage with
+  | Some false -> ()
+  | None | Some true ->
+      remove ~silent:true [ old_dir ];
+      add ~silent:true [ new_dir ]
