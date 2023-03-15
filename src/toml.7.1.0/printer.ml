@@ -26,7 +26,7 @@ let print_float formatter value =
     Format.pp_print_float formatter value
 
 let print_string formatter value =
-  let has_newline = String.contains value '"' in
+  let has_newline = String.contains value '\n' in
   if has_newline then begin
     Format.pp_print_string formatter {|"""|};
     Format.pp_print_newline formatter ();
