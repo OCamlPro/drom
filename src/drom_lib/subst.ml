@@ -491,11 +491,14 @@ let subst_encode p_subst escape state s =
                     if state.postpone then
                       raise Postpone
                     else
-                      match state.hashes with
-                      | None ->
-                          EzFile.read_file var
-                      | Some hashes ->
-                          Hashes.read hashes ~file:var
+                      try
+                        match state.hashes with
+                        | None ->
+                            EzFile.read_file var
+                        | Some hashes ->
+                            Hashes.read hashes ~file:var
+                      with Sys_error _ -> (* File does not exist *)
+                        ""
                   end
               | "md5" -> Digest.string var |> Digest.to_hex
               | "html" -> EzHtml.string var

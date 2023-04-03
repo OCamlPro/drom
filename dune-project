@@ -5,7 +5,7 @@
 (name drom)
 (allow_approximate_merlin)
 (generate_opam_files false)
-(version 0.9.0)
+(version 0.9.1)
 (formatting (enabled_for ocaml reason))
 (using menhir 2.0)
 

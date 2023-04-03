@@ -1,4 +1,7 @@
 
+## v0.9.1
+* Fix Sys_error docs/style.css because of missing file
+
 ## v0.9.0
 * Split `drom-share` into another repository:
   * Use `https://github.com/OCamlPro/drom-share` by default
