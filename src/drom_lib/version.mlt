@@ -13,7 +13,7 @@ let query cmd =
 
 let commit_hash = query "git show -s --pretty=format:%H"
 let commit_date = query "git show -s --pretty=format:%ci"
-let version = "0.9.0"
+let version = "0.9.1"
 
 let string_option = function
   | None -> "None"
