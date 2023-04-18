@@ -28,18 +28,17 @@ val state :
   'p ->
   ('context, 'p) state
 
-val package :
-  ?bracket:('context, Types.package) state EZ_SUBST.t ->
+
+
+type ('project, 'context) subst =
+  ?bracket:('context, 'project) state EZ_SUBST.t ->
   ?skipper:bool list ref ->
-  ('context,Types.package) state ->
+  ('context, 'project) state ->
   string ->
   string
 
-val project :
-  ?bracket:('context, Types.project) state EZ_SUBST.t ->
-  ?skipper:bool list ref ->
-  ('context,Types.project) state ->
-  string ->
-  string
+val package : ( Types.package, 'context ) subst
+
+val project : ( Types.project, 'context ) subst
 
 val package_paren : ('a, Types.package) state -> string -> string

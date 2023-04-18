@@ -30,6 +30,13 @@ type ('context, 'p) state = {
                                before they are committed to disk *)
 }
 
+type ( 'project, 'context ) subst =
+  ?bracket:('context, 'project) state EZ_SUBST.t ->
+  ?skipper:bool list ref ->
+  ('context, 'project) state ->
+  string ->
+  string
+
 let state ?(postpone=false) ?hashes context share p =
   { context ; p ; share ; postpone ; hashes }
 
