@@ -292,16 +292,18 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
       former_deps_status
   in
   let project_deps_opam_locked = p.package.name ^ "-deps.opam.locked" in
+  let opam_diff = former_opam_file_content <> Some new_opam_file_content in
   let need_update =
     force_build_deps || force_dev_deps
     || (build_deps || dev_deps)
-       && (former_opam_file_content <> Some new_opam_file_content || not had_switch)
+       && (opam_diff || not had_switch)
     || former_deps_status <> new_deps_status
   in
   let need_dev_deps =
     dev_deps || force_dev_deps
     || (former_deps_status = Deps_devel && not force_build_deps)
   in
+  let with_locked = former_opam_file_content = None || not opam_diff in
   (*
   Printf.eprintf
     {|need_update :%b
@@ -360,8 +362,9 @@ had_switch: %b
     if Sys.file_exists drom_project_deps_opam_locked then
       Sys.remove drom_project_deps_opam_locked;
 
-    Opam.run ~y [ "install" ; "--locked" ]
-      ( [ "--deps-only"; "." // drom_project_deps_opam ]
+    Opam.run ~y [ "install" ]
+      ( ( if with_locked then [ "--locked" ] else [] )
+        @ [ "--deps-only"; "." // drom_project_deps_opam ]
         @ ( if need_dev_deps then
               [ "--with-doc"; "--with-test" ]
             else

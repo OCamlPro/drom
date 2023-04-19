@@ -411,28 +411,18 @@ let skeleton_flags skeleton file perm =
     flags.flag_perm <- flags.flag_perm lor 0o111;
   flags
 
-let write_project_files write_file state =
-  let p = state.Subst.p in
-  let skeleton = lookup_project state.share (Misc.project_skeleton p.skeleton) in
+
+let write_skeleton_files
+    ?dir
+    ~write_file
+    ~eval_cond
+    ~(subst : ('project, 'context) Subst.subst)
+    state skeleton =
   let postponed_items = ref [] in
 
-  let write_project_file ~postpone (file, content, perm) =
+  let write_skeleton_file ~postpone (file, content, perm) =
     (* Printf.eprintf "File %s perm %o\n%!" file perm; *)
-    backup_skeleton file content ~perm;
     let flags = skeleton_flags skeleton file perm in
-    let bracket = bracket flags eval_project_cond in
-    let content =
-      if flags.flag_subst then
-        try
-          Subst.project { state with postpone }
-            ~bracket ~skipper:flags.flag_skipper content
-        with
-        | Not_found ->
-            Printf.kprintf failwith "Exception Not_found in %S\n%!" file
-      else
-        content
-    in
-    (* name of file can also be substituted *)
     let { flag_file;
           flag_create = create;
           flag_skips = skips;
@@ -444,22 +434,45 @@ let write_project_files write_file state =
         } =
       flags
     in
-    let flag_file = Subst.project state flag_file in
-    write_file flag_file ~create ~skips ~content ~record ~skip ~perm
+    (* name of file can also be substituted *)
+    let flag_file = subst state flag_file in
+    let dir_file = match dir with
+      | None -> flag_file
+      | Some dir -> dir // flag_file in
+    let content =
+      let template = dir_file ^ ".drom" in
+      if Sys.file_exists template then
+        EzFile.read_file template
+      else content
+    in
+    backup_skeleton dir_file content ~perm;
+    let bracket = bracket flags eval_cond in
+    let content =
+      if flags.flag_subst then
+        try
+          subst { state with postpone }
+            ~bracket ~skipper:flags.flag_skipper content
+        with
+        | Not_found ->
+            Printf.kprintf failwith "Exception Not_found in %S\n%!" file
+      else
+        content
+    in
+    write_file dir_file ~create ~skips ~content ~record ~skip ~perm
   in
   List.iter
     (fun file_item ->
        try
-         write_project_file ~postpone:true file_item
+         write_skeleton_file ~postpone:true file_item
        with Subst.Postpone ->
          postponed_items := file_item :: !postponed_items
     )
     skeleton.skeleton_files;
   List.iter
     (fun file_item ->
-       write_project_file ~postpone:false file_item
+       write_skeleton_file ~postpone:false file_item
     )
-    skeleton.skeleton_files;
+    !postponed_items;
   ()
 
 let subst_package_file flags content state =
@@ -477,30 +490,26 @@ let subst_package_file flags content state =
   in
   content
 
+let write_project_files write_file state =
+  let p = state.Subst.p in
+  let skeleton = lookup_project state.share
+      (Misc.project_skeleton p.skeleton) in
+  write_skeleton_files
+    ~write_file
+    ~eval_cond: eval_project_cond
+    ~subst: Subst.project
+    state skeleton
+
+
 let write_package_files write_file state =
   let package = state.Subst.p in
   let skeleton = lookup_package state.share (Misc.package_skeleton package) in
-  List.iter
-    (fun (file, content, perm) ->
-      (* Printf.eprintf "File %s perm %o\n%!" file perm; *)
-      backup_skeleton file content ~perm;
-      let flags = skeleton_flags skeleton file perm in
-      let content = subst_package_file flags content state in
-      let { flag_file;
-            flag_create = create;
-            flag_skips = skips;
-            flag_record = record;
-            flag_skip = skip;
-            flag_perm = perm;
-            flag_skipper = _;
-            flag_subst = _
-          } =
-        flags
-      in
-      let flag_file = Subst.package state flag_file in
-      let file = package.dir // flag_file in
-      write_file file ~create ~skips ~content ~record ~skip ~perm )
-    skeleton.skeleton_files
+  write_skeleton_files
+    ~dir:package.dir
+    ~write_file
+    ~eval_cond: eval_package_cond
+    ~subst: Subst.package
+    state skeleton
 
 let write_files write_file state =
   write_project_files write_file state;
