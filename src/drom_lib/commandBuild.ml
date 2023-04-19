@@ -80,7 +80,7 @@ let cmd =
               ( "3.",
                 "Install all the dependencies in the opam switch. If the \
                  argument $(b,--locked) was specified, use the \
-                 $(b,${package}-deps.opam.locked) file in the project to get \
+                 $(b,\\${package}-deps.opam.locked) file in the project to get \
                  exact dependencies." );
             `I
               ( "4.",
