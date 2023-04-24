@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -175,7 +175,7 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
                  arg_upgrade = !upgrade ;
                }
     in
-    Update.update_files share ~twice:false ~create:false ~git:true p ~args;
+    Update.update_files share ~twice:false ~git:true p ~args;
     ()
   )
 

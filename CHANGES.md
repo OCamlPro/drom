@@ -1,6 +1,20 @@
 
+## v0.9.2
+* Two-phase project creation: projects starts in a creation phase
+  (option `create` set to true in `drom.toml`) after `project new`,
+  where more files are updated when `drom.toml` is modified. Creation
+  phase must be ended by `drom project --create false`, after which
+  fewer files are updated (useful to create the project and edit
+  synopsis/description before freezing them)
+* Support for inline templates:
+  * If `path/file.ext` is to be generated, `drom` will check if
+    `path/file.ext.drom-tpl` exists, in which case it will use it as
+    a template for the file. It is possible to use
+    `_drom/skeleton/path/file.ext` as an example to create such a file.
+
 ## v0.9.1
 * Fix Sys_error docs/style.css because of missing file
+* Fix non-working removal of files (deprecated opam files for example)
 
 ## v0.9.0
 * Split `drom-share` into another repository:

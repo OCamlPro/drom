@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -104,7 +104,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
   let share = Share.load ~p () in
   begin
     if arg_upgrade then
-      Update.update_files share ~twice:false ~create:false p
+      Update.update_files share ~twice:false p
     else
       let hashes = Hashes.load () in
       begin
@@ -131,7 +131,7 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
               List.for_all ( (<>) new_hash ) old_hashes
         then
           if config.config_auto_upgrade <> Some false then
-            Update.update_files share ~twice:false ~create:false ~git:true p
+            Update.update_files share ~twice:false ~git:true p
           else
             Printf.eprintf
               "Warning: 'drom.toml' changed since last update,\n\
@@ -215,22 +215,6 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
   in
 
   if setup_opam then (
-    let vscode_dir = ".vscode" in
-    let vscode_file = vscode_dir // "settings.json" in
-    if not (Sys.file_exists vscode_file) then (
-      EzFile.make_dir ~p:true vscode_dir;
-      EzFile.write_file vscode_file
-        (Printf.sprintf
-           {|
-{
-    "ocaml.sandbox": {
-        "kind": "opam"
-        "switch": "%s"
-    }
-}
-|}
-           (Sys.getcwd ()) )
-    );
 
     match StringMap.find "ocaml" switch_packages with
     | exception Not_found ->
@@ -303,7 +287,9 @@ let build ~args ?(setup_opam = true) ?(build_deps = true)
     dev_deps || force_dev_deps
     || (former_deps_status = Deps_devel && not force_build_deps)
   in
-  let with_locked = former_opam_file_content = None || not opam_diff in
+  let with_locked =
+    not need_dev_deps &&
+    ( former_opam_file_content = None || not opam_diff ) in
   (*
   Printf.eprintf
     {|need_update :%b
@@ -372,8 +358,9 @@ had_switch: %b
         @ vendor_packages
         @ to_install );
 
-    (* Generate lock file *)
-    Opam.run ~y [ "lock" ] [ "." // drom_project_deps_opam ];
+    (* Generate lock file only if no dev deps *)
+    if not need_dev_deps then
+      Opam.run ~y [ "lock" ] [ "-d" ; "." // drom_project_deps_opam ];
 
     EzFile.write_file drom_opam_current new_opam_file_content ;
     EzFile.write_file drom_opam_deps

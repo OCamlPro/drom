@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -183,21 +183,23 @@ let save ?(git = true) t =
       t.hashes;
     EzFile.write_file ".drom" (Buffer.contents b);
 
-    if git && Sys.file_exists ".git" then (
+    if git && Sys.file_exists ".git" then begin
       let to_remove = ref [] in
       StringSet.iter
         (fun file ->
-          if not (Sys.file_exists file) then to_remove := file :: !to_remove )
+           if Sys.file_exists file then
+             to_remove := file :: !to_remove
+        )
         t.to_remove;
-      if !to_remove <> [] then
+      if !to_remove <> [] then begin
         Git.remove ~silent:true ("-f" :: !to_remove);
-
+      end;
       let to_add = ref [] in
       StringSet.iter
         (fun file -> if Sys.file_exists file then to_add := file :: !to_add)
         t.to_add;
       Git.add ~silent:true (".drom" :: !to_add)
-    );
+    end;
     t.to_add <- StringSet.empty;
     t.to_remove <- StringSet.empty;
     t.modified <- false

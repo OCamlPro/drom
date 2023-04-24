@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -26,6 +26,7 @@ type args =
     mutable arg_promote_skip : bool;
     mutable arg_edition : string option;
     mutable arg_min_edition : string option;
+    mutable arg_create : bool option ;
 
     (* Not settable through standard args, only in `drom project` *)
     arg_share_version : string option;
@@ -42,6 +43,7 @@ let default_args () =
     arg_min_edition = None;
     arg_share_version = None;
     arg_share_repo = None;
+    arg_create = None ;
   }
 
 let args () =
@@ -77,6 +79,16 @@ let args () =
       ( [ "min-edition" ],
         Arg.String (fun s -> args.arg_min_edition <- Some s),
         EZCMD.info ~docv:"OCAMLVERSION" "Set project minimal OCaml version" );
+      ( [ "create" ],
+        Arg.String (function
+              "true" -> args.arg_create <- Some true
+            | "false" -> args.arg_create <- Some false
+            | s ->
+                Printf.eprintf "Error: invalid argument %S to option '--create BOOL'\n%!" s;
+                exit 2
+          ),
+        EZCMD.info ~docv:"BOOL"
+          "Change project creation status" );
     ]
   in
   (args, specs)
@@ -94,7 +106,7 @@ let compute_config_hash files =
   in
   Hashes.digest_content ~file:"" ~content:to_hash ()
 
-let update_files share ?args ?(git = false) ?(create = false) p =
+let update_files share ?args ?(git = false) p =
   (*
   let force, upgrade, skip, diff, promote_skip, edition, min_edition =
     match args with
@@ -134,6 +146,16 @@ let update_files share ?args ?(git = false) ?(create = false) p =
   in
 
   let p, changed =
+    match args.arg_create with
+    | None -> (p, changed)
+    | Some bool ->
+        if p.project_create = bool then
+          (p, changed)
+        else
+          ({ p with project_create = bool }, true)
+  in
+
+  let p, changed =
     match args.arg_min_edition with
     | None -> (p, changed)
     | Some min_edition -> ({ p with min_edition }, true)
@@ -166,6 +188,7 @@ let update_files share ?args ?(git = false) ?(create = false) p =
             else
               (p, changed)
   in
+  let create = p.project_create in
 
   let can_skip = ref [] in
 
@@ -443,11 +466,25 @@ let update_files share ?args ?(git = false) ?(create = false) p =
          because it must be an existent file, otherwise `Hashes.save`
          will discard it. *)
       Hashes.update ~git:false hashes "." [hash];
+      p
     )
 
-let update_files share ~twice ?args ?(git = false) ?(create = false) p =
-  update_files share ?args ~git ~create p ;
-  if twice then begin
-    Printf.eprintf "Re-iterate file generation for consistency...\n%!";
-    update_files share ?args ~git p
+let display_create_warning p =
+  if p.project_create then begin
+    Printf.eprintf "%s\n%!"
+      (String.concat "\n" [
+          "Warning: this project is still in creation mode, where more files" ;
+          "  are managed by 'drom'. Use the command:";
+          "drom project --create false";
+          "  to mark the project as created and switch to light management.";
+        ])
   end
+
+let update_files share ~twice ?(warning=true) ?args ?(git = false) p =
+  let p_final = update_files share ?args ~git p in
+  if twice then begin
+    Printf.eprintf "Re-iterating file generation for consistency...\n%!";
+    let _p_final2 = update_files share ?args ~git p in
+    ()
+  end;
+  if warning then display_create_warning p_final

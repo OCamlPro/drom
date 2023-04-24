@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -185,7 +185,7 @@ let cmd =
 author = "John Doe <john.doe@ocaml.org>"
 github-organization = "ocaml"
 license = "LGPL2"
-copyright = "OCamlPro SAS & Origin Labs SAS"
+copyright = "OCamlPro SAS"
 opam-repo = "/home/john/GIT/opam-repository"
 |};
             `P

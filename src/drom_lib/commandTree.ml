@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -10,7 +10,8 @@
 
 open Ezcmd.V2
 open Types
-open EzPrintTree
+
+open EzPrintTree.TYPES
 
 let cmd_name = "tree"
 
@@ -107,7 +108,7 @@ let action () =
   in
   print_deps "dependencies" p.dependencies;
   print_deps "tools" p.tools;
-  print_tree "" (Branch ("File drom.toml", List.rev !branches));
+  EzPrintTree.print_tree (Branch ("File drom.toml", List.rev !branches));
   ()
 
 let cmd =
