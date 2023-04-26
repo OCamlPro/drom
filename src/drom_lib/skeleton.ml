@@ -29,51 +29,60 @@ let bracket flags eval_cond =
     match EzString.split s ':' with
     (* set the name of the file *)
     | [ "file"; v ] ->
-      flags.flag_file <- Some v;
-      ""
+        flags.flag_file <- Some v;
+        ""
     (* create only once *)
     | [ "create" ] ->
-      flags.flag_create <- Some true;
-      ""
+        flags.flag_create <- Some true;
+        ""
     (* skip with this tag *)
     | [ "skip"; v ] ->
-      flags.flag_skips <- v :: flags.flag_skips;
-      ""
+        flags.flag_skips <- v :: flags.flag_skips;
+        ""
     (* skip always *)
     | [ "skip" ] ->
-      flags.flag_skip <- Some true;
-      ""
+        flags.flag_skip <- Some true;
+        ""
     (* do not record in .git *)
     | [ "no-record" ] ->
-      flags.flag_record <- Some false;
-      ""
+        flags.flag_record <- Some false;
+        ""
     | [ "perm"; v ] ->
-      flags.flag_perm <- Some ( int_of_string ("0o" ^ v) );
-      ""
+        flags.flag_perm <- Some ( int_of_string ("0o" ^ v) );
+        ""
     | "if" :: cond ->
-      flags.flag_skipper := not (eval_cond state.Subst.p cond) :: !(flags.flag_skipper);
-      ""
+        let cond =
+          match !( flags.flag_skipper ) with
+          | true :: _ -> true
+          | _ -> not (eval_cond state.Subst.p cond)
+        in
+        flags.flag_skipper := cond :: !(flags.flag_skipper);
+        ""
     | [ "else" ] ->
-      (flags.flag_skipper :=
-         match !(flags.flag_skipper) with
-         | cond :: tail -> not cond :: tail
-         | [] -> failwith "else without if" );
-      ""
+        let list =
+          match !( flags.flag_skipper ) with
+          | _ :: ( (true :: _) as tail ) -> true :: tail
+          | cond :: tail -> not cond :: tail
+          | [] -> failwith "else without if"
+        in
+        flags.flag_skipper := list ;
+        ""
     | "elif" :: cond ->
-      (flags.flag_skipper :=
-         match !(flags.flag_skipper) with
-         | _cond :: tail -> not (eval_cond state.Subst.p cond) :: tail
-         | [] -> failwith "elif without if" );
-      ""
+        (flags.flag_skipper :=
+           match !(flags.flag_skipper) with
+           | _ :: ( (true :: _) as tail ) -> true :: tail
+           | _cond :: tail -> not (eval_cond state.Subst.p cond) :: tail
+           | [] -> failwith "elif without if" );
+        ""
     | [ ("fi" | "endif") ] ->
-      (flags.flag_skipper :=
-         match !(flags.flag_skipper) with
-         | _ :: tail -> tail
-         | [] -> failwith "fi without if" );
-      ""
+        (flags.flag_skipper :=
+           match !(flags.flag_skipper) with
+           | _ :: tail -> tail
+           | [] -> failwith "fi without if" );
+        ""
     | _ ->
-      Printf.eprintf "Warning: unknown flag %S\n%!" s;
-      ""
+        Printf.eprintf "Warning: unknown flag %S\n%!" s;
+        ""
   in
   bracket flags
 
@@ -347,8 +356,10 @@ let rec eval_project_cond p cond =
   match cond with
   | [ "skeleton"; "is"; skeleton ] ->
     Misc.project_skeleton p.skeleton = skeleton
-  | [ "skip"; skip ] -> List.mem skip p.skip
-  | [ "gen"; skip ] -> not (List.mem skip p.skip)
+  | [ "skip"; skip ] ->
+      List.mem skip p.skip || List.mem ("@" ^ skip) p.skip
+  | [ "gen"; skip ] ->
+      not (List.mem skip p.skip || List.mem ("@" ^ skip) p.skip)
   | "not" :: cond -> not (eval_project_cond p cond)
   | [ "true" ] -> true
   | [ "false" ] -> false
@@ -484,9 +495,9 @@ let write_skeleton_files
     in
     let content =
       let template = dir_file ^ ".drom-tpl" in
-      if Sys.file_exists template then
+      if Sys.file_exists template then begin
         EzFile.read_file template
-      else content
+      end else content
     in
     backup_skeleton dir_file content ~perm;
     let bracket = bracket flags eval_cond in
