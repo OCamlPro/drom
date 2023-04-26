@@ -210,6 +210,7 @@ let load ?(args=default_args()) ?p () =
 
   {
     share_dir ;
+    drom_version ;
     share_version ;
     share_licenses = None ;
     share_projects = None ;

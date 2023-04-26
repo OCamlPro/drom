@@ -5,7 +5,8 @@
   where more files are updated when `drom.toml` is modified. Creation
   phase must be ended by `drom project --create false`, after which
   fewer files are updated (useful to create the project and edit
-  synopsis/description before freezing them)
+  synopsis/description before freezing them). Only for skeletons
+  with DROM_VERSION > 0.9.2~dev2.
 * Support for inline templates:
   * If `path/file.ext` is to be generated, `drom` will check if
     `path/file.ext.drom-tpl` exists, in which case it will use it as

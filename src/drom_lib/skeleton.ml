@@ -470,14 +470,18 @@ let write_skeleton_files
     (* name of file can also be substituted *)
     let flag_file = match flag_file with
       | None -> assert false
-      | Some flag_file -> subst state flag_file
+      | Some flag_file ->
+          flags.flag_file <- None ;
+          subst state flag_file
     in
     let perm = match perm with
       | None -> assert false
-      | Some perm -> perm in
+      | Some perm -> perm
+    in
     let dir_file = match dir with
       | None -> flag_file
-      | Some dir -> dir // flag_file in
+      | Some dir -> dir // flag_file
+    in
     let content =
       let template = dir_file ^ ".drom-tpl" in
       if Sys.file_exists template then
@@ -486,7 +490,7 @@ let write_skeleton_files
     in
     backup_skeleton dir_file content ~perm;
     let bracket = bracket flags eval_cond in
-    let content =
+    let new_content =
       match flags.flag_subst with
       | Some false -> content
       | None (* flag_subst default is true *)
@@ -501,7 +505,15 @@ let write_skeleton_files
     let create = default_to create false in
     let record = default_to record true in
     let skip = default_to skip false in
-    write_file dir_file ~create ~skips ~content ~record ~skip ~perm
+    let dir_file = (* check if flags.flag_file was modified during subst *)
+      match flags.flag_file with
+      | None -> dir_file
+      | Some flag_file ->
+          match dir with
+          | None -> flag_file
+          | Some dir -> dir // flag_file
+    in
+    write_file dir_file ~create ~skips ~content:new_content ~record ~skip ~perm
   in
   List.iter
     (fun file_item ->

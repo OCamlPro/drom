@@ -76,7 +76,7 @@ let find_author config =
     in
     Printf.sprintf "%s <%s>" user email
 
-let to_files p =
+let to_files share p =
   let version =
     EzToml.empty
     |> EzToml.put_string [ "project"; "drom-version" ] Globals.min_drom_version
@@ -84,10 +84,16 @@ let to_files p =
       p.project_share_repo
     |> EzToml.put_string_option [ "project"; "share-version" ]
       p.project_share_version
-    |> EzToml.put_bool [ "project"; "create-project" ]
-      p.project_create
-    |> EzToml.to_string
   in
+  let version =
+    Printf.eprintf "drom version : %s\n%!" share.drom_version ;
+    if VersionCompare.compare share.drom_version "0.9.2~dev2" > 0 then begin
+      version |> EzToml.put_bool [ "project"; "create-project" ]
+      p.project_create
+    end else
+      version
+  in
+  let version = EzToml.to_string version in
   let package =
     EzToml.empty
     |> EzToml.put_string [ "project"; "name" ] p.package.name
@@ -337,10 +343,10 @@ let project_of_toml ?file ?default table =
   let project_create =
     match
       EzToml.get_bool_option table [ project_key; "create-project" ]
-        ~default:true
+        ~default:false
     with
       | Some v -> v
-      | None -> true
+      | None -> false
   in
 
   let skeleton =

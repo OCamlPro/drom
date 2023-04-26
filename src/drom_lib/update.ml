@@ -442,7 +442,7 @@ let update_files share ?args ?(git = false) p =
 
       let upgrade = args.arg_upgrade || changed in
       let skip = not (upgrade || not (Sys.file_exists "drom.toml")) in
-      let files = Project.to_files p in
+      let files = Project.to_files share p in
       let files =
         List.map
           (fun (file, content) ->
