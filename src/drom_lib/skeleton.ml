@@ -186,15 +186,16 @@ let load_skeleton ~version ~drom ~dir ~toml ~kind =
       skeleton_version =  version;
     } )
 
-let load_dir_skeletons ~version ~drom kind dir =
-  let map = ref StringMap.empty in
+let load_dir_skeletons ?(map=StringMap.empty) ~version ~drom kind dir =
+  let map = ref map in
   if Sys.file_exists dir then begin
     EzFile.iter_dir dir ~f:(fun file ->
         let dir = dir // file in
         let toml = dir // "skeleton.toml" in
         if Sys.file_exists toml then
           try
-            let name, skeleton = load_skeleton ~version ~drom ~dir ~toml ~kind in
+            let name, skeleton = load_skeleton ~version ~drom ~dir ~toml ~kind
+            in
             if !Globals.verbosity > 0 && StringMap.mem name !map then
               Printf.eprintf "Warning: %s skeleton %S overwritten in %s\n%!"
                 kind name dir;
@@ -208,15 +209,20 @@ let load_dir_skeletons ~version ~drom kind dir =
   end else
     !map
 
-let kind_dir ~kind = ("skeletons" // kind) ^ "s"
-
-(* TODO: the project should be able to specify its own URL for the skeleton repo *)
+(* TODO: the project should be able to specify its own URL for the
+   skeleton repo *)
 let load_skeletons share kind =
   let dir = share.share_dir in
   let version = share.share_version in
-  let global_skeletons_dir = dir // kind_dir ~kind in
-  load_dir_skeletons ~version ~drom:true kind global_skeletons_dir
-
+  let subdir = kind ^ "s" in
+  List.fold_left (fun map dir ->
+      load_dir_skeletons ~map ~version ~drom:true kind dir
+    )
+    StringMap.empty
+    [
+       dir // "skeletons" // subdir ;
+       dir // subdir ;
+     ]
 
 let rec inherit_files self_files super_files =
   match (self_files, super_files) with

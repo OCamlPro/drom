@@ -145,6 +145,7 @@ let update_files share ?args ?(git = false) p =
     | Some edition -> ({ p with edition }, true)
   in
 
+  Printf.eprintf "(1.1) project_create = %b\n%!" p.project_create ;
   let p, changed =
     match args.arg_create with
     | None -> (p, changed)
@@ -154,6 +155,7 @@ let update_files share ?args ?(git = false) p =
         else
           ({ p with project_create = bool }, true)
   in
+  Printf.eprintf "(1.2) project_create = %b\n%!" p.project_create ;
 
   let p, changed =
     match args.arg_min_edition with
@@ -188,7 +190,7 @@ let update_files share ?args ?(git = false) p =
             else
               (p, changed)
   in
-  let create = p.project_create in
+  let create_phase = p.project_create in
 
   let can_skip = ref [] in
 
@@ -281,6 +283,7 @@ let update_files share ?args ?(git = false) p =
       filename
       content =
     try
+      if create && not create_phase then raise Skip;
       if skip then raise Skip;
       if force then (
         Printf.eprintf "Forced Update of file %s\n%!" filename;
@@ -297,8 +300,7 @@ let update_files share ?args ?(git = false) p =
           if Globals.verbose 2 then
             Printf.eprintf "Creating file %s\n%!" filename;
           write_file hashes filename content ~perm
-        ) else if create then
-          raise Skip
+        )
         else if can_update ~filename ~perm hashes content then (
           Printf.eprintf "Updating file %s\n%!" filename;
           write_file hashes filename content ~perm
@@ -347,7 +349,7 @@ let update_files share ?args ?(git = false) p =
         | None -> ()
       end;
 
-      if create then
+      if create_phase then
         if git && not (Sys.file_exists ".git") then (
           Git.call "init" [ "-q" ];
           match config.config_github_organization with

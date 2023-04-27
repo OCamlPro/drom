@@ -14,4 +14,4 @@ module TYPES : sig
 
 end
 
-val print_tree : ?indent:string -> TYPES.tree -> unit
+val print_tree : ?indent:string -> TYPES.tree -> string
