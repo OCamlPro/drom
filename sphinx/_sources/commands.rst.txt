@@ -288,6 +288,8 @@ Where options are:
 
 * :code:`--add`   Add as new dependency
 
+* :code:`--create BOOL`   Change project creation status
+
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
 * :code:`--doc BOOL`   Whether dependency is only for doc
@@ -539,6 +541,8 @@ Where options are:
 
 * :code:`PROJECT`   Name of the project
 
+* :code:`--create BOOL`   Change project creation status
+
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
 * :code:`--dir DIRECTORY`   Dir where package sources are stored (src by default)
@@ -648,6 +652,8 @@ Where options are:
 
 * :code:`PACKAGE`   Name of the package
 
+* :code:`--create BOOL`   Change project creation status
+
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
 * :code:`--dir DIRECTORY`   Dir where package sources are stored (src by default)
@@ -706,6 +712,8 @@ With argument **--upgrade**, it can also be used to reformat the toml files, fro
 
 Where options are:
 
+
+* :code:`--create BOOL`   Change project creation status
 
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
@@ -787,7 +795,7 @@ Before running this command, you should edit the file **$HOME/.config/drom/confi
   author = "John Doe <john.doe@ocaml.org>"
   github-organization = "ocaml"
   license = "LGPL2"
-  copyright = "OCamlPro SAS & Origin Labs SAS"
+  copyright = "OCamlPro SAS"
   opam-repo = "/home/john/GIT/opam-repository"
   
 

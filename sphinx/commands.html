@@ -5,8 +5,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sub-commands and Arguments &mdash; drom master
- (5391db7
-) (2023/04/19 08:29) documentation</title>
+ (3a349aa
+) (2023/04/27 13:09) documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
@@ -32,7 +32,7 @@
           </a>
               <div class="version">
                 master
- (5391db7
+ (3a349aa
 )
               </div>
 <div role="search">
@@ -319,6 +319,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 <ul class="simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">DEPENDENCY</span></code>   Name of dependency</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--add</span></code>   Add as new dependency</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--create</span> <span class="pre">BOOL</span></code>   Change project creation status</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--doc</span> <span class="pre">BOOL</span></code>   Whether dependency is only for doc</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">OCAMLVERSION</span></code>   Set project default OCaml version</p></li>
@@ -466,6 +467,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 <p>Where options are:</p>
 <ul class="simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">PROJECT</span></code>   Name of the project</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--create</span> <span class="pre">BOOL</span></code>   Change project creation status</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--dir</span> <span class="pre">DIRECTORY</span></code>   Dir where package sources are stored (src by default)</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">OCAMLVERSION</span></code>   Set project default OCaml version</p></li>
@@ -533,6 +535,7 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 <p>Where options are:</p>
 <ul class="simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">PACKAGE</span></code>   Name of the package</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">--create</span> <span class="pre">BOOL</span></code>   Change project creation status</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--dir</span> <span class="pre">DIRECTORY</span></code>   Dir where package sources are stored (src by default)</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--edit</span></code>   Edit package.toml description with EDITOR</p></li>
@@ -565,6 +568,7 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 </div>
 <p>Where options are:</p>
 <ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">--create</span> <span class="pre">BOOL</span></code>   Change project creation status</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--diff</span></code>   Print a diff of user-modified files that are being skipped</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--edit</span></code>   Edit project description</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">--edition</span> <span class="pre">OCAMLVERSION</span></code>   Set project default OCaml version</p></li>
@@ -610,7 +614,7 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 <span class="n">author</span> <span class="o">=</span> <span class="s2">&quot;John Doe &lt;john.doe@ocaml.org&gt;&quot;</span>
 <span class="n">github</span><span class="o">-</span><span class="n">organization</span> <span class="o">=</span> <span class="s2">&quot;ocaml&quot;</span>
 <span class="n">license</span> <span class="o">=</span> <span class="s2">&quot;LGPL2&quot;</span>
-<span class="n">copyright</span> <span class="o">=</span> <span class="s2">&quot;OCamlPro SAS &amp; Origin Labs SAS&quot;</span>
+<span class="n">copyright</span> <span class="o">=</span> <span class="s2">&quot;OCamlPro SAS&quot;</span>
 <span class="n">opam</span><span class="o">-</span><span class="n">repo</span> <span class="o">=</span> <span class="s2">&quot;/home/john/GIT/opam-repository&quot;</span>
 </pre></div>
 </div>
@@ -855,7 +859,7 @@ Unpin package dependencies</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright OCamlPro SAS &amp; Origin Labs SAS.</p>
+    <p>&#169; Copyright OCamlPro SAS.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
