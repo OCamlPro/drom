@@ -145,7 +145,6 @@ let update_files share ?args ?(git = false) p =
     | Some edition -> ({ p with edition }, true)
   in
 
-  Printf.eprintf "(1.1) project_create = %b\n%!" p.project_create ;
   let p, changed =
     match args.arg_create with
     | None -> (p, changed)
@@ -155,7 +154,6 @@ let update_files share ?args ?(git = false) p =
         else
           ({ p with project_create = bool }, true)
   in
-  Printf.eprintf "(1.2) project_create = %b\n%!" p.project_create ;
 
   let p, changed =
     match args.arg_min_edition with
