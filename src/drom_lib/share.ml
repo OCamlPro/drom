@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -210,6 +210,7 @@ let load ?(args=default_args()) ?p () =
 
   {
     share_dir ;
+    drom_version ;
     share_version ;
     share_licenses = None ;
     share_projects = None ;

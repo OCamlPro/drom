@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -8,7 +8,11 @@
 (*                                                                        *)
 (**************************************************************************)
 
-type tree = Branch of string * tree list
+module TYPES = struct
+  type tree = Branch of string * tree list
+end
+
+open TYPES
 
 let up_down = "│  "
 
@@ -41,3 +45,6 @@ let print_tree indent tree =
       iter_branches indent branches
   in
   iter indent ~last:true tree
+
+let print_tree ?(indent = "") tree =
+  print_tree indent tree

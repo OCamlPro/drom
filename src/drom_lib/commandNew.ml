@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -18,7 +18,7 @@ open EzFile.OP
 let cmd_name = "new"
 
 let print_dir name dir =
-  let open EzPrintTree in
+  let open EzPrintTree.TYPES in
   let rec iter name dir =
     let files = Sys.readdir dir in
     Array.sort compare files;
@@ -51,7 +51,7 @@ let print_dir name dir =
              files ) )
   in
   let tree = iter name dir in
-  print_tree "" tree
+  EzPrintTree.print_tree tree
 
 let rec find_project_package name packages =
   match packages with
@@ -111,6 +111,7 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
   in
   let p =
     { Globals.dummy_project with
+      project_create = true;
       package;
       packages;
       project_share_repo = Some ( Share.share_repo_default () );
@@ -140,7 +141,7 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
       ci_systems = Globals.default_ci_systems;
       profiles = StringMap.empty;
       skip_dirs = [];
-      fields = StringMap.empty
+      fields = StringMap.empty;
     }
   in
   package.project <- p;
@@ -215,8 +216,9 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     project_share_version = Some share.share_version ;
   } in
 
-  Update.update_files share ~twice:true ~create:true ~git:true ~args p;
-  print_dir (name ^ "/") "."
+  Update.update_files share ~warning:false ~twice:true ~git:true ~args p;
+  print_dir (name ^ "/") ".";
+  Update.display_create_warning p
 
 (* lookup for "drom.toml" and update it *)
 let action ~skeleton ~name ~inplace ~dir ~args =

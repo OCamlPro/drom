@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -62,7 +62,7 @@ let action ~skeleton ~edit ~args =
                 args.arg_upgrade )
         }
       in
-      Update.update_files share ~twice:false ~args ~create:false ~git:true p
+      Update.update_files share ~twice:false ~args ~git:true p
 
 let cmd =
   let skeleton = ref None in

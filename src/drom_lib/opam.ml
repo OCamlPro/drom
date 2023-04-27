@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -163,7 +163,7 @@ let opam_of_package kind share package =
           | Virtual -> begin
               match StringMap.find "gen-opam" package.p_fields with
               | exception _ -> []
-              | s -> (
+              | s ->
                   match String.lowercase s with
                   | "all" ->
                       List.map
@@ -177,7 +177,7 @@ let opam_of_package kind share package =
                              filename )
                         (List.filter (fun pp -> package != pp) p.packages)
                   | "some" -> []
-                  | _ -> [] )
+                  | _ -> []
             end
           | _ ->
               [ OpamParser.FullPos.value_from_string
@@ -212,11 +212,11 @@ let opam_of_package kind share package =
             (List.map (fun (name, version, url) ->
                  list [
                    string (match version with
-                     | None -> name
-                     | Some version ->
-                         Printf.sprintf "%s.%s" name version) ;
-                     string url ;
-                   ]
+                       | None -> name
+                       | Some version ->
+                           Printf.sprintf "%s.%s" name version) ;
+                   string url ;
+                 ]
                ) pin_depends)]
   in
   let file_contents =

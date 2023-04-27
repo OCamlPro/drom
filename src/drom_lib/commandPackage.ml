@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -265,7 +265,7 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
   in
   let args = { args with arg_upgrade = upgrade } in
   let twice = create <> None in
-  Update.update_files share ~twice ~create:false ~git:true p ~args;
+  Update.update_files share ~twice ~git:true p ~args;
   ()
 
 let cmd =

@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -154,6 +154,7 @@ let rec dummy_project =
     year = (Misc.date ()).Unix.tm_year;
     generators = StringSet.empty;
     dune_version = current_dune_version ;
+    project_create = false ;
   }
 
 and dummy_package =

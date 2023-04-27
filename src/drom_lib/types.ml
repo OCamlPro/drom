@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -108,7 +108,8 @@ and project =
     mutable tools : (string * dependency) list;
     mutable fields : string StringMap.t;
     year : int;
-    mutable dune_version : string
+    mutable dune_version : string;
+    mutable project_create : bool ;
   }
 
 and profile = { flags : string StringMap.t }
@@ -139,13 +140,13 @@ type switch_arg =
 (* These flags are used during file generation. They can either be set
    in the file itself, or in the 'flags' section of the skeleton. *)
 type flags =
-  { mutable flag_file : string;
-    mutable flag_create : bool;
-    mutable flag_record : bool;
+  { mutable flag_file : string option;
+    mutable flag_create : bool option;
+    mutable flag_record : bool option;
     mutable flag_skips : string list;
-    mutable flag_skip : bool;
-    mutable flag_subst : bool;
-    mutable flag_perm : int;
+    mutable flag_skip : bool option;
+    mutable flag_subst : bool option;
+    mutable flag_perm : int option;
     flag_skipper : bool list ref
   }
 
@@ -170,6 +171,7 @@ type license =
 type share = {
   share_dir : string ;
   share_version : string ;
+  drom_version : string ;
   mutable share_licenses : license StringMap.t option ;
   mutable share_projects : skeleton StringMap.t option ;
   mutable share_packages : skeleton StringMap.t option ;

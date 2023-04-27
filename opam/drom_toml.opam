@@ -2,7 +2,7 @@
 # Do not modify, or add to the `skip` field of `drom.toml`.
 opam-version: "2.0"
 name: "drom_toml"
-version: "0.9.1"
+version: "0.9.2~dev2"
 license: "LGPL-2.1-only WITH OCaml-LGPL-linking-exception"
 synopsis:
   "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
@@ -13,11 +13,11 @@ sphinx and odoc documentation. It has specific knowledge of Github and
 will generate files for Github Actions CI and Github pages.
 """
 authors: [
-  "Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"
+  "Fabrice Le Fessant <fabrice.le_fessant@ocamlpro.com>"
   "Léo Andrès <leo.andres@ocamlpro.com>"
 ]
 maintainer: [
-  "Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"
+  "Fabrice Le Fessant <fabrice.le_fessant@ocamlpro.com>"
   "Léo Andrès <leo.andres@ocamlpro.com>"
 ]
 homepage: "https://ocamlpro.github.io/drom"

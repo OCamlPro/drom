@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*  Copyright (c) 2023 OCamlPro SAS & Origin Labs SAS                     *)
+(*  Copyright (c) 2023 OCamlPro SAS                                       *)
 (*                                                                        *)
 (*  All rights reserved.                                                  *)
 (*  This file is distributed under the terms of the GNU Lesser General    *)

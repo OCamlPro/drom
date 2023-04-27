@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -76,7 +76,7 @@ let find_author config =
     in
     Printf.sprintf "%s <%s>" user email
 
-let to_files p =
+let to_files share p =
   let version =
     EzToml.empty
     |> EzToml.put_string [ "project"; "drom-version" ] Globals.min_drom_version
@@ -84,8 +84,16 @@ let to_files p =
       p.project_share_repo
     |> EzToml.put_string_option [ "project"; "share-version" ]
       p.project_share_version
-    |> EzToml.to_string
   in
+  let version =
+    Printf.eprintf "drom version : %s\n%!" share.drom_version ;
+    if VersionCompare.compare share.drom_version "0.9.2~dev2" > 0 then begin
+      version |> EzToml.put_bool [ "project"; "create-project" ]
+      p.project_create
+    end else
+      version
+  in
+  let version = EzToml.to_string version in
   let package =
     EzToml.empty
     |> EzToml.put_string [ "project"; "name" ] p.package.name
@@ -331,6 +339,15 @@ let project_of_toml ?file ?default table =
         Error.raise
           "Invalid drom.toml: both 'share-repo' and 'share-version' must be specified."
   end;
+
+  let project_create =
+    match
+      EzToml.get_bool_option table [ project_key; "create-project" ]
+        ~default:false
+    with
+      | Some v -> v
+      | None -> false
+  in
 
   let skeleton =
     EzToml.get_string_option table
@@ -623,6 +640,7 @@ let project_of_toml ?file ?default table =
       generators;
       year;
       dune_version;
+      project_create;
     }
   in
   package.project <- project;

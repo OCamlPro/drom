@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -15,32 +15,23 @@ open Types
 
 let cmd_name = "config"
 
+let sprintf_flag flag fmt =
+  match flag with
+  | None -> ""
+  | Some x ->
+      Printf.sprintf fmt x
+
 let string_of_flags f =
   Printf.sprintf "{%s%s%s%s%s%s }"
-    ( if f.flag_file <> "" then
-      Printf.sprintf " file = %S;" f.flag_file
-    else
-      "" )
-    ( if f.flag_create then
-      " create = true;"
-    else
-      "" )
-    ( if not f.flag_record then
-      " record = false;"
-    else
-      "" )
-    ( if f.flag_skip then
-      " skip = true;"
-    else
-      "" )
-    ( if not f.flag_subst then
-      " subst = false;"
-    else
-      "" )
-    ( if f.flag_skips <> [] then
-      Printf.sprintf " skips = [%s];" (String.concat " " f.flag_skips)
-    else
-      "" )
+    (sprintf_flag f.flag_file " file = %S;" )
+    (sprintf_flag f.flag_create " create = %b;" )
+    (sprintf_flag f.flag_record " record = %b;" )
+    (sprintf_flag f.flag_skip " skip = %b;")
+    (sprintf_flag f.flag_subst " subst = %b;")
+    (match f.flag_skips with
+     | [] -> ""
+     | list ->
+         Printf.sprintf " skips = [%s];" (String.concat " " list))
 
 let string_of_skeleton s =
   match !Globals.verbosity with

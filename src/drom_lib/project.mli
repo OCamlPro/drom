@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -16,7 +16,7 @@ val get : unit -> Types.project * string
 
 val of_file : ?default:Types.project -> string -> Types.project
 
-val to_files : Types.project -> (string * string) list
+val to_files : Types.share -> Types.project -> (string * string) list
 
 val of_string : msg:string -> ?default:Types.project -> string -> Types.project
 

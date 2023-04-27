@@ -8,18 +8,10 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open Ezcmd.V2
+module TYPES : sig
 
-let cmd_name = "build-deps"
+  type tree = Branch of string * tree list
 
-let action ~args () =
-  let (_p : Types.project) =
-    Build.build ~force_build_deps:true ~build_deps:true ~build:false ~args ()
-  in
-  ()
+end
 
-let cmd =
-  let args, specs = Build.build_args () in
-  EZCMD.sub cmd_name
-    (fun () -> action ~args ())
-    ~args:specs ~doc:"Install build dependencies only"
+val print_tree : ?indent:string -> TYPES.tree -> unit

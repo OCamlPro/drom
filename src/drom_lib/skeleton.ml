@@ -1,6 +1,6 @@
 (**************************************************************************)
 (*                                                                        *)
-(*    Copyright 2020 OCamlPro & Origin Labs                               *)
+(*    Copyright 2020 OCamlPro                                             *)
 (*                                                                        *)
 (*  All rights reserved. This file is distributed under the terms of the  *)
 (*  GNU Lesser General Public License version 2.1, with the special       *)
@@ -14,14 +14,14 @@ open Ez_file.V1
 open EzFile.OP
 
 let default_flags =
-  { flag_file = "";
-    flag_create = false;
-    flag_record = true;
+  { flag_file = None;
+    flag_create = None; (* false *)
+    flag_record = None; (* true; *)
     flag_skips = [];
-    flag_skip = false;
+    flag_skip = None;  (* false; *)
+    flag_subst = None; (* true; *)
+    flag_perm = None; (* 0 *)
     flag_skipper = ref [];
-    flag_subst = true;
-    flag_perm = 0
   }
 
 let bracket flags eval_cond =
@@ -29,51 +29,60 @@ let bracket flags eval_cond =
     match EzString.split s ':' with
     (* set the name of the file *)
     | [ "file"; v ] ->
-      flags.flag_file <- v;
-      ""
+        flags.flag_file <- Some v;
+        ""
     (* create only once *)
     | [ "create" ] ->
-      flags.flag_create <- true;
-      ""
+        flags.flag_create <- Some true;
+        ""
     (* skip with this tag *)
     | [ "skip"; v ] ->
-      flags.flag_skips <- v :: flags.flag_skips;
-      ""
+        flags.flag_skips <- v :: flags.flag_skips;
+        ""
     (* skip always *)
     | [ "skip" ] ->
-      flags.flag_skip <- true;
-      ""
+        flags.flag_skip <- Some true;
+        ""
     (* do not record in .git *)
     | [ "no-record" ] ->
-      flags.flag_record <- false;
-      ""
+        flags.flag_record <- Some false;
+        ""
     | [ "perm"; v ] ->
-      flags.flag_perm <- int_of_string ("0o" ^ v);
-      ""
+        flags.flag_perm <- Some ( int_of_string ("0o" ^ v) );
+        ""
     | "if" :: cond ->
-      flags.flag_skipper := not (eval_cond state.Subst.p cond) :: !(flags.flag_skipper);
-      ""
+        let cond =
+          match !( flags.flag_skipper ) with
+          | true :: _ -> true
+          | _ -> not (eval_cond state.Subst.p cond)
+        in
+        flags.flag_skipper := cond :: !(flags.flag_skipper);
+        ""
     | [ "else" ] ->
-      (flags.flag_skipper :=
-         match !(flags.flag_skipper) with
-         | cond :: tail -> not cond :: tail
-         | [] -> failwith "else without if" );
-      ""
+        let list =
+          match !( flags.flag_skipper ) with
+          | _ :: ( (true :: _) as tail ) -> true :: tail
+          | cond :: tail -> not cond :: tail
+          | [] -> failwith "else without if"
+        in
+        flags.flag_skipper := list ;
+        ""
     | "elif" :: cond ->
-      (flags.flag_skipper :=
-         match !(flags.flag_skipper) with
-         | _cond :: tail -> not (eval_cond state.Subst.p cond) :: tail
-         | [] -> failwith "elif without if" );
-      ""
+        (flags.flag_skipper :=
+           match !(flags.flag_skipper) with
+           | _ :: ( (true :: _) as tail ) -> true :: tail
+           | _cond :: tail -> not (eval_cond state.Subst.p cond) :: tail
+           | [] -> failwith "elif without if" );
+        ""
     | [ ("fi" | "endif") ] ->
-      (flags.flag_skipper :=
-         match !(flags.flag_skipper) with
-         | _ :: tail -> tail
-         | [] -> failwith "fi without if" );
-      ""
+        (flags.flag_skipper :=
+           match !(flags.flag_skipper) with
+           | _ :: tail -> tail
+           | [] -> failwith "fi without if" );
+        ""
     | _ ->
-      Printf.eprintf "Warning: unknown flag %S\n%!" s;
-      ""
+        Printf.eprintf "Warning: unknown flag %S\n%!" s;
+        ""
   in
   bracket flags
 
@@ -82,19 +91,20 @@ let flags_encoding =
     ~to_toml:(fun _ -> assert false)
     ~of_toml:(fun ~key v ->
       let table = EzToml.expect_table ~key ~name:"flags" v in
-      let flags = { default_flags with flag_file = "" } in
+      let flags = { default_flags with flag_file = None } in
       EzToml.iter
         (fun k v ->
           let key = key @ [ k ] in
           match k with
-          | "file" -> flags.flag_file <- EzToml.expect_string ~key v
-          | "create" -> flags.flag_create <- EzToml.expect_bool ~key v
-          | "record" -> flags.flag_record <- EzToml.expect_bool ~key v
+          | "file" -> flags.flag_file <- Some ( EzToml.expect_string ~key v )
+          | "create" -> flags.flag_create <- Some ( EzToml.expect_bool ~key v )
+          | "record" -> flags.flag_record <- Some ( EzToml.expect_bool ~key v )
           | "skips" -> flags.flag_skips <- EzToml.expect_string_list ~key v
-          | "skip" -> flags.flag_skip <- EzToml.expect_bool ~key v
-          | "subst" -> flags.flag_subst <- EzToml.expect_bool ~key v
+          | "skip" -> flags.flag_skip <- Some ( EzToml.expect_bool ~key v )
+          | "subst" -> flags.flag_subst <- Some ( EzToml.expect_bool ~key v )
           | "perm" ->
-            flags.flag_perm <- int_of_string ("0o" ^ EzToml.expect_string ~key v)
+              flags.flag_perm <-
+                Some ( int_of_string ("0o" ^ EzToml.expect_string ~key v) )
           | _ ->
             Printf.eprintf "Warning: discarding flags field %S\n%!"
               (EzToml.key2str key) )
@@ -224,6 +234,24 @@ let rec inherit_files self_files super_files =
       (super_file, super_content, super_mode)
       :: inherit_files self_files super_files_tail
 
+let combine_option keep default =
+  match keep, default with
+  | None, None -> None
+  | Some _, _ -> keep
+  | _ -> default
+
+let combine_flags keep default =
+  {
+    flag_file = combine_option keep.flag_file default.flag_file;
+    flag_create = combine_option keep.flag_create default.flag_create;
+    flag_record = combine_option keep.flag_record default.flag_record;
+    flag_skips = keep.flag_skips @ default.flag_skips ;
+    flag_skip = combine_option keep.flag_skip default.flag_skip;
+    flag_subst = combine_option keep.flag_subst default.flag_subst;
+    flag_perm = combine_option keep.flag_perm default.flag_perm;
+    flag_skipper = ref [];
+  }
+
 let lookup_skeleton skeletons name =
   let rec iter name =
     match StringMap.find name skeletons with
@@ -242,7 +270,8 @@ let lookup_skeleton skeletons name =
             in
             let skeleton_flags =
               StringMap.union
-                (fun _ x _ -> Some x)
+                (fun _ flag_self flag_super ->
+                   Some (combine_flags flag_self flag_super))
                 self.skeleton_flags super.skeleton_flags
             in
             { skeleton_name = name;
@@ -327,8 +356,10 @@ let rec eval_project_cond p cond =
   match cond with
   | [ "skeleton"; "is"; skeleton ] ->
     Misc.project_skeleton p.skeleton = skeleton
-  | [ "skip"; skip ] -> List.mem skip p.skip
-  | [ "gen"; skip ] -> not (List.mem skip p.skip)
+  | [ "skip"; skip ] ->
+      List.mem skip p.skip || List.mem ("@" ^ skip) p.skip
+  | [ "gen"; skip ] ->
+      not (List.mem skip p.skip || List.mem ("@" ^ skip) p.skip)
   | "not" :: cond -> not (eval_project_cond p cond)
   | [ "true" ] -> true
   | [ "false" ] -> false
@@ -379,7 +410,7 @@ let rec eval_package_cond p cond =
       (String.concat ":" cond)
 
 let default_flags flag_file =
-  { default_flags with flag_file; flag_skipper = ref [] }
+  { default_flags with flag_file = Some flag_file; flag_skipper = ref [] }
 
 let skeleton_flags skeleton file =
   try
@@ -397,20 +428,33 @@ let skeleton_flags skeleton file =
               skeleton.skeleton_name file;
           raise Not_found )
     in
-    if flags.flag_file = "" then
-      { flags with flag_file = file; flag_skipper = ref [] }
-    else
-      { flags with flag_skipper = ref [] }
+    match flags.flag_file with
+    | None ->
+        { flags with flag_file = Some file; flag_skipper = ref [] }
+    | _ ->
+        { flags with flag_skipper = ref [] }
   with
   | Not_found -> default_flags file
 
 let skeleton_flags skeleton file perm =
   let flags = skeleton_flags skeleton file in
-  if flags.flag_perm = 0 then flags.flag_perm <- perm;
-  if Filename.check_suffix file ".sh" then
-    flags.flag_perm <- flags.flag_perm lor 0o111;
+  let perm =
+    match flags.flag_perm with
+    | None -> perm
+    | Some perm ->
+        if Filename.check_suffix file ".sh" then
+          perm lor 0o111
+        else
+          perm
+  in
+  flags.flag_perm <- Some perm ;
   flags
 
+
+let default_to option v =
+  match option with
+  | None -> v
+  | Some v -> v
 
 let write_skeleton_files
     ?dir
@@ -435,30 +479,52 @@ let write_skeleton_files
       flags
     in
     (* name of file can also be substituted *)
-    let flag_file = subst state flag_file in
+    let flag_file = match flag_file with
+      | None -> assert false
+      | Some flag_file ->
+          flags.flag_file <- None ;
+          subst state flag_file
+    in
+    let perm = match perm with
+      | None -> assert false
+      | Some perm -> perm
+    in
     let dir_file = match dir with
       | None -> flag_file
-      | Some dir -> dir // flag_file in
+      | Some dir -> dir // flag_file
+    in
     let content =
-      let template = dir_file ^ ".drom" in
-      if Sys.file_exists template then
+      let template = dir_file ^ ".drom-tpl" in
+      if Sys.file_exists template then begin
         EzFile.read_file template
-      else content
+      end else content
     in
     backup_skeleton dir_file content ~perm;
     let bracket = bracket flags eval_cond in
-    let content =
-      if flags.flag_subst then
-        try
-          subst { state with postpone }
-            ~bracket ~skipper:flags.flag_skipper content
-        with
-        | Not_found ->
-            Printf.kprintf failwith "Exception Not_found in %S\n%!" file
-      else
-        content
+    let new_content =
+      match flags.flag_subst with
+      | Some false -> content
+      | None (* flag_subst default is true *)
+      | Some true ->
+          try
+            subst { state with postpone }
+              ~bracket ~skipper:flags.flag_skipper content
+          with
+          | Not_found ->
+              Printf.kprintf failwith "Exception Not_found in %S\n%!" file
     in
-    write_file dir_file ~create ~skips ~content ~record ~skip ~perm
+    let create = default_to create false in
+    let record = default_to record true in
+    let skip = default_to skip false in
+    let dir_file = (* check if flags.flag_file was modified during subst *)
+      match flags.flag_file with
+      | None -> dir_file
+      | Some flag_file ->
+          match dir with
+          | None -> flag_file
+          | Some dir -> dir // flag_file
+    in
+    write_file dir_file ~create ~skips ~content:new_content ~record ~skip ~perm
   in
   List.iter
     (fun file_item ->
@@ -478,15 +544,20 @@ let write_skeleton_files
 let subst_package_file flags content state =
   let bracket = bracket flags eval_package_cond in
   let content =
-    if flags.flag_subst then
-      try
-        Subst.package state
-          ~bracket ~skipper:flags.flag_skipper content
-      with
-      | Not_found ->
-        Printf.kprintf failwith "Exception Not_found in %S\n%!" flags.flag_file
-    else
-      content
+    match flags.flag_subst with
+    | Some false -> content
+    | None | Some true ->
+        try
+          Subst.package state
+            ~bracket ~skipper:flags.flag_skipper content
+        with
+        | Not_found ->
+            Printf.kprintf failwith
+              "Exception Not_found in %S\n%!"
+              (match flags.flag_file with
+               | None -> assert false
+               | Some file -> file)
+
   in
   content
 
