@@ -108,8 +108,10 @@ let action () =
   in
   print_deps "dependencies" p.dependencies;
   print_deps "tools" p.tools;
-  EzPrintTree.print_tree (Branch ("File drom.toml", List.rev !branches));
-  ()
+  let tree =
+    EzPrintTree.print_tree (Branch ("File drom.toml", List.rev !branches))
+  in
+  Printf.printf "%s%!" tree
 
 let cmd =
   EZCMD.sub cmd_name action ~doc:"Display a tree of dependencies"

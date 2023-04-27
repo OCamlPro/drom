@@ -145,7 +145,6 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     }
   in
   package.project <- p;
-
   if not inplace then (
     if Sys.file_exists name then
       Error.raise "A directory %s already exists" name;
@@ -167,7 +166,6 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
             (p, Some content) )
   in
   let p, p_content = iter_skeleton skeleton.skeleton_toml in
-
   (* second, resolve package skeletons *)
   let rec iter_skeleton package list =
     match list with
@@ -212,12 +210,14 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
   (* Set fields that are not in templates *)
   let p = {
     p with
+    project_create = true ;
     project_share_repo = Some ( Share.share_repo_default () );
     project_share_version = Some share.share_version ;
   } in
 
   Update.update_files share ~warning:false ~twice:true ~git:true ~args p;
-  print_dir (name ^ "/") ".";
+  let tree = print_dir (name ^ "/") "." in
+  Printf.eprintf "%s%!" tree ;
   Update.display_create_warning p
 
 (* lookup for "drom.toml" and update it *)

@@ -20,31 +20,33 @@ let up_right_down = "├──"
 
 let up_right = "└──"
 
-let print_tree indent tree =
+let print_tree b indent tree =
   let rec iter indent ~last = function
     | Branch (s, branches) ->
-      Printf.printf "%s%s %s\n" indent
-        ( if last then
-          up_right
-        else
-          up_right_down )
-        s;
-      iter_branches
-        ( indent
-        ^
-        if last then
-          "   "
-        else
-          up_down )
-        branches
+        Printf.bprintf b "%s%s %s\n" indent
+          ( if last then
+              up_right
+            else
+              up_right_down )
+          s;
+        iter_branches
+          ( indent
+            ^
+            if last then
+              "   "
+            else
+              up_down )
+          branches
   and iter_branches indent = function
     | [] -> ()
     | [ branch ] -> iter (indent ^ " ") ~last:true branch
     | branch :: branches ->
-      iter (indent ^ " ") ~last:false branch;
-      iter_branches indent branches
+        iter (indent ^ " ") ~last:false branch;
+        iter_branches indent branches
   in
   iter indent ~last:true tree
 
 let print_tree ?(indent = "") tree =
-  print_tree indent tree
+  let b = Buffer.create 10_000 in
+  print_tree b indent tree ;
+  Buffer.contents b

@@ -86,7 +86,6 @@ let to_files share p =
       p.project_share_version
   in
   let version =
-    Printf.eprintf "drom version : %s\n%!" share.drom_version ;
     if VersionCompare.compare share.drom_version "0.9.2~dev2" > 0 then begin
       version |> EzToml.put_bool [ "project"; "create-project" ]
       p.project_create
