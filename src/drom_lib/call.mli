@@ -13,6 +13,8 @@ val call :
   ?stdout:Unix.file_descr ->
   ?stderr:Unix.file_descr ->
   ?print_args:string list -> string list -> unit
+
+(* Does not print anything, except in case of error. Exception on error *)
 val silent : ?print_args:string list -> string list -> unit
 
 val call_get_fst_line : string -> string option

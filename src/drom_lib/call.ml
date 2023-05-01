@@ -95,6 +95,7 @@ let after_hook ?args ~command () =
 let tmpfile () =
   Filename.temp_file "tmpfile" ".tmp"
 
+(* Does not print anything, except in case of error. Exception on error *)
 let silent ?print_args args =
   let out_file = tmpfile () in
   let fd = Unix.openfile out_file
