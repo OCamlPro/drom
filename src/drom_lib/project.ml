@@ -531,6 +531,28 @@ let project_of_toml ?file ?default table =
         generators := StringSet.union !generators p_generators )
     packages;
   let generators = !generators in
+  let menhir_version =
+    List.fold_left
+      (fun acc p ->
+         match p.p_menhir with
+         | None -> acc
+         | Some { version; _ } ->
+             match acc with
+             | None ->
+                 begin try Scanf.sscanf version "%d.%d" (fun _ _ -> ())
+                   with Scanf.Scan_failure s ->
+                     Error.raise "In package %s, invalid menhir version: %s (error: %s)"
+                       p.name version s
+                 end;
+                 Some version
+             | Some acc_version ->
+                 if version <> acc_version then
+                   Error.raise "In package %s, menhir version is different from other packages \
+                                got %s when expecting %s" p.name version acc_version;
+                 acc)
+      None
+      packages
+  in
   let year = EzToml.get_int_default table [ project_key; "year" ] d.year in
 
   (* Check dune specification consistency :
@@ -637,6 +659,7 @@ let project_of_toml ?file ?default table =
       profile;
       fields;
       generators;
+      menhir_version;
       year;
       dune_version;
       project_create;

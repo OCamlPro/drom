@@ -34,11 +34,14 @@ Overview of sub-commands::
   fmt
     Format sources with ocamlformat
   
+  headers
+    Check all headers in project
+  
   install
     Build & install the project in the project opam switch
   
-  lock (since version 0.2.1)
-    Generate a .locked file for the project
+  list (since version 0.4.0)
+    List available project or packages skeletons
   
   new
     Create a new project
@@ -70,6 +73,12 @@ Overview of sub-commands::
   test
     Run tests
   
+  toml
+    Read TOML files and print them back on stdout
+  
+  top
+    Run the ocaml toplevel
+  
   tree
     Display a tree of dependencies
   
@@ -80,8 +89,8 @@ Overview of sub-commands::
     Update packages in switch
 
 
-drom build
-~~~~~~~~~~~~
+main.exe build
+~~~~~~~~~~~~~~~~
 
 Build a project
 
@@ -110,7 +119,7 @@ This command performs the following actions:
 **USAGE**
 ::
   
-  drom build [OPTIONS]
+  main.exe build [OPTIONS]
 
 Where options are:
 
@@ -118,8 +127,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -130,8 +137,8 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom build-deps
-~~~~~~~~~~~~~~~~~
+main.exe build-deps
+~~~~~~~~~~~~~~~~~~~~~
 
 Install build dependencies only
 
@@ -139,7 +146,7 @@ Install build dependencies only
 **USAGE**
 ::
   
-  drom build-deps [OPTIONS]
+  main.exe build-deps [OPTIONS]
 
 Where options are:
 
@@ -147,8 +154,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -159,8 +164,8 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom clean
-~~~~~~~~~~~~
+main.exe clean
+~~~~~~~~~~~~~~~~
 
 Clean the project from build files
 
@@ -168,7 +173,7 @@ Clean the project from build files
 **USAGE**
 ::
   
-  drom clean [OPTIONS]
+  main.exe clean [OPTIONS]
 
 Where options are:
 
@@ -176,8 +181,8 @@ Where options are:
 * :code:`--distclean`   Also remove _opam/ (local switch) and _drom/
 
 
-drom config
-~~~~~~~~~~~~~
+main.exe config
+~~~~~~~~~~~~~~~~~
 
 Read/write configuration
 
@@ -194,27 +199,35 @@ This command is useful to read/write drom configuration
 
 The following displays the list of project skeletons:
 ::
+
   
   drom config --project-skeletons
   
 
+
 **USAGE**
 ::
   
-  drom config [OPTIONS]
+  main.exe config [OPTIONS]
 
 Where options are:
 
 
-* :code:`--drom-project-skeletons`   List available project skeletons from drom
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
 
 * :code:`--package-skeletons`   List available package skeletons
 
 * :code:`--project-skeletons`   List available project skeletons
 
+* :code:`--reclone-share`   Reclone share repository
 
-drom dep (since version 0.2.1)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* :code:`--share-repo SHARE_REPO`   Set the repository URL of the share database (use 'default' for default repo)
+
+* :code:`--share-version SHARE_VERSION`   Set the version of share database (use 'latest' for latest version)
+
+
+main.exe dep (since version 0.2.1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Manage dependency of a package
 
@@ -237,11 +250,13 @@ If no modification argument is provided, the dependency is printed in the termin
 **EXAMPLE**
 
 ::
+
   
   drom dep --package drom_lib --add ez_cmdliner --ver ">0.1"
   drom dep --package drom_lib --remove ez_cmdliner
   drom dep --add --tool odoc --ver ">1.0 <3.0" --doc true
   
+
 
 
 **VERSION SPECIFICATION**
@@ -264,7 +279,7 @@ The version specified in the **--ver VERSION** argument should follow the follow
 **USAGE**
 ::
   
-  drom dep DEPENDENCY [OPTIONS]
+  main.exe dep DEPENDENCY [OPTIONS]
 
 Where options are:
 
@@ -273,19 +288,35 @@ Where options are:
 
 * :code:`--add`   Add as new dependency
 
+* :code:`--create BOOL`   Change project creation status
+
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
 * :code:`--doc BOOL`   Whether dependency is only for doc
+
+* :code:`--edition OCAMLVERSION`   Set project default OCaml version
 
 * :code:`-f` or :code:`--force`   Force overwriting modified files (otherwise, they would be skipped)
 
 * :code:`--lib LIBNAME`   Dependency should have this libname in dune
 
+* :code:`--min-edition OCAMLVERSION`   Set project minimal OCaml version
+
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
+
+* :code:`--opt BOOL`   Whether dependency is optional or not
+
 * :code:`--package PACKAGE`   Attach dependency to this package name
 
 * :code:`--promote-skip`   Promote user-modified files to skip field
 
+* :code:`--reclone-share`   Reclone share repository
+
 * :code:`--remove`   Remove this dependency
+
+* :code:`--share-repo SHARE_REPO`   Set the repository URL of the share database (use 'default' for default repo)
+
+* :code:`--share-version SHARE_VERSION`   Set the version of share database (use 'latest' for latest version)
 
 * :code:`--skip FILE`   Add FILE to skip list
 
@@ -298,8 +329,8 @@ Where options are:
 * :code:`--ver VERSION`   Dependency should have this version
 
 
-drom dev-deps
-~~~~~~~~~~~~~~~
+main.exe dev-deps
+~~~~~~~~~~~~~~~~~~~
 
 Install dev dependencies (odoc, ocamlformat, merlin, etc.)
 
@@ -307,7 +338,7 @@ Install dev dependencies (odoc, ocamlformat, merlin, etc.)
 **USAGE**
 ::
   
-  drom dev-deps [OPTIONS]
+  main.exe dev-deps [OPTIONS]
 
 Where options are:
 
@@ -315,8 +346,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -327,8 +356,8 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom doc
-~~~~~~~~~~
+main.exe doc
+~~~~~~~~~~~~~~
 
 Generate all documentation (API and Sphinx)
 
@@ -336,7 +365,7 @@ Generate all documentation (API and Sphinx)
 **USAGE**
 ::
   
-  drom doc [OPTIONS]
+  main.exe doc [OPTIONS]
 
 Where options are:
 
@@ -344,8 +373,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -358,8 +385,8 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom fmt
-~~~~~~~~~~
+main.exe fmt
+~~~~~~~~~~~~~~
 
 Format sources with ocamlformat
 
@@ -367,7 +394,7 @@ Format sources with ocamlformat
 **USAGE**
 ::
   
-  drom fmt [OPTIONS]
+  main.exe fmt [OPTIONS]
 
 Where options are:
 
@@ -378,8 +405,6 @@ Where options are:
 
 * :code:`--local`   Create a local switch instead of using a global switch
 
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
-
 * :code:`--profile PROFILE`   Build profile to use
 
 * :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
@@ -389,8 +414,33 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom install
-~~~~~~~~~~~~~~
+main.exe headers
+~~~~~~~~~~~~~~~~~~
+
+Check all headers in project
+
+
+**USAGE**
+::
+  
+  main.exe headers [OPTIONS]
+
+Where options are:
+
+
+* :code:`--add-default HEADER_ID`   Add this header as the default for these files
+
+* :code:`--from HEADER_ID`   Replace this header
+
+* :code:`--replace SRC:DST`   Replace header SRC by header DST
+
+* :code:`--replace-by HEADER_ID`   Replace by this header
+
+* :code:`--skip HEADER_ID`   skip this header when printing headers
+
+
+main.exe install
+~~~~~~~~~~~~~~~~~~
 
 Build & install the project in the project opam switch
 
@@ -398,16 +448,16 @@ Build & install the project in the project opam switch
 **USAGE**
 ::
   
-  drom install [OPTIONS]
+  main.exe install PACKAGES [OPTIONS]
 
 Where options are:
 
 
+* :code:`PACKAGES`   Specify the list of packages to install
+
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -418,45 +468,39 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom lock (since version 0.2.1)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.exe list (since version 0.4.0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Generate a .locked file for the project
+List available project or packages skeletons
 
 
 
 **DESCRIPTION**
 
 
-This command will build the project and call **opam lock** to generate a file *${project}-deps.opam.locked* with the exact dependencies used during the build, and that file will be added to the git-managed files of the project to be committed.
-
-The generated .locked file can be used by other developers to build in the exact same environment by calling **drom build --locked** to build the current project.
+List available project or packages skeletons
 
 **USAGE**
 ::
   
-  drom lock [OPTIONS]
+  main.exe list ARGUMENTS [OPTIONS]
 
 Where options are:
 
 
-* :code:`--edition VERSION`   Use this OCaml edition
+* :code:`ARGUMENTS`   Use 'projects' or 'packages' to display corresponding skeletons
 
-* :code:`--local`   Create a local switch instead of using a global switch
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
 
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
+* :code:`--reclone-share`   Reclone share repository
 
-* :code:`--profile PROFILE`   Build profile to use
+* :code:`--share-repo SHARE_REPO`   Set the repository URL of the share database (use 'default' for default repo)
 
-* :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
-
-* :code:`--upgrade`   Upgrade project files from drom.toml
-
-* :code:`-y` or :code:`--yes`   Reply yes to all questions
+* :code:`--share-version SHARE_VERSION`   Set the version of share database (use 'latest' for latest version)
 
 
-drom new
-~~~~~~~~~~
+main.exe new
+~~~~~~~~~~~~~~
 
 Create a new project
 
@@ -473,43 +517,57 @@ This command creates a new project, with name **PROJECT** in a directory **PROJE
 
 The following command creates a project containing library **my_lib** in **src/my_lib**:
 ::
+
   
   drom new my_lib --skeleton library
   
 
+
 The following command creates a project containing a library **hello_lib** in **src/hello_lib** and a program **hello** in **src/hello** calling the library:
 ::
+
   
   drom new hello --skeleton program
   
 
+
 **USAGE**
 ::
   
-  drom new PROJECT [OPTIONS]
+  main.exe new PROJECT [OPTIONS]
 
 Where options are:
 
 
 * :code:`PROJECT`   Name of the project
 
-* :code:`--binary`   Compile to binary
+* :code:`--create BOOL`   Change project creation status
 
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
 * :code:`--dir DIRECTORY`   Dir where package sources are stored (src by default)
 
+* :code:`--edition OCAMLVERSION`   Set project default OCaml version
+
 * :code:`-f` or :code:`--force`   Force overwriting modified files (otherwise, they would be skipped)
 
 * :code:`--inplace`   Create project in the the current directory
 
-* :code:`--javascript`   Compile to javascript
-
 * :code:`--library`   Project contains only a library
+
+* :code:`--min-edition OCAMLVERSION`   Set project minimal OCaml version
+
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
 
 * :code:`--program`   Project contains only a program
 
 * :code:`--promote-skip`   Promote user-modified files to skip field
+
+* :code:`--reclone-share`   Reclone share repository
+
+* :code:`--share-repo SHARE_REPO`   Set the repository URL of the share database (use 'default' for default repo)
+
+* :code:`--share-version SHARE_VERSION`   Set the version of share database (use 'latest' for latest version)
 
 * :code:`--skeleton SKELETON`   Create project using a predefined skeleton or one specified in ~/.config/drom/skeletons/
 
@@ -520,8 +578,8 @@ Where options are:
 * :code:`--virtual`   Package is virtual, i.e. no code
 
 
-drom odoc
-~~~~~~~~~~~
+main.exe odoc
+~~~~~~~~~~~~~~~
 
 Generate API documentation using odoc in the _drom/docs/doc directory
 
@@ -529,7 +587,7 @@ Generate API documentation using odoc in the _drom/docs/doc directory
 **USAGE**
 ::
   
-  drom odoc [OPTIONS]
+  main.exe odoc [OPTIONS]
 
 Where options are:
 
@@ -537,8 +595,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -551,8 +607,8 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom opam-plugin (since version 0.2.1)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.exe opam-plugin (since version 0.2.1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Install drom as an opam plugin (called by 'opam drom')
 
@@ -572,7 +628,7 @@ This command performs the following actions:
 **USAGE**
 ::
   
-  drom opam-plugin [OPTIONS]
+  main.exe opam-plugin [OPTIONS]
 
 Where options are:
 
@@ -580,8 +636,8 @@ Where options are:
 * :code:`--remove`   Remove drom as an opam plugin
 
 
-drom package
-~~~~~~~~~~~~~~
+main.exe package
+~~~~~~~~~~~~~~~~~~
 
 Manage a package within a project
 
@@ -589,32 +645,40 @@ Manage a package within a project
 **USAGE**
 ::
   
-  drom package PACKAGE [OPTIONS]
+  main.exe package PACKAGE [OPTIONS]
 
 Where options are:
 
 
 * :code:`PACKAGE`   Name of the package
 
-* :code:`--binary`   Compile to binary
+* :code:`--create BOOL`   Change project creation status
 
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
 * :code:`--dir DIRECTORY`   Dir where package sources are stored (src by default)
 
+* :code:`--edit`   Edit package.toml description with EDITOR
+
+* :code:`--edition OCAMLVERSION`   Set project default OCaml version
+
 * :code:`-f` or :code:`--force`   Force overwriting modified files (otherwise, they would be skipped)
 
-* :code:`--javascript`   Compile to javascript
-
 * :code:`--library`   Package is a library
+
+* :code:`--min-edition OCAMLVERSION`   Set project minimal OCaml version
 
 * :code:`--new SKELETON`   Add a new package to the project with skeleton NAME
 
 * :code:`--new-file FILENAME`   (since version 0.2.1) Add new source file
 
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
+
 * :code:`--program`   Package is a program
 
 * :code:`--promote-skip`   Promote user-modified files to skip field
+
+* :code:`--reclone-share`   Reclone share repository
 
 * :code:`--remove`   (since version 0.2.1) Remove a package from the project
 
@@ -627,8 +691,8 @@ Where options are:
 * :code:`--virtual`   Package is virtual, i.e. no code
 
 
-drom project
-~~~~~~~~~~~~~~
+main.exe project
+~~~~~~~~~~~~~~~~~~
 
 Update an existing project
 
@@ -644,24 +708,36 @@ With argument **--upgrade**, it can also be used to reformat the toml files, fro
 **USAGE**
 ::
   
-  drom project [OPTIONS]
+  main.exe project [OPTIONS]
 
 Where options are:
 
 
-* :code:`--binary`   Compile to binary
+* :code:`--create BOOL`   Change project creation status
 
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
+* :code:`--edit`   Edit project description
+
+* :code:`--edition OCAMLVERSION`   Set project default OCaml version
+
 * :code:`-f` or :code:`--force`   Force overwriting modified files (otherwise, they would be skipped)
 
-* :code:`--javascript`   Compile to javascript
-
 * :code:`--library`   Project contains only a library. Equivalent to **--skeleton library**
+
+* :code:`--min-edition OCAMLVERSION`   Set project minimal OCaml version
+
+* :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
 
 * :code:`--program`   Project contains a program. Equivalent to **--skeleton program**. The generated project will be composed of a *library* package and a *driver* package calling the **Main.main** of the library.
 
 * :code:`--promote-skip`   Promote user-modified files to skip field
+
+* :code:`--reclone-share`   Reclone share repository
+
+* :code:`--share-repo SHARE_REPO`   Set the repository URL of the share database (use 'default' for default repo)
+
+* :code:`--share-version SHARE_VERSION`   Set the version of share database (use 'latest' for latest version)
 
 * :code:`--skeleton SKELETON`   Create project using a predefined skeleton or one specified in ~/.config/drom/skeletons/
 
@@ -674,8 +750,8 @@ Where options are:
 * :code:`--virtual`   Package is virtual, i.e. no code. Equivalent to **--skeleton virtual**.
 
 
-drom promote
-~~~~~~~~~~~~~~
+main.exe promote
+~~~~~~~~~~~~~~~~~~
 
 Promote detected changes after running drom test or drom fmt
 
@@ -683,7 +759,7 @@ Promote detected changes after running drom test or drom fmt
 **USAGE**
 ::
   
-  drom promote [OPTIONS]
+  main.exe promote [OPTIONS]
 
 Where options are:
 
@@ -691,8 +767,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -703,8 +777,8 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom publish
-~~~~~~~~~~~~~~
+main.exe publish
+~~~~~~~~~~~~~~~~~~
 
 Update opam files with checksums and copy them to a local opam-repository for publication
 
@@ -715,14 +789,16 @@ Update opam files with checksums and copy them to a local opam-repository for pu
 
 Before running this command, you should edit the file **$HOME/.config/drom/config** and set the value of the *opam-repo* option, like:
 ::
+
   
   [user]
   author = "John Doe <john.doe@ocaml.org>"
   github-organization = "ocaml"
   license = "LGPL2"
-  copyright = "OCamlPro SAS & Origin Labs SAS"
+  copyright = "OCamlPro SAS"
   opam-repo = "/home/john/GIT/opam-repository"
   
+
 
 Alternatively, you can run it with option **--opam-repo REPOSITORY**.
 
@@ -741,11 +817,14 @@ In both case, **REPOSITORY** should be the absolute path to the location of a lo
 
 Note that, prior to calling **drom publish**, you should update the opam-repository to the latest version of the **master** branch:
 ::
+
   git checkout master
   git pull ocaml master
 
+
 Once the opam files have been added, you should push them to your local fork of opam-repository and create a merge request:
 ::
+
   cd ~/GIT/opam-repository
   git checkout -b z-$(date --iso)-new-package-version
   git add packages
@@ -753,12 +832,13 @@ Once the opam files have been added, you should push them to your local fork of 
   git push
   
 
+
 To download the project source archive, **drom publish** will either use the *archive* URL of the drom.toml file, or the Github URL (if the *github-organization* is set in the project), assuming in this later case that the version starts with 'v' (like v1.0.0). Two substitutions are allowed in *archive*: *${version}* for the version, *${name}* for the package name.
 
 **USAGE**
 ::
   
-  drom publish [OPTIONS]
+  main.exe publish [OPTIONS]
 
 Where options are:
 
@@ -770,8 +850,8 @@ Where options are:
 * :code:`--opam-repo DIRECTORY`   Path to local git-managed opam-repository. The path should be absolute. Overwrites the value *opam-repo* from *$HOME/.config/drom/config*
 
 
-drom run
-~~~~~~~~~~
+main.exe run
+~~~~~~~~~~~~~~
 
 Execute the project
 
@@ -794,7 +874,7 @@ This command performs the following actions:
 **USAGE**
 ::
   
-  drom run ARGUMENTS [OPTIONS]
+  main.exe run ARGUMENTS [OPTIONS]
 
 Where options are:
 
@@ -804,8 +884,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`-p PACKAGE`   Package to run
 
@@ -818,8 +896,8 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom sphinx
-~~~~~~~~~~~~~
+main.exe sphinx
+~~~~~~~~~~~~~~~~~
 
 Generate documentation using sphinx
 
@@ -845,7 +923,7 @@ This command performs the following actions:
 **USAGE**
 ::
   
-  drom sphinx [OPTIONS]
+  main.exe sphinx [OPTIONS]
 
 Where options are:
 
@@ -853,8 +931,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -867,8 +943,8 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom test
-~~~~~~~~~~~
+main.exe test
+~~~~~~~~~~~~~~~
 
 Run tests
 
@@ -890,7 +966,7 @@ If the **--all** argument was provided, a file **_drom/dune-workspace.dev** is c
 **USAGE**
 ::
   
-  drom test [OPTIONS]
+  main.exe test [OPTIONS]
 
 Where options are:
 
@@ -901,7 +977,57 @@ Where options are:
 
 * :code:`--local`   Create a local switch instead of using a global switch
 
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
+* :code:`--profile PROFILE`   Build profile to use
+
+* :code:`--switch OPAM_SWITCH`   Use global switch SWITCH instead of creating a local switch
+
+* :code:`--upgrade`   Upgrade project files from drom.toml
+
+* :code:`-y` or :code:`--yes`   Reply yes to all questions
+
+
+main.exe toml
+~~~~~~~~~~~~~~~
+
+Read TOML files and print them back on stdout
+
+
+
+**DESCRIPTION**
+
+
+Test the TOML parser/printer:
+
+**USAGE**
+::
+  
+  main.exe toml FILE [OPTIONS]
+
+Where options are:
+
+
+* :code:`FILE`   Parse FILE and write it back on stdout
+
+
+main.exe top
+~~~~~~~~~~~~~~
+
+Run the ocaml toplevel
+
+
+**USAGE**
+::
+  
+  main.exe top ARGUMENTS [OPTIONS]
+
+Where options are:
+
+
+* :code:`ARGUMENTS`   Provide arguments for the ocaml toplevel
+
+* :code:`--edition VERSION`   Use this OCaml edition
+
+* :code:`--local`   Create a local switch instead of using a global switch
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -912,8 +1038,8 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom tree
-~~~~~~~~~~~
+main.exe tree
+~~~~~~~~~~~~~~~
 
 Display a tree of dependencies
 
@@ -928,6 +1054,7 @@ Print the project as a tree of dependencies, i.e. dependencies are printed as br
 **EXAMPLE**
 
 ::
+
   
   └──drom (/src/drom)
      └──drom_lib (/src/drom_lib)
@@ -945,17 +1072,18 @@ Print the project as a tree of dependencies, i.e. dependencies are printed as br
   └── ocamlformat
   
 
+
 **USAGE**
 ::
   
-  drom tree [OPTIONS]
+  main.exe tree [OPTIONS]
 
 Where options are:
 
 
 
-drom uninstall
-~~~~~~~~~~~~~~~~
+main.exe uninstall
+~~~~~~~~~~~~~~~~~~~~
 
 Uninstall the project from the project opam switch
 
@@ -963,7 +1091,7 @@ Uninstall the project from the project opam switch
 **USAGE**
 ::
   
-  drom uninstall [OPTIONS]
+  main.exe uninstall [OPTIONS]
 
 Where options are:
 
@@ -971,8 +1099,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 
@@ -983,8 +1109,8 @@ Where options are:
 * :code:`-y` or :code:`--yes`   Reply yes to all questions
 
 
-drom update
-~~~~~~~~~~~~~
+main.exe update
+~~~~~~~~~~~~~~~~~
 
 Update packages in switch
 
@@ -1010,7 +1136,7 @@ This command performs the following actions:
 **USAGE**
 ::
   
-  drom update [OPTIONS]
+  main.exe update [OPTIONS]
 
 Where options are:
 
@@ -1018,8 +1144,6 @@ Where options are:
 * :code:`--edition VERSION`   Use this OCaml edition
 
 * :code:`--local`   Create a local switch instead of using a global switch
-
-* :code:`--locked`   (since version 0.2.1) Use .locked file if it exists
 
 * :code:`--profile PROFILE`   Build profile to use
 

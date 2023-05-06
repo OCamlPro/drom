@@ -25,7 +25,58 @@ let package_dune_files package =
   let p_generators =
     match package.p_generators with
     | None -> StringSet.of_list [ "ocamllex"; "ocamlyacc" ]
-    | Some generators -> generators
+    | Some generators ->
+        begin match package.p_menhir with
+          | Some { parser; tokens = menhir_tokens; _ }
+            when StringSet.mem "menhir" generators ->
+              let { modules; tokens; merge_into; flags; infer } = parser in
+              Printf.bprintf b "(menhir\n  (modules";
+              List.iter (fun module_ -> Printf.bprintf b " %s" module_) modules;
+              Printf.bprintf b ")";
+              begin match merge_into with
+                | Some merge_into ->
+                    Printf.bprintf b "\n  (merge_into %s)" merge_into
+                | None ->
+                    if List.length modules > 1 then
+                      let merge_into = List.rev modules |> List.hd in
+                      Printf.bprintf b "\n  (merge_into %s)" merge_into
+              end;
+              begin match flags with
+                | Some flags ->
+                    Printf.bprintf b "\n  (flags";
+                    List.iter (fun flag -> Printf.bprintf b " %s" flag) flags;
+                    begin match tokens with
+                      | Some tokens -> Printf.bprintf b "--external-token %s" tokens
+                      | None -> ()
+                    end;
+                    Printf.bprintf b ")";
+                | None -> ()
+              end;
+              begin match infer with
+                | Some infer -> Printf.bprintf b "\n  (infer %B)" infer
+                | None -> ()
+              end;
+              Printf.bprintf b ")\n";
+              begin match menhir_tokens with
+                | Some { modules; flags; } ->
+                    Printf.bprintf b "(menhir (modules";
+                    List.iter (fun module_ -> Printf.bprintf b " %s" module_) modules;
+                    Printf.bprintf b ")";
+                    begin match flags with
+                      | Some flags ->
+                          Printf.bprintf b "\n  (flags";
+                          List.iter (fun flag -> Printf.bprintf b " %s" flag) flags;
+                          Printf.bprintf b " --only-tokens)";
+                      | None -> ()
+                    end;
+                    Printf.bprintf b ")\n"
+                | None -> ()
+              end
+          | Some _ ->
+              Printf.eprintf "'menhir' table defined without menhir generator"
+          | None -> ()
+        end;
+        generators
   in
   ( match Sys.readdir package.dir with
   | exception _ -> ()
@@ -56,15 +107,18 @@ let package_dune_files package =
               Printf.bprintf b "\n  (mode %s)" mode;
               Printf.bprintf b ")\n"
           end else if StringSet.mem "menhir" p_generators then begin
-            Printf.bprintf b "(menhir (modules %s)"
-              (Filename.chop_suffix file ".mly");
-            List.iter
-              (fun ext ->
-                match StringMap.find ("menhir-" ^ ext) package.p_fields with
-                | exception Not_found -> ()
-                | s -> Printf.bprintf b "\n  (%s %s)" ext s )
-              [ "flags"; "into"; "infer" ];
-            Printf.bprintf b ")\n"
+            match package.p_menhir with
+            | None ->
+                Printf.bprintf b "(menhir (modules %s)"
+                  (Filename.chop_suffix file ".mly");
+                List.iter
+                  (fun ext ->
+                     match StringMap.find ("menhir-" ^ ext) package.p_fields with
+                     | exception Not_found -> ()
+                     | s -> Printf.bprintf b "\n  (%s %s)" ext s )
+                  [ "flags"; "into"; "infer" ];
+                Printf.bprintf b ")\n"
+            | Some _ -> ()
           end else
             Printf.eprintf "no generator for %s\n%!" file
         end )
@@ -148,7 +202,11 @@ let packages p =
   (* If menhir is used as a generator, prevents dune from modifying
      dune-project by adding this line ourselves. *)
   if StringSet.mem "menhir" p.generators then
-    Buffer.add_string b "(using menhir 2.0)\n";
+    begin match p.menhir_version with
+    | Some version ->
+        Printf.bprintf b "(using menhir %s)\n" version
+    | None -> Buffer.add_string b "(using menhir 2.0)\n"
+    end;
 
   List.iter add_package p.packages;
   Buffer.contents b
