@@ -239,7 +239,7 @@ let opam_of_package kind share package =
               Misc.p_synopsis package );
       var_string "description" (Misc.p_description package);
       var_list "authors" (List.map string (Misc.p_authors package));
-      var_list "maintainer" (List.map string p.authors)
+      var_list "maintainer" (List.map string (Misc.p_authors package))
     ]
     @ List.rev !optionals
     @ build_commands

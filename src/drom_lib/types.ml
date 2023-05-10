@@ -97,6 +97,7 @@ and project =
     mutable menhir_version : string option; (* from sub-packages *)
     (* common fields *)
     mutable skeleton : string option;
+    project_drom_version : string ;
     project_share_repo : string option ;
     project_share_version : string option ;
     edition : string;
