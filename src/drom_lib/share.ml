@@ -127,7 +127,7 @@ let load ?(args=default_args()) ?p () =
     end;
     git ~cd:share_dir cmd args
   in
-  let git_silent_fail cmd args =
+  let git_fail_ok cmd args =
     try git cmd args with _ -> ()
   in
   let git_fetch_all () =
@@ -139,17 +139,72 @@ let load ?(args=default_args()) ?p () =
     if branch = "master" then
       Error.raise "Don't use 'master' as a development branch of the share-repo.";
     git "checkout" [ "master" ];
-    git_silent_fail "branch" [ "-D" ; branch ];
+    git_fail_ok "branch" [ "-D" ; branch ];
     git "checkout" [ "-b"; branch ; "--track" ; remote ^ "/" ^ branch ];
   in
-  let get_version () =
-    String.trim ( EzFile.read_file ( share_dir // "VERSION" ))
+  let read_first_line file =
+    let ic = open_in file in
+    let line = input_line ic in
+    close_in ic;
+    String.trim line
   in
-  let get_latest () =
-    String.trim ( EzFile.read_file ( share_dir // "LATEST" ))
+  let get_version () =
+    String.trim ( read_first_line ( share_dir // "VERSION" ))
+  in
+  let get_latest ?(version = Version.version) () =
+    let filename = share_dir // "LATEST_VERSIONS" in
+    if Sys.file_exists filename then
+      let lines = EzFile.read_lines_to_list filename in
+      (* format:
+         * '#' at 0 for line comment
+         * 'dev $VERSION' for VERSION is the LATEST version
+         * '$DROM_VERSION $VERSION' for $VERSION is for all drom versions
+            before $DROM_VERSION
+      *)
+      let rec iter share_version lines =
+        match lines with
+          [] -> begin
+            match share_version with
+            | None ->
+                failwith "LATEST_VERSIONS does not contain a matching version"
+            | Some share_version -> share_version
+          end
+        | line :: lines ->
+            let len = String.length line in
+            if len > 0 && line.[0] = '#' then (* allow comments *)
+              iter share_version lines
+            else
+              let drom_version, new_share_version = EzString.cut_at line ' ' in
+              if
+                drom_version <> "dev" &&
+                VersionCompare.compare version drom_version >= 0 then
+                iter share_version []
+              else
+                let share_version = String.trim new_share_version in
+                iter ( Some share_version ) lines
+      in
+      iter None lines
+    else
+      String.trim ( read_first_line ( share_dir // "LATEST" ))
   in
   let get_drom_version () =
-    String.trim ( EzFile.read_file ( share_dir // "DROM_VERSION" ))
+    String.trim ( read_first_line ( share_dir // "DROM_VERSION" ))
+  in
+  let git_checkout_latest () =
+    (* Some testing of the algorithm...
+    List.iter (fun version ->
+        let latest = get_latest ~version () in
+        Printf.eprintf "Latest for %s is %s\n%!" version latest)
+      [ "0.8.0"; "0.8.1"; "0.9.0" ; "0.9.1" ; "0.9.2" ; "0.9.3" ];
+       *)
+    let latest = get_latest  () in
+    git "checkout" [ latest ];
+    let version = get_version () in
+    if version <> latest then
+      Error.raise
+        "Version %S in VERSION does not match tag version %S"
+        version latest;
+    version
   in
   let share_version = match version with
     | None
@@ -157,14 +212,7 @@ let load ?(args=default_args()) ?p () =
         git_fetch_all ();
         git "checkout" [ "master" ];
         git "merge" [ "--ff-only" ];
-        let latest = get_latest () in
-        git "checkout" [ latest ];
-        let version = get_version () in
-        if version <> latest then
-          Error.raise
-            "Version %S in VERSION does not match tag version %S"
-            version latest;
-        version
+        git_checkout_latest ()
 
     | Some version ->
 
@@ -177,26 +225,29 @@ let load ?(args=default_args()) ?p () =
             git_fetch_all () ;
             git_checkout_branch ~remote branch;
             version
+        | [ "branch" ; remote; branch ; "latest" ] ->
+            git_fetch_all () ;
+            git_checkout_branch ~remote branch;
+            let _latest_version = git_checkout_latest () in
+            version
         | _ ->
+            (* always checkout the version by tag. *)
+            begin
+              try
+                git "checkout" [ version ];
+                let current_version = get_version () in
+                if current_version <> version then
+                  failwith "Probably buggy version, try refetch"
+              with _ ->
+                git_fetch_all ();
+                (* TODO: in case of error, the version does not exit ? *)
+                git "checkout" [ version ];
+            end;
             let current_version = get_version () in
             if current_version <> version then begin
-              begin
-                try
-                  git "checkout" [ version ];
-                  let current_version = get_version () in
-                  if current_version <> version then
-                    failwith "Probably buggy version, try refetch"
-                with _ ->
-                  git_fetch_all ();
-                  (* TODO: in case of error, the version does not exit ? *)
-                  git "checkout" [ version ];
-              end;
-              let current_version = get_version () in
-              if current_version <> version then begin
-                Error.raise "Version %S does not seem to exist (latest seems to be %S).\nCheck in repo %s"
-                  version current_version
-                  share_dir
-              end;
+              Error.raise "Version %S does not seem to exist (latest seems to be %S).\nCheck in repo %s"
+                version current_version
+                share_dir
             end;
             version
   in

@@ -12,6 +12,10 @@
     `path/file.ext.drom-tpl` exists, in which case it will use it as
     a template for the file. It is possible to use
     `_drom/skeleton/path/file.ext` as an example to create such a file.
+* Support for LATEST_VERSIONS in drom-share: the LATEST_VERSIONS file
+  indicates, for any version of `drom`, the latest version of the
+  drom-share repo that should be used. It makes the `LATEST` file
+  obsolete (as it was incomplete in that matter)
 
 ## v0.9.1
 * Fix Sys_error docs/style.css because of missing file
