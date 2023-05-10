@@ -5,8 +5,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Project Description &mdash; drom master
- (75a452c
-) (2023/04/27 14:52) documentation</title>
+ (b2bc2e6
+) (2023/05/10 15:04) documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
@@ -32,7 +32,7 @@
           </a>
               <div class="version">
                 master
- (75a452c
+ (b2bc2e6
 )
               </div>
 <div role="search">
@@ -416,6 +416,27 @@ if not specified:</p>
 <li><p><code class="code docutils literal notranslate"><span class="pre">pack-modules</span></code>: whether modules should be wrapped or not</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">synopsis</span></code>: the one-line description of the package</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">version</span></code>: the version of this package</p></li>
+</ul>
+<p>For <code class="code docutils literal notranslate"><span class="pre">menhir</span></code> usage, you will find an optional <code class="code docutils literal notranslate"><span class="pre">[menhir]</span></code> talbe,
+with the following fields:
+* <code class="code docutils literal notranslate"><span class="pre">version</span></code>: the version of the menhir language configuration
+* <code class="code docutils literal notranslate"><span class="pre">parser</span></code>: a table with the following fields:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">modules</span></code>: an array of string with all your menhir modules</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">merge-into</span></code>: an optional string for the name of the merged module,
+by default the last value in the <code class="code docutils literal notranslate"><span class="pre">modules</span></code> array if not provided</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">tokens</span></code>: an optional to add the <code class="code docutils literal notranslate"><span class="pre">--external-tokens</span></code> flag</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">flags</span></code>: an optional string array with menhir flags</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">infer</span></code>: an optional boolean which adds the <code class="code docutils literal notranslate"><span class="pre">(infer</span> <span class="pre">&lt;bool&gt;)</span></code>
+rule to the <code class="code docutils literal notranslate"><span class="pre">dune</span></code> file</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">tokens</span></code>: an optional table that will add the <cite>–only-tokens</cite> flag
+to the <code class="code docutils literal notranslate"><span class="pre">menhir</span></code> rule with the following fiels:
+* <code class="code docutils literal notranslate"><span class="pre">modules</span></code>: a string array with all the modules to add to the rule
+* <code class="code docutils literal notranslate"><span class="pre">flags</span></code>: an optional string array with all the flags to add to menhir</p></li>
 </ul>
 <p>Finally, there is a table <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> within a
 package. Currently, the following fields are used by skeletons:</p>

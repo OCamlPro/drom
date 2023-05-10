@@ -5,8 +5,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Use Cases &mdash; drom master
- (75a452c
-) (2023/04/27 14:52) documentation</title>
+ (b2bc2e6
+) (2023/05/10 15:04) documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
@@ -32,7 +32,7 @@
           </a>
               <div class="version">
                 master
- (75a452c
+ (b2bc2e6
 )
               </div>
 <div role="search">
@@ -102,8 +102,40 @@ package, setting:</p>
 </div>
 <p>into the corresponding <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> will likely work. However, if
 you have multiple <code class="code docutils literal notranslate"><span class="pre">.mly</span></code> files, or
-need to specify custom <code class="code docutils literal notranslate"><span class="pre">menhir</span></code> flags, you’ll probably need to tune
-the <code class="code docutils literal notranslate"><span class="pre">dune</span></code> generation. A good way to properly do that is to disable
+need to specify custom <code class="code docutils literal notranslate"><span class="pre">menhir</span></code> flags, you’ll probably need to use the
+<code class="code docutils literal notranslate"><span class="pre">[menhir]</span></code> table in the corresponding <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code>. For example:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">[</span><span class="n">menhir</span><span class="o">]</span>
+<span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;2.1&quot;</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="n">modules</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;tokens&quot;</span><span class="o">,</span> <span class="s2">&quot;parser&quot;</span><span class="o">],</span>
+  <span class="n">merge</span><span class="o">-</span><span class="n">into</span> <span class="o">=</span> <span class="s2">&quot;parser&quot;</span><span class="o">,</span>
+  <span class="n">tokens</span> <span class="o">=</span> <span class="s2">&quot;Tokens&quot;</span><span class="o">,</span>
+  <span class="n">flags</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&quot;--table&quot;</span> <span class="o">],</span>
+  <span class="n">infer</span> <span class="o">=</span> <span class="bp">true</span>
+<span class="o">}</span>
+<span class="n">tokens</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="n">modules</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;tokens&quot;</span><span class="o">],</span>
+  <span class="o">#</span><span class="n">flags</span> <span class="o">=</span> <span class="bp">[]</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This will generate the following rules in you <code class="code docutils literal notranslate"><span class="pre">dune</span></code> file:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="n">menhir</span>
+  <span class="o">(</span><span class="n">modules</span> <span class="n">tokens</span><span class="o">)</span>
+  <span class="o">(</span><span class="n">flags</span> <span class="o">--</span><span class="n">only</span><span class="o">-</span><span class="n">tokens</span><span class="o">))</span>
+<span class="o">(</span><span class="n">menhir</span>
+  <span class="o">(</span><span class="n">modules</span> <span class="n">tokens</span> <span class="n">parser</span><span class="o">)</span>
+  <span class="o">(</span><span class="n">merge_into</span> <span class="n">parser</span><span class="o">)</span>
+  <span class="o">(</span><span class="n">flags</span> <span class="o">--</span><span class="n">table</span> <span class="o">--</span><span class="k">external</span><span class="o">-</span><span class="n">tokens</span> <span class="nc">Tokens</span><span class="o">)</span>
+  <span class="o">(</span><span class="n">infer</span> <span class="bp">true</span><span class="o">))</span>
+</pre></div>
+</div>
+<p>and will add:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="n">using</span> <span class="n">menhir</span> <span class="mi">2</span><span class="o">.</span><span class="mi">1</span><span class="o">)</span>
+</pre></div>
+</div>
+<p>to the <code class="code docutils literal notranslate"><span class="pre">dune-project</span></code> file.</p>
+<p>You can also can tune the <code class="code docutils literal notranslate"><span class="pre">dune</span></code> generation. A good way to properly do that is to disable
 the default <code class="code docutils literal notranslate"><span class="pre">dune</span></code> generation for and add your own <code class="code docutils literal notranslate"><span class="pre">dune</span></code> stanzas
 for parsing generators. First, add <code class="code docutils literal notranslate"><span class="pre">(using</span> <span class="pre">menhir</span> <span class="pre">X.Y)</span></code> in the
 <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code>’s ‘<code class="code docutils literal notranslate"><span class="pre">dune-project-header</span></code> field. For example:</p>
