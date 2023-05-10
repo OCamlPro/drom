@@ -153,6 +153,7 @@ let rec dummy_project =
     share_dirs = [ "share" ];
     year = (Misc.date ()).Unix.tm_year;
     generators = StringSet.empty;
+    menhir_version = None;
     dune_version = current_dune_version ;
     project_create = false ;
   }
@@ -175,6 +176,7 @@ and dummy_package =
     p_fields = StringMap.empty;
     p_skeleton = None;
     p_generators = None;
+    p_menhir = None;
     p_skip = None;
     p_optional = None;
     p_preprocess = None

@@ -42,6 +42,28 @@ type dependency =
     dep_pin: string option;
   }
 
+type menhir_parser =
+  {
+    modules: string list;
+    tokens: string option;
+    merge_into: string option;
+    flags: string list option;
+    infer: bool option;
+  }
+
+type menhir_tokens =
+  {
+    modules: string list;
+    flags: string list option;
+  }
+
+type menhir =
+  {
+    version: string;
+    parser: menhir_parser;
+    tokens: menhir_tokens option;
+  }
+
 type package =
   { name : string;
     mutable dir : string;
@@ -59,6 +81,7 @@ type package =
     mutable p_gen_version : string option;
     mutable p_fields : string StringMap.t;
     mutable p_generators : StringSet.t option;
+    mutable p_menhir : menhir option;
     mutable p_file : string option;
     mutable p_skip : string list option;
     mutable p_optional : bool option;
@@ -71,6 +94,7 @@ and project =
     mutable packages : package list;
     mutable file : string option; (* name of the file *)
     mutable generators : StringSet.t; (* sub-packages *)
+    mutable menhir_version : string option; (* from sub-packages *)
     (* common fields *)
     mutable skeleton : string option;
     project_share_repo : string option ;

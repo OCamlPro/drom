@@ -193,6 +193,65 @@ let stringSet_encoding =
 
 let fields_encoding = EzToml.ENCODING.stringMap EzToml.string_encoding
 
+let menhir_parser_encoding =
+  EzToml.encoding
+    ~to_toml:(fun { modules; tokens; merge_into; flags; infer } ->
+        let table = EzToml.empty
+                    |> EzToml.put_string_list [ "modules" ] modules
+                    |> EzToml.put_string_option [ "tokens" ] tokens
+                    |> EzToml.put_string_option [ "merge-into" ] merge_into
+                    |> EzToml.put_string_list_option [ "flags" ] flags
+                    |> EzToml.put_bool_option [ "infer" ] infer
+        in
+        TTable table)
+    ~of_toml:(fun ~key v ->
+      match v with
+        | TTable table ->
+            let modules = EzToml.get_string_list_default table [ "modules" ] [ "parser" ] in
+            let tokens = EzToml.get_string_option table [ "tokens" ] in
+            let merge_into = EzToml.get_string_option table [ "merge-into" ] in
+            let flags = EzToml.get_string_list_option table [ "flags" ] in
+            let infer = EzToml.get_bool_option table [ "infer" ] in
+            { modules; tokens; merge_into; flags; infer; }
+        | _ ->
+            EzToml.expecting_type "table" key)
+
+let menhir_tokens_encoding =
+  EzToml.encoding
+    ~to_toml:(fun { modules; flags } ->
+        let table = EzToml.empty
+                    |> EzToml.put_string_list [ "modules" ] modules
+                    |> EzToml.put_string_list_option [ "flags" ] flags
+        in
+      TTable table)
+    ~of_toml:(fun ~key v ->
+        match v with
+        | TTable table ->
+            let modules = EzToml.get_string_list_default table [ "modules"] [ "tokens" ] in
+            let flags = EzToml.get_string_list_option table [ "flags" ] in
+            { modules; flags }
+        | _ ->
+            EzToml.expecting_type "table" key)
+
+let menhir_encoding =
+  EzToml.encoding
+    ~to_toml:(fun { version; parser; tokens } ->
+        let table = EzToml.empty
+                    |> EzToml.put_string [ "version" ] version
+                    |> EzToml.put_encoding menhir_parser_encoding [ "parser" ] parser
+                    |> EzToml.put_encoding_option menhir_tokens_encoding [ "encoding" ] tokens
+        in
+        TTable table)
+    ~of_toml:(fun ~key v ->
+        match v with
+        | TTable table ->
+            let version = EzToml.get_string table [ "version" ] in
+            let parser = EzToml.get_encoding menhir_parser_encoding table [ "parser" ] in
+            let tokens = EzToml.get_encoding_option menhir_tokens_encoding table [ "tokens" ] in
+            { version; parser; tokens; }
+        | _ ->
+            EzToml.expecting_type "talbe" key)
+
 let to_string pk =
   EzToml.CONST.(
     s_
@@ -226,6 +285,15 @@ let to_string pk =
             ]
           ~default:{|generators = [ "ocamllex", "menhir" ]|}
           (encoding_option stringSet_encoding pk.p_generators);
+        option "menhir"
+          ~comment:
+            [ "menhir options for the package";
+              "Example:";
+              {|version = "2.0"|};
+              {|parser = { modules = ["parser"]; tokens = "Tokens" }|};
+              {|tokens = { modules = ["tokens"]}|};
+            ]
+          (encoding_option menhir_encoding pk.p_menhir);
         option "pack-modules"
           ~comment:
             [ "whether all modules should be packed/wrapped (default is true)" ]
@@ -366,6 +434,9 @@ let of_toml ?default ?p_file table =
     EzToml.get_encoding_option stringSet_encoding table [ "generators" ]
       ?default:default.p_generators
   in
+  let p_menhir =
+    EzToml.get_encoding_option menhir_encoding table [ "menhir" ]
+  in
   let p_fields =
     EzToml.get_encoding_default fields_encoding table [ "fields" ]
       StringMap.empty
@@ -400,6 +471,7 @@ let of_toml ?default ?p_file table =
     p_fields;
     p_skeleton;
     p_generators;
+    p_menhir;
     p_skip;
     p_optional
   }

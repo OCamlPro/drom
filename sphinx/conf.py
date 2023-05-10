@@ -220,4 +220,4 @@ epub_exclude_files = ['search.html']
 
 # entry point for setup
 def setup(app):
-    app.add_stylesheet('css/fixes.css')
+    app.add_css_file('css/fixes.css')

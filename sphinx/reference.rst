@@ -340,6 +340,22 @@ if not specified:
 * :code:`synopsis`: the one-line description of the package
 * :code:`version`: the version of this package
 
+For :code:`menhir` usage, you will find an optional :code:`[menhir]` talbe,
+with the following fields:
+* :code:`version`: the version of the menhir language configuration
+* :code:`parser`: a table with the following fields:
+  * :code:`modules`: an array of string with all your menhir modules
+  * :code:`merge-into`: an optional string for the name of the merged module,
+    by default the last value in the :code:`modules` array if not provided
+  * :code:`tokens`: an optional to add the :code:`--external-tokens` flag
+  * :code:`flags`: an optional string array with menhir flags
+  * :code:`infer`: an optional boolean which adds the :code:`(infer <bool>)`
+    rule to the :code:`dune` file
+* :code:`tokens`: an optional table that will add the `--only-tokens` flag
+  to the :code:`menhir` rule with the following fiels:
+  * :code:`modules`: a string array with all the modules to add to the rule
+  * :code:`flags`: an optional string array with all the flags to add to menhir
+
 Finally, there is a table :code:`[fields]` within a
 package. Currently, the following fields are used by skeletons:
 
