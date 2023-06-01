@@ -268,8 +268,14 @@ let project_brace ({ p; _ }  as state ) v =
       end )
   (* for dune *)
   | "dune-version" -> p.dune_version
-  | "dune-lang" ->
-    String.sub p.dune_version 0 (String.rindex p.dune_version '.')
+  | "dune-lang" -> 
+    (* just parsing basic semver for now. *)
+    begin
+      try 
+        Scanf.sscanf p.dune_version "%i.%i" 
+          (fun major minor -> Printf.sprintf "%i.%i" major minor)
+      with _ -> raise (Failure ("Cannot parse dune-version: " ^ p.dune_version))
+    end
   | "dune-cram" ->
     if VersionCompare.compare p.dune_version "2.7.0" >= 0 then
       "(cram enable)"
