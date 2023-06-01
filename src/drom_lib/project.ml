@@ -586,7 +586,7 @@ let project_of_toml ?file ?default table =
             p.name )
       packages;
     (* Legacy dune lang version specification *)
-    let legacy_dune_lang = StringMap.find_opt "dune" p_fields in
+    let legacy_dune_lang = StringMap.find_opt "dune-lang" p_fields in
     (* Checking that dune is not in project's dependencies, which has no more
        meaning than in packages *)
     if find dependencies then
@@ -594,7 +594,7 @@ let project_of_toml ?file ?default table =
         "Project has a dune dependency which has no meaning. Please remove it \
          or move it in [tools].";
     (* The valid way of overriding dune version. *)
-    let dune_tool_spec = List.assoc_opt "dune" dependencies in
+    let dune_tool_spec = List.assoc_opt "dune" tools in
     (* Normalizing *)
     let versions =
       match (legacy_dune_lang, dune_tool_spec) with
