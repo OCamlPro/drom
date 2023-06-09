@@ -12,6 +12,8 @@ open Ezcmd.V2
 open EZCMD.TYPES
 open Update
 open Types
+open Ez_file.V1
+open EzFile.OP
 
 let cmd_name = "dep"
 
@@ -179,6 +181,19 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
     ()
   )
 
+let generate_opam_for_windows ~args () =
+  EzFile.make_dir ~p:true "opam/windows";
+  let p, _inferred_dir = Project.get () in
+  let _args, share_args = args in
+  let share = Share.load ~args:share_args ~p () in
+  List.iter (fun package ->
+      let full_filename = "opam/windows" //
+                          package.name ^ "-windows.opam" in
+      EzFile.write_file full_filename
+        (Opam.opam_of_package ~windows:true Single share package)
+    ) p.packages;
+  Printf.eprintf "Cross compilation opam files generated in opam/windows/\n%!"
+
 let cmd =
   let package = ref None in
   let dep = ref None in
@@ -194,46 +209,53 @@ let cmd =
   let share_args, share_specs = Share.args ~set:true () in
   let args = (update_args, share_args) in
   let specs = update_specs @ share_specs in
+  let opam4windows = ref false in
   EZCMD.sub cmd_name
     (fun () ->
-      action ~dep:!dep ~package:!package ~tool:!tool ~add:!add ~remove:!remove
-        ~version:!version ~depname:!depname ~deptest:!deptest ~depdoc:!depdoc
-        ~depopt:!depopt ~args )
+       if !opam4windows then
+         generate_opam_for_windows ~args ()
+       else
+         action ~dep:!dep ~package:!package ~tool:!tool ~add:!add ~remove:!remove
+           ~version:!version ~depname:!depname ~deptest:!deptest ~depdoc:!depdoc
+           ~depopt:!depopt ~args )
     ~args:
       ( specs
-      @ [ ( [ "package" ],
-            Arg.String (fun s -> package := Some s),
-            EZCMD.info ~docv:"PACKAGE" "Attach dependency to this package name"
-          );
-          ( [ "tool" ],
-            Arg.Unit (fun () -> tool := true),
-            EZCMD.info "Dependency is a tool, not a library" );
-          ( [ "add" ],
-            Arg.Unit (fun () -> add := true),
-            EZCMD.info "Add as new dependency" );
-          ( [ "remove" ],
-            Arg.Unit (fun () -> tool := true),
-            EZCMD.info "Remove this dependency" );
-          ( [ "ver" ],
-            Arg.String (fun s -> version := Some s),
-            EZCMD.info ~docv:"VERSION" "Dependency should have this version" );
-          ( [ "lib" ],
-            Arg.String (fun s -> depname := Some s),
-            EZCMD.info ~docv:"LIBNAME"
-              "Dependency should have this libname in dune" );
-          ( [ "test" ],
-            Arg.Bool (fun b -> deptest := Some b),
-            EZCMD.info "Whether dependency is only for tests" );
-          ( [ "doc" ],
-            Arg.Bool (fun b -> depdoc := Some b),
-            EZCMD.info "Whether dependency is only for doc" );
-          ( [ "opt" ],
-            Arg.Bool (fun b -> depopt := Some b),
-            EZCMD.info "Whether dependency is optional or not" );
-          ( [],
-            Arg.Anon (0, fun name -> dep := Some name),
-            EZCMD.info ~docv:"DEPENDENCY" "Name of dependency" )
-        ] )
+        @ [ ( [ "package" ],
+              Arg.String (fun s -> package := Some s),
+              EZCMD.info ~docv:"PACKAGE" "Attach dependency to this package name"
+            );
+            ( [ "opam4windows" ],
+              Arg.Unit (fun () -> opam4windows := true),
+              EZCMD.info "Dependency is a tool, not a library" );
+            ( [ "tool" ],
+              Arg.Unit (fun () -> tool := true),
+              EZCMD.info "Dependency is a tool, not a library" );
+            ( [ "add" ],
+              Arg.Unit (fun () -> add := true),
+              EZCMD.info "Add as new dependency" );
+            ( [ "remove" ],
+              Arg.Unit (fun () -> tool := true),
+              EZCMD.info "Remove this dependency" );
+            ( [ "ver" ],
+              Arg.String (fun s -> version := Some s),
+              EZCMD.info ~docv:"VERSION" "Dependency should have this version" );
+            ( [ "lib" ],
+              Arg.String (fun s -> depname := Some s),
+              EZCMD.info ~docv:"LIBNAME"
+                "Dependency should have this libname in dune" );
+            ( [ "test" ],
+              Arg.Bool (fun b -> deptest := Some b),
+              EZCMD.info "Whether dependency is only for tests" );
+            ( [ "doc" ],
+              Arg.Bool (fun b -> depdoc := Some b),
+              EZCMD.info "Whether dependency is only for doc" );
+            ( [ "opt" ],
+              Arg.Bool (fun b -> depopt := Some b),
+              EZCMD.info "Whether dependency is optional or not" );
+            ( [],
+              Arg.Anon (0, fun name -> dep := Some name),
+              EZCMD.info ~docv:"DEPENDENCY" "Name of dependency" )
+          ] )
     ~doc:"Manage dependency of a package" ~version:"0.2.1"
     ~man:
       [ `S "DESCRIPTION";
