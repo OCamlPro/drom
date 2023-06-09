@@ -29,7 +29,7 @@ let dev_repo p =
   | Some s -> Some (Printf.sprintf "git+%s.git" s)
   | None -> None
 
-let opam_of_package kind share package =
+let opam_of_package ?(windows=false) kind share package =
   let p = package.project in
   let open OpamParserTypes.FullPos in
   let filename = "opam" in
@@ -66,12 +66,17 @@ let opam_of_package kind share package =
         [ var "build"
             (OpamParser.FullPos.value_from_string
                (Printf.sprintf "%s%s%s%s"
-                  {|
+                  (Printf.sprintf {|
 [
   ["dune" "subst"] {dev}
-  ["sh" "-c" "./scripts/before.sh build '%{name}%'" ]
-  ["dune" "build" "-p" name "-j" jobs "@install"
+  ["sh" "-c" "./scripts/before.sh build '%%{name}%%'" ]
+  ["dune" "build" "-p" %s "-j" jobs "@install"
 |}
+                  (if windows then
+                     Printf.sprintf "\"%s\" \"-x\" \"windows\"" package.name
+                   else
+                     "name"
+                  ))
                   ( if
                     match StringMap.find "no-opam-test" package.p_fields with
                     | exception Not_found -> false
@@ -110,9 +115,10 @@ let opam_of_package kind share package =
                filename )
         ]
   in
-  let depend_of_dep (name, d) =
+  let depend_of_dep (name, d, is_library) =
     let b = Buffer.create 100 in
-    Printf.bprintf b {| "%s" { |} name;
+    Printf.bprintf b {| "%s" { |}
+      (if is_library && windows then name ^ "-windows" else name);
     List.iteri
       (fun i version ->
          if i > 0 then Printf.bprintf b "& ";
@@ -193,9 +199,12 @@ let opam_of_package kind share package =
                   filename
               ]
         in
-        let alldeps = Misc.p_dependencies package @ Misc.p_tools package in
+        let alldeps =
+          ( List.map (fun (n,d) -> (n,d,true)) @@ Misc.p_dependencies package )
+          @
+          ( List.map (fun (n,d) -> (n,d,false)) @@ Misc.p_tools package ) in
         let depends, depopts =
-          List.partition (fun (_, d) -> not d.depopt) alldeps
+          List.partition (fun (_, d,_) -> not d.depopt) alldeps
         in
         let depends = List.map depend_of_dep depends in
         let depopts = List.map depend_of_dep depopts in
