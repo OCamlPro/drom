@@ -304,6 +304,8 @@ Where options are:
 
 * :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
 
+* :code:`--opam4windows`   Dependency is a tool, not a library
+
 * :code:`--opt BOOL`   Whether dependency is optional or not
 
 * :code:`--package PACKAGE`   Attach dependency to this package name
