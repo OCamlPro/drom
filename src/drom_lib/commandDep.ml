@@ -181,18 +181,19 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
     ()
   )
 
-let generate_opam_for_windows ~args () =
-  EzFile.make_dir ~p:true "opam/windows";
+let generate_opam_for_cross ~cross ~args () =
+  let dir = "opam" // cross in
+  EzFile.make_dir ~p:true dir;
   let p, _inferred_dir = Project.get () in
   let _args, share_args = args in
   let share = Share.load ~args:share_args ~p () in
   List.iter (fun package ->
-      let full_filename = "opam/windows" //
-                          package.name ^ "-windows.opam" in
+      let full_filename = dir //
+                          Printf.sprintf "%s-%s.opam" package.name cross in
       EzFile.write_file full_filename
-        (Opam.opam_of_package ~windows:true Single share package)
+        (Opam.opam_of_package ~cross Single share package)
     ) p.packages;
-  Printf.eprintf "Cross compilation opam files generated in opam/windows/\n%!"
+  Printf.eprintf "Cross compilation opam files generated in %s/\n%!" dir
 
 let cmd =
   let package = ref None in
@@ -209,24 +210,25 @@ let cmd =
   let share_args, share_specs = Share.args ~set:true () in
   let args = (update_args, share_args) in
   let specs = update_specs @ share_specs in
-  let opam4windows = ref false in
+  let cross = ref None in
   EZCMD.sub cmd_name
     (fun () ->
-       if !opam4windows then
-         generate_opam_for_windows ~args ()
-       else
-         action ~dep:!dep ~package:!package ~tool:!tool ~add:!add ~remove:!remove
-           ~version:!version ~depname:!depname ~deptest:!deptest ~depdoc:!depdoc
-           ~depopt:!depopt ~args )
+       match !cross with
+       | Some cross ->
+           generate_opam_for_cross ~cross ~args ()
+       | None ->
+           action ~dep:!dep ~package:!package ~tool:!tool ~add:!add ~remove:!remove
+             ~version:!version ~depname:!depname ~deptest:!deptest ~depdoc:!depdoc
+             ~depopt:!depopt ~args )
     ~args:
       ( specs
         @ [ ( [ "package" ],
               Arg.String (fun s -> package := Some s),
               EZCMD.info ~docv:"PACKAGE" "Attach dependency to this package name"
             );
-            ( [ "opam4windows" ],
-              Arg.Unit (fun () -> opam4windows := true),
-              EZCMD.info "Dependency is a tool, not a library" );
+            ( [ "cross" ],
+              Arg.String (fun s -> cross := Some s),
+              EZCMD.info ~docv:"TARGET" "Build opam packages for cross-compilation (TARGET=windows|osx)" );
             ( [ "tool" ],
               Arg.Unit (fun () -> tool := true),
               EZCMD.info "Dependency is a tool, not a library" );
