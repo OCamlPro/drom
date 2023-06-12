@@ -29,7 +29,7 @@ let dev_repo p =
   | Some s -> Some (Printf.sprintf "git+%s.git" s)
   | None -> None
 
-let opam_of_package ?(windows=false) kind share package =
+let opam_of_package ?cross kind share package =
   let p = package.project in
   let open OpamParserTypes.FullPos in
   let filename = "opam" in
@@ -72,11 +72,11 @@ let opam_of_package ?(windows=false) kind share package =
   ["sh" "-c" "./scripts/before.sh build '%%{name}%%'" ]
   ["dune" "build" "-p" %s "-j" jobs "@install"
 |}
-                  (if windows then
-                     Printf.sprintf "\"%s\" \"-x\" \"windows\"" package.name
-                   else
-                     "name"
-                  ))
+                     (match cross with
+                      | None -> "name"
+                      | Some cross ->
+                          Printf.sprintf "\"%s\" \"-x\" \"%s\"" package.name cross
+                     ))
                   ( if
                     match StringMap.find "no-opam-test" package.p_fields with
                     | exception Not_found -> false
@@ -118,7 +118,11 @@ let opam_of_package ?(windows=false) kind share package =
   let depend_of_dep (name, d, is_library) =
     let b = Buffer.create 100 in
     Printf.bprintf b {| "%s" { |}
-      (if is_library && windows then name ^ "-windows" else name);
+      (if is_library then
+         match cross with
+         | None -> name
+         | Some cross ->  name ^ "-" ^ cross
+       else name);
     List.iteri
       (fun i version ->
          if i > 0 then Printf.bprintf b "& ";
