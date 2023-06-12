@@ -290,6 +290,8 @@ Where options are:
 
 * :code:`--create BOOL`   Change project creation status
 
+* :code:`--cross TARGET`   Build opam packages for cross-compilation (TARGET=windows|osx)
+
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
 * :code:`--doc BOOL`   Whether dependency is only for doc
@@ -303,8 +305,6 @@ Where options are:
 * :code:`--min-edition OCAMLVERSION`   Set project minimal OCaml version
 
 * :code:`--no-fetch-share`   Prevent fetching updates from the share repo (in particular without network connection
-
-* :code:`--opam4windows`   Dependency is a tool, not a library
 
 * :code:`--opt BOOL`   Whether dependency is optional or not
 
