@@ -125,6 +125,7 @@ let rec dummy_project =
     project_share_version = None;
     skeleton = None;
     edition = current_ocaml_edition;
+    project_drom_version = min_drom_version;
     min_edition = min_ocaml_edition;
     github_organization = None;
     homepage = None;

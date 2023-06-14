@@ -16,6 +16,11 @@
   indicates, for any version of `drom`, the latest version of the
   drom-share repo that should be used. It makes the `LATEST` file
   obsolete (as it was incomplete in that matter)
+* Package substitution: fix incorrect substitution of 'description',
+   'synopsis', 'version' and 'authors*' (previously interpreted as from
+   the project instead of from the package). {drom-version >= 0.9.2~dev4}
+* Fix usage of `drom-version`: takes as `drom` version the most recent version
+   between `drom.toml` and skeleton `DROM_VERSION`
 
 ## v0.9.1
 * Fix Sys_error docs/style.css because of missing file

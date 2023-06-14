@@ -79,7 +79,7 @@ let find_author config =
 let to_files share p =
   let version =
     EzToml.empty
-    |> EzToml.put_string [ "project"; "drom-version" ] Globals.min_drom_version
+    |> EzToml.put_string [ "project"; "drom-version" ] p.project_drom_version
     |> EzToml.put_string_option [ "project"; "share-repo" ]
       p.project_share_repo
     |> EzToml.put_string_option [ "project"; "share-version" ]
@@ -234,15 +234,17 @@ let to_files share p =
   ("drom.toml", content) :: !files
 
 let project_of_toml ?file ?default table =
-  ( match EzToml.get_string_option table [ "project"; "drom-version" ] with
-  | None -> ()
-  | Some version -> (
-    match VersionCompare.compare version Version.version with
-    | 1 ->
-      Error.raise
-        "You must update `drom` to version %s to work with this project."
-        version
-    | _ -> () ) );
+  let project_drom_version =
+    match EzToml.get_string_option table [ "project"; "drom-version" ] with
+    | None -> Globals.min_drom_version
+    | Some version ->
+        match VersionCompare.compare version Version.version with
+        | 1 ->
+            Error.raise
+              "You must update `drom` to version %s to work with this project."
+              version
+        | _ -> version
+  in
 
   let project_key = "project" in
   let project_packages =
@@ -262,17 +264,17 @@ let project_of_toml ?file ?default table =
         match default with
         | Some default -> default
         | None ->
-          { Globals.dummy_project with
-            synopsis = Globals.default_synopsis ~name;
-            description = Globals.default_description ~name
-          }
+            { Globals.dummy_project with
+              synopsis = Globals.default_synopsis ~name;
+              description = Globals.default_description ~name
+            }
       in
       (name, default)
     with
     | Not_found -> (
-      match default with
-      | None -> Error.raise "Missing project field 'name'"
-      | Some default -> (default.package.name, default) )
+        match default with
+        | None -> Error.raise "Missing project field 'name'"
+        | Some default -> (default.package.name, default) )
   in
   let authors =
     match
@@ -303,11 +305,11 @@ let project_of_toml ?file ?default table =
     | None, None -> (default_version, default_version)
     | None, Some edition
     | Some edition, None ->
-      (edition, edition)
+        (edition, edition)
     | Some edition, Some min_edition -> (
-      match VersionCompare.compare min_edition edition with
-      | 1 -> Error.raise "min-edition is greater than edition in drom.toml"
-      | _ -> (edition, min_edition) )
+        match VersionCompare.compare min_edition edition with
+        | 1 -> Error.raise "min-edition is greater than edition in drom.toml"
+        | _ -> (edition, min_edition) )
   in
   let dependencies =
     EzToml.get_encoding_default Package.dependencies_encoding table
@@ -344,8 +346,8 @@ let project_of_toml ?file ?default table =
       EzToml.get_bool_option table [ project_key; "create-project" ]
         ~default:false
     with
-      | Some v -> v
-      | None -> false
+    | Some v -> v
+    | None -> false
   in
 
   let skeleton =
@@ -397,23 +399,23 @@ let project_of_toml ?file ?default table =
     with
     | Some list -> list
     | None -> (
-      match
-        EzToml.get_string_option table [ "drom"; "skip" ]
-          ~default:(String.concat " " d.skip)
-      with
-      | None -> []
-      | Some s -> EzString.split s ' ' )
+        match
+          EzToml.get_string_option table [ "drom"; "skip" ]
+            ~default:(String.concat " " d.skip)
+        with
+        | None -> []
+        | Some s -> EzString.split s ' ' )
   in
   let _pack_modules =
     (* obsolete *)
     match EzToml.get_bool_option table [ project_key; "pack-modules" ] with
     | Some v -> v
     | None -> (
-      match
-        EzToml.get_bool_option table [ project_key; "wrapped" ] ~default:true
-      with
-      | Some v -> v
-      | None -> true )
+        match
+          EzToml.get_bool_option table [ project_key; "wrapped" ] ~default:true
+        with
+        | Some v -> v
+        | None -> true )
   in
   let sphinx_target =
     EzToml.get_string_option table
@@ -451,13 +453,13 @@ let project_of_toml ?file ?default table =
     let rec iter list =
       match list with
       | [] ->
-        let p = Package.find ?default name in
-        (p, p :: project_packages)
+          let p = Package.find ?default name in
+          (p, p :: project_packages)
       | p :: tail ->
-        if p.name = name then
-          (p, project_packages)
-        else
-          iter tail
+          if p.name = name then
+            (p, project_packages)
+          else
+            iter tail
     in
     iter project_packages
   in
@@ -465,31 +467,31 @@ let project_of_toml ?file ?default table =
   let packages =
     match EzToml.get_string_option table [ project_key; "kind" ] with
     | Some "both" ->
-      package.dir <- "main";
-      package.kind <- Program;
-      package.p_dependencies <-
-        ( Misc.package_lib package,
-          { depname = None;
-            depversions = [ Version ];
-            deptest = false;
-            depdoc = false;
-            depopt = false;
-            dep_pin = None;
-          } )
-        :: package.p_dependencies;
-      package.p_gen_version <- None;
-      let lib_name = Misc.package_lib package in
-      let lib =
-        { Globals.dummy_package with
-          name = lib_name;
-          dir = "src" // lib_name;
-          kind = Library
-        }
-      in
-      packages @ [ lib ]
+        package.dir <- "main";
+        package.kind <- Program;
+        package.p_dependencies <-
+          ( Misc.package_lib package,
+            { depname = None;
+              depversions = [ Version ];
+              deptest = false;
+              depdoc = false;
+              depopt = false;
+              dep_pin = None;
+            } )
+          :: package.p_dependencies;
+        package.p_gen_version <- None;
+        let lib_name = Misc.package_lib package in
+        let lib =
+          { Globals.dummy_package with
+            name = lib_name;
+            dir = "src" // lib_name;
+            kind = Library
+          }
+        in
+        packages @ [ lib ]
     | Some _
     | None ->
-      packages
+        packages
   in
 
   let profiles =
@@ -525,10 +527,10 @@ let project_of_toml ?file ?default table =
   let generators = ref StringSet.empty in
   List.iter
     (fun p ->
-      match p.p_generators with
-      | None -> ()
-      | Some p_generators ->
-        generators := StringSet.union !generators p_generators )
+       match p.p_generators with
+       | None -> ()
+       | Some p_generators ->
+           generators := StringSet.union !generators p_generators )
     packages;
   let generators = !generators in
   let menhir_version =
@@ -571,19 +573,19 @@ let project_of_toml ?file ?default table =
     (* No dune dependencies in packages tools or dependencies. *)
     List.iter
       (fun (p : package) ->
-        if find p.p_dependencies then
-          (* dune is in [p] dependencies which is silly: dune is a tool, not
-             a library. *)
-          Error.raise
-            "Package %s has a dune dependency which has no meaning. Please \
-             remove it"
-            p.name;
-        if find p.p_tools then
-          (* dune is in [p] tools which is bad project engineering design. *)
-          Error.raise
-            "Package %s gives dune as a tool dependency. Such dependency \
-             should appears at project level, please move it in drom.toml."
-            p.name )
+         if find p.p_dependencies then
+           (* dune is in [p] dependencies which is silly: dune is a tool, not
+              a library. *)
+           Error.raise
+             "Package %s has a dune dependency which has no meaning. Please \
+              remove it"
+             p.name;
+         if find p.p_tools then
+           (* dune is in [p] tools which is bad project engineering design. *)
+           Error.raise
+             "Package %s gives dune as a tool dependency. Such dependency \
+              should appears at project level, please move it in drom.toml."
+             p.name )
       packages;
     (* Legacy dune lang version specification *)
     let legacy_dune_lang = StringMap.find_opt "dune" p_fields in
@@ -615,19 +617,20 @@ let project_of_toml ?file ?default table =
         ~bottom:"2.0" versions
     with
     | `unknown ->
-      Error.raise
-        "Can't determine the dune minimal version. Please consider less \
-         restrictive dune specification."
+        Error.raise
+          "Can't determine the dune minimal version. Please consider less \
+           restrictive dune specification."
     | `conflict (version, constraint_) ->
-      Error.raise
-        "dune version must be (>=%s), which contradicts the (%s) specification"
-        version constraint_
+        Error.raise
+          "dune version must be (>=%s), which contradicts the (%s) specification"
+          version constraint_
     | `found version -> version
   in
 
   let project =
     { package;
       packages;
+      project_drom_version ;
       project_share_repo;
       project_share_version;
       file;

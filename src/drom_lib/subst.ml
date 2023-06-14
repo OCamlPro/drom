@@ -75,6 +75,7 @@ let project_brace ({ p; _ }  as state ) v =
   | "edition" -> p.edition
   | "min-edition" -> p.min_edition
   | "github-organization" -> maybe_string p.github_organization
+  | "authors-ampersand" -> String.concat " & " p.authors
   | "authors-as-strings" ->
     String.concat ", " (List.map (Printf.sprintf "%S") p.authors)
   | "authors-for-toml" ->
@@ -89,7 +90,6 @@ let project_brace ({ p; _ }  as state ) v =
   | "header-c" -> License.header_c state.share p
   | "header-mly" -> License.header_mly state.share p
   | "header-mll" -> License.header_mll state.share p
-  | "authors-ampersand" -> String.concat " & " p.authors
   (* general *)
   | "start_year" -> string_of_int p.year
   | "years" ->
@@ -375,6 +375,9 @@ let project_paren state name =
           ""
       | Some default -> default
 
+let is_0_9_2_dev4 state =
+  VersionCompare.compare state.share.drom_version "0.9.2~dev4" >= 0
+
 let package_brace state v =
   let package = state.p in
   match v with
@@ -386,6 +389,15 @@ let package_brace state v =
     | exception Not_found -> package.name
     | name -> name
   end
+  | "synopsis" when is_0_9_2_dev4 state -> Misc.p_synopsis package
+  | "description" when is_0_9_2_dev4 state -> Misc.p_description package
+  | "version" when is_0_9_2_dev4 state -> Misc.p_version package
+  | "authors-ampersand" when is_0_9_2_dev4 state ->
+      String.concat " & " (Misc.p_authors package)
+  | "authors-as-strings" when is_0_9_2_dev4 state ->
+      String.concat ", " (List.map (Printf.sprintf "%S") (Misc.p_authors package))
+  | "authors-for-toml" when is_0_9_2_dev4 state ->
+      String.concat ", " (List.map (Printf.sprintf "\"%s\"") (Misc.p_authors package))
   | "skeleton" -> Misc.package_skeleton package
   | "library-name" -> Misc.library_name package
   | "pack" -> Misc.library_module package

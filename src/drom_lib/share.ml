@@ -252,7 +252,14 @@ let load ?(args=default_args()) ?p () =
             version
   in
   let drom_version = get_drom_version () in
-
+  let drom_version = match p with
+    | None -> drom_version
+    | Some p ->
+        if VersionCompare.compare drom_version p.project_drom_version > 0 then
+          drom_version
+        else
+          p.project_drom_version
+  in
   if VersionCompare.compare drom_version Version.version > 0 then begin
     Printf.eprintf "Error: you cannot update this project files:\n%!";
     Printf.eprintf "  Your drom version is too old: %s\n%!" Version.version;
