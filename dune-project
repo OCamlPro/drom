@@ -33,7 +33,6 @@
    (ez_subst ( >= 0.1 ))
    (ez_opam_file (and (>= 0.1.0) (< 1.0.0)))
    (ez_file (and (>= 0.3.0) (< 1.0.0)))
-   (ez_config (and (>= 0.1.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.2.0) (< 1.0.0)))
    (drom_toml (= version))
    (directories ( >= 0.2 ))
