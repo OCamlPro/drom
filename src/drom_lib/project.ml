@@ -568,19 +568,21 @@ let project_of_toml ?file ?default table =
 
      If no dune version is specified, drom uses the
      {!Globals.current_dune_version}. *)
+
+  let after_0_9_2 = VersionCompare.compare project_drom_version "0.9.2" >= 0 in
+
   let dune_version =
-    let find = List.mem_assoc "dune" in
     (* No dune dependencies in packages tools or dependencies. *)
     List.iter
       (fun (p : package) ->
-         if find p.p_dependencies then
+         if List.mem_assoc "dune" p.p_dependencies then
            (* dune is in [p] dependencies which is silly: dune is a tool, not
               a library. *)
            Error.raise
              "Package %s has a dune dependency which has no meaning. Please \
               remove it"
              p.name;
-         if find p.p_tools then
+         if List.mem_assoc "dune" p.p_tools then
            (* dune is in [p] tools which is bad project engineering design. *)
            Error.raise
              "Package %s gives dune as a tool dependency. Such dependency \
@@ -588,15 +590,17 @@ let project_of_toml ?file ?default table =
              p.name )
       packages;
     (* Legacy dune lang version specification *)
-    let legacy_dune_lang = StringMap.find_opt "dune" p_fields in
+    let legacy_dune_lang = StringMap.find_opt
+        (if after_0_9_2 then "dune-lang" else "dune") p_fields in
     (* Checking that dune is not in project's dependencies, which has no more
        meaning than in packages *)
-    if find dependencies then
+    if List.mem_assoc "dune" dependencies then
       Error.raise
         "Project has a dune dependency which has no meaning. Please remove it \
          or move it in [tools].";
     (* The valid way of overriding dune version. *)
-    let dune_tool_spec = List.assoc_opt "dune" dependencies in
+    let dune_tool_spec = List.assoc_opt "dune"
+        (if after_0_9_2 then tools else dependencies) in
     (* Normalizing *)
     let versions =
       match (legacy_dune_lang, dune_tool_spec) with
