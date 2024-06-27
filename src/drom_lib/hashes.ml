@@ -67,7 +67,7 @@ type t =
 let load () =
   let version = ref None in
   let hashes =
-    if Sys.file_exists ".drom" then (
+    if Sys.file_exists ".drom" then
       let map = ref StringMap.empty in
       (* Printf.eprintf "Loading .drom\n%!"; *)
       Array.iteri
@@ -104,7 +104,7 @@ let load () =
                exit 2 )
         (EzFile.read_lines ".drom");
       !map
-    ) else
+    else
       StringMap.empty
   in
   { hashes;
@@ -150,11 +150,11 @@ let save ?(git = true) t =
   if t.modified then begin
     StringMap.iter
       (fun file (record, content, perm) ->
-        let dirname = Filename.dirname file in
-        if not (Sys.file_exists dirname) then EzFile.make_dir ~p:true dirname;
-        EzFile.write_file file content;
-        Unix.chmod file perm;
-        if record then update t file [digest_content ~file ~perm ~content ()] )
+         let dirname = Filename.dirname file in
+         if not (Sys.file_exists dirname) then EzFile.make_dir ~p:true dirname;
+         EzFile.write_file file content;
+         Unix.chmod file perm;
+         if record then update t file [digest_content ~file ~perm ~content ()] )
       t.files;
 
     let b = Buffer.create 1000 in
@@ -167,19 +167,31 @@ let save ?(git = true) t =
     Printf.bprintf b "# end version\n%!";
     StringMap.iter
       (fun filename hashes ->
-        if Sys.file_exists filename then begin
-          if filename = "." then begin
-            Printf.bprintf b "\n# hash of toml configuration files\n";
-            Printf.bprintf b "# used for generation of all files\n"
-          end else begin
-            Printf.bprintf b "\n# begin context for %s\n" filename;
-            Printf.bprintf b "# file %s\n" filename
-          end;
-          List.iter (fun hash ->
-              Printf.bprintf b "%s:%s\n" (HASH.to_hex hash) filename
-            ) (List.rev hashes);
-          Printf.bprintf b "# end context for %s\n" filename
-        end )
+         if Sys.file_exists filename then begin
+           let hashes =
+             if filename = "." then begin
+               Printf.bprintf b "\n# hash of toml configuration files\n";
+               Printf.bprintf b "# used for generation of all files\n";
+               hashes
+             end else begin
+               Printf.bprintf b "\n# begin context for %s\n" filename;
+               Printf.bprintf b "# file %s\n" filename;
+               let found = ref None in
+               let current_hash = digest_file filename in
+               List.iter (fun hash ->
+                   if hash = current_hash then
+                     found := Some current_hash;
+                 ) hashes;
+               match !found with
+               | Some hash -> [ hash ]
+               | None -> hashes
+             end
+           in
+           List.iter (fun hash ->
+               Printf.bprintf b "%s:%s\n" (HASH.to_hex hash) filename
+             ) (List.rev hashes);
+           Printf.bprintf b "# end context for %s\n" filename
+         end )
       t.hashes;
     EzFile.write_file ".drom" (Buffer.contents b);
 

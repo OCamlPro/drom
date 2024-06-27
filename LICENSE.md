@@ -1,4 +1,4 @@
-Copyright (c) 2023 OCamlPro SAS
+Copyright (c) 2024 OCamlPro SAS
 
 This software is distributed under the terms of the
 GNU Lesser General Public License (LGPL) version 2.1 (included below).
