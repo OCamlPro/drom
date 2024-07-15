@@ -1,8 +1,8 @@
 [project]
 create-project = false
-drom-version = "0.1"
+drom-version = "0.9.2"
 share-repo = "https://github.com/OCamlPro/drom-share"
-share-version = "0.9.0"
+share-version = "branch:ninjapouet:prepare_sites"
 
 [project]
 authors = ["Fabrice Le Fessant <fabrice.le_fessant@ocamlpro.com>", "Léo Andrès <leo.andres@ocamlpro.com>"]
@@ -11,7 +11,7 @@ copyright = "OCamlPro SAS"
 edition = "4.14.1"
 github-organization = "ocamlpro"
 license = "LGPL2"
-min-edition = "4.07.0"
+min-edition = "4.08.0"
 name = "drom"
 skeleton = "program"
 synopsis = "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like user experience"
@@ -42,6 +42,8 @@ skip = ["sphinx/about.rst", "src/drom_lib/main.ml", "sphinx/index.rst", "CHANGES
 [dependencies]
 
 # project-wide tools dependencies (not for package-specific deps)
+[tools]
+dune = ">=2.8"
 [tools.ocamlformat]
 for-test = true
 [tools.odoc]

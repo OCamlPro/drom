@@ -25,6 +25,13 @@ gen-version = "version.ml"
 # default is [ "ocamllex", "ocamlyacc" ] 
 # generators = [ "ocamllex", "menhir" ]
 
+# menhir options for the package
+#Example:
+#version = "2.0"
+#parser = { modules = ["parser"]; tokens = "Tokens" }
+#tokens = { modules = ["tokens"]}
+# menhir = ...
+
 # whether all modules should be packed/wrapped (default is true)
 pack-modules = true
 
@@ -49,11 +56,14 @@ pack-modules = true
 directories = ">=0.2"
 drom_toml = "version"
 ez_cmdliner = "0.2.0"
-#ez_config = "0.1.0"
 ez_file = "0.3.0"
 ez_opam_file = "0.1.0"
 ez_subst = ">=0.1"
+fmt = ">=0.9.0"
+jingoo = ">=1.5.0"
 omd = ">=2.0"
+otoml = ">=1.0.4"
+ppx_protocol_conv = ">=5.2.1"
 
 # package tools dependencies
 [tools]
@@ -71,5 +81,6 @@ omd = ">=2.0"
 #  dune-stanzas = "(flags (:standard (:include linking.sexp)))" 
 #  static-clibs = "unix" 
 [fields]
-dune-libraries = "bigarray"
+dune-libraries = "bigarray ppx_protocol_conv.runtime ppx_protocol_conv.driver"
+dune-stanzas = "(preprocess (pps ppx_deriving.show ppx_protocol_conv))"
 dune-trailer = ""

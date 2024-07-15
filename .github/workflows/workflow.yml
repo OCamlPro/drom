@@ -25,7 +25,7 @@ jobs:
 
         include:
           - os: ubuntu-latest
-            ocaml-compiler: 4.07.0
+            ocaml-compiler: 4.08.0
             skip_test: true
 
 

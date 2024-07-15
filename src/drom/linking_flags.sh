@@ -52,6 +52,8 @@ case $(uname -s) in
     Linux)
         case $(. /etc/os-release && echo $ID) in
             alpine)
+		# Use `static-alpine-clibs` field to add libs more here
+		# (or `static-clibs` for both Linux and Macos)
                 COMMON_LIBS=" camlstr unix c"
                 # `m` and `pthread` are built-in musl
                 echo2 '(-noautolink'
@@ -68,6 +70,7 @@ case $(uname -s) in
         esac
         ;;
     Darwin)
+	# Use `static-macos-clibs` field to add libs more here
         COMMON_LIBS=" unix"
         # `m` and `pthread` are built-in in libSystem
         echo2 '(-noautolink'
