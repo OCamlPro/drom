@@ -1,0 +1,24 @@
+; This file is managed by 'drom project'
+
+; You may want to remove it by adding 'test/output-tests/dune.drom'
+; to 'skip' in 'drom.toml', or '@test' for all tests
+; and remove the '(include dune.drom)' from 'dune' in the current dir
+
+(executable
+ (name test2)
+ (libraries drom_lib drom_toml)
+ )
+
+(alias
+ (name buildtest)
+ (deps test2.exe))
+
+(rule
+ (with-stdout-to
+  test2.output
+  (run %{exe:test2.exe})))
+
+(rule
+ (alias runtest)
+ (action
+  (diff test2.expected test2.output)))

@@ -35,8 +35,8 @@ install: [
   ["sh" "-c" "./scripts/before.sh install '%{name}%'"]
 ]
 depends: [
-  "ocaml" {>= "4.07.0"}
-  "dune" {>= "2.7.0"}
+  "ocaml" {>= "4.08.0"}
+  "dune" {>= "2.8"}
   "menhirLib" {> "2019"}
   "ISO8601" {>= "0.2"}
   "menhir" {> "2019"}
@@ -44,5 +44,6 @@ depends: [
   "ppx_expect" {with-test}
   "odoc" {with-doc}
   "ocamlformat" {with-test}
+  "dune" {>= "2.8"}
 ]
 # Content of `opam-trailer` field:

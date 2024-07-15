@@ -11,8 +11,13 @@ let query cmd =
      else None
    with End_of_file -> None
 
-let commit_hash = query "git show -s --pretty=format:%H"
-let commit_date = query "git show -s --pretty=format:%ci"
+let gitdir =
+  try Sys.getenv "DUNE_SOURCEROOT" with Not_found -> ""
+
+let commit_hash =
+  query ("git -C \""^gitdir^"\" show -s --pretty=format:%H")
+let commit_date =
+  query ("git -C \""^gitdir^"\" show -s --pretty=format:%ci")
 let version = "0.9.2"
 
 let string_option = function
