@@ -1,0 +1,83 @@
+# Maintained by "drom project"
+.PHONY: $(DROMNS)build $(DROMNS)build-deps $(DROMNS)fmt $(DROMNS)fmt-check
+.PHONY: $(DROMNS)install $(DROMNS)dev-deps $(DROMNS)test
+.PHONY: $(DROMNS)clean $(DROMNS)distclean
+
+DROM_DEV_DEPS := merlin ocamlformat odoc ppx_expect ppx_inline_test $(DEV_DEPS)
+
+
+SPHINX_TARGET:=_drom/docs/sphinx
+
+ODOC_TARGET:=_drom/docs/doc/.
+
+
+$(DROMNS)build:
+	./scripts/before.sh build
+	opam exec -- dune build @install
+	./scripts/copy-bin.sh drom drom_lib drom_toml
+	./scripts/after.sh build
+
+$(DROMNS)build-deps:
+	if ! [ -e _opam ]; then \
+	   opam switch create . 4.14.1 ; \
+	fi
+	opam install ./opam/*.opam --deps-only
+
+
+.PHONY: $(DROMNS)doc-common $(DROMNS)odoc $(DROMNS)view
+.PHONY: $(DROMNS)sphinx
+$(DROMNS)doc-common: $(DROMNS)build
+	mkdir -p _drom/docs
+	rsync -auv docs/. _drom/docs/.
+
+$(DROMNS)sphinx: $(DROMNS)doc-common
+	./scripts/before.sh sphinx ${SPHINX_TARGET}
+	sphinx-build sphinx ${SPHINX_TARGET}
+	./scripts/after.sh sphinx  ${SPHINX_TARGET}
+
+$(DROMNS)odoc: $(DROMNS)doc-common
+	mkdir -p ${ODOC_TARGET}
+	./scripts/before.sh odoc ${ODOC_TARGET}
+	opam exec -- dune build @doc
+	rsync -auv --delete _build/default/_doc/_html/. ${ODOC_TARGET}
+	./scripts/after.sh odoc ${ODOC_TARGET}
+
+$(DROMNS)doc: $(DROMNS)doc-common $(DROMNS)odoc $(DROMNS)sphinx
+
+$(DROMNS)view:
+	xdg-open file://$$(pwd)/_drom/docs/index.html
+
+$(DROMNS)fmt:
+	opam exec -- dune build @fmt --auto-promote
+
+$(DROMNS)fmt-check:
+	opam exec -- dune build @fmt
+
+$(DROMNS)install:
+	opam pin -y --no-action -k path .
+	opam install -y .
+
+$(DROMNS)opam:
+	opam pin -k path .
+
+$(DROMNS)uninstall:
+	opam uninstall .
+
+$(DROMNS)dev-deps:
+	opam install ./opam/*.opam --deps-only --with-doc --with-test
+
+$(DROMNS)test:
+	./scripts/before.sh test
+	opam exec -- dune build @runtest
+	./scripts/after.sh test
+
+$(DROMNS)clean:
+	rm -rf _build
+	rm -f *.exe *~
+	./scripts/after.sh clean
+
+$(DROMNS)distclean: $(DROMNS)clean
+	rm -rf _opam _drom
+	./scripts/after.sh distclean
+
+

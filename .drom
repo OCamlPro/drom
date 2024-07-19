@@ -5,17 +5,17 @@ version:0.9.0
 
 # hash of toml configuration files
 # used for generation of all files
-cfa41e62814087cf2f340eab496a6542:.
+cfd502831bbf686b41df41219629c1c4:.
 # end context for .
 
 # begin context for .github/workflows/workflow.yml
 # file .github/workflows/workflow.yml
-533318fb1c01b0861406a644a7d9f39c:.github/workflows/workflow.yml
+eee26f5d13b222b48706c4fcbd98a19a:.github/workflows/workflow.yml
 # end context for .github/workflows/workflow.yml
 
 # begin context for .gitignore
 # file .gitignore
-33c88a25e8b40f3683f6c03ec26be5db:.gitignore
+f7a24abcad0ba9301c03bb64464b1718:.gitignore
 # end context for .gitignore
 
 # begin context for .ocamlformat
@@ -47,6 +47,11 @@ cfa41e62814087cf2f340eab496a6542:.
 # file Makefile
 9018881cf0682f4f7f262417b0d4f9ff:Makefile
 # end context for Makefile
+
+# begin context for Makefile.drom
+# file Makefile.drom
+2b07c62bfabf8f45733eafbc696c6146:Makefile.drom
+# end context for Makefile.drom
 
 # begin context for README.md
 # file README.md
@@ -90,7 +95,7 @@ c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 
 # begin context for drom.toml
 # file drom.toml
-b7b7b8f4a370e3c1b425b7a9316c3e0f:drom.toml
+9949d65b87e55480a30122e9e77ae7d3:drom.toml
 # end context for drom.toml
 
 # begin context for dune
@@ -100,22 +105,22 @@ e850a13c004f963e9f5a568eac93c217:dune
 
 # begin context for dune-project
 # file dune-project
-47416b4e7b7e7febc8da32932cae0d54:dune-project
+c063288437da29a5a21e8c76c1906adc:dune-project
 # end context for dune-project
 
 # begin context for opam/drom.opam
 # file opam/drom.opam
-d3c8882f1742f865c2987dea6c7c83e2:opam/drom.opam
+ff84198ff87fa46b8ac39ed2951d2d26:opam/drom.opam
 # end context for opam/drom.opam
 
 # begin context for opam/drom_lib.opam
 # file opam/drom_lib.opam
-8b323689fcc28f9783fa85ca4a4fac55:opam/drom_lib.opam
+788b17212e259bbb8fe7c22c85c76d35:opam/drom_lib.opam
 # end context for opam/drom_lib.opam
 
 # begin context for opam/drom_toml.opam
 # file opam/drom_toml.opam
-81116a1889e6414dee5c2e921961aa77:opam/drom_toml.opam
+e55d659410b556d7bc60183d8ff1f788:opam/drom_toml.opam
 # end context for opam/drom_toml.opam
 
 # begin context for scripts/after.sh
@@ -130,12 +135,12 @@ d3c8882f1742f865c2987dea6c7c83e2:opam/drom.opam
 
 # begin context for scripts/copy-bin.sh
 # file scripts/copy-bin.sh
-bb3a9d286f0dc64021db4194427263ee:scripts/copy-bin.sh
+7fe4ada2a2fc5a0ebf9a2f483679a0ae:scripts/copy-bin.sh
 # end context for scripts/copy-bin.sh
 
 # begin context for scripts/static-build.sh
 # file scripts/static-build.sh
-2a405479b3313d79d421c2e7fc282304:scripts/static-build.sh
+cda3f8bad69d9c6e8cbeab1c720d739a:scripts/static-build.sh
 # end context for scripts/static-build.sh
 
 # begin context for sphinx/_static/css/fixes.css
@@ -170,7 +175,7 @@ a44c87f3a364dd95f55427fe40b2c5d1:sphinx/about.rst
 
 # begin context for src/drom/dune
 # file src/drom/dune
-efad88968955023a354f16469eb1ae15:src/drom/dune
+68aec4169671c0163b98bb38205d2e4d:src/drom/dune
 # end context for src/drom/dune
 
 # begin context for src/drom/index.mld
@@ -180,7 +185,7 @@ efad88968955023a354f16469eb1ae15:src/drom/dune
 
 # begin context for src/drom/linking_flags.sh
 # file src/drom/linking_flags.sh
-9a3b02ff1d99723e9ee2f3c0e97d7b30:src/drom/linking_flags.sh
+9fdfca3cc53df639758ff04fe09d3243:src/drom/linking_flags.sh
 # end context for src/drom/linking_flags.sh
 
 # begin context for src/drom/main.ml
@@ -190,12 +195,12 @@ efad88968955023a354f16469eb1ae15:src/drom/dune
 
 # begin context for src/drom/package.toml
 # file src/drom/package.toml
-5bdfaa2663247cad045abb018d576a5e:src/drom/package.toml
+bb6803d414fd5a5479ed6381914604de:src/drom/package.toml
 # end context for src/drom/package.toml
 
 # begin context for src/drom_lib/dune
 # file src/drom_lib/dune
-a97be0d7328e7c15eb149c454844646a:src/drom_lib/dune
+103b365e9f24dbbae02b6be22b3efd0a:src/drom_lib/dune
 # end context for src/drom_lib/dune
 
 # begin context for src/drom_lib/index.mld
@@ -205,17 +210,17 @@ a97be0d7328e7c15eb149c454844646a:src/drom_lib/dune
 
 # begin context for src/drom_lib/package.toml
 # file src/drom_lib/package.toml
-18ae084348cbfdbb80ca1469113e0e9f:src/drom_lib/package.toml
+c4d6597dc5b0966758c213bfffb9d594:src/drom_lib/package.toml
 # end context for src/drom_lib/package.toml
 
 # begin context for src/drom_lib/version.mlt
 # file src/drom_lib/version.mlt
-fc09abbaf032f775d148928fa1398cf9:src/drom_lib/version.mlt
+a3e5d8a00664ceaa6addf376bedf6de1:src/drom_lib/version.mlt
 # end context for src/drom_lib/version.mlt
 
 # begin context for src/toml.7.1.0/dune
 # file src/toml.7.1.0/dune
-229a5f90ef7f812db6f3560ccb3d131f:src/toml.7.1.0/dune
+0841a2e47118b9fcd9b900f84ff66c34:src/toml.7.1.0/dune
 # end context for src/toml.7.1.0/dune
 
 # begin context for src/toml.7.1.0/index.mld
@@ -230,18 +235,23 @@ d1b05207fce876a1b44a8b268bcaf226:src/toml.7.1.0/index.mld
 
 # begin context for src/toml.7.1.0/package.toml
 # file src/toml.7.1.0/package.toml
-706b170edac8a3051745f05ece52fb62:src/toml.7.1.0/package.toml
+16c1103a2b8042862d209fc275b52f65:src/toml.7.1.0/package.toml
 # end context for src/toml.7.1.0/package.toml
 
 # begin context for src/toml.7.1.0/version.mlt
 # file src/toml.7.1.0/version.mlt
-fc09abbaf032f775d148928fa1398cf9:src/toml.7.1.0/version.mlt
+a3e5d8a00664ceaa6addf376bedf6de1:src/toml.7.1.0/version.mlt
 # end context for src/toml.7.1.0/version.mlt
 
 # begin context for test/expect-tests/dune
 # file test/expect-tests/dune
 d7e2675a767e30edf28d061c94f0ec62:test/expect-tests/dune
 # end context for test/expect-tests/dune
+
+# begin context for test/expect-tests/dune.drom
+# file test/expect-tests/dune.drom
+6d2c689d437f17d4e99e01df3f4515c6:test/expect-tests/dune.drom
+# end context for test/expect-tests/dune.drom
 
 # begin context for test/expect-tests/dune_
 # file test/expect-tests/dune_
@@ -258,6 +268,11 @@ f15fedac6f43c154bcd0348b776ac08c:test/expect-tests/dune_
 a0d7baa94246a5122e55a255dcefa9d0:test/inline-tests/dune
 # end context for test/inline-tests/dune
 
+# begin context for test/inline-tests/dune.drom
+# file test/inline-tests/dune.drom
+4cd12cd1258c38ccd44b225323601ff5:test/inline-tests/dune.drom
+# end context for test/inline-tests/dune.drom
+
 # begin context for test/inline-tests/dune_
 # file test/inline-tests/dune_
 75d7504f9c8002ec5ccdd2458f01da09:test/inline-tests/dune_
@@ -272,6 +287,11 @@ a0d7baa94246a5122e55a255dcefa9d0:test/inline-tests/dune
 # file test/output-tests/dune
 b5ea41e29d37e997b482b1bf7f5953d7:test/output-tests/dune
 # end context for test/output-tests/dune
+
+# begin context for test/output-tests/dune.drom
+# file test/output-tests/dune.drom
+a3371489c9d6aee62aeba112ecfddcf0:test/output-tests/dune.drom
+# end context for test/output-tests/dune.drom
 
 # begin context for test/output-tests/dune_
 # file test/output-tests/dune_

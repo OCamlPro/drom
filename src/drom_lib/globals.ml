@@ -21,7 +21,7 @@ let min_ocaml_edition = "4.07.0"
 
 let current_ocaml_edition = "4.13.0"
 
-let current_dune_version = "2.7.0"
+let current_dune_version = "2.8.0"
 
 let default_synopsis ~name = Printf.sprintf "The %s project" name
 
@@ -180,5 +180,6 @@ and dummy_package =
     p_menhir = None;
     p_skip = None;
     p_optional = None;
-    p_preprocess = None
+    p_preprocess = None;
+    p_sites = Sites.default;
   }

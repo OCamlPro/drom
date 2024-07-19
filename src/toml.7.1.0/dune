@@ -4,13 +4,17 @@
   (name drom_toml)
   (public_name drom_toml)
   (wrapped true)
+  ; use field 'dune-libraries' to add libraries without opam deps
   (libraries menhirLib ISO8601 str unix)
+  ; use field 'dune-flags' to set this value
+  (flags (:standard))
+  ; use field 'dune-stanzas' to add more stanzas here
   
   
   )
 
-(menhir (modules menhir_parser))
 (ocamllex lexer)
+(menhir (modules menhir_parser))
 
 (rule
     (targets version.ml)
@@ -20,4 +24,5 @@
 (documentation
   (package drom_toml))
 
+; use field 'dune-trailer' to add more stuff here
 

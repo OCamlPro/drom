@@ -91,3 +91,47 @@ Of course, this is just a basic tuning and you can modify the flags or
 targets as needed. The overall result will likely fit in most
 of :code:`menhir` usages in :code:`drom` projects waiting for a better
 :code:`menhir` support.
+
+
+Using sites
+-----------
+
+Installation sites can be specified in the :code:`package.toml` file under
+the :code:`sites` section. By default, :code:`drom` does nothing about it
+but you can use it to generate site definitions for your project.
+
+Thos sites are directories with predefined root
+to follow the standards:
+* :code:`lib` for libraries
+* :code:`bin` for executables
+* :code:`sbin` for system executables
+* :code:`toplevel` for toplevel executables
+* :code:`share` for shared data
+* :code:`etc` for configuration files
+* :code:`stublibs` for OCaml stub libraries
+* :code:`doc` for documentation
+
+The :code:`man` directory is also a valid installation directory but we can't
+use it in sites for it has a special treatment.
+
+For each of those directories, you can specify a list of directories to install
+files in it. For a complete list of possibities, see the
+:ref:`sites reference <sites_ref>`.
+
+The most common use is handling configuration or web files which can be
+done with the following declaration:
+
+.. code-block:: toml
+
+  [[sites.share]]
+  dir = "www"
+  [[sites.share.install]]
+  source = "javascript"
+  destination = "js"
+  recursive = true
+
+This will make the :code:`www` directory available both at runtime (through
+the value :code:`Sites.Sites.www`) and for web files installation. In this
+example, we install all :code:`javascript` subdirectory in
+:code:`<prefix>/share/<package>/www/js`.
+

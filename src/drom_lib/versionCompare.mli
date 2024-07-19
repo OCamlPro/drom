@@ -35,3 +35,6 @@ val equal : string -> string -> bool
 (** [compare x y] returns 0 if x is eqivalent to y, -1 if x is smaller than y,
     and 1 if x is greater than y. This is consistent with [Stdlib.compare]. *)
 val compare : string -> string -> int
+
+(** [a >= b] is a syntactic sugar for [compare a b >= 0]. *)
+val ( >= ) : string -> string -> bool

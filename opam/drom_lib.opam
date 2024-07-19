@@ -45,9 +45,13 @@ install: [
   ["sh" "-c" "./scripts/before.sh install '%{name}%'"]
 ]
 depends: [
-  "ocaml" {>= "4.07.0"}
-  "dune" {>= "2.7.0"}
+  "ocaml" {>= "4.08.0"}
+  "dune" {>= "2.8"}
+  "ppx_protocol_conv" {>= "5.2.1"}
+  "otoml" {>= "1.0.4"}
   "omd" {>= "2.0"}
+  "jingoo" {>= "1.5.0"}
+  "fmt" {>= "0.9.0"}
   "ez_subst" {>= "0.1"}
   "ez_opam_file" {>= "0.1.0" & < "1.0.0"}
   "ez_file" {>= "0.3.0" & < "1.0.0"}
@@ -58,5 +62,6 @@ depends: [
   "ppx_expect" {with-test}
   "odoc" {with-doc}
   "ocamlformat" {with-test}
+  "dune" {>= "2.8"}
 ]
 # Content of `opam-trailer` field:

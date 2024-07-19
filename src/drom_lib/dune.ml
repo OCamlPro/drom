@@ -128,6 +128,18 @@ let package_dune_files package =
     | None -> ()
     | Some file -> Buffer.add_string b @@ GenVersion.dune package file
   end;
+  if (
+    VersionCompare.(package.project.project_drom_version >= "0.9.2") &&
+    package.p_sites <> Sites.default
+  ) then
+    (* Sites dynamic loading is available only after 0.9.2 and if really
+       needed *)
+    begin
+      let sites_content = Sites.to_dune
+        ~package:package.name
+        package.p_sites in
+      Buffer.add_string b sites_content
+    end;
   Buffer.contents b
 
 let packages p =
@@ -138,9 +150,17 @@ let packages p =
  (name %s)
  (synopsis %S)
  (description %S)
+ %s
 |}
       package.name (Misc.p_synopsis package)
-      (Misc.p_description package);
+      (Misc.p_description package)
+      (
+        (* Sites declaration is available only from 0.9.2 *)
+        if VersionCompare.(package.project.project_drom_version >= "0.9.2")
+        then package.p_sites |> Sites.to_dune_project
+        else ""
+      )
+      ;
 
     let depend_of_dep (name, d) =
       match d.depversions with

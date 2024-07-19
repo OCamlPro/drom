@@ -343,7 +343,6 @@ let to_string pk =
               {|  no-opam-test = "yes" |};
               {|  no-opam-doc = "yes" |};
               {|  gen-opam = "some" | "all" |};
-              {|  dune-stanzas = "(flags (:standard (:include linking.sexp)))" |};
               {|  static-clibs = "unix" |};
             ]
           (encoding fields_encoding pk.p_fields)
@@ -452,7 +451,10 @@ let of_toml ?default ?p_file table =
     EzToml.get_encoding_option skip_encoding table [ "skip" ]
       ?default:default.p_skip
   in
-
+  let p_sites =
+    match Toml.Lenses.get table Toml.Lenses.(key "sites" |-- table) with
+    | None -> Sites.default
+    | Some toml -> EzToml.TYPES.TTable toml |> Sites.of_eztoml in
   { name;
     dir;
     project;
@@ -473,7 +475,8 @@ let of_toml ?default ?p_file table =
     p_generators;
     p_menhir;
     p_skip;
-    p_optional
+    p_optional;
+    p_sites;
   }
 
 let of_toml ?default table =

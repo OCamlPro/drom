@@ -212,3 +212,6 @@ let equal (x : string) (y : string) =
     true
   else
     compare x y = 0
+
+
+let ( >= ) a b = compare a b >= 0

@@ -1,0 +1,13 @@
+; This file is managed by 'drom project'
+
+; You may want to remove it by adding 'test/expect-tests/dune.drom'
+; to 'skip' in 'drom.toml', or '@test' for all tests
+; and remove the '(include dune.drom)' from 'dune' in the current dir
+
+(library
+ (name lib_inline_tests)
+ (preprocess
+  (pps ppx_inline_test))
+ (inline_tests
+  (modes best)) ; add js for testing with nodejs
+ (libraries drom_lib drom_toml))
