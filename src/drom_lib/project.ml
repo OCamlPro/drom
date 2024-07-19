@@ -236,7 +236,9 @@ let to_files share p =
 let project_of_toml ?file ?default table =
   let project_drom_version =
     match EzToml.get_string_option table [ "project"; "drom-version" ] with
-    | None -> Globals.min_drom_version
+    | None ->
+      (* Using current version by default. *)
+      Version.version
     | Some version ->
         match VersionCompare.compare version Version.version with
         | 1 ->
