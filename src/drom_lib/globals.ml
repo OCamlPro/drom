@@ -87,12 +87,20 @@ let find_ancestor_file file f =
   in
   iter dir ""
 
-let opam_root =
-  lazy
-    ( try Sys.getenv "OPAMROOT" with
-    | Not_found -> home_dir // ".opam" )
+(** [opam_root ()] returns the opam root directory.
 
-let opam_root () = Lazy.force opam_root
+    @raise Error.Error if any error happens. *)
+let opam_root : unit -> string =
+  let compute = lazy begin
+    (* Don't use OPAMROOT or hardcoded directories. `opam` gives its own
+       way to give it. *)
+    let cmd = Bos.Cmd.(v "opam" % "var" % "root") in
+    match Bos.OS.Cmd.(run_out cmd |> to_string) with
+    | Ok dir -> dir
+    | Error _ -> Error.raise "%s: unknown error" __FUNCTION__
+  end in
+  fun () -> Lazy.force compute
+
 
 let verbose_subst =
   try

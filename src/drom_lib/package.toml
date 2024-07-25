@@ -64,6 +64,7 @@ jingoo = ">=1.5.0"
 omd = ">=2.0"
 otoml = ">=1.0.4"
 ppx_protocol_conv = ">=5.2.1"
+bos = ">=0.2.1"
 
 # package tools dependencies
 [tools]
