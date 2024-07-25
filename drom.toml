@@ -1,8 +1,6 @@
 [project]
 create-project = false
 drom-version = "0.9.2"
-share-repo = "https://github.com/OCamlPro/drom-share"
-share-version = "branch:ninjapouet:prepare_sites"
 
 [project]
 authors = ["Fabrice Le Fessant <fabrice.le_fessant@ocamlpro.com>", "Léo Andrès <leo.andres@ocamlpro.com>"]
