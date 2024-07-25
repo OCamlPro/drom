@@ -5,7 +5,7 @@ version:0.9.0
 
 # hash of toml configuration files
 # used for generation of all files
-cfd502831bbf686b41df41219629c1c4:.
+812a88073a143fbfd65d11dd1ac586fd:.
 # end context for .
 
 # begin context for .github/workflows/workflow.yml
@@ -15,7 +15,7 @@ eee26f5d13b222b48706c4fcbd98a19a:.github/workflows/workflow.yml
 
 # begin context for .gitignore
 # file .gitignore
-f7a24abcad0ba9301c03bb64464b1718:.gitignore
+33c88a25e8b40f3683f6c03ec26be5db:.gitignore
 # end context for .gitignore
 
 # begin context for .ocamlformat
@@ -55,7 +55,7 @@ f7a24abcad0ba9301c03bb64464b1718:.gitignore
 
 # begin context for README.md
 # file README.md
-616ddd2660258447be65bdb664b9241d:README.md
+5d523350230459e853bc57803b729e29:README.md
 # end context for README.md
 
 # begin context for docs/README.txt
@@ -88,10 +88,30 @@ e739f3026aa997af4026bc428f4c9ef6:docs/favicon.png
 c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 # end context for docs/style.css
 
+# begin context for docs\README.txt
+# file docs\README.txt
+bfbacf00053bb9ab2a6e2ce94ed4a642:docs\README.txt
+# end context for docs\README.txt
+
+# begin context for docs\favicon.png
+# file docs\favicon.png
+e739f3026aa997af4026bc428f4c9ef6:docs\favicon.png
+# end context for docs\favicon.png
+
+# begin context for docs\style.css
+# file docs\style.css
+c8281f46ba9a11d0b61bc8ef67eaa357:docs\style.css
+# end context for docs\style.css
+
 # begin context for dot_gitattributes
 # file dot_gitattributes
 20bbe7a5dbb3c3278a1511d960616fe5:dot_gitattributes
 # end context for dot_gitattributes
+
+# begin context for dot_github\workflows\workflow.yml
+# file dot_github\workflows\workflow.yml
+004b92dd628d26b4f8a5a5139bf4aa79:dot_github\workflows\workflow.yml
+# end context for dot_github\workflows\workflow.yml
 
 # begin context for drom.toml
 # file drom.toml
@@ -105,7 +125,7 @@ e850a13c004f963e9f5a568eac93c217:dune
 
 # begin context for dune-project
 # file dune-project
-c063288437da29a5a21e8c76c1906adc:dune-project
+7f0439af8599faf105447755ebd72e7e:dune-project
 # end context for dune-project
 
 # begin context for opam/drom.opam
@@ -143,6 +163,16 @@ e55d659410b556d7bc60183d8ff1f788:opam/drom_toml.opam
 cda3f8bad69d9c6e8cbeab1c720d739a:scripts/static-build.sh
 # end context for scripts/static-build.sh
 
+# begin context for scripts\after.sh
+# file scripts\after.sh
+cb2282903fb6ae1ac71fb2fbbcccffbd:scripts\after.sh
+# end context for scripts\after.sh
+
+# begin context for scripts\before.sh
+# file scripts\before.sh
+97c9b1f22a04f7c0b42477aee6f4393e:scripts\before.sh
+# end context for scripts\before.sh
+
 # begin context for sphinx/_static/css/fixes.css
 # file sphinx/_static/css/fixes.css
 68b329da9893e34099c7d8ad5cb9c940:sphinx/_static/css/fixes.css
@@ -173,6 +203,21 @@ a44c87f3a364dd95f55427fe40b2c5d1:sphinx/about.rst
 8f504f01aea592543c0a662b81169d91:sphinx/license.rst
 # end context for sphinx/license.rst
 
+# begin context for sphinx\conf.py
+# file sphinx\conf.py
+67496ee935ab27fdabb4544f4f81eeb6:sphinx\conf.py
+# end context for sphinx\conf.py
+
+# begin context for sphinx\license.rst
+# file sphinx\license.rst
+8f504f01aea592543c0a662b81169d91:sphinx\license.rst
+# end context for sphinx\license.rst
+
+# begin context for sphinx\under_static\css\fixes.css
+# file sphinx\under_static\css\fixes.css
+20bbe7a5dbb3c3278a1511d960616fe5:sphinx\under_static\css\fixes.css
+# end context for sphinx\under_static\css\fixes.css
+
 # begin context for src/drom/dune
 # file src/drom/dune
 68aec4169671c0163b98bb38205d2e4d:src/drom/dune
@@ -198,6 +243,11 @@ a44c87f3a364dd95f55427fe40b2c5d1:sphinx/about.rst
 bb6803d414fd5a5479ed6381914604de:src/drom/package.toml
 # end context for src/drom/package.toml
 
+# begin context for src/drom\index.mld
+# file src/drom\index.mld
+2818d15f527a37c2cfafe85ef89f675b:src/drom\index.mld
+# end context for src/drom\index.mld
+
 # begin context for src/drom_lib/dune
 # file src/drom_lib/dune
 103b365e9f24dbbae02b6be22b3efd0a:src/drom_lib/dune
@@ -217,6 +267,21 @@ c4d6597dc5b0966758c213bfffb9d594:src/drom_lib/package.toml
 # file src/drom_lib/version.mlt
 a3e5d8a00664ceaa6addf376bedf6de1:src/drom_lib/version.mlt
 # end context for src/drom_lib/version.mlt
+
+# begin context for src/drom_lib\dune
+# file src/drom_lib\dune
+8c189e7a8bac651b008889b1dd38a8fe:src/drom_lib\dune
+# end context for src/drom_lib\dune
+
+# begin context for src/drom_lib\index.mld
+# file src/drom_lib\index.mld
+3e03ec5e98f99c1d5b09dd366177ad13:src/drom_lib\index.mld
+# end context for src/drom_lib\index.mld
+
+# begin context for src/drom_lib\version.mlt
+# file src/drom_lib\version.mlt
+a3e5d8a00664ceaa6addf376bedf6de1:src/drom_lib\version.mlt
+# end context for src/drom_lib\version.mlt
 
 # begin context for src/toml.7.1.0/dune
 # file src/toml.7.1.0/dune
@@ -242,6 +307,16 @@ d1b05207fce876a1b44a8b268bcaf226:src/toml.7.1.0/index.mld
 # file src/toml.7.1.0/version.mlt
 a3e5d8a00664ceaa6addf376bedf6de1:src/toml.7.1.0/version.mlt
 # end context for src/toml.7.1.0/version.mlt
+
+# begin context for src/toml.7.1.0\index.mld
+# file src/toml.7.1.0\index.mld
+d1b05207fce876a1b44a8b268bcaf226:src/toml.7.1.0\index.mld
+# end context for src/toml.7.1.0\index.mld
+
+# begin context for src/toml.7.1.0\version.mlt
+# file src/toml.7.1.0\version.mlt
+a3e5d8a00664ceaa6addf376bedf6de1:src/toml.7.1.0\version.mlt
+# end context for src/toml.7.1.0\version.mlt
 
 # begin context for test/expect-tests/dune
 # file test/expect-tests/dune
@@ -312,3 +387,13 @@ ee63957b3b77455a12e6c269a5032c3f:test/output-tests/test2.expected
 # file test/output-tests/test2.ml
 e8eaab7626ef0aace5e570fffe81f869:test/output-tests/test2.ml
 # end context for test/output-tests/test2.ml
+
+# begin context for test\inline-tests\test.ml
+# file test\inline-tests\test.ml
+37b8bc6035cda6302a80178c61f9626e:test\inline-tests\test.ml
+# end context for test\inline-tests\test.ml
+
+# begin context for test\output-tests\test1.expected
+# file test\output-tests\test1.expected
+dc8d6157230e9ef8e965865f990fbc49:test\output-tests\test1.expected
+# end context for test\output-tests\test1.expected

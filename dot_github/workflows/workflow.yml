@@ -1,0 +1,105 @@
+name: Main Workflow
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        ocaml-compiler:
+          - 4.14.1
+        skip_test:
+          - false
+
+        include:
+          - os: ubuntu-latest
+            ocaml-compiler: 4.08.0
+            skip_test: true
+
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Retrieve opam cache
+        uses: actions/cache@v2
+        id: cache-opam
+        with:
+          path: ~/.opam
+          key: v2-${{ runner.os }}-drom-${{ matrix.ocaml-compiler }}-${{ hashFiles('opam/*.opam') }}
+#          restore-keys: |
+#            v2-${{ runner.os }}-opam-${{ matrix.ocaml-compiler }}-
+
+      - name: Use OCaml ${{ matrix.ocaml-compiler }}
+        uses: avsm/setup-ocaml@v2
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          opam-pin: false
+          opam-depext: false
+
+      - name: Set git user
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email github-actions-bot@users.noreply.github.com
+
+      # define opam-repo = "git+https://" to add an extra opam repo
+
+      - run: opam pin add . -y --no-action
+
+      - run: opam depext -y drom drom_lib drom_toml
+#        if: steps.cache-opam.outputs.cache-hit != 'true'
+
+      - run: opam install -y opam/*.opam --deps-only --with-test
+#        if: steps.cache-opam.outputs.cache-hit != 'true'
+
+#      - run: opam upgrade --fixup
+#        if: steps.cache-opam.outputs.cache-hit == 'true'
+
+      - run: dos2unix scripts/*.sh
+        if: matrix.os == 'windows-latest'
+
+      - run: make build
+
+      - name: run test suite
+        run: |
+          ./scripts/before.sh test
+          opam exec -- dune build @runtest
+          ./scripts/after.sh test
+        if: matrix.skip_test  != 'true'
+
+      - name: test source is well formatted
+        run: make fmt
+        continue-on-error: true
+        if: matrix.ocaml-compiler == '4.14.1' && matrix.os == 'ubuntu-latest'
+
+      - name: build-doc
+        if: github.ref == 'refs/heads/master' && matrix.ocaml-compiler == '4.14.1' && matrix.os == 'ubuntu-latest'
+        run: |
+             sudo apt install -yqq python3-sphinx python3-sphinx-rtd-theme
+             opam install -y dune odoc
+             make doc
+             touch _drom/docs/.nojekyll
+             touch _drom/docs/sphinx/.nojekyll
+             touch _drom/docs/doc/.nojekyll
+
+      - name: deploy-doc
+        uses: JamesIves/github-pages-deploy-action@3.6.2
+        if: github.ref == 'refs/heads/master' && matrix.ocaml-compiler == '4.14.1' && matrix.os == 'ubuntu-latest'
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: _drom/docs/
+          CLEAN: true
