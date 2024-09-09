@@ -4,11 +4,7 @@
   (name drom_lib)
   (public_name drom_lib)
   (wrapped true)
-  ; use field 'dune-libraries' to add libraries without opam deps
-  (libraries ppx_protocol_conv otoml omd jingoo fmt ez_subst ez_opam_file ez_file ez_cmdliner drom_toml directories bigarray ppx_protocol_conv.runtime ppx_protocol_conv.driver)
-  ; use field 'dune-flags' to set this value
-  (flags (:standard))
-  ; use field 'dune-stanzas' to add more stanzas here
+  (libraries ppx_protocol_conv otoml omd jingoo fmt ez_subst ez_opam_file ez_file ez_cmdliner drom_toml directories bos bigarray ppx_protocol_conv.runtime ppx_protocol_conv.driver)
   
   (preprocess (pps ppx_deriving.show ppx_protocol_conv))
   )
@@ -22,5 +18,4 @@
 (documentation
   (package drom_lib))
 
-; use field 'dune-trailer' to add more stuff here
 
