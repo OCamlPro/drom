@@ -16,29 +16,31 @@ open EzFile.OP
 
 exception Postpone
 
-type ('context, 'p) state = {
-  context : 'context;
-  p : 'p; (* Types.project or Types.package *)
-  share : Types.share ; (* used mostly for licenses *)
-  postpone : bool ; (* some operations can be postponed (`raise
+type ('context, 'p) state =
+  { context : 'context;
+    p : 'p; (* Types.project or Types.package *)
+    share : Types.share; (* used mostly for licenses *)
+    postpone : bool;
+        (* some operations can be postponed (`raise
                        Postpone`), for example if they depend on
                        another file that has to be generated
                        before. *)
-  hashes : Hashes.t option; (* When reading files, files may not exist
+    hashes : Hashes.t option
+        (* When reading files, files may not exist
                                yet until `Hashes.save` has been
                                called, so we need a way to read them
                                before they are committed to disk *)
-}
+  }
 
-type ( 'project, 'context ) subst =
+type ('project, 'context) subst =
   ?bracket:('context, 'project) state EZ_SUBST.t ->
   ?skipper:bool list ref ->
   ('context, 'project) state ->
   string ->
   string
 
-let state ?(postpone=false) ?hashes context share p =
-  { context ; p ; share ; postpone ; hashes }
+let state ?(postpone = false) ?hashes context share p =
+  { context; p; share; postpone; hashes }
 
 exception ReplaceContent of string
 
@@ -65,7 +67,7 @@ let with_buffer f =
   f b;
   Buffer.contents b
 
-let project_brace ({ p; _ }  as state ) v =
+let project_brace ({ p; _ } as state) v =
   match v with
   | "name" -> p.package.name
   | "synopsis" -> p.synopsis
@@ -128,7 +130,7 @@ let project_brace ({ p; _ }  as state ) v =
     | None -> "unspecified"
     | Some copyright -> copyright )
   | "random" ->
-      (* TODO:deprecate as it is not determinist *)
+    (* TODO:deprecate as it is not determinist *)
     Random.int 1_000_000_000 |> string_of_int |> Digest.string |> Digest.to_hex
   | "li-authors" ->
     String.concat "\n"
@@ -249,6 +251,7 @@ let project_brace ({ p; _ }  as state ) v =
     match Globals.Base_dirs.config_dir with
     | None -> ""
     | Some config_dir ->
+      let config_dir = Fpath.to_string config_dir in
       let open EzFile.OP in
       begin
         match EzFile.read_file (config_dir // "ocamlformat") with
@@ -260,6 +263,7 @@ let project_brace ({ p; _ }  as state ) v =
     match Globals.Base_dirs.config_dir with
     | None -> ""
     | Some config_dir ->
+      let config_dir = Fpath.to_string config_dir in
       let open EzFile.OP in
       begin
         match EzFile.read_file (config_dir // "ocp" // "ocp-indent.conf") with
@@ -269,15 +273,15 @@ let project_brace ({ p; _ }  as state ) v =
   (* for dune *)
   | "dune-version" -> p.dune_version
   | "dune-lang" ->
-      if VersionCompare.compare state.share.drom_version "0.9.2" >= 0 then
-        (* just parsing basic semver for now. *)
+    if VersionCompare.compare state.share.drom_version "0.9.2" >= 0 then
+      (* just parsing basic semver for now. *)
         try
-          Scanf.sscanf p.dune_version "%i.%i"
-            (fun major minor -> Printf.sprintf "%i.%i" major minor)
-        with _ ->
-          raise (Failure ("Cannot parse dune-version: " ^ p.dune_version))
-      else
-        String.sub p.dune_version 0 (String.rindex p.dune_version '.')
+          Scanf.sscanf p.dune_version "%i.%i" (fun major minor ->
+              Printf.sprintf "%i.%i" major minor )
+        with
+      | _ -> raise (Failure ("Cannot parse dune-version: " ^ p.dune_version))
+    else
+      String.sub p.dune_version 0 (String.rindex p.dune_version '.')
   | "dune-cram" ->
     if VersionCompare.compare p.dune_version "2.7.0" >= 0 then
       "(cram enable)"
@@ -357,10 +361,7 @@ let project_brace ({ p; _ }  as state ) v =
     | None -> ""
     | Some s -> " --profile " ^ s )
   | "ocamlformat-ignore-share" ->
-      String.concat "\n"
-        (List.map (fun s ->
-             Filename.concat s "**"
-           ) p.share_dirs)
+    String.concat "\n" (List.map (fun s -> Filename.concat s "**") p.share_dirs)
   | s ->
     Printf.eprintf "Error: no project substitution for %S\n%!" s;
     raise Not_found
@@ -369,19 +370,19 @@ let project_paren state name =
   let name, default =
     if String.contains name ':' then
       let name, default = EzString.cut_at name ':' in
-      name, Some default
+      (name, Some default)
     else
-      name, None
+      (name, None)
   in
   match StringMap.find name state.p.fields with
   | s -> s
-  | exception Not_found ->
-      match default with
-      | None ->
-          if verbose_subst then
-            Printf.eprintf "Warning: no project field %S\n%!" name;
-          ""
-      | Some default -> default
+  | exception Not_found -> (
+    match default with
+    | None ->
+      if verbose_subst then
+        Printf.eprintf "Warning: no project field %S\n%!" name;
+      ""
+    | Some default -> default )
 
 let is_0_9_2_dev4 state =
   VersionCompare.compare state.share.drom_version "0.9.2~dev4" >= 0
@@ -401,11 +402,12 @@ let package_brace state v =
   | "description" when is_0_9_2_dev4 state -> Misc.p_description package
   | "version" when is_0_9_2_dev4 state -> Misc.p_version package
   | "authors-ampersand" when is_0_9_2_dev4 state ->
-      String.concat " & " (Misc.p_authors package)
+    String.concat " & " (Misc.p_authors package)
   | "authors-as-strings" when is_0_9_2_dev4 state ->
-      String.concat ", " (List.map (Printf.sprintf "%S") (Misc.p_authors package))
+    String.concat ", " (List.map (Printf.sprintf "%S") (Misc.p_authors package))
   | "authors-for-toml" when is_0_9_2_dev4 state ->
-      String.concat ", " (List.map (Printf.sprintf "\"%s\"") (Misc.p_authors package))
+    String.concat ", "
+      (List.map (Printf.sprintf "\"%s\"") (Misc.p_authors package))
   | "skeleton" -> Misc.package_skeleton package
   | "library-name" -> Misc.library_name package
   | "pack" -> Misc.library_module package
@@ -485,66 +487,64 @@ let package_paren state name =
 let subst_encode p_subst escape state s =
   match EzString.split s ':' with
   | [] ->
-      Printf.eprintf "Warning: empty expression\n%!";
-      raise Not_found
+    Printf.eprintf "Warning: empty expression\n%!";
+    raise Not_found
   | [ "escape"; "true" ] ->
-      escape := true;
-      ""
+    escape := true;
+    ""
   | [ "escape"; "false" ] ->
-      escape := false;
-      ""
+    escape := false;
+    ""
   | list ->
-      let s, encodings = match list with
-        | [] -> assert false
-        | s :: ">" :: encodings ->
-            s, encodings
-        | var :: encodings ->
-            let s = p_subst state var in
-            s, encodings
-      in
-      let rec iter encodings var =
-        match encodings with
-        | [] -> var
-        | "default" :: default ->
-            if var = "" then
-              String.concat ":" default
+    let s, encodings =
+      match list with
+      | [] -> assert false
+      | s :: ">" :: encodings -> (s, encodings)
+      | var :: encodings ->
+        let s = p_subst state var in
+        (s, encodings)
+    in
+    let rec iter encodings var =
+      match encodings with
+      | [] -> var
+      | "default" :: default ->
+        if var = "" then
+          String.concat ":" default
+        else
+          var
+      | encoding :: encodings ->
+        let var =
+          match encoding with
+          | "read" -> begin
+            if state.postpone then
+              raise Postpone
             else
-              var
-        | encoding :: encodings ->
-            let var =
-              match encoding with
-              | "read" ->
-                  begin
-                    if state.postpone then
-                      raise Postpone
-                    else
-                      try
-                        match state.hashes with
-                        | None ->
-                            EzFile.read_file var
-                        | Some hashes ->
-                            Hashes.read hashes ~file:var
-                      with Sys_error _ -> (* File does not exist *)
-                        ""
-                  end
-              | "md5" -> Digest.string var |> Digest.to_hex
-              | "html" -> EzHtml.string var
-              | "cap" -> String.capitalize var
-              | "uncap" -> String.uncapitalize var
-              | "low" -> String.lowercase var
-              | "up"
-              | "upp" ->
-                  String.uppercase var
-              | "alpha" -> Misc.underscorify var
-              | "md-to-html" ->
-                  Omd.of_string var |> Omd.to_html
-              | _ ->
-                  Printf.eprintf "Error: unknown encoding %S\n%!" encoding;
-                  raise Not_found
-            in
-            iter encodings var
-      in
-      iter encodings s
+              try
+                match state.hashes with
+                | None -> EzFile.read_file var
+                | Some hashes -> Hashes.read hashes ~file:var
+              with
+              | Sys_error _ ->
+                (* File does not exist *)
+                ""
+          end
+          | "md5" -> Digest.string var |> Digest.to_hex
+          | "html" -> EzHtml.string var
+          | "cap" -> String.capitalize var
+          | "uncap" -> String.uncapitalize var
+          | "low" -> String.lowercase var
+          | "up"
+          | "upp" ->
+            String.uppercase var
+          | "alpha" -> Misc.underscorify var
+          | "md-to-html" -> Omd.of_string var |> Omd.to_html
+          | _ ->
+            Printf.eprintf "Error: unknown encoding %S\n%!" encoding;
+            raise Not_found
+        in
+        iter encodings var
+    in
+    iter encodings s
 
 let project ?bracket ?skipper state s =
   try

@@ -42,21 +42,21 @@ module EZ = struct
     match Toml.Parser.from_filename filename with
     | `Ok content -> content
     | `Error (s, loc) ->
-      Printf.kprintf failwith "Could not parse %S: %s at %s" filename s
+      Printf.ksprintf failwith "Could not parse %S: %s at %s" filename s
         (string_of_location loc)
 
   let from_string_exn content =
     match Toml.Parser.from_string content with
     | `Ok content -> content
     | `Error (s, loc) ->
-      Printf.kprintf failwith "Could not parse toml content: %s at %s" s
+      Printf.ksprintf failwith "Could not parse toml content: %s at %s" s
         (string_of_location loc)
 end
 
 open TYPES
 include EZ
 
-let failwith fmt = Printf.kprintf failwith fmt
+let failwith fmt = Printf.ksprintf failwith fmt
 
 let key2str key = String.concat "." key
 

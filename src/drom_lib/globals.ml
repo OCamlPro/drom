@@ -43,7 +43,6 @@ module App_id = struct
 end
 
 module Base_dirs = Directories.Base_dirs ()
-
 module Project_dirs = Directories.Project_dirs (App_id)
 
 let home_dir =
@@ -52,7 +51,7 @@ let home_dir =
     Format.eprintf
       "Error: can't compute HOME path, make sure it is well defined !@.";
     exit 2
-  | Some home_dir -> home_dir
+  | Some home_dir -> Fpath.to_string home_dir
 
 let config_dir =
   match Project_dirs.config_dir with
@@ -61,7 +60,7 @@ let config_dir =
       "Error: can't compute configuration path, make sure your HOME and other \
        environment variables are well defined !@.";
     exit 2
-  | Some config_dir -> config_dir
+  | Some config_dir -> Fpath.to_string config_dir
 
 let min_drom_version = "0.1"
 
@@ -112,8 +111,7 @@ let main_branch = "master"
 
 let key_LGPL2 = "LGPL2"
 
-let default_ci_systems =
-  [ "ubuntu-latest"; "macos-latest"; "windows-latest" ]
+let default_ci_systems = [ "ubuntu-latest"; "macos-latest"; "windows-latest" ]
 
 open EzCompat
 open Types
@@ -155,8 +153,8 @@ let rec dummy_project =
     year = (Misc.date ()).Unix.tm_year;
     generators = StringSet.empty;
     menhir_version = None;
-    dune_version = current_dune_version ;
-    project_create = false ;
+    dune_version = current_dune_version;
+    project_create = false
   }
 
 and dummy_package =

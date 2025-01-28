@@ -61,11 +61,11 @@ let load_licenses_dir dir =
 let licenses share =
   match share.share_licenses with
   | None ->
-      let dir = share.share_dir in
-      let global_licenses_dir = dir // "licenses" in
-      let licenses = load_licenses_dir global_licenses_dir in
-      share.share_licenses <- Some licenses ;
-      licenses
+    let dir = share.share_dir in
+    let global_licenses_dir = dir // "licenses" in
+    let licenses = load_licenses_dir global_licenses_dir in
+    share.share_licenses <- Some licenses;
+    licenses
   | Some licenses -> licenses
 
 let known_licenses share =
@@ -132,7 +132,7 @@ let header share ?(sep = ml_sep) p =
           else
             Printf.sprintf "%d-%d" p.year current_year
         in
-        [ Printf.kprintf line "Copyright (c) %s %s" years copyright; line "" ]
+        [ Printf.ksprintf line "Copyright (c) %s %s" years copyright; line "" ]
       )
     @ [ line "All rights reserved." ]
     @ List.map line lines
@@ -149,7 +149,7 @@ let header_c share p = header ~sep:c_sep share p
 let license share p =
   let key = p.license in
   try
-    let m = StringMap.find key ( licenses share ) in
+    let m = StringMap.find key (licenses share) in
     m.license_contents
   with
   | Not_found ->

@@ -152,7 +152,7 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
             found := true;
             let editor = Globals.editor in
             match
-              Printf.kprintf Sys.command "%s '%s'" editor
+              Printf.ksprintf Sys.command "%s '%s'" editor
                 (package.dir // "package.toml")
             with
             | 0 -> ()
@@ -168,7 +168,6 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
   let share = Share.load ~args:share_args ~p () in
   let upgrade =
     Hashes.with_ctxt ~git:true (fun hashes ->
-
         if remove then begin
           if create <> None then
             Error.raise "--remove and --create are incompatible";
@@ -219,8 +218,9 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
                 | [] -> package
                 | content :: super ->
                   let package = iter_skeleton super in
-                  let content = Subst.package
-                      (Subst.state () share package) content in
+                  let content =
+                    Subst.package (Subst.state () share package) content
+                  in
                   Package.of_string ~msg:"package.toml template" content
               in
               let skeleton = Skeleton.lookup_package share skeleton in

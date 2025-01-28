@@ -22,47 +22,49 @@ let action ~skeleton ~edit ~args =
   begin
     match Project.lookup () with
     | None ->
-        Error.raise
-          "No project found. Maybe you need to create a project first with 'drom \
-           new PROJECT'"
+      Error.raise
+        "No project found. Maybe you need to create a project first with 'drom \
+         new PROJECT'"
     | Some (dir, _) -> (
-        if edit then
-          let editor = Globals.editor in
-          match
-            Printf.kprintf Sys.command "%s '%s'" editor (dir // "drom.toml")
-          with
-          | 0 -> ()
-          | _ -> Error.raise "Editing command returned a non-zero status" )
+      if edit then
+        let editor = Globals.editor in
+        match
+          Printf.ksprintf Sys.command "%s '%s'" editor (dir // "drom.toml")
+        with
+        | 0 -> ()
+        | _ -> Error.raise "Editing command returned a non-zero status" )
   end;
 
   let project = Project.find () in
   match project with
   | None -> assert false
   | Some (p, _) ->
-      let args, share_args = args in
-      let share = Share.load ~args:share_args ~p () in
-      let args = { args with
-                   arg_share_version = Some share.share_version ;
-                   arg_share_repo = share_args.arg_repo ;
-                 }
-      in
-      let skeleton = match skeleton with
-        | None -> Misc.project_skeleton p.skeleton
-        | Some skeleton -> skeleton
-      in
-      (* Used to check that the project exists. *)
-      let _sk : skeleton = Skeleton.lookup_project share skeleton in
-      let args =
-        { args with
-          arg_upgrade =
-            ( if p.skeleton <> Some skeleton then begin
-                  p.skeleton <- Some skeleton;
-                  true
-                end else
-                args.arg_upgrade )
-        }
-      in
-      Update.update_files share ~twice:false ~args ~git:true p
+    let args, share_args = args in
+    let share = Share.load ~args:share_args ~p () in
+    let args =
+      { args with
+        arg_share_version = Some share.share_version;
+        arg_share_repo = share_args.arg_repo
+      }
+    in
+    let skeleton =
+      match skeleton with
+      | None -> Misc.project_skeleton p.skeleton
+      | Some skeleton -> skeleton
+    in
+    (* Used to check that the project exists. *)
+    let _sk : skeleton = Skeleton.lookup_project share skeleton in
+    let args =
+      { args with
+        arg_upgrade =
+          ( if p.skeleton <> Some skeleton then begin
+              p.skeleton <- Some skeleton;
+              true
+            end else
+              args.arg_upgrade )
+      }
+    in
+    Update.update_files share ~twice:false ~args ~git:true p
 
 let cmd =
   let skeleton = ref None in
@@ -71,12 +73,10 @@ let cmd =
   let edit = ref false in
   let args = (update_args, share_args) in
   EZCMD.sub cmd_name
-    (fun () -> action
-        ~skeleton:!skeleton ~edit:!edit ~args)
+    (fun () -> action ~skeleton:!skeleton ~edit:!edit ~args)
     ~args:
-      ( update_specs
-        @ share_specs
-        @ [ ( [ "library" ],
+      ( update_specs @ share_specs
+      @ [ ( [ "library" ],
             Arg.Unit
               (fun () ->
                 skeleton := Some "library";
@@ -114,7 +114,7 @@ let cmd =
             Arg.Unit (fun () -> update_args.arg_upgrade <- true),
             EZCMD.info "Force upgrade of the drom.toml file from the skeleton"
           );
-          ([ "edit" ], Arg.Set edit, EZCMD.info "Edit project description");
+          ([ "edit" ], Arg.Set edit, EZCMD.info "Edit project description")
         ] )
     ~doc:"Update an existing project"
     ~man:

@@ -15,13 +15,18 @@ open EzFile.OP
 
 let default_flags =
   { flag_file = None;
-    flag_create = None; (* false *)
-    flag_record = None; (* true; *)
+    flag_create = None;
+    (* false *)
+    flag_record = None;
+    (* true; *)
     flag_skips = [];
-    flag_skip = None;  (* false; *)
-    flag_subst = None; (* true; *)
-    flag_perm = None; (* 0 *)
-    flag_skipper = ref [];
+    flag_skip = None;
+    (* false; *)
+    flag_subst = None;
+    (* true; *)
+    flag_perm = None;
+    (* 0 *)
+    flag_skipper = ref []
   }
 
 let bracket flags eval_cond =
@@ -29,60 +34,60 @@ let bracket flags eval_cond =
     match EzString.split s ':' with
     (* set the name of the file *)
     | [ "file"; v ] ->
-        flags.flag_file <- Some v;
-        ""
+      flags.flag_file <- Some v;
+      ""
     (* create only once *)
     | [ "create" ] ->
-        flags.flag_create <- Some true;
-        ""
+      flags.flag_create <- Some true;
+      ""
     (* skip with this tag *)
     | [ "skip"; v ] ->
-        flags.flag_skips <- v :: flags.flag_skips;
-        ""
+      flags.flag_skips <- v :: flags.flag_skips;
+      ""
     (* skip always *)
     | [ "skip" ] ->
-        flags.flag_skip <- Some true;
-        ""
+      flags.flag_skip <- Some true;
+      ""
     (* do not record in .git *)
     | [ "no-record" ] ->
-        flags.flag_record <- Some false;
-        ""
+      flags.flag_record <- Some false;
+      ""
     | [ "perm"; v ] ->
-        flags.flag_perm <- Some ( int_of_string ("0o" ^ v) );
-        ""
+      flags.flag_perm <- Some (int_of_string ("0o" ^ v));
+      ""
     | "if" :: cond ->
-        let cond =
-          match !( flags.flag_skipper ) with
-          | true :: _ -> true
-          | _ -> not (eval_cond state.Subst.p cond)
-        in
-        flags.flag_skipper := cond :: !(flags.flag_skipper);
-        ""
+      let cond =
+        match !(flags.flag_skipper) with
+        | true :: _ -> true
+        | _ -> not (eval_cond state.Subst.p cond)
+      in
+      flags.flag_skipper := cond :: !(flags.flag_skipper);
+      ""
     | [ "else" ] ->
-        let list =
-          match !( flags.flag_skipper ) with
-          | _ :: ( (true :: _) as tail ) -> true :: tail
-          | cond :: tail -> not cond :: tail
-          | [] -> failwith "else without if"
-        in
-        flags.flag_skipper := list ;
-        ""
+      let list =
+        match !(flags.flag_skipper) with
+        | _ :: (true :: _ as tail) -> true :: tail
+        | cond :: tail -> not cond :: tail
+        | [] -> failwith "else without if"
+      in
+      flags.flag_skipper := list;
+      ""
     | "elif" :: cond ->
-        (flags.flag_skipper :=
-           match !(flags.flag_skipper) with
-           | _ :: ( (true :: _) as tail ) -> true :: tail
-           | _cond :: tail -> not (eval_cond state.Subst.p cond) :: tail
-           | [] -> failwith "elif without if" );
-        ""
+      (flags.flag_skipper :=
+         match !(flags.flag_skipper) with
+         | _ :: (true :: _ as tail) -> true :: tail
+         | _cond :: tail -> not (eval_cond state.Subst.p cond) :: tail
+         | [] -> failwith "elif without if" );
+      ""
     | [ ("fi" | "endif") ] ->
-        (flags.flag_skipper :=
-           match !(flags.flag_skipper) with
-           | _ :: tail -> tail
-           | [] -> failwith "fi without if" );
-        ""
+      (flags.flag_skipper :=
+         match !(flags.flag_skipper) with
+         | _ :: tail -> tail
+         | [] -> failwith "fi without if" );
+      ""
     | _ ->
-        Printf.eprintf "Warning: unknown flag %S\n%!" s;
-        ""
+      Printf.eprintf "Warning: unknown flag %S\n%!" s;
+      ""
   in
   bracket flags
 
@@ -96,15 +101,15 @@ let flags_encoding =
         (fun k v ->
           let key = key @ [ k ] in
           match k with
-          | "file" -> flags.flag_file <- Some ( EzToml.expect_string ~key v )
-          | "create" -> flags.flag_create <- Some ( EzToml.expect_bool ~key v )
-          | "record" -> flags.flag_record <- Some ( EzToml.expect_bool ~key v )
+          | "file" -> flags.flag_file <- Some (EzToml.expect_string ~key v)
+          | "create" -> flags.flag_create <- Some (EzToml.expect_bool ~key v)
+          | "record" -> flags.flag_record <- Some (EzToml.expect_bool ~key v)
           | "skips" -> flags.flag_skips <- EzToml.expect_string_list ~key v
-          | "skip" -> flags.flag_skip <- Some ( EzToml.expect_bool ~key v )
-          | "subst" -> flags.flag_subst <- Some ( EzToml.expect_bool ~key v )
+          | "skip" -> flags.flag_skip <- Some (EzToml.expect_bool ~key v)
+          | "subst" -> flags.flag_subst <- Some (EzToml.expect_bool ~key v)
           | "perm" ->
-              flags.flag_perm <-
-                Some ( int_of_string ("0o" ^ EzToml.expect_string ~key v) )
+            flags.flag_perm <-
+              Some (int_of_string ("0o" ^ EzToml.expect_string ~key v))
           | _ ->
             Printf.eprintf "Warning: discarding flags field %S\n%!"
               (EzToml.key2str key) )
@@ -183,10 +188,10 @@ let load_skeleton ~version ~drom ~dir ~toml ~kind =
       skeleton_flags;
       skeleton_drom = drom;
       skeleton_name = name;
-      skeleton_version =  version;
+      skeleton_version = version
     } )
 
-let load_dir_skeletons ?(map=StringMap.empty) ~version ~drom kind dir =
+let load_dir_skeletons ?(map = StringMap.empty) ~version ~drom kind dir =
   let map = ref map in
   if Sys.file_exists dir then begin
     EzFile.iter_dir dir ~f:(fun file ->
@@ -194,7 +199,8 @@ let load_dir_skeletons ?(map=StringMap.empty) ~version ~drom kind dir =
         let toml = dir // "skeleton.toml" in
         if Sys.file_exists toml then
           try
-            let name, skeleton = load_skeleton ~version ~drom ~dir ~toml ~kind
+            let name, skeleton =
+              load_skeleton ~version ~drom ~dir ~toml ~kind
             in
             if !Globals.verbosity > 0 && StringMap.mem name !map then
               Printf.eprintf "Warning: %s skeleton %S overwritten in %s\n%!"
@@ -215,14 +221,10 @@ let load_skeletons share kind =
   let dir = share.share_dir in
   let version = share.share_version in
   let subdir = kind ^ "s" in
-  List.fold_left (fun map dir ->
-      load_dir_skeletons ~map ~version ~drom:true kind dir
-    )
+  List.fold_left
+    (fun map dir -> load_dir_skeletons ~map ~version ~drom:true kind dir)
     StringMap.empty
-    [
-       dir // "skeletons" // subdir ;
-       dir // subdir ;
-     ]
+    [ dir // "skeletons" // subdir; dir // subdir ]
 
 let rec inherit_files self_files super_files =
   match (self_files, super_files) with
@@ -241,55 +243,52 @@ let rec inherit_files self_files super_files =
       :: inherit_files self_files super_files_tail
 
 let combine_option keep default =
-  match keep, default with
+  match (keep, default) with
   | None, None -> None
   | Some _, _ -> keep
   | _ -> default
 
 let combine_flags keep default =
-  {
-    flag_file = combine_option keep.flag_file default.flag_file;
+  { flag_file = combine_option keep.flag_file default.flag_file;
     flag_create = combine_option keep.flag_create default.flag_create;
     flag_record = combine_option keep.flag_record default.flag_record;
-    flag_skips = keep.flag_skips @ default.flag_skips ;
+    flag_skips = keep.flag_skips @ default.flag_skips;
     flag_skip = combine_option keep.flag_skip default.flag_skip;
     flag_subst = combine_option keep.flag_subst default.flag_subst;
     flag_perm = combine_option keep.flag_perm default.flag_perm;
-    flag_skipper = ref [];
+    flag_skipper = ref []
   }
 
 let lookup_skeleton skeletons name =
   let rec iter name =
     match StringMap.find name skeletons with
-    | exception Not_found ->
-        Error.raise "Missing skeleton %S" name
+    | exception Not_found -> Error.raise "Missing skeleton %S" name
     | self -> (
-        match self.skeleton_inherits with
-        | None -> self
-        | Some super ->
-            let super = iter super in
-            let skeleton_toml =
-              [ String.concat "\n" (super.skeleton_toml @ self.skeleton_toml) ]
-            in
-            let skeleton_files =
-              inherit_files self.skeleton_files super.skeleton_files
-            in
-            let skeleton_flags =
-              StringMap.union
-                (fun _ flag_self flag_super ->
-                   Some (combine_flags flag_self flag_super))
-                self.skeleton_flags super.skeleton_flags
-            in
-            { skeleton_name = name;
-              skeleton_inherits = None;
-              skeleton_toml;
-              skeleton_files;
-              skeleton_drom = false;
-              skeleton_flags;
-              skeleton_version = self.skeleton_version;
-            } )
-
-  (* This should be deprecated in favor of using a skeleton database
+      match self.skeleton_inherits with
+      | None -> self
+      | Some super ->
+        let super = iter super in
+        let skeleton_toml =
+          [ String.concat "\n" (super.skeleton_toml @ self.skeleton_toml) ]
+        in
+        let skeleton_files =
+          inherit_files self.skeleton_files super.skeleton_files
+        in
+        let skeleton_flags =
+          StringMap.union
+            (fun _ flag_self flag_super ->
+              Some (combine_flags flag_self flag_super) )
+            self.skeleton_flags super.skeleton_flags
+        in
+        { skeleton_name = name;
+          skeleton_inherits = None;
+          skeleton_toml;
+          skeleton_files;
+          skeleton_drom = false;
+          skeleton_flags;
+          skeleton_version = self.skeleton_version
+        } )
+    (* This should be deprecated in favor of using a skeleton database
      and download_skeleton name =
      if project then (
       match EzString.chop_prefix name ~prefix:"gh:" with
@@ -338,17 +337,17 @@ let project_skeletons share =
   match share.share_projects with
   | Some skeletons -> skeletons
   | None ->
-      let skeletons = load_skeletons share "project" in
-      share.share_projects <- Some skeletons ;
-      skeletons
+    let skeletons = load_skeletons share "project" in
+    share.share_projects <- Some skeletons;
+    skeletons
 
 let package_skeletons share =
   match share.share_packages with
   | Some skeletons -> skeletons
   | None ->
-      let skeletons = load_skeletons share "package" in
-      share.share_packages <- Some skeletons ;
-      skeletons
+    let skeletons = load_skeletons share "package" in
+    share.share_packages <- Some skeletons;
+    skeletons
 
 let lookup_project share skeleton =
   let project_skeletons = project_skeletons share in
@@ -362,10 +361,8 @@ let rec eval_project_cond p cond =
   match cond with
   | [ "skeleton"; "is"; skeleton ] ->
     Misc.project_skeleton p.skeleton = skeleton
-  | [ "skip"; skip ] ->
-      List.mem skip p.skip || List.mem ("@" ^ skip) p.skip
-  | [ "gen"; skip ] ->
-      not (List.mem skip p.skip || List.mem ("@" ^ skip) p.skip)
+  | [ "skip"; skip ] -> List.mem skip p.skip || List.mem ("@" ^ skip) p.skip
+  | [ "gen"; skip ] -> not (List.mem skip p.skip || List.mem ("@" ^ skip) p.skip)
   | "not" :: cond -> not (eval_project_cond p cond)
   | [ "true" ] -> true
   | [ "false" ] -> false
@@ -389,7 +386,7 @@ let rec eval_project_cond p cond =
       | x -> x = v
     end
   | _ ->
-    Printf.kprintf failwith "eval_project_cond: unknown condition %S\n%!"
+    Printf.ksprintf failwith "eval_project_cond: unknown condition %S\n%!"
       (String.concat ":" cond)
 
 let rec eval_package_cond p cond =
@@ -412,7 +409,7 @@ let rec eval_package_cond p cond =
       | x -> x = v
     end
   | _ ->
-    Printf.kprintf failwith "eval_package_cond: unknown condition %S\n%!"
+    Printf.ksprintf failwith "eval_package_cond: unknown condition %S\n%!"
       (String.concat ":" cond)
 
 let default_flags flag_file =
@@ -435,10 +432,8 @@ let skeleton_flags skeleton file =
           raise Not_found )
     in
     match flags.flag_file with
-    | None ->
-        { flags with flag_file = Some file; flag_skipper = ref [] }
-    | _ ->
-        { flags with flag_skipper = ref [] }
+    | None -> { flags with flag_file = Some file; flag_skipper = ref [] }
+    | _ -> { flags with flag_skipper = ref [] }
   with
   | Not_found -> default_flags file
 
@@ -448,26 +443,21 @@ let skeleton_flags skeleton file perm =
     match flags.flag_perm with
     | None -> perm
     | Some perm ->
-        if Filename.check_suffix file ".sh" then
-          perm lor 0o111
-        else
-          perm
+      if Filename.check_suffix file ".sh" then
+        perm lor 0o111
+      else
+        perm
   in
-  flags.flag_perm <- Some perm ;
+  flags.flag_perm <- Some perm;
   flags
-
 
 let default_to option v =
   match option with
   | None -> v
   | Some v -> v
 
-let write_skeleton_files
-    ?dir
-    ~write_file
-    ~eval_cond
-    ~(subst : ('project, 'context) Subst.subst)
-    state skeleton =
+let write_skeleton_files ?dir ~write_file ~eval_cond
+    ~(subst : ('project, 'context) Subst.subst) state skeleton =
   let postponed_items = ref [] in
 
   let write_skeleton_file ~postpone (file, content, perm) =
@@ -485,17 +475,20 @@ let write_skeleton_files
       flags
     in
     (* name of file can also be substituted *)
-    let flag_file = match flag_file with
+    let flag_file =
+      match flag_file with
       | None -> assert false
       | Some flag_file ->
-          flags.flag_file <- None ;
-          subst state flag_file
+        flags.flag_file <- None;
+        subst state flag_file
     in
-    let perm = match perm with
+    let perm =
+      match perm with
       | None -> assert false
       | Some perm -> perm
     in
-    let dir_file = match dir with
+    let dir_file =
+      match dir with
       | None -> flag_file
       | Some dir -> dir // flag_file
     in
@@ -503,7 +496,8 @@ let write_skeleton_files
       let template = dir_file ^ ".drom-tpl" in
       if Sys.file_exists template then begin
         EzFile.read_file template
-      end else content
+      end else
+        content
     in
     backup_skeleton dir_file content ~perm;
     let bracket = bracket flags eval_cond in
@@ -511,39 +505,35 @@ let write_skeleton_files
       match flags.flag_subst with
       | Some false -> content
       | None (* flag_subst default is true *)
-      | Some true ->
-          try
-            subst { state with postpone }
-              ~bracket ~skipper:flags.flag_skipper content
-          with
-          | Not_found ->
-              Printf.kprintf failwith "Exception Not_found in %S\n%!" file
+      | Some true -> (
+        try
+          subst { state with postpone } ~bracket ~skipper:flags.flag_skipper
+            content
+        with
+        | Not_found ->
+          Printf.ksprintf failwith "Exception Not_found in %S\n%!" file )
     in
     let create = default_to create false in
     let record = default_to record true in
     let skip = default_to skip false in
-    let dir_file = (* check if flags.flag_file was modified during subst *)
+    let dir_file =
+      (* check if flags.flag_file was modified during subst *)
       match flags.flag_file with
       | None -> dir_file
-      | Some flag_file ->
-          match dir with
-          | None -> flag_file
-          | Some dir -> dir // flag_file
+      | Some flag_file -> (
+        match dir with
+        | None -> flag_file
+        | Some dir -> dir // flag_file )
     in
     write_file dir_file ~create ~skips ~content:new_content ~record ~skip ~perm
   in
   List.iter
     (fun file_item ->
-       try
-         write_skeleton_file ~postpone:true file_item
-       with Subst.Postpone ->
-         postponed_items := file_item :: !postponed_items
-    )
+      try write_skeleton_file ~postpone:true file_item with
+      | Subst.Postpone -> postponed_items := file_item :: !postponed_items )
     skeleton.skeleton_files;
   List.iter
-    (fun file_item ->
-       write_skeleton_file ~postpone:false file_item
-    )
+    (fun file_item -> write_skeleton_file ~postpone:false file_item)
     !postponed_items;
   ()
 
@@ -552,55 +542,42 @@ let subst_package_file flags content state =
   let content =
     match flags.flag_subst with
     | Some false -> content
-    | None | Some true ->
-        try
-          Subst.package state
-            ~bracket ~skipper:flags.flag_skipper content
-        with
-        | Not_found ->
-            Printf.kprintf failwith
-              "Exception Not_found in %S\n%!"
-              (match flags.flag_file with
-               | None -> assert false
-               | Some file -> file)
-
+    | None
+    | Some true -> (
+      try Subst.package state ~bracket ~skipper:flags.flag_skipper content with
+      | Not_found ->
+        Printf.ksprintf failwith "Exception Not_found in %S\n%!"
+          ( match flags.flag_file with
+          | None -> assert false
+          | Some file -> file ) )
   in
   content
 
 let write_project_files write_file state =
   let p = state.Subst.p in
-  let skeleton = lookup_project state.share
-      (Misc.project_skeleton p.skeleton) in
-  write_skeleton_files
-    ~write_file
-    ~eval_cond: eval_project_cond
-    ~subst: Subst.project
-    state skeleton
-
+  let skeleton =
+    lookup_project state.share (Misc.project_skeleton p.skeleton)
+  in
+  write_skeleton_files ~write_file ~eval_cond:eval_project_cond
+    ~subst:Subst.project state skeleton
 
 let write_package_files write_file state =
   let package = state.Subst.p in
   let skeleton = lookup_package state.share (Misc.package_skeleton package) in
-  write_skeleton_files
-    ~dir:package.dir
-    ~write_file
-    ~eval_cond: eval_package_cond
-    ~subst: Subst.package
-    state skeleton
+  write_skeleton_files ~dir:package.dir ~write_file ~eval_cond:eval_package_cond
+    ~subst:Subst.package state skeleton
 
 let write_files write_file state =
   write_project_files write_file state;
-  List.iter (fun package ->
-      write_package_files write_file { state with p = package })
+  List.iter
+    (fun package -> write_package_files write_file { state with p = package })
     state.Subst.p.packages
 
 let project_skeletons share =
-  project_skeletons share
-  |> StringMap.to_list |> List.map snd
+  project_skeletons share |> StringMap.to_list |> List.map snd
 
 let package_skeletons share =
-  package_skeletons share
-  |> StringMap.to_list |> List.map snd
+  package_skeletons share |> StringMap.to_list |> List.map snd
 
 let known_skeletons share =
   Printf.sprintf "project skeletons: %s\npackage skeletons: %s\n"
