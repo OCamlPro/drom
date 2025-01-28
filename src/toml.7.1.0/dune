@@ -9,8 +9,8 @@
   
   )
 
-(menhir (modules menhir_parser))
 (ocamllex lexer)
+(menhir (modules menhir_parser))
 
 (rule
     (targets version.ml)

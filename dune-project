@@ -30,12 +30,13 @@
  (depends
    (ocaml (>= 4.07.0))
    (omd ( >= 2.0 ))
+   (fpath ( >= 0.7.3 ))
    (ez_subst ( >= 0.1 ))
    (ez_opam_file (and (>= 0.1.0) (< 1.0.0)))
    (ez_file (and (>= 0.3.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.2.0) (< 1.0.0)))
    (drom_toml (= version))
-   (directories ( >= 0.2 ))
+   (directories ( >= 0.6 ))
    ppx_inline_test
    ppx_expect
    odoc

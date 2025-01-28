@@ -4,7 +4,7 @@
   (name drom_lib)
   (public_name drom_lib)
   (wrapped true)
-  (libraries omd ez_subst ez_opam_file ez_file ez_cmdliner drom_toml directories bigarray)
+  (libraries omd fpath ez_subst ez_opam_file ez_file ez_cmdliner drom_toml directories bigarray)
   
   
   )
