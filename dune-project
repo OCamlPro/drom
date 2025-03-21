@@ -15,7 +15,7 @@
  (description "The drom tool is a wrapper over opam/dune in an attempt to provide a cargo-like\nuser experience. It can be used to create full OCaml projects with\nsphinx and odoc documentation. It has specific knowledge of Github and\nwill generate files for Github Actions CI and Github pages.\n")
  (depends
    (ocaml (>= 4.07.0))
-   (drom_lib (= version))
+   (drom_lib (= :version))
    ppx_inline_test
    ppx_expect
    odoc
@@ -34,7 +34,7 @@
    (ez_opam_file (and (>= 0.1.0) (< 1.0.0)))
    (ez_file (and (>= 0.3.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.2.0) (< 1.0.0)))
-   (drom_toml (= version))
+   (drom_toml (= :version))
    (directories ( >= 0.2 ))
    ppx_inline_test
    ppx_expect
