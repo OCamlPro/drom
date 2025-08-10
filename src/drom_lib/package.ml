@@ -343,6 +343,8 @@ let to_string pk =
               {|  no-opam-test = "yes" |};
               {|  no-opam-doc = "yes" |};
               {|  gen-opam = "some" | "all" |};
+              {|  dune-flags = "(:standard (:include linking.sexp))" |};
+              {|  dune-stanzas = "(foreign_stubs (language c) (names mapfile_stubs))" |};
               {|  static-clibs = "unix" |};
             ]
           (encoding fields_encoding pk.p_fields)

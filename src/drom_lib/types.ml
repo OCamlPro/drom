@@ -192,6 +192,7 @@ and project =
     mutable menhir_version : string option; (* from sub-packages *)
     (* common fields *)
     mutable skeleton : string option;
+    (* Initialized by DROM_VERSION from the drom-share skeleton *)
     project_drom_version : string ;
     project_share_repo : string option ;
     project_share_version : string option ;
@@ -272,7 +273,9 @@ type flags =
 
 type skeleton =
   { skeleton_inherits : string option;
-    skeleton_toml : string list; (* content of drom.toml or package.toml file *)
+    (* content of drom.toml or package.toml file, inherited skeletons
+       coming first *)
+    skeleton_toml : string list;
     skeleton_files : (string * string * int) list;
     skeleton_flags : flags StringMap.t;
     skeleton_drom : bool;
@@ -289,14 +292,43 @@ type license =
 
 (* The content of the share-repo. Options are loaded on demand *)
 type share = {
-  share_dir : string ;
-  share_version : string ;
-  drom_version : string ;
-  mutable share_licenses : license StringMap.t option ;
-  mutable share_projects : skeleton StringMap.t option ;
-  mutable share_packages : skeleton StringMap.t option ;
+    (* Directory containing a checkout of drom-share at the given
+       version. TODO: add a lock ! *)
+    share_dir : string ;
+    (* The current version of drom-share *)
+    share_version : string ;
+    (* The maximal version between DROM_VERSION file (in drom-share)
+       and the current drom-version (in drom.toml of the project) *)
+    share_drom_version : string ;
+
+    mutable share_licenses : license StringMap.t option ;
+    mutable share_projects : skeleton StringMap.t option ;
+    mutable share_packages : skeleton StringMap.t option ;
 }
 
 type deps_status =
   | Deps_build
   | Deps_devel
+
+
+
+
+type share_args = {
+  mutable arg_share_reclone : bool ;
+  mutable arg_share_no_fetch : bool ;
+  mutable arg_share_version : string option ;
+  mutable arg_share_repo : string option ;
+}
+
+type update_args =
+  { mutable arg_upgrade : bool;
+    mutable arg_force : bool;
+    mutable arg_diff : bool;
+    mutable arg_skip : (bool * string) list;
+    mutable arg_promote_skip : bool;
+    mutable arg_edition : string option;
+    mutable arg_min_edition : string option;
+    mutable arg_create : bool option ;
+
+    arg_share : share_args ;
+  }

@@ -13,7 +13,6 @@ open Types
 open EZCMD.TYPES
 open Ez_file.V1
 open EzFile.OP
-open Update
 
 let cmd_name = "package"
 
@@ -120,9 +119,9 @@ let find_package_name () =
         Printf.eprintf "Infering package name %S from location\n%!" name;
         name )
 
-let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
-    () =
-  let args, share_args = args in
+let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~update_args ~files
+      () =
+  let share_args = update_args.arg_share in
   let package_name =
     match package_name with
     | Some _ -> package_name
@@ -165,7 +164,7 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
     ) else
       p
   in
-  let share = Share.load ~args:share_args ~p () in
+  let share = Share.load ~share_args ~p () in
   let upgrade =
     Hashes.with_ctxt ~git:true (fun hashes ->
 
@@ -263,9 +262,9 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
             p.packages;
           !upgrade )
   in
-  let args = { args with arg_upgrade = upgrade } in
+  let update_args = { update_args with arg_upgrade = upgrade } in
   let twice = create <> None in
-  Update.update_files share ~twice ~git:true p ~args;
+  Update.update_files share ~twice ~git:true p ~update_args;
   ()
 
 let cmd =
@@ -277,17 +276,14 @@ let cmd =
   let rename = ref None in
   let edit = ref false in
   let update_args, update_specs = Update.args () in
-  let share_args, share_specs = Share.args () in
-  let args = (update_args, share_args) in
-  let specs = update_specs @ share_specs in
   let files = ref [] in
   EZCMD.sub cmd_name
     (fun () ->
       action ~package_name:!package_name ~kind:!kind ~dir:!dir ?create:!create
-        ~remove:!remove ~edit:!edit ?rename:!rename ~args
+        ~remove:!remove ~edit:!edit ?rename:!rename ~update_args
         ~files:(List.rev !files) () )
     ~args:
-      ( specs
+      ( update_specs
       @ [ ( [ "new" ],
             Arg.String (fun s -> create := Some s),
             EZCMD.info ~docv:"SKELETON"

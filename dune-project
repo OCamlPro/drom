@@ -3,9 +3,8 @@
 
 (cram enable)
 (name drom)
-(allow_approximate_merlin)
 (generate_opam_files false)
-(version 0.9.2)
+(version 0.9.3)
 (formatting (enabled_for ocaml reason))
 (using menhir 2.0)
 
@@ -19,8 +18,8 @@
   )
 
  (depends
-   (ocaml (>= 4.08.0))
-   (drom_lib (= version))
+   (ocaml (>= 4.14.0))
+   (drom_lib (= :version))
    ppx_inline_test
    ppx_expect
    odoc
@@ -39,7 +38,7 @@
   )
 
  (depends
-   (ocaml (>= 4.08.0))
+   (ocaml (>= 4.14.0))
    (ppx_protocol_conv ( >= 5.2.1 ))
    (otoml ( >= 1.0.4 ))
    (omd ( >= 2.0 ))
@@ -49,9 +48,9 @@
    (ez_opam_file (and (>= 0.1.0) (< 1.0.0)))
    (ez_file (and (>= 0.3.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.2.0) (< 1.0.0)))
-   (drom_toml (= version))
-   (directories ( >= 0.2 ))
-   bos
+   (drom_toml (= :version))
+   (directories ( >= 0.6 ))
+   (bos ( >= 0.2.1 ))
    ppx_inline_test
    ppx_expect
    odoc
@@ -70,7 +69,7 @@
   )
 
  (depends
-   (ocaml (>= 4.08.0))
+   (ocaml (>= 4.14.0))
    (menhirLib ( > 2019 ))
    (ISO8601 ( >= 0.2 ))
    (menhir ( > 2019 ))
@@ -82,4 +81,7 @@
   )
  )
 
+; the next line is deprecated for recent versions of dune, but
+; can still be added into the dune-project-trailer field
+;(allow_approximate_merlin)
 

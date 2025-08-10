@@ -11,14 +11,13 @@
 open Types
 open Ezcmd.V2
 open EZCMD.TYPES
-open Update
 open Ez_file.V1
 open EzFile.OP
 
 let cmd_name = "project"
 
 (* lookup for "drom.toml" and update it *)
-let action ~skeleton ~edit ~args =
+let action ~skeleton ~edit ~update_args =
   begin
     match Project.lookup () with
     | None ->
@@ -39,43 +38,33 @@ let action ~skeleton ~edit ~args =
   match project with
   | None -> assert false
   | Some (p, _) ->
-      let args, share_args = args in
-      let share = Share.load ~args:share_args ~p () in
-      let args = { args with
-                   arg_share_version = Some share.share_version ;
-                   arg_share_repo = share_args.arg_repo ;
-                 }
-      in
+      let share = Share.load ~share_args:update_args.arg_share ~p () in
       let skeleton = match skeleton with
         | None -> Misc.project_skeleton p.skeleton
         | Some skeleton -> skeleton
       in
       (* Used to check that the project exists. *)
       let _sk : skeleton = Skeleton.lookup_project share skeleton in
-      let args =
-        { args with
+      let update_args =
+        { update_args with
           arg_upgrade =
             ( if p.skeleton <> Some skeleton then begin
                   p.skeleton <- Some skeleton;
                   true
                 end else
-                args.arg_upgrade )
+                update_args.arg_upgrade )
         }
       in
-      Update.update_files share ~twice:false ~args ~git:true p
+      Update.update_files share ~twice:false ~update_args ~git:true p
 
 let cmd =
   let skeleton = ref None in
-  let update_args, update_specs = Update.args () in
-  let share_args, share_specs = Share.args ~set:true () in
+  let update_args, update_specs = Update.args ~set_share:true () in
   let edit = ref false in
-  let args = (update_args, share_args) in
   EZCMD.sub cmd_name
-    (fun () -> action
-        ~skeleton:!skeleton ~edit:!edit ~args)
+    (fun () -> action ~skeleton:!skeleton ~edit:!edit ~update_args)
     ~args:
       ( update_specs
-        @ share_specs
         @ [ ( [ "library" ],
             Arg.Unit
               (fun () ->

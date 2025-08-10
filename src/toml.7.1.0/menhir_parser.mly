@@ -163,6 +163,7 @@ toml:
 group_header:
  | LBRACK LBRACK key_path RBRACK RBRACK { ArrayElement, $3 }
  | LBRACK key_path RBRACK               { Regular, $2 }
+ | LBRACK RBRACK               { Regular, [] }
 
 key:
  | STRING { Table.Key.of_string $1 }

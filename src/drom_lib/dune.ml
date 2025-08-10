@@ -172,7 +172,12 @@ let packages p =
           | [] -> ()
           | [ version ] -> (
             match version with
-            | Version -> Printf.bprintf b "(= version)"
+            | Version ->
+               if VersionCompare.gte
+                    package.project.project_drom_version "0.9.3" then
+                 Printf.bprintf b "(= :version)"
+               else
+                 Printf.bprintf b "(= version)"
             | NoVersion -> ()
             | Semantic (major, minor, fix) ->
               Printf.bprintf b "(and (>= %d.%d.%d) (< %d.0.0))" major minor fix

@@ -25,19 +25,12 @@ let share_repo_default () =
   | Some repo -> repo
 
 
-type args = {
-  mutable arg_reclone : bool ;
-  mutable arg_no_fetch : bool ;
-  mutable arg_version : string option ;
-  mutable arg_repo : string option ;
-}
-
 let default_args () =
   {
-    arg_reclone = false ;
-    arg_no_fetch = false ;
-    arg_version = None ;
-    arg_repo = None ;
+    arg_share_reclone = false ;
+    arg_share_no_fetch = false ;
+    arg_share_version = None ;
+    arg_share_repo = None ;
   }
 
 let args ?(set=false) () =
@@ -45,13 +38,13 @@ let args ?(set=false) () =
   let specs =
     [
       [ "no-fetch-share" ],
-      Arg.Unit (fun () -> args.arg_no_fetch <- true),
+      Arg.Unit (fun () -> args.arg_share_no_fetch <- true),
       EZCMD.info
         "Prevent fetching updates from the share repo (in particular without network connection"
       ;
 
       [ "reclone-share" ],
-      Arg.Unit (fun () -> args.arg_reclone <- true),
+      Arg.Unit (fun () -> args.arg_share_reclone <- true),
       EZCMD.info
         "Reclone share repository"
       ;
@@ -61,7 +54,7 @@ let args ?(set=false) () =
     if set then
       ( [ "share-version" ],
         Arg.String (fun s ->
-            args.arg_version <- Some s
+            args.arg_share_version <- Some s
           ),
         EZCMD.info ~docv:"SHARE_VERSION"
           "Set the version of share database (use 'latest' for latest version)" )
@@ -69,8 +62,9 @@ let args ?(set=false) () =
       ( [ "share-repo" ],
         Arg.String (fun s ->
             match s with
-            | "default" -> args.arg_repo <-  Some ( share_repo_default () )
-            | _ -> args.arg_repo <- Some s),
+            | "default" ->
+               args.arg_share_repo <-  Some ( share_repo_default () )
+            | _ -> args.arg_share_repo <- Some s),
         EZCMD.info ~docv:"SHARE_REPO"
           "Set the repository URL of the share database (use 'default' for default repo)" )
       ::
@@ -80,7 +74,7 @@ let args ?(set=false) () =
   in
   (args, specs)
 
-let load ?(args=default_args()) ?p () =
+let load ?(share_args=default_args()) ?p () =
   let default_repo, default_version = match p with
     | None -> None, None
     | Some p ->
@@ -88,13 +82,13 @@ let load ?(args=default_args()) ?p () =
         | None -> None, Some "0.8.0"
         | _ -> p.project_share_repo, p.project_share_version
   in
-  let repo = match args.arg_repo with
+  let repo = match share_args.arg_share_repo with
     | None -> default_repo
-    | _ -> args.arg_repo
+    | _ -> share_args.arg_share_repo
   in
-  let version = match args.arg_version with
+  let version = match share_args.arg_share_version with
     | None -> default_version
-    | _ -> args.arg_version
+    | _ -> share_args.arg_share_version
   in
   let repo = match repo with
     | None | Some "default" -> share_repo_default ()
@@ -111,7 +105,7 @@ let load ?(args=default_args()) ?p () =
     Unix.mkdir shares_dir 0o755;
 
   let share_dir = shares_dir // hash in
-  if Sys.file_exists share_dir && args.arg_reclone then
+  if Sys.file_exists share_dir && share_args.arg_share_reclone then
     Call.call [ "rm"; "-rf" ; share_dir ];
 
   let git = Git.silent in
@@ -131,7 +125,7 @@ let load ?(args=default_args()) ?p () =
     try git cmd args with _ -> ()
   in
   let git_fetch_all () =
-    if not args.arg_no_fetch then
+    if not share_args.arg_share_no_fetch then
       let fetch_args = [ "-a"; "--all"; "--tags"; "-f" ] in
       git "fetch" fetch_args
   in
@@ -251,24 +245,26 @@ let load ?(args=default_args()) ?p () =
             end;
             version
   in
-  let drom_version = get_drom_version () in
-  let drom_version = match p with
-    | None -> drom_version
+  let share_drom_version = get_drom_version () in
+  let share_drom_version = match p with
+    | None -> share_drom_version
     | Some p ->
-        if VersionCompare.compare drom_version p.project_drom_version > 0 then
-          drom_version
-        else
-          p.project_drom_version
+       if VersionCompare.gt
+            p.project_drom_version share_drom_version then
+            p.project_drom_version
+          else
+            share_drom_version
   in
-  if VersionCompare.compare drom_version Version.version > 0 then begin
+  if VersionCompare.compare share_drom_version Version.version > 0 then begin
     Printf.eprintf "Error: you cannot update this project files:\n%!";
     Printf.eprintf "  Your drom version is too old: %s\n%!" Version.version;
-    Printf.eprintf "  Minimal version to update files: %s\n%!" drom_version;
+    Printf.eprintf "  Minimal version to update files: %s\n%!" share_drom_version;
+    exit 2
   end;
 
   {
     share_dir ;
-    drom_version ;
+    share_drom_version ;
     share_version ;
     share_licenses = None ;
     share_projects = None ;

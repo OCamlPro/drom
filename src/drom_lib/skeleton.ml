@@ -269,7 +269,7 @@ let lookup_skeleton skeletons name =
         | Some super ->
             let super = iter super in
             let skeleton_toml =
-              [ String.concat "\n" (super.skeleton_toml @ self.skeleton_toml) ]
+              [ String.concat "\n[]\n" (super.skeleton_toml @ self.skeleton_toml) ]
             in
             let skeleton_files =
               inherit_files self.skeleton_files super.skeleton_files

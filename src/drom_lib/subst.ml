@@ -261,7 +261,7 @@ let project_brace ({ p; _ }  as state ) v =
   (* for dune *)
   | "dune-version" -> p.dune_version
   | "dune-lang" ->
-      if VersionCompare.compare state.share.drom_version "0.9.2" >= 0 then
+      if VersionCompare.compare state.share.share_drom_version "0.9.2" >= 0 then
         (* just parsing basic semver for now. *)
         try
           Scanf.sscanf p.dune_version "%i.%i"
@@ -376,7 +376,7 @@ let project_paren state name =
       | Some default -> default
 
 let is_0_9_2_dev4 state =
-  VersionCompare.compare state.share.drom_version "0.9.2~dev4" >= 0
+  VersionCompare.compare state.share.share_drom_version "0.9.2~dev4" >= 0
 
 let package_brace state v =
   let package = state.p in

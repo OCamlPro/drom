@@ -17,9 +17,9 @@ let about =
   Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>" command
     Version.version
 
-let min_ocaml_edition = "4.07.0"
+let min_ocaml_edition = "4.13.0"
 
-let current_ocaml_edition = "4.13.0"
+let current_ocaml_edition = "4.14.0"
 
 let current_dune_version = "2.8.0"
 
@@ -63,7 +63,7 @@ let config_dir =
     exit 2
   | Some config_dir -> Fpath.to_string config_dir
 
-let min_drom_version = "0.1"
+let min_drom_version = "0.9.3"
 
 let verbosity = ref 1
 

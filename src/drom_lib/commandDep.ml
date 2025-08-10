@@ -10,7 +10,6 @@
 
 open Ezcmd.V2
 open EZCMD.TYPES
-open Update
 open Types
 open Ez_file.V1
 open EzFile.OP
@@ -30,9 +29,9 @@ let print_dep (name, d) =
   ()
 
 let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
-    ~depopt ~args =
+    ~depopt ~update_args =
   let p, _inferred_dir = Project.get () in
-  let upgrade = ref (fst args).arg_upgrade in
+  let upgrade = ref update_args.arg_upgrade in
   let update package_kind dep_kind deps setdeps =
     match dep with
     | None ->
@@ -169,24 +168,21 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
   end;
 
   if !upgrade then (
-    let args, share_args = args in
-    let share = Share.load ~args:share_args ~p () in
-    let args = { args with
-                 arg_share_version = Some share.share_version ;
-                 arg_share_repo = share_args.arg_repo ;
+    let share = Share.load ~share_args:update_args.arg_share ~p () in
+    let update_args = { update_args with
                  arg_upgrade = !upgrade ;
                }
     in
-    Update.update_files share ~twice:false ~git:true p ~args;
+    Update.update_files share ~twice:false ~git:true p ~update_args;
     ()
   )
 
-let generate_opam_for_cross ~cross ~args () =
+let generate_opam_for_cross ~cross ~update_args () =
+  let share_args = update_args.arg_share in
   let dir = "opam" // cross in
   EzFile.make_dir ~p:true dir;
   let p, _inferred_dir = Project.get () in
-  let _args, share_args = args in
-  let share = Share.load ~args:share_args ~p () in
+  let share = Share.load ~share_args ~p () in
   List.iter (fun package ->
       let full_filename = dir //
                           Printf.sprintf "%s-%s.opam" package.name cross in
@@ -206,22 +202,19 @@ let cmd =
   let deptest = ref None in
   let depdoc = ref None in
   let depopt = ref None in
-  let update_args, update_specs = Update.args () in
-  let share_args, share_specs = Share.args ~set:true () in
-  let args = (update_args, share_args) in
-  let specs = update_specs @ share_specs in
+  let update_args, update_specs = Update.args ~set_share:true () in
   let cross = ref None in
   EZCMD.sub cmd_name
     (fun () ->
        match !cross with
        | Some cross ->
-           generate_opam_for_cross ~cross ~args ()
+           generate_opam_for_cross ~cross ~update_args ()
        | None ->
            action ~dep:!dep ~package:!package ~tool:!tool ~add:!add ~remove:!remove
              ~version:!version ~depname:!depname ~deptest:!deptest ~depdoc:!depdoc
-             ~depopt:!depopt ~args )
+             ~depopt:!depopt ~update_args )
     ~args:
-      ( specs
+      ( update_specs
         @ [ ( [ "package" ],
               Arg.String (fun s -> package := Some s),
               EZCMD.info ~docv:"PACKAGE" "Attach dependency to this package name"

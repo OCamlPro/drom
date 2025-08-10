@@ -21,3 +21,5 @@ val to_files : Types.share -> Types.project -> (string * string) list
 val of_string : msg:string -> ?default:Types.project -> string -> Types.project
 
 val find_author : Types.config -> string
+
+val drom_version_at_least : string option -> string -> bool

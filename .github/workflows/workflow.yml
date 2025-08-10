@@ -25,9 +25,13 @@ jobs:
 
         include:
           - os: ubuntu-latest
-            ocaml-compiler: 4.08.0
+            ocaml-compiler: 4.14.0
             skip_test: true
 
+
+# we need permissions to deploy docs
+    permissions:
+      contents: write
 
     runs-on: ${{ matrix.os }}
 
@@ -38,20 +42,19 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Retrieve opam cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         id: cache-opam
         with:
           path: ~/.opam
-          key: v2-${{ runner.os }}-drom-${{ matrix.ocaml-compiler }}-${{ hashFiles('opam/*.opam') }}
+          key: v4-${{ runner.os }}-drom-${{ matrix.ocaml-compiler }}-${{ hashFiles('opam/*.opam') }}
 #          restore-keys: |
-#            v2-${{ runner.os }}-opam-${{ matrix.ocaml-compiler }}-
+#            v4-${{ runner.os }}-opam-${{ matrix.ocaml-compiler }}-
 
       - name: Use OCaml ${{ matrix.ocaml-compiler }}
-        uses: avsm/setup-ocaml@v2
+        uses: avsm/setup-ocaml@v3
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
           opam-pin: false
-          opam-depext: false
 
       - name: Set git user
         run: |
@@ -62,14 +65,7 @@ jobs:
 
       - run: opam pin add . -y --no-action
 
-      - run: opam depext -y drom drom_lib drom_toml
-#        if: steps.cache-opam.outputs.cache-hit != 'true'
-
-      - run: opam install -y opam/*.opam --deps-only --with-test
-#        if: steps.cache-opam.outputs.cache-hit != 'true'
-
-#     - run: opam upgrade --fixup
-#        if: steps.cache-opam.outputs.cache-hit == 'true'
+      - run: opam install -y ./opam/*.opam --deps-only --with-test
 
       # Use fields.build-scripts to add more scripts to convert here
       - run: dos2unix scripts/*.sh 
