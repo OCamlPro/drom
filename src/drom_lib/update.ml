@@ -101,7 +101,9 @@ let update_files share ?update_args ?(git = false) p =
         (args.arg_force, args.arg_upgrade, args.arg_skip, args.arg_diff,
          args.arg_promote_skip)
   in
-*)
+   *)
+  if Globals.verbose 2 then
+    Printf.eprintf "upgrade_files()\n%!";
   let args =
     match update_args with
     | None -> default_args ~share_args:(Share.default_args ()) ()
@@ -132,15 +134,6 @@ let update_files share ?update_args ?(git = false) p =
     | Some edition -> ({ p with edition }, true)
   in
 
-  let p, changed =
-    match args.arg_create with
-    | None -> (p, changed)
-    | Some bool ->
-        if p.project_create = bool then
-          (p, changed)
-        else
-          ({ p with project_create = bool }, true)
-  in
 
   let p, changed =
     match args.arg_min_edition with
@@ -177,8 +170,6 @@ let update_files share ?update_args ?(git = false) p =
             else
               (p, changed)
   in
-  let create_phase = p.project_create in
-
   let can_skip = ref [] in
 
   let skip_set = ref StringSet.empty in
@@ -193,6 +184,16 @@ let update_files share ?update_args ?(git = false) p =
                 skip_set := StringSet.add (Filename.concat pk.dir skip) !skip_set )
              list )
     p.packages;
+
+  let drom_ignore = ".drom_ignore" in
+  if Sys.file_exists drom_ignore then
+    Array.iter (fun line ->
+        let line = String.trim line in
+        let len = String.length line in
+        if len > 0 && line.[0] <> '#' then
+          skip_set := StringSet.add line !skip_set;
+      ) (EzFile.read_lines drom_ignore);
+
   let skip_set = !skip_set in
   let not_skipped s =
     can_skip := s :: !can_skip;
@@ -203,6 +204,8 @@ let update_files share ?update_args ?(git = false) p =
     Hashes.write hashes ~record ~perm ~file:filename ~content
   in
   let can_update ~filename ~perm hashes content =
+    if Globals.verbose 3 then
+      Printf.eprintf "can_update ( %S )\n%!" filename;
     let old_content = EzFile.read_file filename in
     let old_perm = (Unix.lstat filename).Unix.st_perm in
     if content = old_content && Hashes.perm_equal perm old_perm then begin
@@ -258,7 +261,6 @@ let update_files share ?update_args ?(git = false) p =
           );
           not modified
   in
-
   let write_file
       ?((* add to git/.drom *) record = true)
       ?((* only create, never update *) create = false)
@@ -269,8 +271,11 @@ let update_files share ?update_args ?(git = false) p =
       hashes
       filename
       content =
+    if Globals.verbose 3 then
+      Printf.eprintf "write_file ( %S, record=%b, create=%b, skip=%b, force=%b )\n%!" filename record create skip force;
     try
-      if create && not create_phase then raise Skip;
+      let file_exists = Sys.file_exists filename in
+      if create && file_exists then raise Skip ;
       if skip then raise Skip;
       if force then (
         Printf.eprintf "Forced Update of file %s\n%!" filename;
@@ -283,13 +288,12 @@ let update_files share ?update_args ?(git = false) p =
       then
         if not record then
           write_file ~record:false hashes filename content ~perm
-        else if not (Sys.file_exists filename) then (
+        else if not file_exists then (
           if Globals.verbose 2 then
             Printf.eprintf "Creating file %s\n%!" filename;
           write_file hashes filename content ~perm
         )
         else if can_update ~filename ~perm hashes content then (
-          Printf.eprintf "Updating file %s\n%!" filename;
           write_file hashes filename content ~perm
         ) else
           raise Skip
@@ -336,8 +340,7 @@ let update_files share ?update_args ?(git = false) p =
         | None -> ()
       end;
 
-      if create_phase then
-        if git && not (Sys.file_exists ".git") then (
+        if git && not (Sys.file_exists ".git") then begin
           Git.call "init" [ "-q" ];
           match config.config_github_organization with
           | None -> ()
@@ -353,7 +356,7 @@ let update_files share ?update_args ?(git = false) p =
               if Sys.file_exists "README.md" then
                 Git.call "add" [ "README.md" ];
               Git.call "commit" [ "--allow-empty"; "-m"; "Initial commit" ]
-        );
+          end;
 
       List.iter
         (fun package ->
@@ -419,15 +422,12 @@ let update_files share ?update_args ?(git = false) p =
            write_file hashes ~perm file ~create ~skips ~record ~skip content )
         ( Subst.state ~hashes () share p );
 
-      let p, changed =
-        if args.arg_promote_skip && !skipped <> [] then (
-          let skip = p.skip @ !skipped in
-          Printf.eprintf "skip field promotion: %s\n%!"
-            (String.concat " " !skipped);
-          ({ p with skip }, true)
-        ) else
-          (p, changed)
-      in
+      if args.arg_promote_skip && !skipped <> [] then begin
+          let s = try EzFile.read_file drom_ignore with _ -> "" in
+          let contents = String.concat "\n" (s :: !skipped) in
+          write_file hashes drom_ignore contents;
+
+        end;
 
       let upgrade = args.arg_upgrade || changed in
       let skip = not (upgrade || not (Sys.file_exists "drom.toml")) in
@@ -458,22 +458,10 @@ let update_files share ?update_args ?(git = false) p =
       p
     )
 
-let display_create_warning p =
-  if p.project_create then begin
-    Printf.eprintf "%s\n%!"
-      (String.concat "\n" [
-          "Warning: this project is still in creation mode, where more files" ;
-          "  are managed by 'drom'. Use the command:";
-          "drom project --create false";
-          "  to mark the project as created and switch to light management.";
-        ])
-  end
-
-let update_files share ~twice ?(warning=true) ?update_args ?(git = false) p =
-  let p_final = update_files share ?update_args ~git p in
+let update_files share ~twice ?update_args ?(git = false) p =
+  let _p_final = update_files share ?update_args ~git p in
   if twice then begin
     Printf.eprintf "Re-iterating file generation for consistency...\n%!";
     let _p_final2 = update_files share ?update_args ~git p in
     ()
-  end;
-  if warning then display_create_warning p_final
+  end

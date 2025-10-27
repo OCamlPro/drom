@@ -164,7 +164,6 @@ let rec dummy_project =
     generators = StringSet.empty;
     menhir_version = None;
     dune_version = current_dune_version ;
-    project_create = false ;
   }
 
 and dummy_package =

@@ -230,7 +230,6 @@ and project =
     mutable fields : string StringMap.t;
     year : int;
     mutable dune_version : string;
-    mutable project_create : bool ;
   }
 
 and profile = { flags : string StringMap.t }

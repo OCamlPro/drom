@@ -26,19 +26,20 @@ let action ~args () =
        | Program ->
            try
              let src = "_build/default" // package.dir // "main.exe" in
-             if Sys.file_exists package.name then begin
-               if Sys.is_directory package.name then begin
+             let executable_name = package.name ^ ".exe" in
+             if Sys.file_exists executable_name then begin
+               if Sys.is_directory executable_name then begin
                  Printf.eprintf "Warning: %S is an existing directory. Could not copy %s\n%!" package.name src;
                  Printf.eprintf "  You should rename this directory to another name.\n%!";
                  raise Exit
                end;
-               Sys.remove package.name;
+               Sys.remove executable_name;
              end;
              if Sys.file_exists src then begin
                let s = EzFile.read_file src in
-               EzFile.write_file package.name s;
+               EzFile.write_file executable_name s;
                incr n;
-               Unix.chmod package.name 0o755
+               Unix.chmod executable_name 0o755
 
              end;
            with Exit -> ()

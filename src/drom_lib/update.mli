@@ -14,12 +14,9 @@ val args : ?set_share:bool -> unit ->
 val update_files :
   Types.share ->
   twice:bool ->
-  ?warning:bool ->
   ?update_args:Types.update_args ->
   ?git:bool ->
   Types.project ->
   unit
 
 val compute_config_hash : (string * string) list -> Hashes.hash
-
-val display_create_warning : Types.project -> unit

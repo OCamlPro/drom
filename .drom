@@ -30,8 +30,13 @@ f7a24abcad0ba9301c03bb64464b1718:.gitignore
 
 # begin context for .ocp-indent
 # file .ocp-indent
-1281376e351d6c2be9ea4c576a29ebd4:.ocp-indent
+6048407431b8d9baf725ae5365d4c2f2:.ocp-indent
 # end context for .ocp-indent
+
+# begin context for .vscode/tasks.json
+# file .vscode/tasks.json
+7884eee2b10cf89cff5d1e466646b046:.vscode/tasks.json
+# end context for .vscode/tasks.json
 
 # begin context for CHANGES.md
 # file CHANGES.md
@@ -45,7 +50,7 @@ cf4da9c43c0026cec0ba46b9cfe8407e:LICENSE.md
 
 # begin context for Makefile
 # file Makefile
-9018881cf0682f4f7f262417b0d4f9ff:Makefile
+ae9611fad30a07ccb4a010556d51bdea:Makefile
 # end context for Makefile
 
 # begin context for Makefile.drom
@@ -55,7 +60,7 @@ cf4da9c43c0026cec0ba46b9cfe8407e:LICENSE.md
 
 # begin context for README.md
 # file README.md
-5d523350230459e853bc57803b729e29:README.md
+616ddd2660258447be65bdb664b9241d:README.md
 # end context for README.md
 
 # begin context for docs/README.txt
@@ -65,7 +70,7 @@ bfbacf00053bb9ab2a6e2ce94ed4a642:docs/README.txt
 
 # begin context for docs/doc/index.html
 # file docs/doc/index.html
-8c90147085379063e18134a7f18f079b:docs/doc/index.html
+c63c3154117c3bd726dc9e43be11eb2d:docs/doc/index.html
 # end context for docs/doc/index.html
 
 # begin context for docs/favicon.png
@@ -80,7 +85,7 @@ e739f3026aa997af4026bc428f4c9ef6:docs/favicon.png
 
 # begin context for docs/sphinx/index.html
 # file docs/sphinx/index.html
-8a2ddf0ce1706457ec54652cf0f5ffac:docs/sphinx/index.html
+ef9e026800aab220e275ed07ba543275:docs/sphinx/index.html
 # end context for docs/sphinx/index.html
 
 # begin context for docs/style.css
@@ -145,7 +150,7 @@ cda3f8bad69d9c6e8cbeab1c720d739a:scripts/static-build.sh
 
 # begin context for sphinx/_static/css/fixes.css
 # file sphinx/_static/css/fixes.css
-68b329da9893e34099c7d8ad5cb9c940:sphinx/_static/css/fixes.css
+20bbe7a5dbb3c3278a1511d960616fe5:sphinx/_static/css/fixes.css
 # end context for sphinx/_static/css/fixes.css
 
 # begin context for sphinx/about.rst
@@ -155,7 +160,7 @@ a44c87f3a364dd95f55427fe40b2c5d1:sphinx/about.rst
 
 # begin context for sphinx/conf.py
 # file sphinx/conf.py
-67496ee935ab27fdabb4544f4f81eeb6:sphinx/conf.py
+2879960e5d438acce665f7ba2b86232c:sphinx/conf.py
 # end context for sphinx/conf.py
 
 # begin context for sphinx/index.rst
@@ -200,7 +205,7 @@ bb6803d414fd5a5479ed6381914604de:src/drom/package.toml
 
 # begin context for src/drom_lib/dune
 # file src/drom_lib/dune
-42d9d18b7b63adfd834f4de13c4fd892:src/drom_lib/dune
+58c7f2af17bf6b1f3147556ad9d3d275:src/drom_lib/dune
 # end context for src/drom_lib/dune
 
 # begin context for src/drom_lib/index.mld
@@ -220,7 +225,7 @@ ad0048099dd6df9d2c73875be2ba28e7:src/drom_lib/version.mlt
 
 # begin context for src/toml.7.1.0/dune
 # file src/toml.7.1.0/dune
-0841a2e47118b9fcd9b900f84ff66c34:src/toml.7.1.0/dune
+502af698659280707ee9d214481f322e:src/toml.7.1.0/dune
 # end context for src/toml.7.1.0/dune
 
 # begin context for src/toml.7.1.0/index.mld
@@ -245,7 +250,7 @@ ad0048099dd6df9d2c73875be2ba28e7:src/toml.7.1.0/version.mlt
 
 # begin context for test/expect-tests/dune
 # file test/expect-tests/dune
-d7e2675a767e30edf28d061c94f0ec62:test/expect-tests/dune
+e3b544fe12c7afd17f5f252466dab4fb:test/expect-tests/dune
 # end context for test/expect-tests/dune
 
 # begin context for test/expect-tests/dune.drom
@@ -265,7 +270,7 @@ f15fedac6f43c154bcd0348b776ac08c:test/expect-tests/dune_
 
 # begin context for test/inline-tests/dune
 # file test/inline-tests/dune
-a0d7baa94246a5122e55a255dcefa9d0:test/inline-tests/dune
+e3b544fe12c7afd17f5f252466dab4fb:test/inline-tests/dune
 # end context for test/inline-tests/dune
 
 # begin context for test/inline-tests/dune.drom
@@ -285,7 +290,7 @@ a0d7baa94246a5122e55a255dcefa9d0:test/inline-tests/dune
 
 # begin context for test/output-tests/dune
 # file test/output-tests/dune
-b5ea41e29d37e997b482b1bf7f5953d7:test/output-tests/dune
+9d7eeeedaff73d803089021ce5e81364:test/output-tests/dune
 # end context for test/output-tests/dune
 
 # begin context for test/output-tests/dune.drom

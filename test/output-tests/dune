@@ -1,4 +1,4 @@
-; if you modify this file, add 'test' to the 'skip' field in drom.toml
+; This file was created by `drom new`
 
 ; a first example where we would test the behavior of one of the executables
 ; that we generate else-where
@@ -15,23 +15,6 @@
  (action
   (diff test1.expected test1.output)))
 
-; a second example where we generate a file and test its output
+; a second example where we generate a file and test its output:
 
-(executable
- (name test2)
- (libraries drom_lib drom_toml) ; add your own library here
- )
-
-(alias
- (name buildtest)
- (deps test2.exe))
-
-(rule
- (with-stdout-to
-  test2.output
-  (run %{exe:test2.exe})))
-
-(rule
- (alias runtest)
- (action
-  (diff test2.expected test2.output)))
+(include dune.drom)

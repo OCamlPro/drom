@@ -73,7 +73,6 @@ let main () =
       exit 0
     | _ -> args
   in
-
   let args = iter_initial_args (List.tl (Array.to_list Sys.argv)) in
   let argv = Array.of_list (Sys.argv.(0) :: args) in
   (* OpambinMisc.global_log "args: %s"

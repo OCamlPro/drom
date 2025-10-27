@@ -1,9 +1,3 @@
-; if you modify this file, add 'test' to the 'skip' field in drom.toml
+; This file was created by `drom new`
 
-(library
- (name lib_inline_tests)
- (preprocess
-  (pps ppx_inline_test))
- (inline_tests
-  (modes best)) ; add js for testing with nodejs
- (libraries drom_lib drom_toml))
+(include dune.drom)

@@ -1,0 +1,6 @@
+_build/
+*.install
+*.merlin
+_coverage/
+doc/api/
+doc/coverage/

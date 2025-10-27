@@ -111,7 +111,6 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~update_args =
   in
   let p =
     { Globals.dummy_project with
-      project_create = true;
       package;
       packages;
       project_share_repo = Some ( Share.share_repo_default () );
@@ -214,15 +213,13 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~update_args =
   (* Set fields that are not in templates *)
   let p = {
       p with
-      project_create = true ;
       project_share_repo = Some ( Share.share_repo_default () );
       project_share_version = Some share.share_version ;
     } in
 
-  Update.update_files share ~warning:false ~twice:true ~git:true ~update_args p;
+  Update.update_files share ~twice:true ~git:true ~update_args p;
   let tree = print_dir (name ^ "/") "." in
-  Printf.eprintf "%s%!" tree ;
-  Update.display_create_warning p
+  Printf.eprintf "%s%!" tree 
 
 (* lookup for "drom.toml" and update it *)
 let action ~skeleton ~name ~inplace ~dir ~update_args =
