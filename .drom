@@ -93,11 +93,6 @@ ef9e026800aab220e275ed07ba543275:docs/sphinx/index.html
 c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 # end context for docs/style.css
 
-# begin context for dot_gitattributes
-# file dot_gitattributes
-20bbe7a5dbb3c3278a1511d960616fe5:dot_gitattributes
-# end context for dot_gitattributes
-
 # begin context for drom.toml
 # file drom.toml
 9949d65b87e55480a30122e9e77ae7d3:drom.toml
