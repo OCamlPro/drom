@@ -81,7 +81,8 @@
   )
  )
 
-; the next line is deprecated for recent versions of dune, but
-; can still be added into the dune-project-trailer field
-;(allow_approximate_merlin)
 
+
+; add this in dune-project-trailer if you need it, as it is not used
+; by the most recent versions of dune
+;(allow_approximate_merlin)
