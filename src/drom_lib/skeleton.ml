@@ -389,7 +389,7 @@ let rec eval_project_cond p cond =
       | x -> x = v
     end
   | _ ->
-    Printf.kprintf failwith "eval_project_cond: unknown condition %S\n%!"
+    Printf.ksprintf failwith "eval_project_cond: unknown condition %S\n%!"
       (String.concat ":" cond)
 
 let rec eval_package_cond p cond =
@@ -412,7 +412,7 @@ let rec eval_package_cond p cond =
       | x -> x = v
     end
   | _ ->
-    Printf.kprintf failwith "eval_package_cond: unknown condition %S\n%!"
+    Printf.ksprintf failwith "eval_package_cond: unknown condition %S\n%!"
       (String.concat ":" cond)
 
 let default_flags flag_file =
@@ -517,7 +517,7 @@ let write_skeleton_files
               ~bracket ~skipper:flags.flag_skipper content
           with
           | Not_found ->
-              Printf.kprintf failwith "Exception Not_found in %S\n%!" file
+              Printf.ksprintf failwith "Exception Not_found in %S\n%!" file
     in
     let create = default_to create false in
     let record = default_to record true in
@@ -558,7 +558,7 @@ let subst_package_file flags content state =
             ~bracket ~skipper:flags.flag_skipper content
         with
         | Not_found ->
-            Printf.kprintf failwith
+            Printf.ksprintf failwith
               "Exception Not_found in %S\n%!"
               (match flags.flag_file with
                | None -> assert false

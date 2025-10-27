@@ -44,7 +44,7 @@ let add_value t k v =
        if !Types.override then
          Hashtbl.remove t k
        else
-         Printf.kprintf failwith "add_value failed: key %S already exists"
+         Printf.ksprintf failwith "add_value failed: key %S already exists"
            (Table.Key.to_string k) ;
 
      Hashtbl.add t k (Value v)

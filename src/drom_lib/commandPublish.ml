@@ -144,7 +144,7 @@ url {
       with
       | exn ->
         List.iter
-          (fun dir -> ignore (Printf.kprintf Sys.command "rm -rf %s" dir))
+          (fun dir -> ignore (Printf.ksprintf Sys.command "rm -rf %s" dir))
           !created;
         raise exn )
     ".";

@@ -152,7 +152,7 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~args ~files
             found := true;
             let editor = Globals.editor in
             match
-              Printf.kprintf Sys.command "%s '%s'" editor
+              Printf.ksprintf Sys.command "%s '%s'" editor
                 (package.dir // "package.toml")
             with
             | 0 -> ()
