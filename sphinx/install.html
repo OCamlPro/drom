@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>How to install &mdash; drom master
- (61aee33
-) (2024/06/27 14:10) documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+ (8f499c8
+) (2025/10/27 20:47) documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+      <link rel="stylesheet" type="text/css" href="_static/css/fixes.css" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+  
+        <script src="_static/jquery.js?v=8dae8fb0"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=b4f2b8b4"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -28,16 +31,20 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> drom
+
+          
+          
+          <a href="index.html">
+            
           </a>
               <div class="version">
                 master
- (61aee33
+ (8f499c8
 )
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -83,8 +90,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>How to install</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">How to install</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/install.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -95,16 +102,16 @@
            <div itemprop="articleBody">
              
   <section id="how-to-install">
-<h1>How to install<a class="headerlink" href="#how-to-install" title="Permalink to this headline"></a></h1>
+<h1>How to install<a class="headerlink" href="#how-to-install" title="Link to this heading"></a></h1>
 <section id="install-with-opam">
-<h2>Install with <code class="code docutils literal notranslate"><span class="pre">opam</span></code><a class="headerlink" href="#install-with-opam" title="Permalink to this headline"></a></h2>
+<h2>Install with <code class="code docutils literal notranslate"><span class="pre">opam</span></code><a class="headerlink" href="#install-with-opam" title="Link to this heading"></a></h2>
 <p>If <code class="code docutils literal notranslate"><span class="pre">drom</span></code> is available in your opam repository, you can just call:</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">install</span> <span class="n">drom</span>
 </pre></div>
 </div>
 </section>
 <section id="build-and-install-with-dune">
-<h2>Build and install with <code class="code docutils literal notranslate"><span class="pre">dune</span></code><a class="headerlink" href="#build-and-install-with-dune" title="Permalink to this headline"></a></h2>
+<h2>Build and install with <code class="code docutils literal notranslate"><span class="pre">dune</span></code><a class="headerlink" href="#build-and-install-with-dune" title="Link to this heading"></a></h2>
 <p>Checkout the sources of <code class="code docutils literal notranslate"><span class="pre">drom</span></code> in a directory.</p>
 <p>You need a switch with at least version <code class="code docutils literal notranslate"><span class="pre">4.07.0</span></code> of OCaml,
 you can for example create it with:</p>
@@ -136,10 +143,10 @@ targets:</p>
 </ul>
 </section>
 <section id="installing-drom-globally">
-<h2>Installing <code class="code docutils literal notranslate"><span class="pre">drom</span></code> globally<a class="headerlink" href="#installing-drom-globally" title="Permalink to this headline"></a></h2>
+<h2>Installing <code class="code docutils literal notranslate"><span class="pre">drom</span></code> globally<a class="headerlink" href="#installing-drom-globally" title="Link to this heading"></a></h2>
 <p>There are two recommendend approaches to using <cite>drom</cite> globally.</p>
 <section id="user-profile-shell-function">
-<h3>User profile shell function<a class="headerlink" href="#user-profile-shell-function" title="Permalink to this headline"></a></h3>
+<h3>User profile shell function<a class="headerlink" href="#user-profile-shell-function" title="Link to this heading"></a></h3>
 <p>The simplest way to use <code class="code docutils literal notranslate"><span class="pre">drom</span></code> globally is through a shell
 function.</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">drom</span> <span class="bp">()</span> <span class="o">{</span>
@@ -151,7 +158,7 @@ function.</p>
 <code class="code docutils literal notranslate"><span class="pre">opam</span> <span class="pre">switch</span> <span class="pre">-s</span> <span class="pre">show</span></code>.</p>
 </section>
 <section id="global-binary">
-<h3>Global binary<a class="headerlink" href="#global-binary" title="Permalink to this headline"></a></h3>
+<h3>Global binary<a class="headerlink" href="#global-binary" title="Link to this heading"></a></h3>
 <p>To be installed globally, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will need to locate its data
 files, in particular its skeleton and license files. This files are
 usually installed in <code class="code docutils literal notranslate"><span class="pre">$OPAM_SWITCH_PREFIX/share/drom</span></code> when

@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Use Cases &mdash; drom master
- (61aee33
-) (2024/06/27 14:10) documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+ (8f499c8
+) (2025/10/27 20:47) documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+      <link rel="stylesheet" type="text/css" href="_static/css/fixes.css" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+  
+        <script src="_static/jquery.js?v=8dae8fb0"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=b4f2b8b4"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -28,16 +31,20 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> drom
+
+          
+          
+          <a href="index.html">
+            
           </a>
               <div class="version">
                 master
- (61aee33
+ (8f499c8
 )
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -53,6 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="config.html">User Configuration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Use Cases</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#using-menhir">Using <code class="code docutils literal notranslate"><span class="pre">menhir</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-sites">Using sites</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="github.html">Github Projects</a></li>
@@ -77,8 +85,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Use Cases</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Use Cases</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/usecases.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -89,10 +97,10 @@
            <div itemprop="articleBody">
              
   <section id="use-cases">
-<h1>Use Cases<a class="headerlink" href="#use-cases" title="Permalink to this headline"></a></h1>
+<h1>Use Cases<a class="headerlink" href="#use-cases" title="Link to this heading"></a></h1>
 <p>This sections describes how the handle common use cases with <code class="code docutils literal notranslate"><span class="pre">drom</span></code>.</p>
 <section id="using-menhir">
-<h2>Using <code class="code docutils literal notranslate"><span class="pre">menhir</span></code><a class="headerlink" href="#using-menhir" title="Permalink to this headline"></a></h2>
+<h2>Using <code class="code docutils literal notranslate"><span class="pre">menhir</span></code><a class="headerlink" href="#using-menhir" title="Link to this heading"></a></h2>
 <p>Whereas <code class="code docutils literal notranslate"><span class="pre">ocamlyacc</span></code> is the legacy parser generator for OCaml,
 <code class="code docutils literal notranslate"><span class="pre">menhir</span></code> is much more powerful and probably more prevalent nowadays.</p>
 <p>For trivial usage where there is a simple <code class="code docutils literal notranslate"><span class="pre">parser.mly</span></code> file in your
@@ -173,6 +181,41 @@ Finally, add the following <code class="code docutils literal notranslate"><span
 targets as needed. The overall result will likely fit in most
 of <code class="code docutils literal notranslate"><span class="pre">menhir</span></code> usages in <code class="code docutils literal notranslate"><span class="pre">drom</span></code> projects waiting for a better
 <code class="code docutils literal notranslate"><span class="pre">menhir</span></code> support.</p>
+</section>
+<section id="using-sites">
+<h2>Using sites<a class="headerlink" href="#using-sites" title="Link to this heading"></a></h2>
+<p>Installation sites can be specified in the <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> file under
+the <code class="code docutils literal notranslate"><span class="pre">sites</span></code> section. By default, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> does nothing about it
+but you can use it to generate site definitions for your project.</p>
+<p>Thos sites are directories with predefined root
+to follow the standards:
+* <code class="code docutils literal notranslate"><span class="pre">lib</span></code> for libraries
+* <code class="code docutils literal notranslate"><span class="pre">bin</span></code> for executables
+* <code class="code docutils literal notranslate"><span class="pre">sbin</span></code> for system executables
+* <code class="code docutils literal notranslate"><span class="pre">toplevel</span></code> for toplevel executables
+* <code class="code docutils literal notranslate"><span class="pre">share</span></code> for shared data
+* <code class="code docutils literal notranslate"><span class="pre">etc</span></code> for configuration files
+* <code class="code docutils literal notranslate"><span class="pre">stublibs</span></code> for OCaml stub libraries
+* <code class="code docutils literal notranslate"><span class="pre">doc</span></code> for documentation</p>
+<p>The <code class="code docutils literal notranslate"><span class="pre">man</span></code> directory is also a valid installation directory but we can’t
+use it in sites for it has a special treatment.</p>
+<p>For each of those directories, you can specify a list of directories to install
+files in it. For a complete list of possibities, see the
+<a class="reference internal" href="reference.html#sites-ref"><span class="std std-ref">sites reference</span></a>.</p>
+<p>The most common use is handling configuration or web files which can be
+done with the following declaration:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[[sites.share]]</span>
+<span class="n">dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;www&quot;</span>
+<span class="k">[[sites.share.install]]</span>
+<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;javascript&quot;</span>
+<span class="n">destination</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;js&quot;</span>
+<span class="n">recursive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+</pre></div>
+</div>
+<p>This will make the <code class="code docutils literal notranslate"><span class="pre">www</span></code> directory available both at runtime (through
+the value <code class="code docutils literal notranslate"><span class="pre">Sites.Sites.www</span></code>) and for web files installation. In this
+example, we install all <code class="code docutils literal notranslate"><span class="pre">javascript</span></code> subdirectory in
+<code class="code docutils literal notranslate"><span class="pre">&lt;prefix&gt;/share/&lt;package&gt;/www/js</span></code>.</p>
 </section>
 </section>
 

@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Project Description &mdash; drom master
- (61aee33
-) (2024/06/27 14:10) documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+ (8f499c8
+) (2025/10/27 20:47) documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+      <link rel="stylesheet" type="text/css" href="_static/css/fixes.css" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+  
+        <script src="_static/jquery.js?v=8dae8fb0"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=b4f2b8b4"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -28,16 +31,20 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> drom
+
+          
+          
+          <a href="index.html">
+            
           </a>
               <div class="version">
                 master
- (61aee33
+ (8f499c8
 )
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -57,7 +64,16 @@
 <li class="toctree-l3"><a class="reference internal" href="#the-fields-table">The <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> table</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#the-package-toml-files">The <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-package-toml-files">The <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-package-fields">The package fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">The <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-sites-table">The <code class="code docutils literal notranslate"><span class="pre">sites</span></code> table</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#the-predefined-directories-fields">The predefined directories’ fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-name-field">The <code class="code docutils literal notranslate"><span class="pre">name</span></code> field</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#skeletons">Skeletons</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#project-skeletons">Project Skeletons</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#package-skeletons">Package Skeletons</a></li>
@@ -91,8 +107,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Project Description</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Project Description</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/reference.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -103,7 +119,7 @@
            <div itemprop="articleBody">
              
   <section id="project-description">
-<h1>Project Description<a class="headerlink" href="#project-description" title="Permalink to this headline"></a></h1>
+<h1>Project Description<a class="headerlink" href="#project-description" title="Link to this heading"></a></h1>
 <p>Configuration files used by <code class="code docutils literal notranslate"><span class="pre">drom</span></code> are in <a class="reference external" href="https://toml.io/en/">TOML syntax</a>. See also <a class="reference external" href="https://learnxinyminutes.com/docs/toml/">Learn TOML in Y minutes</a> for a very quick
 introduction.</p>
 <p>A project is composed of the <em>project</em> itself, and a set of <em>packages</em>
@@ -111,7 +127,7 @@ introduction.</p>
 same name as the project. An <code class="code docutils literal notranslate"><span class="pre">opam</span></code> package is generated for
 each package in the project.</p>
 <section id="the-drom-toml-project-file">
-<h2>The <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> Project File<a class="headerlink" href="#the-drom-toml-project-file" title="Permalink to this headline"></a></h2>
+<h2>The <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> Project File<a class="headerlink" href="#the-drom-toml-project-file" title="Link to this heading"></a></h2>
 <p>To get a feeling of what is in this file, we can look at the one used for
 <code class="code docutils literal notranslate"><span class="pre">drom</span></code> itself:</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">[</span><span class="n">project</span><span class="o">]</span>
@@ -185,7 +201,7 @@ each package in the project.</p>
 <p>Notice that every package contains only the directory where the
 sources are located, in which <code class="code docutils literal notranslate"><span class="pre">drom</span></code> expects to find a file <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> describing the package itself.</p>
 <section id="the-project-table">
-<h3>The <code class="code docutils literal notranslate"><span class="pre">[project]</span></code> table<a class="headerlink" href="#the-project-table" title="Permalink to this headline"></a></h3>
+<h3>The <code class="code docutils literal notranslate"><span class="pre">[project]</span></code> table<a class="headerlink" href="#the-project-table" title="Link to this heading"></a></h3>
 <p>This table describes the main project. For multi-package projects,
 these fields are used as default if the corresponding fields are not
 specified in sub-packages.</p>
@@ -276,7 +292,7 @@ restarting <code class="code docutils literal notranslate"><span class="pre">dro
 </ul>
 </section>
 <section id="the-dependencies-table">
-<h3>The <code class="code docutils literal notranslate"><span class="pre">[dependencies]</span></code> table<a class="headerlink" href="#the-dependencies-table" title="Permalink to this headline"></a></h3>
+<h3>The <code class="code docutils literal notranslate"><span class="pre">[dependencies]</span></code> table<a class="headerlink" href="#the-dependencies-table" title="Link to this heading"></a></h3>
 <p>This section contains dependencies with their versions. These
 dependencies are for libraries only, as they will be added in the
 generated <code class="code docutils literal notranslate"><span class="pre">dune</span></code> files.</p>
@@ -323,12 +339,12 @@ needed for tests (<code class="code docutils literal notranslate"><span class="p
 library <code class="code docutils literal notranslate"><span class="pre">ez_config</span></code>.</p>
 </section>
 <section id="the-tools-table">
-<h3>The <code class="code docutils literal notranslate"><span class="pre">[tools]</span></code> table<a class="headerlink" href="#the-tools-table" title="Permalink to this headline"></a></h3>
+<h3>The <code class="code docutils literal notranslate"><span class="pre">[tools]</span></code> table<a class="headerlink" href="#the-tools-table" title="Link to this heading"></a></h3>
 <p>This section contains dependencies that will appear in the
 <code class="code docutils literal notranslate"><span class="pre">opam</span></code> files, but not as libraries in the <code class="code docutils literal notranslate"><span class="pre">dune</span></code> files.</p>
 </section>
 <section id="the-package-table">
-<h3>The <code class="code docutils literal notranslate"><span class="pre">[package]</span></code> table<a class="headerlink" href="#the-package-table" title="Permalink to this headline"></a></h3>
+<h3>The <code class="code docutils literal notranslate"><span class="pre">[package]</span></code> table<a class="headerlink" href="#the-package-table" title="Link to this heading"></a></h3>
 <p>The <code class="code docutils literal notranslate"><span class="pre">package</span></code> table has one entry per package (library or
 program) included in the project. One of the packages must have the
 same name as the project.</p>
@@ -343,7 +359,7 @@ information on the packages.</p>
 fields in the documentation of <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code>.</p>
 </section>
 <section id="the-fields-table">
-<h3>The <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> table<a class="headerlink" href="#the-fields-table" title="Permalink to this headline"></a></h3>
+<h3>The <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> table<a class="headerlink" href="#the-fields-table" title="Link to this heading"></a></h3>
 <p>The <code class="code docutils literal notranslate"><span class="pre">fields</span></code> table contains fields that will be added to the
 the <code class="code docutils literal notranslate"><span class="pre">dune-project</span></code> file. There is two fields may be used :</p>
 <ul class="simple">
@@ -360,7 +376,7 @@ such tuning.</p>
 </section>
 </section>
 <section id="the-package-toml-files">
-<h2>The <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> Files<a class="headerlink" href="#the-package-toml-files" title="Permalink to this headline"></a></h2>
+<h2>The <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> Files<a class="headerlink" href="#the-package-toml-files" title="Link to this heading"></a></h2>
 <p>Every package source directory (as specified by the <code class="code docutils literal notranslate"><span class="pre">dir</span></code> field
 of each <code class="code docutils literal notranslate"><span class="pre">[[package]]</span></code> entry in the <code class="code docutils literal notranslate"><span class="pre">drom.toml</span></code> file) can
 contain a <code class="code docutils literal notranslate"><span class="pre">package.toml</span></code> file.</p>
@@ -383,6 +399,8 @@ contain a <code class="code docutils literal notranslate"><span class="pre">pack
 <span class="n">dune</span><span class="o">-</span><span class="n">libraries</span> <span class="o">=</span> <span class="s2">&quot;bigarray&quot;</span>
 </pre></div>
 </div>
+<section id="the-package-fields">
+<h3>The package fields<a class="headerlink" href="#the-package-fields" title="Link to this heading"></a></h3>
 <p>The following fields are allowed in a package definition:</p>
 <ul class="simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">dir</span></code>: the directory of the package sources (defaults to
@@ -438,6 +456,9 @@ to the <code class="code docutils literal notranslate"><span class="pre">menhir<
 * <code class="code docutils literal notranslate"><span class="pre">modules</span></code>: a string array with all the modules to add to the rule
 * <code class="code docutils literal notranslate"><span class="pre">flags</span></code>: an optional string array with all the flags to add to menhir</p></li>
 </ul>
+</section>
+<section id="id1">
+<h3>The <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> table<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>Finally, there is a table <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> within a
 package. Currently, the following fields are used by skeletons:</p>
 <ul class="simple">
@@ -452,8 +473,97 @@ package. Currently, the following fields are used by skeletons:</p>
 <p>In skeletons, <em>fields</em> are referenced using parens (for example
 <code class="code docutils literal notranslate"><span class="pre">!(dune-stanzas)</span></code>).</p>
 </section>
+<section id="the-sites-table">
+<h3>The <code class="code docutils literal notranslate"><span class="pre">sites</span></code> table<a class="headerlink" href="#the-sites-table" title="Link to this heading"></a></h3>
+<p id="sites-ref">The <code class="code docutils literal notranslate"><span class="pre">sites</span></code> table specifies the installation rules for the
+project’s additionnal files. For each directories, a path is created
+and made available for dynamic lookup through a generated module.</p>
+<section id="the-predefined-directories-fields">
+<h4>The predefined directories’ fields<a class="headerlink" href="#the-predefined-directories-fields" title="Link to this heading"></a></h4>
+<p>There are several predefined directories in the <code class="code docutils literal notranslate"><span class="pre">sites</span></code> table:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">lib</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">bin</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">sbin</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">toplevel</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">share</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">etc</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">stublibs</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">doc</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">man</span></code></p></li>
+</ul>
+<p>Each of these fields is an array of site specification which is a table with
+the following fields:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">root</span></code>: a boolean specifying if the directory is installed in the root
+prefix or in the package prefix. It has meaning only for <code class="code docutils literal notranslate"><span class="pre">lib</span></code> and
+<code class="code docutils literal notranslate"><span class="pre">share</span></code> directories. Default is <code class="code docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">exec</span></code>: a boolean specifying if the files are installed with the
+executable flag. It has meaning only for <code class="code docutils literal notranslate"><span class="pre">lib</span></code> directory. Default is
+<code class="code docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">dir</span></code>: the name of a custom site, if any.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">install</span></code>: a list of installation specifications.</p></li>
+</ul>
+<p>Each installation specification is a table with the following fields:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">source</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">destination</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">recursive</span></code></p></li>
+</ul>
+<p><code class="code docutils literal notranslate"><span class="pre">source</span></code> is the source file or directory to install. It can be a glob
+pattern like <code class="code docutils literal notranslate"><span class="pre">foo/*.js</span></code> for instance. <code class="code docutils literal notranslate"><span class="pre">destination</span></code> is the
+destination file or directory. <code class="code docutils literal notranslate"><span class="pre">recursive</span></code> says that <code class="code docutils literal notranslate"><span class="pre">source</span></code> is
+a directory and should be installed recursively.</p>
+<p>For example:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[[sites.etc]]</span>
+<span class="k">[[sites.etc.install]]</span>
+<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;foo.conf&quot;</span>
+<span class="c1"># will install in &lt;prefix&gt;/etc/&lt;package&gt;/foo.conf</span>
+
+<span class="k">[[sites.share]]</span>
+<span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;www&quot;</span>
+<span class="k">[[sites.share.install]]</span>
+<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;javascript&quot;</span>
+<span class="n">destination</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;js&quot;</span>
+<span class="n">recursive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="c1"># will install the javascript directory is &lt;prefix&gt;/share/www/js</span>
+</pre></div>
+</div>
+</section>
+<section id="the-name-field">
+<h4>The <code class="code docutils literal notranslate"><span class="pre">name</span></code> field<a class="headerlink" href="#the-name-field" title="Link to this heading"></a></h4>
+<p>The various sites defined in the <code class="code docutils literal notranslate"><span class="pre">sites</span></code> table are made available
+at runtime through a generated module. The name of this module can be
+specified with the <code class="code docutils literal notranslate"><span class="pre">name</span></code> field. For example, if the previous
+code was introduced by:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[sites]</span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;MySites&quot;</span>
+</pre></div>
+</div>
+<p>This would generate a module <code class="code docutils literal notranslate"><span class="pre">MySites</span></code> with the following signature:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="nc">MySites</span> <span class="o">:</span> <span class="k">sig</span>
+  <span class="k">module</span> <span class="nc">Sites</span> <span class="o">:</span> <span class="k">sig</span>
+    <span class="k">val</span> <span class="n">www</span> <span class="o">:</span> <span class="kt">string</span> <span class="kt">list</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>where the <code class="code docutils literal notranslate"><span class="pre">www</span></code> value is the list of files installed in it.
+If not specified, the module is simply named <code class="code docutils literal notranslate"><span class="pre">Sites</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>With the default name, the generated module will be <code class="code docutils literal notranslate"><span class="pre">Sites.Sites</span></code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Only explicit custom sites are made available in the generated module.</p>
+</div>
+</section>
+</section>
+</section>
 <section id="skeletons">
-<h2>Skeletons<a class="headerlink" href="#skeletons" title="Permalink to this headline"></a></h2>
+<h2>Skeletons<a class="headerlink" href="#skeletons" title="Link to this heading"></a></h2>
 <p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> generates most of the files using template files stored
 in <em>skeletons</em> on which substitutions are applied.</p>
 <p>There are two kinds of skeletons:</p>
@@ -469,7 +579,7 @@ about. Beware that, if you create a new skeleton, you will have to
 share it for other users to be able to use <code class="code docutils literal notranslate"><span class="pre">drom</span></code> on the project
 to update generated files.</p>
 <section id="project-skeletons">
-<h3>Project Skeletons<a class="headerlink" href="#project-skeletons" title="Permalink to this headline"></a></h3>
+<h3>Project Skeletons<a class="headerlink" href="#project-skeletons" title="Link to this heading"></a></h3>
 <p>Default project skeletons are defined in the source tree in:
 <a class="reference external" href="https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/projects">https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/projects</a></p>
 <p>The following project skeletons are available by default:</p>
@@ -480,57 +590,57 @@ the project) does not define a program or library. This skeleton can
 be seen as the root of the inheritance tree between project
 skeletons.</p>
 <p>Files:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom new VIRTUAL --skeleton virtual
-└── VIRTUAL/
-    ├── .drom             (drom state, do not edit)
-    ├── .github/
-    │   └── workflows/
-    │       ├── doc-deploy.yml
-    │       └── workflow.yml
-    ├── .gitignore
-    ├── .ocamlformat
-    ├── .ocamlformat-ignore
-    ├── .ocp-indent
-    ├── CHANGES.md
-    ├── LICENSE.md
-    ├── Makefile
-    ├── README.md
-    ├── docs/
-    │   ├── README.txt
-    │   ├── doc/
-    │   │   └── index.html
-    │   ├── favicon.png
-    │   ├── index.html
-    │   ├── sphinx/
-    │   │   └── index.html
-    │   └── style.css
-    ├── drom.toml    &lt;────────── project config EDIT !
-    ├── dune
-    ├── dune-project
-    ├── sphinx/
-    │   ├── _static/
-    │   │   └── css/
-    │   │       └── fixes.css
-    │   ├── about.rst
-    │   ├── conf.py
-    │   ├── index.rst
-    │   ├── install.rst
-    │   └── license.rst
-    ├── src/
-    │   └── VIRTUAL/
-    │       └── package.toml    &lt;────────── package config EDIT !
-    └── test/
-        ├── expect-tests/
-        │   ├── dune
-        │   └── test.ml
-        ├── inline-tests/
-        │   ├── dune
-        │   └── test.ml
-        └── output-tests/
-            ├── dune
-            ├── test1.expected
-            ├── test2.expected
-            └── test2.ml
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="k">new</span> <span class="nc">VIRTUAL</span> <span class="o">--</span><span class="n">skeleton</span> <span class="k">virtual</span>
+<span class="err">└──</span> <span class="nc">VIRTUAL</span><span class="o">/</span>
+    <span class="err">├──</span> <span class="o">.</span><span class="n">drom</span>             <span class="o">(</span><span class="n">drom</span> <span class="n">state</span><span class="o">,</span> <span class="k">do</span> <span class="n">not</span> <span class="n">edit</span><span class="o">)</span>
+    <span class="err">├──</span> <span class="o">.</span><span class="n">github</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">└──</span> <span class="n">workflows</span><span class="o">/</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">doc</span><span class="o">-</span><span class="n">deploy</span><span class="o">.</span><span class="n">yml</span>
+    <span class="err">│</span>       <span class="err">└──</span> <span class="n">workflow</span><span class="o">.</span><span class="n">yml</span>
+    <span class="err">├──</span> <span class="o">.</span><span class="n">gitignore</span>
+    <span class="err">├──</span> <span class="o">.</span><span class="n">ocamlformat</span>
+    <span class="err">├──</span> <span class="o">.</span><span class="n">ocamlformat</span><span class="o">-</span><span class="n">ignore</span>
+    <span class="err">├──</span> <span class="o">.</span><span class="n">ocp</span><span class="o">-</span><span class="n">indent</span>
+    <span class="err">├──</span> <span class="nn">CHANGES</span><span class="p">.</span><span class="n">md</span>
+    <span class="err">├──</span> <span class="nn">LICENSE</span><span class="p">.</span><span class="n">md</span>
+    <span class="err">├──</span> <span class="nc">Makefile</span>
+    <span class="err">├──</span> <span class="nn">README</span><span class="p">.</span><span class="n">md</span>
+    <span class="err">├──</span> <span class="n">docs</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">├──</span> <span class="nn">README</span><span class="p">.</span><span class="n">txt</span>
+    <span class="err">│</span>   <span class="err">├──</span> <span class="n">doc</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">│</span>   <span class="err">└──</span> <span class="n">index</span><span class="o">.</span><span class="n">html</span>
+    <span class="err">│</span>   <span class="err">├──</span> <span class="n">favicon</span><span class="o">.</span><span class="n">png</span>
+    <span class="err">│</span>   <span class="err">├──</span> <span class="n">index</span><span class="o">.</span><span class="n">html</span>
+    <span class="err">│</span>   <span class="err">├──</span> <span class="n">sphinx</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">│</span>   <span class="err">└──</span> <span class="n">index</span><span class="o">.</span><span class="n">html</span>
+    <span class="err">│</span>   <span class="err">└──</span> <span class="n">style</span><span class="o">.</span><span class="n">css</span>
+    <span class="err">├──</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>    <span class="o">&lt;</span><span class="err">──────────</span> <span class="n">project</span> <span class="n">config</span> <span class="nc">EDIT</span> <span class="o">!</span>
+    <span class="err">├──</span> <span class="n">dune</span>
+    <span class="err">├──</span> <span class="n">dune</span><span class="o">-</span><span class="n">project</span>
+    <span class="err">├──</span> <span class="n">sphinx</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">├──</span> <span class="o">_</span><span class="n">static</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">│</span>   <span class="err">└──</span> <span class="n">css</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">│</span>       <span class="err">└──</span> <span class="n">fixes</span><span class="o">.</span><span class="n">css</span>
+    <span class="err">│</span>   <span class="err">├──</span> <span class="n">about</span><span class="o">.</span><span class="n">rst</span>
+    <span class="err">│</span>   <span class="err">├──</span> <span class="n">conf</span><span class="o">.</span><span class="n">py</span>
+    <span class="err">│</span>   <span class="err">├──</span> <span class="n">index</span><span class="o">.</span><span class="n">rst</span>
+    <span class="err">│</span>   <span class="err">├──</span> <span class="n">install</span><span class="o">.</span><span class="n">rst</span>
+    <span class="err">│</span>   <span class="err">└──</span> <span class="n">license</span><span class="o">.</span><span class="n">rst</span>
+    <span class="err">├──</span> <span class="n">src</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">└──</span> <span class="nc">VIRTUAL</span><span class="o">/</span>
+    <span class="err">│</span>       <span class="err">└──</span> <span class="n">package</span><span class="o">.</span><span class="n">toml</span>    <span class="o">&lt;</span><span class="err">──────────</span> <span class="n">package</span> <span class="n">config</span> <span class="nc">EDIT</span> <span class="o">!</span>
+    <span class="err">└──</span> <span class="n">test</span><span class="o">/</span>
+        <span class="err">├──</span> <span class="n">expect</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span>
+        <span class="err">│</span>   <span class="err">├──</span> <span class="n">dune</span>
+        <span class="err">│</span>   <span class="err">└──</span> <span class="n">test</span><span class="o">.</span><span class="n">ml</span>
+        <span class="err">├──</span> <span class="n">inline</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span>
+        <span class="err">│</span>   <span class="err">├──</span> <span class="n">dune</span>
+        <span class="err">│</span>   <span class="err">└──</span> <span class="n">test</span><span class="o">.</span><span class="n">ml</span>
+        <span class="err">└──</span> <span class="n">output</span><span class="o">-</span><span class="n">tests</span><span class="o">/</span>
+            <span class="err">├──</span> <span class="n">dune</span>
+            <span class="err">├──</span> <span class="n">test1</span><span class="o">.</span><span class="n">expected</span>
+            <span class="err">├──</span> <span class="n">test2</span><span class="o">.</span><span class="n">expected</span>
+            <span class="err">└──</span> <span class="n">test2</span><span class="o">.</span><span class="n">ml</span>
 </pre></div>
 </div>
 <p>Notice that there are no <code class="code docutils literal notranslate"><span class="pre">.opam</span></code> file generated by default
@@ -540,22 +650,22 @@ in the <code class="code docutils literal notranslate"><span class="pre">virtual
 <li><p>The <code class="code docutils literal notranslate"><span class="pre">library</span></code> skeleton contains only a library package. It
 inherits from the <code class="code docutils literal notranslate"><span class="pre">virtual</span></code> skeleton.</p>
 <p>Files:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom new LIBRARY --skeleton library
-└── LIBRARY/
-    │
-    .  (same as virtual )
-    .
-    ├── LIBRARY.opam
-    ├── src/
-    │   └── LIBRARY/
-    │       ├── dune
-    │       ├── index.mld
-    │       ├── main.ml
-    │       ├── package.toml    &lt;────────── package config EDIT !
-    │       └── version.mlt
-    └── test/
-    .
-    .  (same as virtual )
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="k">new</span> <span class="nc">LIBRARY</span> <span class="o">--</span><span class="n">skeleton</span> <span class="n">library</span>
+<span class="err">└──</span> <span class="nc">LIBRARY</span><span class="o">/</span>
+    <span class="err">│</span>
+    <span class="o">.</span>  <span class="o">(</span><span class="n">same</span> <span class="k">as</span> <span class="k">virtual</span> <span class="o">)</span>
+    <span class="o">.</span>
+    <span class="err">├──</span> <span class="nn">LIBRARY</span><span class="p">.</span><span class="n">opam</span>
+    <span class="err">├──</span> <span class="n">src</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">└──</span> <span class="nc">LIBRARY</span><span class="o">/</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">dune</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">index</span><span class="o">.</span><span class="n">mld</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">main</span><span class="o">.</span><span class="n">ml</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">package</span><span class="o">.</span><span class="n">toml</span>    <span class="o">&lt;</span><span class="err">──────────</span> <span class="n">package</span> <span class="n">config</span> <span class="nc">EDIT</span> <span class="o">!</span>
+    <span class="err">│</span>       <span class="err">└──</span> <span class="n">version</span><span class="o">.</span><span class="n">mlt</span>
+    <span class="err">└──</span> <span class="n">test</span><span class="o">/</span>
+    <span class="o">.</span>
+    <span class="o">.</span>  <span class="o">(</span><span class="n">same</span> <span class="k">as</span> <span class="k">virtual</span> <span class="o">)</span>
 </pre></div>
 </div>
 </li>
@@ -563,107 +673,107 @@ inherits from the <code class="code docutils literal notranslate"><span class="p
 packages. It inherits from the <code class="code docutils literal notranslate"><span class="pre">virtual</span></code> skeleton. It is the
 default project skeleton used when nothing is specified.</p>
 <p>Files:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom new PROGRAM --skeleton program
-└── PROGRAM/
-    │
-    .  (same as virtual )
-    .
-    ├── PROGRAM.opam
-    ├── PROGRAM_lib.opam
-    ├── src/
-    │   ├── PROGRAM/
-    │   │   ├── dune
-    │   │   ├── index.mld
-    │   │   ├── main.ml
-    │   │   └── package.toml    &lt;────────── package config EDIT !
-    │   └── PROGRAM_lib/
-    │       ├── dune
-    │       ├── index.mld
-    │       ├── main.ml
-    │       ├── package.toml    &lt;────────── package config EDIT !
-    │       └── version.mlt
-    └── test/
-    .
-    .  (same as virtual )
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="k">new</span> <span class="nc">PROGRAM</span> <span class="o">--</span><span class="n">skeleton</span> <span class="n">program</span>
+<span class="err">└──</span> <span class="nc">PROGRAM</span><span class="o">/</span>
+    <span class="err">│</span>
+    <span class="o">.</span>  <span class="o">(</span><span class="n">same</span> <span class="k">as</span> <span class="k">virtual</span> <span class="o">)</span>
+    <span class="o">.</span>
+    <span class="err">├──</span> <span class="nn">PROGRAM</span><span class="p">.</span><span class="n">opam</span>
+    <span class="err">├──</span> <span class="nn">PROGRAM_lib</span><span class="p">.</span><span class="n">opam</span>
+    <span class="err">├──</span> <span class="n">src</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">├──</span> <span class="nc">PROGRAM</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">│</span>   <span class="err">├──</span> <span class="n">dune</span>
+    <span class="err">│</span>   <span class="err">│</span>   <span class="err">├──</span> <span class="n">index</span><span class="o">.</span><span class="n">mld</span>
+    <span class="err">│</span>   <span class="err">│</span>   <span class="err">├──</span> <span class="n">main</span><span class="o">.</span><span class="n">ml</span>
+    <span class="err">│</span>   <span class="err">│</span>   <span class="err">└──</span> <span class="n">package</span><span class="o">.</span><span class="n">toml</span>    <span class="o">&lt;</span><span class="err">──────────</span> <span class="n">package</span> <span class="n">config</span> <span class="nc">EDIT</span> <span class="o">!</span>
+    <span class="err">│</span>   <span class="err">└──</span> <span class="nc">PROGRAM_lib</span><span class="o">/</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">dune</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">index</span><span class="o">.</span><span class="n">mld</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">main</span><span class="o">.</span><span class="n">ml</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">package</span><span class="o">.</span><span class="n">toml</span>    <span class="o">&lt;</span><span class="err">──────────</span> <span class="n">package</span> <span class="n">config</span> <span class="nc">EDIT</span> <span class="o">!</span>
+    <span class="err">│</span>       <span class="err">└──</span> <span class="n">version</span><span class="o">.</span><span class="n">mlt</span>
+    <span class="err">└──</span> <span class="n">test</span><span class="o">/</span>
+    <span class="o">.</span>
+    <span class="o">.</span>  <span class="o">(</span><span class="n">same</span> <span class="k">as</span> <span class="k">virtual</span> <span class="o">)</span>
 </pre></div>
 </div>
 </li>
 <li><p>The <code class="code docutils literal notranslate"><span class="pre">mini-lib</span></code> skeleton contains a library package, with a minimal
 set of files (no test, no docs, etc.) (since version 0.2.2)</p>
 <p>Files:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom new MINI-LIB --skeleton mini-lib
-└── MINI-LIB/
-    ├── .drom             (drom state, do not edit)
-    ├── .gitignore
-    ├── CHANGES.md
-    ├── LICENSE.md
-    ├── MINI-LIB.opam
-    ├── Makefile
-    ├── README.md
-    ├── drom.toml    &lt;────────── project config EDIT !
-    ├── dune
-    ├── dune-project
-    └── src/
-        └── MINI-LIB/
-            ├── dune
-            ├── package.toml    &lt;────────── package config EDIT !
-            └── version.mlt
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="k">new</span> <span class="nc">MINI</span><span class="o">-</span><span class="nc">LIB</span> <span class="o">--</span><span class="n">skeleton</span> <span class="n">mini</span><span class="o">-</span><span class="n">lib</span>
+<span class="err">└──</span> <span class="nc">MINI</span><span class="o">-</span><span class="nc">LIB</span><span class="o">/</span>
+    <span class="err">├──</span> <span class="o">.</span><span class="n">drom</span>             <span class="o">(</span><span class="n">drom</span> <span class="n">state</span><span class="o">,</span> <span class="k">do</span> <span class="n">not</span> <span class="n">edit</span><span class="o">)</span>
+    <span class="err">├──</span> <span class="o">.</span><span class="n">gitignore</span>
+    <span class="err">├──</span> <span class="nn">CHANGES</span><span class="p">.</span><span class="n">md</span>
+    <span class="err">├──</span> <span class="nn">LICENSE</span><span class="p">.</span><span class="n">md</span>
+    <span class="err">├──</span> <span class="nc">MINI</span><span class="o">-</span><span class="nn">LIB</span><span class="p">.</span><span class="n">opam</span>
+    <span class="err">├──</span> <span class="nc">Makefile</span>
+    <span class="err">├──</span> <span class="nn">README</span><span class="p">.</span><span class="n">md</span>
+    <span class="err">├──</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>    <span class="o">&lt;</span><span class="err">──────────</span> <span class="n">project</span> <span class="n">config</span> <span class="nc">EDIT</span> <span class="o">!</span>
+    <span class="err">├──</span> <span class="n">dune</span>
+    <span class="err">├──</span> <span class="n">dune</span><span class="o">-</span><span class="n">project</span>
+    <span class="err">└──</span> <span class="n">src</span><span class="o">/</span>
+        <span class="err">└──</span> <span class="nc">MINI</span><span class="o">-</span><span class="nc">LIB</span><span class="o">/</span>
+            <span class="err">├──</span> <span class="n">dune</span>
+            <span class="err">├──</span> <span class="n">package</span><span class="o">.</span><span class="n">toml</span>    <span class="o">&lt;</span><span class="err">──────────</span> <span class="n">package</span> <span class="n">config</span> <span class="nc">EDIT</span> <span class="o">!</span>
+            <span class="err">└──</span> <span class="n">version</span><span class="o">.</span><span class="n">mlt</span>
 </pre></div>
 </div>
 </li>
 <li><p>The <code class="code docutils literal notranslate"><span class="pre">mini-prg</span></code> skeleton contains a program package, with a minimal
 set of files (no test, no docs, etc.)  (since version 0.2.2)</p>
 <p>Files:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom new MINI-PRG --skeleton mini-prg
-└── MINI-PRG/
-    ├── .drom             (drom state, do not edit)
-    ├── .gitignore
-    ├── CHANGES.md
-    ├── LICENSE.md
-    ├── MINI-PRG.opam
-    ├── MINI-PRG_lib.opam
-    ├── Makefile
-    ├── README.md
-    ├── drom.toml    &lt;────────── project config EDIT !
-    ├── dune
-    ├── dune-project
-    └── src/
-        ├── MINI-PRG/
-        │   ├── dune
-        │   └── package.toml    &lt;────────── package config EDIT !
-        └── MINI-PRG_lib/
-            ├── dune
-            ├── package.toml    &lt;────────── package config EDIT !
-            └── version.mlt
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="k">new</span> <span class="nc">MINI</span><span class="o">-</span><span class="nc">PRG</span> <span class="o">--</span><span class="n">skeleton</span> <span class="n">mini</span><span class="o">-</span><span class="n">prg</span>
+<span class="err">└──</span> <span class="nc">MINI</span><span class="o">-</span><span class="nc">PRG</span><span class="o">/</span>
+    <span class="err">├──</span> <span class="o">.</span><span class="n">drom</span>             <span class="o">(</span><span class="n">drom</span> <span class="n">state</span><span class="o">,</span> <span class="k">do</span> <span class="n">not</span> <span class="n">edit</span><span class="o">)</span>
+    <span class="err">├──</span> <span class="o">.</span><span class="n">gitignore</span>
+    <span class="err">├──</span> <span class="nn">CHANGES</span><span class="p">.</span><span class="n">md</span>
+    <span class="err">├──</span> <span class="nn">LICENSE</span><span class="p">.</span><span class="n">md</span>
+    <span class="err">├──</span> <span class="nc">MINI</span><span class="o">-</span><span class="nn">PRG</span><span class="p">.</span><span class="n">opam</span>
+    <span class="err">├──</span> <span class="nc">MINI</span><span class="o">-</span><span class="nn">PRG_lib</span><span class="p">.</span><span class="n">opam</span>
+    <span class="err">├──</span> <span class="nc">Makefile</span>
+    <span class="err">├──</span> <span class="nn">README</span><span class="p">.</span><span class="n">md</span>
+    <span class="err">├──</span> <span class="n">drom</span><span class="o">.</span><span class="n">toml</span>    <span class="o">&lt;</span><span class="err">──────────</span> <span class="n">project</span> <span class="n">config</span> <span class="nc">EDIT</span> <span class="o">!</span>
+    <span class="err">├──</span> <span class="n">dune</span>
+    <span class="err">├──</span> <span class="n">dune</span><span class="o">-</span><span class="n">project</span>
+    <span class="err">└──</span> <span class="n">src</span><span class="o">/</span>
+        <span class="err">├──</span> <span class="nc">MINI</span><span class="o">-</span><span class="nc">PRG</span><span class="o">/</span>
+        <span class="err">│</span>   <span class="err">├──</span> <span class="n">dune</span>
+        <span class="err">│</span>   <span class="err">└──</span> <span class="n">package</span><span class="o">.</span><span class="n">toml</span>    <span class="o">&lt;</span><span class="err">──────────</span> <span class="n">package</span> <span class="n">config</span> <span class="nc">EDIT</span> <span class="o">!</span>
+        <span class="err">└──</span> <span class="nc">MINI</span><span class="o">-</span><span class="nc">PRG_lib</span><span class="o">/</span>
+            <span class="err">├──</span> <span class="n">dune</span>
+            <span class="err">├──</span> <span class="n">package</span><span class="o">.</span><span class="n">toml</span>    <span class="o">&lt;</span><span class="err">──────────</span> <span class="n">package</span> <span class="n">config</span> <span class="nc">EDIT</span> <span class="o">!</span>
+            <span class="err">└──</span> <span class="n">version</span><span class="o">.</span><span class="n">mlt</span>
 </pre></div>
 </div>
 </li>
 <li><p>The <code class="code docutils literal notranslate"><span class="pre">ppx_deriver</span></code> skeleton contains a library package that defines
 a <em>ppx_deriver</em>, with a minimal example of code. (since version 0.2.2)</p>
 <p>Files:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom new PPX_DERIVER --skeleton ppx_deriver
-└── PPX_DERIVER/
-    │
-    .  (same as virtual )
-    .
-    ├── PPX_DERIVER.opam
-    ├── src/
-    │   └── PPX_DERIVER/
-    │       ├── dune
-    │       ├── index.mld
-    │       ├── main.ml
-    │       ├── package.toml    &lt;────────── package config EDIT !
-    │       └── version.mlt
-    └── test/
-    .
-    .  (same as virtual )
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="k">new</span> <span class="nc">PPX_DERIVER</span> <span class="o">--</span><span class="n">skeleton</span> <span class="n">ppx_deriver</span>
+<span class="err">└──</span> <span class="nc">PPX_DERIVER</span><span class="o">/</span>
+    <span class="err">│</span>
+    <span class="o">.</span>  <span class="o">(</span><span class="n">same</span> <span class="k">as</span> <span class="k">virtual</span> <span class="o">)</span>
+    <span class="o">.</span>
+    <span class="err">├──</span> <span class="nn">PPX_DERIVER</span><span class="p">.</span><span class="n">opam</span>
+    <span class="err">├──</span> <span class="n">src</span><span class="o">/</span>
+    <span class="err">│</span>   <span class="err">└──</span> <span class="nc">PPX_DERIVER</span><span class="o">/</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">dune</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">index</span><span class="o">.</span><span class="n">mld</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">main</span><span class="o">.</span><span class="n">ml</span>
+    <span class="err">│</span>       <span class="err">├──</span> <span class="n">package</span><span class="o">.</span><span class="n">toml</span>    <span class="o">&lt;</span><span class="err">──────────</span> <span class="n">package</span> <span class="n">config</span> <span class="nc">EDIT</span> <span class="o">!</span>
+    <span class="err">│</span>       <span class="err">└──</span> <span class="n">version</span><span class="o">.</span><span class="n">mlt</span>
+    <span class="err">└──</span> <span class="n">test</span><span class="o">/</span>
+    <span class="o">.</span>
+    <span class="o">.</span>  <span class="o">(</span><span class="n">same</span> <span class="k">as</span> <span class="k">virtual</span> <span class="o">)</span>
 </pre></div>
 </div>
 </li>
 </ul>
 </section>
 <section id="package-skeletons">
-<h3>Package Skeletons<a class="headerlink" href="#package-skeletons" title="Permalink to this headline"></a></h3>
+<h3>Package Skeletons<a class="headerlink" href="#package-skeletons" title="Link to this heading"></a></h3>
 <p>Default package skeletons are defined in the source tree in:
 <a class="reference external" href="https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/packages">https://github.com/OCamlPro/drom/tree/master/src/drom_lib/skeletons/packages</a></p>
 <p>The following package skeletons are available by default:</p>
@@ -681,7 +791,7 @@ a <em>ppx_deriver</em>.</p></li>
 skeleton.</p>
 </section>
 <section id="user-specified-skeletons">
-<h3>User-specified skeletons<a class="headerlink" href="#user-specified-skeletons" title="Permalink to this headline"></a></h3>
+<h3>User-specified skeletons<a class="headerlink" href="#user-specified-skeletons" title="Link to this heading"></a></h3>
 <p>Users can create their own skeletons. Check the documentation on <a class="reference internal" href="skeletons.html#contributing-skeletons"><span class="std std-ref">Contributing Your Own Skeletons</span></a></p>
 </section>
 </section>

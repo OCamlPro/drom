@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contributing Your Own Skeletons &mdash; drom master
- (61aee33
-) (2024/06/27 14:10) documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+ (8f499c8
+) (2025/10/27 20:47) documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+      <link rel="stylesheet" type="text/css" href="_static/css/fixes.css" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+  
+        <script src="_static/jquery.js?v=8dae8fb0"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=b4f2b8b4"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -28,16 +31,20 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> drom
+
+          
+          
+          <a href="index.html">
+            
           </a>
               <div class="version">
                 master
- (61aee33
+ (8f499c8
 )
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -85,8 +92,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Contributing Your Own Skeletons</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Contributing Your Own Skeletons</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/skeletons.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -97,9 +104,9 @@
            <div itemprop="articleBody">
              
   <section id="contributing-your-own-skeletons">
-<span id="contributing-skeletons"></span><h1>Contributing Your Own Skeletons<a class="headerlink" href="#contributing-your-own-skeletons" title="Permalink to this headline"></a></h1>
+<span id="contributing-skeletons"></span><h1>Contributing Your Own Skeletons<a class="headerlink" href="#contributing-your-own-skeletons" title="Link to this heading"></a></h1>
 <section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline"></a></h2>
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
 <p>There are 2 kinds of skeletons used to create and update <code class="code docutils literal notranslate"><span class="pre">drom</span></code>
 project:</p>
 <ul class="simple">
@@ -112,7 +119,7 @@ contribute their own skeletons, either by adding them to their local
 configuration, or by submitting them to the <code class="code docutils literal notranslate"><span class="pre">drom</span></code> project.</p>
 </section>
 <section id="skeleton-locations">
-<h2>Skeleton Locations<a class="headerlink" href="#skeleton-locations" title="Permalink to this headline"></a></h2>
+<h2>Skeleton Locations<a class="headerlink" href="#skeleton-locations" title="Link to this heading"></a></h2>
 <p>When building its set of skeletons, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will search them in two
 directories:</p>
 <ul class="simple">
@@ -130,7 +137,7 @@ directories:</p>
 <p>If a skeleton exists in both directories, the one in the user directory overwrites the one in the system directory. <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will then complain about it.</p>
 </section>
 <section id="the-skeleton-format">
-<h2>The Skeleton Format<a class="headerlink" href="#the-skeleton-format" title="Permalink to this headline"></a></h2>
+<h2>The Skeleton Format<a class="headerlink" href="#the-skeleton-format" title="Link to this heading"></a></h2>
 <p>The <code class="code docutils literal notranslate"><span class="pre">skeletons/</span></code> folder is divided in two directories
 <code class="code docutils literal notranslate"><span class="pre">projects/</span></code> and <code class="code docutils literal notranslate"><span class="pre">packages/</span></code> for the two kinds of skeletons.</p>
 <p>Each directory contains one directory per skeleton, containing the
@@ -198,7 +205,7 @@ user, not to remain in the project.</p></li>
 </ul>
 </section>
 <section id="the-skeleton-substitution-language">
-<h2>The Skeleton Substitution Language<a class="headerlink" href="#the-skeleton-substitution-language" title="Permalink to this headline"></a></h2>
+<h2>The Skeleton Substitution Language<a class="headerlink" href="#the-skeleton-substitution-language" title="Link to this heading"></a></h2>
 <p>Substitutions are performed on files in skeletons if the <code class="code docutils literal notranslate"><span class="pre">subst</span></code>
 field is not set to <code class="code docutils literal notranslate"><span class="pre">false</span></code> in the <code class="code docutils literal notranslate"><span class="pre">skeleton.toml</span></code> file
 (see above).</p>
@@ -236,13 +243,13 @@ project). Reciprocally, it is possible to use a <code class="code docutils liter
 prefix in a Paren (field) substitution to prevent a project
 substitution if the field is not defined in the package.</p>
 <section id="brace-substitutions">
-<h3>Brace Substitutions<a class="headerlink" href="#brace-substitutions" title="Permalink to this headline"></a></h3>
+<h3>Brace Substitutions<a class="headerlink" href="#brace-substitutions" title="Link to this heading"></a></h3>
 <p>The ultimate source of information for Brace substitutions is the
 <a class="reference external" href="https://github.com/OCamlPro/drom/blob/master/src/drom_lib/subst.ml">subst.ml module</a>
 in the <code class="code docutils literal notranslate"><span class="pre">project_brace</span></code> and <code class="code docutils literal notranslate"><span class="pre">package_brace</span></code> fuctions.</p>
 <p>Currently, the following <em>project</em> substitutions are available:</p>
 <ul class="simple">
-<li><p><code class="code docutils literal notranslate"><span class="pre">!{escape:true}</span></code>… <code class="code docutils literal notranslate"><span class="pre">!{escape:false}</span></code>: makes <code class="code docutils literal notranslate"><span class="pre">\!{</span></code>
+<li><p><code class="code docutils literal notranslate"><span class="pre">!{escape:true}</span></code>… <code class="code docutils literal notranslate"><span class="pre">!{escape:false}</span></code>: makes <code class="code docutils literal notranslate"><span class="pre">!{</span></code>
 be replaced by <code class="code docutils literal notranslate"><span class="pre">!{</span></code> instead of starting a substitution.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">!{name}</span></code>: the project name</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">!{synopsis}</span></code>: the project synopsis</p></li>
@@ -278,7 +285,7 @@ or capitalized version of the package name)</p></li>
 </ul>
 </section>
 <section id="paren-substitutions-project-and-package-fields">
-<h3>Paren Substitutions (project and package fields)<a class="headerlink" href="#paren-substitutions-project-and-package-fields" title="Permalink to this headline"></a></h3>
+<h3>Paren Substitutions (project and package fields)<a class="headerlink" href="#paren-substitutions-project-and-package-fields" title="Link to this heading"></a></h3>
 <p>Paren substitutions are substituted by the <code class="code docutils literal notranslate"><span class="pre">[fields]</span></code> variables
 in the project/package description files. If the field is not defined,
 the substitution is replaced by the empty string. Such fields are
@@ -308,7 +315,7 @@ skeletons:</p>
 </ul>
 </section>
 <section id="bracket-substitutions">
-<h3>Bracket Substitutions<a class="headerlink" href="#bracket-substitutions" title="Permalink to this headline"></a></h3>
+<h3>Bracket Substitutions<a class="headerlink" href="#bracket-substitutions" title="Link to this heading"></a></h3>
 <p>The following bracket substitutions are currently available:</p>
 <ul class="simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">![if:CONDITION]</span></code>… <code class="code docutils literal notranslate"><span class="pre">![else]</span></code> … <code class="code docutils literal notranslate"><span class="pre">![fi]</span></code>:

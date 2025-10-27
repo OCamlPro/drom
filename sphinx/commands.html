@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sub-commands and Arguments &mdash; drom master
- (61aee33
-) (2024/06/27 14:10) documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+ (8f499c8
+) (2025/10/27 20:47) documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+      <link rel="stylesheet" type="text/css" href="_static/css/fixes.css" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+  
+        <script src="_static/jquery.js?v=8dae8fb0"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=b4f2b8b4"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -28,16 +31,20 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> drom
+
+          
+          
+          <a href="index.html">
+            
           </a>
               <div class="version">
                 master
- (61aee33
+ (8f499c8
 )
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -102,8 +109,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Sub-commands and Arguments</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Sub-commands and Arguments</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/commands.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -114,7 +121,7 @@
            <div itemprop="articleBody">
              
   <section id="sub-commands-and-arguments">
-<h1>Sub-commands and Arguments<a class="headerlink" href="#sub-commands-and-arguments" title="Permalink to this headline"></a></h1>
+<h1>Sub-commands and Arguments<a class="headerlink" href="#sub-commands-and-arguments" title="Link to this heading"></a></h1>
 <p>Common arguments to all sub-commands:</p>
 <ul class="simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">-q</span></code> or <code class="code docutils literal notranslate"><span class="pre">--quiet</span></code>   Set verbosity level to 0</p></li>
@@ -140,7 +147,7 @@
   <span class="nc">Install</span> <span class="n">dev</span> <span class="n">dependencies</span> <span class="o">(</span><span class="n">odoc</span><span class="o">,</span> <span class="n">ocamlformat</span><span class="o">,</span> <span class="n">merlin</span><span class="o">,</span> <span class="n">etc</span><span class="o">.)</span>
 
 <span class="n">doc</span>
-  <span class="nc">Generate</span> <span class="n">all</span> <span class="n">documentation</span> <span class="o">(</span><span class="nc">API</span> <span class="ow">and</span> <span class="nc">Sphinx</span><span class="o">)</span>
+  <span class="nc">Generate</span> <span class="n">all</span> <span class="n">documentation</span> <span class="o">(</span><span class="nc">API</span> <span class="k">and</span> <span class="nc">Sphinx</span><span class="o">)</span>
 
 <span class="n">fmt</span>
   <span class="nc">Format</span> <span class="n">sources</span> <span class="k">with</span> <span class="n">ocamlformat</span>
@@ -173,7 +180,7 @@
   <span class="nc">Promote</span> <span class="n">detected</span> <span class="n">changes</span> <span class="n">after</span> <span class="n">running</span> <span class="n">drom</span> <span class="n">test</span> <span class="ow">or</span> <span class="n">drom</span> <span class="n">fmt</span>
 
 <span class="n">publish</span>
-  <span class="nc">Update</span> <span class="n">opam</span> <span class="n">files</span> <span class="k">with</span> <span class="n">checksums</span> <span class="ow">and</span> <span class="n">copy</span> <span class="n">them</span> <span class="k">to</span> <span class="n">a</span> <span class="n">local</span> <span class="n">opam</span><span class="o">-</span><span class="n">repository</span> <span class="k">for</span> <span class="n">publication</span>
+  <span class="nc">Update</span> <span class="n">opam</span> <span class="n">files</span> <span class="k">with</span> <span class="n">checksums</span> <span class="k">and</span> <span class="n">copy</span> <span class="n">them</span> <span class="k">to</span> <span class="n">a</span> <span class="n">local</span> <span class="n">opam</span><span class="o">-</span><span class="n">repository</span> <span class="k">for</span> <span class="n">publication</span>
 
 <span class="n">run</span>
   <span class="nc">Execute</span> <span class="n">the</span> <span class="n">project</span>
@@ -185,7 +192,7 @@
   <span class="nc">Run</span> <span class="n">tests</span>
 
 <span class="n">toml</span>
-  <span class="nc">Read</span> <span class="nc">TOML</span> <span class="n">files</span> <span class="ow">and</span> <span class="n">print</span> <span class="n">them</span> <span class="n">back</span> <span class="n">on</span> <span class="n">stdout</span>
+  <span class="nc">Read</span> <span class="nc">TOML</span> <span class="n">files</span> <span class="k">and</span> <span class="n">print</span> <span class="n">them</span> <span class="n">back</span> <span class="n">on</span> <span class="n">stdout</span>
 
 <span class="n">top</span>
   <span class="nc">Run</span> <span class="n">the</span> <span class="n">ocaml</span> <span class="n">toplevel</span>
@@ -201,7 +208,7 @@
 </pre></div>
 </div>
 <section id="main-exe-build">
-<h2>main.exe build<a class="headerlink" href="#main-exe-build" title="Permalink to this headline"></a></h2>
+<h2>main.exe build<a class="headerlink" href="#main-exe-build" title="Link to this heading"></a></h2>
 <p>Build a project</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>This command performs the following actions:</p>
@@ -232,7 +239,7 @@ If build was ok, copy executable in the top directory of the project</p></li>
 </ul>
 </section>
 <section id="main-exe-build-deps">
-<h2>main.exe build-deps<a class="headerlink" href="#main-exe-build-deps" title="Permalink to this headline"></a></h2>
+<h2>main.exe build-deps<a class="headerlink" href="#main-exe-build-deps" title="Link to this heading"></a></h2>
 <p>Install build dependencies only</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">build</span><span class="o">-</span><span class="n">deps</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -249,7 +256,7 @@ If build was ok, copy executable in the top directory of the project</p></li>
 </ul>
 </section>
 <section id="main-exe-clean">
-<h2>main.exe clean<a class="headerlink" href="#main-exe-clean" title="Permalink to this headline"></a></h2>
+<h2>main.exe clean<a class="headerlink" href="#main-exe-clean" title="Link to this heading"></a></h2>
 <p>Clean the project from build files</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">clean</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -261,7 +268,7 @@ If build was ok, copy executable in the top directory of the project</p></li>
 </ul>
 </section>
 <section id="main-exe-config">
-<h2>main.exe config<a class="headerlink" href="#main-exe-config" title="Permalink to this headline"></a></h2>
+<h2>main.exe config<a class="headerlink" href="#main-exe-config" title="Link to this heading"></a></h2>
 <p>Read/write configuration</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>This command is useful to read/write drom configuration</p>
@@ -285,7 +292,7 @@ If build was ok, copy executable in the top directory of the project</p></li>
 </ul>
 </section>
 <section id="main-exe-dep-since-version-0-2-1">
-<h2>main.exe dep (since version 0.2.1)<a class="headerlink" href="#main-exe-dep-since-version-0-2-1" title="Permalink to this headline"></a></h2>
+<h2>main.exe dep (since version 0.2.1)<a class="headerlink" href="#main-exe-dep-since-version-0-2-1" title="Link to this heading"></a></h2>
 <p>Manage dependency of a package</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>Add, remove and modify dependencies from <strong>drom.toml</strong> and  <strong>package.toml</strong> files.</p>
@@ -343,7 +350,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 </ul>
 </section>
 <section id="main-exe-dev-deps">
-<h2>main.exe dev-deps<a class="headerlink" href="#main-exe-dev-deps" title="Permalink to this headline"></a></h2>
+<h2>main.exe dev-deps<a class="headerlink" href="#main-exe-dev-deps" title="Link to this heading"></a></h2>
 <p>Install dev dependencies (odoc, ocamlformat, merlin, etc.)</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">dev</span><span class="o">-</span><span class="n">deps</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -360,7 +367,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 </ul>
 </section>
 <section id="main-exe-doc">
-<h2>main.exe doc<a class="headerlink" href="#main-exe-doc" title="Permalink to this headline"></a></h2>
+<h2>main.exe doc<a class="headerlink" href="#main-exe-doc" title="Link to this heading"></a></h2>
 <p>Generate all documentation (API and Sphinx)</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">doc</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -378,7 +385,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 </ul>
 </section>
 <section id="main-exe-fmt">
-<h2>main.exe fmt<a class="headerlink" href="#main-exe-fmt" title="Permalink to this headline"></a></h2>
+<h2>main.exe fmt<a class="headerlink" href="#main-exe-fmt" title="Link to this heading"></a></h2>
 <p>Format sources with ocamlformat</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">fmt</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -396,7 +403,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 </ul>
 </section>
 <section id="main-exe-headers">
-<h2>main.exe headers<a class="headerlink" href="#main-exe-headers" title="Permalink to this headline"></a></h2>
+<h2>main.exe headers<a class="headerlink" href="#main-exe-headers" title="Link to this heading"></a></h2>
 <p>Check all headers in project</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">headers</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -412,7 +419,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 </ul>
 </section>
 <section id="main-exe-install">
-<h2>main.exe install<a class="headerlink" href="#main-exe-install" title="Permalink to this headline"></a></h2>
+<h2>main.exe install<a class="headerlink" href="#main-exe-install" title="Link to this heading"></a></h2>
 <p>Build &amp; install the project in the project opam switch</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">install</span> <span class="nc">PACKAGES</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -430,7 +437,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 </ul>
 </section>
 <section id="main-exe-list-since-version-0-4-0">
-<h2>main.exe list (since version 0.4.0)<a class="headerlink" href="#main-exe-list-since-version-0-4-0" title="Permalink to this headline"></a></h2>
+<h2>main.exe list (since version 0.4.0)<a class="headerlink" href="#main-exe-list-since-version-0-4-0" title="Link to this heading"></a></h2>
 <p>List available project or packages skeletons</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>List available project or packages skeletons</p>
@@ -448,7 +455,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 </ul>
 </section>
 <section id="main-exe-new">
-<h2>main.exe new<a class="headerlink" href="#main-exe-new" title="Permalink to this headline"></a></h2>
+<h2>main.exe new<a class="headerlink" href="#main-exe-new" title="Link to this heading"></a></h2>
 <p>Create a new project</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>This command creates a new project, with name <strong>PROJECT</strong> in a directory <strong>PROJECT</strong> (unless the <strong>–inplace</strong> argument was provided).</p>
@@ -489,7 +496,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 </ul>
 </section>
 <section id="main-exe-odoc">
-<h2>main.exe odoc<a class="headerlink" href="#main-exe-odoc" title="Permalink to this headline"></a></h2>
+<h2>main.exe odoc<a class="headerlink" href="#main-exe-odoc" title="Link to this heading"></a></h2>
 <p>Generate API documentation using odoc in the _drom/docs/doc directory</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">odoc</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -507,7 +514,7 @@ A semantic version like <strong>1.2.3</strong> is equivalent to the constraints 
 </ul>
 </section>
 <section id="main-exe-opam-plugin-since-version-0-2-1">
-<h2>main.exe opam-plugin (since version 0.2.1)<a class="headerlink" href="#main-exe-opam-plugin-since-version-0-2-1" title="Permalink to this headline"></a></h2>
+<h2>main.exe opam-plugin (since version 0.2.1)<a class="headerlink" href="#main-exe-opam-plugin-since-version-0-2-1" title="Link to this heading"></a></h2>
 <p>Install drom as an opam plugin (called by ‘opam drom’)</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>This command performs the following actions:</p>
@@ -527,7 +534,7 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 </ul>
 </section>
 <section id="main-exe-package">
-<h2>main.exe package<a class="headerlink" href="#main-exe-package" title="Permalink to this headline"></a></h2>
+<h2>main.exe package<a class="headerlink" href="#main-exe-package" title="Link to this heading"></a></h2>
 <p>Manage a package within a project</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">package</span> <span class="nc">PACKAGE</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -558,7 +565,7 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 </ul>
 </section>
 <section id="main-exe-project">
-<h2>main.exe project<a class="headerlink" href="#main-exe-project" title="Permalink to this headline"></a></h2>
+<h2>main.exe project<a class="headerlink" href="#main-exe-project" title="Link to this heading"></a></h2>
 <p>Update an existing project</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>This command is used to regenerate the files of a project after updating its description.</p>
@@ -590,7 +597,7 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 </ul>
 </section>
 <section id="main-exe-promote">
-<h2>main.exe promote<a class="headerlink" href="#main-exe-promote" title="Permalink to this headline"></a></h2>
+<h2>main.exe promote<a class="headerlink" href="#main-exe-promote" title="Link to this heading"></a></h2>
 <p>Promote detected changes after running drom test or drom fmt</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">promote</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -607,7 +614,7 @@ Install drom share files in <strong>$OPAMROOT/plugins/opam-drom</strong>, removi
 </ul>
 </section>
 <section id="main-exe-publish">
-<h2>main.exe publish<a class="headerlink" href="#main-exe-publish" title="Permalink to this headline"></a></h2>
+<h2>main.exe publish<a class="headerlink" href="#main-exe-publish" title="Link to this heading"></a></h2>
 <p>Update opam files with checksums and copy them to a local opam-repository for publication</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>Before running this command, you should edit the file <strong>$HOME/.config/drom/config</strong> and set the value of the <em>opam-repo</em> option, like:</p>
@@ -656,7 +663,7 @@ Copy updated opam files to the git-managed opam repository. During this operatio
 </ul>
 </section>
 <section id="main-exe-run">
-<h2>main.exe run<a class="headerlink" href="#main-exe-run" title="Permalink to this headline"></a></h2>
+<h2>main.exe run<a class="headerlink" href="#main-exe-run" title="Link to this heading"></a></h2>
 <p>Execute the project</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>This command performs the following actions:</p>
@@ -685,7 +692,7 @@ Call <strong>opam exec – drun exec – [PACKAGE] [ARGUMENTS]</strong>, where <
 </ul>
 </section>
 <section id="main-exe-sphinx">
-<h2>main.exe sphinx<a class="headerlink" href="#main-exe-sphinx" title="Permalink to this headline"></a></h2>
+<h2>main.exe sphinx<a class="headerlink" href="#main-exe-sphinx" title="Link to this heading"></a></h2>
 <p>Generate documentation using sphinx</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>This command performs the following actions:</p>
@@ -715,7 +722,7 @@ If the argument <strong>–view</strong> was specified, open a browser on the ne
 </ul>
 </section>
 <section id="main-exe-test">
-<h2>main.exe test<a class="headerlink" href="#main-exe-test" title="Permalink to this headline"></a></h2>
+<h2>main.exe test<a class="headerlink" href="#main-exe-test" title="Link to this heading"></a></h2>
 <p>Run tests</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>This command performs the following actions:</p>
@@ -742,7 +749,7 @@ Run the test command <strong>opam exec – dune build &#64;runtest</strong></p><
 </ul>
 </section>
 <section id="main-exe-toml">
-<h2>main.exe toml<a class="headerlink" href="#main-exe-toml" title="Permalink to this headline"></a></h2>
+<h2>main.exe toml<a class="headerlink" href="#main-exe-toml" title="Link to this heading"></a></h2>
 <p>Read TOML files and print them back on stdout</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>Test the TOML parser/printer:</p>
@@ -756,7 +763,7 @@ Run the test command <strong>opam exec – dune build &#64;runtest</strong></p><
 </ul>
 </section>
 <section id="main-exe-top">
-<h2>main.exe top<a class="headerlink" href="#main-exe-top" title="Permalink to this headline"></a></h2>
+<h2>main.exe top<a class="headerlink" href="#main-exe-top" title="Link to this heading"></a></h2>
 <p>Run the ocaml toplevel</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">top</span> <span class="nc">ARGUMENTS</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -774,25 +781,25 @@ Run the test command <strong>opam exec – dune build &#64;runtest</strong></p><
 </ul>
 </section>
 <section id="main-exe-tree">
-<h2>main.exe tree<a class="headerlink" href="#main-exe-tree" title="Permalink to this headline"></a></h2>
+<h2>main.exe tree<a class="headerlink" href="#main-exe-tree" title="Link to this heading"></a></h2>
 <p>Display a tree of dependencies</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>Print the project as a tree of dependencies, i.e. dependencies are printed as branches of the package they are dependencies of. If a package is itself a dependency of another package, it will be printed there.</p>
 <p><strong>EXAMPLE</strong></p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>└──drom (/src/drom)
-   └──drom_lib (/src/drom_lib)
-      └──toml 5.0.0
-      └──opam-file-format 2.1.1
-      └──ez_subst &gt;= 0.1
-      └──ez_file 0.2.0
-      └──ez_config 0.1.0
-      └──ez_cmdliner 0.2.0
-      └──directories &gt;= 0.2
-[tools]
-└── ppx_inline_test
-└── ppx_expect
-└── odoc
-└── ocamlformat
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="err">└──</span><span class="n">drom</span> <span class="o">(/</span><span class="n">src</span><span class="o">/</span><span class="n">drom</span><span class="o">)</span>
+   <span class="err">└──</span><span class="n">drom_lib</span> <span class="o">(/</span><span class="n">src</span><span class="o">/</span><span class="n">drom_lib</span><span class="o">)</span>
+      <span class="err">└──</span><span class="n">toml</span> <span class="mi">5</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="mi">0</span>
+      <span class="err">└──</span><span class="n">opam</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">format</span> <span class="mi">2</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">1</span>
+      <span class="err">└──</span><span class="n">ez_subst</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span>
+      <span class="err">└──</span><span class="n">ez_file</span> <span class="mi">0</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">0</span>
+      <span class="err">└──</span><span class="n">ez_config</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">0</span>
+      <span class="err">└──</span><span class="n">ez_cmdliner</span> <span class="mi">0</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">0</span>
+      <span class="err">└──</span><span class="n">directories</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">.</span><span class="mi">2</span>
+<span class="o">[</span><span class="n">tools</span><span class="o">]</span>
+<span class="err">└──</span> <span class="n">ppx_inline_test</span>
+<span class="err">└──</span> <span class="n">ppx_expect</span>
+<span class="err">└──</span> <span class="n">odoc</span>
+<span class="err">└──</span> <span class="n">ocamlformat</span>
 </pre></div>
 </div>
 <p><strong>USAGE</strong></p>
@@ -802,7 +809,7 @@ Run the test command <strong>opam exec – dune build &#64;runtest</strong></p><
 <p>Where options are:</p>
 </section>
 <section id="main-exe-uninstall">
-<h2>main.exe uninstall<a class="headerlink" href="#main-exe-uninstall" title="Permalink to this headline"></a></h2>
+<h2>main.exe uninstall<a class="headerlink" href="#main-exe-uninstall" title="Link to this heading"></a></h2>
 <p>Uninstall the project from the project opam switch</p>
 <p><strong>USAGE</strong></p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">exe</span> <span class="n">uninstall</span> <span class="o">[</span><span class="nc">OPTIONS</span><span class="o">]</span>
@@ -819,7 +826,7 @@ Run the test command <strong>opam exec – dune build &#64;runtest</strong></p><
 </ul>
 </section>
 <section id="main-exe-update">
-<h2>main.exe update<a class="headerlink" href="#main-exe-update" title="Permalink to this headline"></a></h2>
+<h2>main.exe update<a class="headerlink" href="#main-exe-update" title="Link to this heading"></a></h2>
 <p>Update packages in switch</p>
 <p><strong>DESCRIPTION</strong></p>
 <p>This command performs the following actions:</p>

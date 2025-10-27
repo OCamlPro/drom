@@ -306,6 +306,9 @@ For example::
   dune-libraries = "bigarray"
 
 
+The package fields
+~~~~~~~~~~~~~~~~~~
+
 The following fields are allowed in a package definition:
 
 * :code:`dir`: the directory of the package sources (defaults to
@@ -356,6 +359,9 @@ with the following fields:
   * :code:`modules`: a string array with all the modules to add to the rule
   * :code:`flags`: an optional string array with all the flags to add to menhir
 
+The :code:`[fields]` table
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Finally, there is a table :code:`[fields]` within a
 package. Currently, the following fields are used by skeletons:
 
@@ -369,7 +375,104 @@ package. Currently, the following fields are used by skeletons:
 
 In skeletons, *fields* are referenced using parens (for example
 :code:`!(dune-stanzas)`).
-        
+
+
+The :code:`sites` table
+~~~~~~~~~~~~~~~~~~~~~~~
+.. _sites_ref:
+
+The :code:`sites` table specifies the installation rules for the
+project's additionnal files. For each directories, a path is created
+and made available for dynamic lookup through a generated module.
+
+The predefined directories' fields
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There are several predefined directories in the :code:`sites` table:
+
+- :code:`lib`
+- :code:`bin`
+- :code:`sbin`
+- :code:`toplevel`
+- :code:`share`
+- :code:`etc`
+- :code:`stublibs`
+- :code:`doc`
+- :code:`man`
+
+Each of these fields is an array of site specification which is a table with
+the following fields:
+
+- :code:`root`: a boolean specifying if the directory is installed in the root
+  prefix or in the package prefix. It has meaning only for :code:`lib` and
+  :code:`share` directories. Default is :code:`false`.
+- :code:`exec`: a boolean specifying if the files are installed with the
+  executable flag. It has meaning only for :code:`lib` directory. Default is
+  :code:`false`.
+- :code:`dir`: the name of a custom site, if any.
+- :code:`install`: a list of installation specifications.
+
+Each installation specification is a table with the following fields:
+
+- :code:`source`
+- :code:`destination`
+- :code:`recursive`
+
+:code:`source` is the source file or directory to install. It can be a glob
+pattern like :code:`foo/*.js` for instance. :code:`destination` is the
+destination file or directory. :code:`recursive` says that :code:`source` is
+a directory and should be installed recursively.
+
+For example:
+
+.. code-block:: toml
+
+  [[sites.etc]]
+  [[sites.etc.install]]
+  source = "foo.conf"
+  # will install in <prefix>/etc/<package>/foo.conf
+
+  [[sites.share]]
+  root = true
+  dir = "www"
+  [[sites.share.install]]
+  source = "javascript"
+  destination = "js"
+  recursive = true
+  # will install the javascript directory is <prefix>/share/www/js
+
+The :code:`name` field
+^^^^^^^^^^^^^^^^^^^^^^
+
+The various sites defined in the :code:`sites` table are made available
+at runtime through a generated module. The name of this module can be
+specified with the :code:`name` field. For example, if the previous
+code was introduced by:
+
+.. code-block:: toml
+
+  [sites]
+  name = "MySites"
+
+This would generate a module :code:`MySites` with the following signature:
+
+.. code-block:: ocaml
+
+  module MySites : sig
+    module Sites : sig
+      val www : string list
+    end
+  end
+
+where the :code:`www` value is the list of files installed in it.
+If not specified, the module is simply named :code:`Sites`.
+
+.. warning::
+  With the default name, the generated module will be :code:`Sites.Sites`.
+
+.. warning::
+  Only explicit custom sites are made available in the generated module.
+
 Skeletons
 ---------
 

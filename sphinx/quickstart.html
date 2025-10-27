@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quickstart &mdash; drom master
- (61aee33
-) (2024/06/27 14:10) documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+ (8f499c8
+) (2025/10/27 20:47) documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+      <link rel="stylesheet" type="text/css" href="_static/css/fixes.css" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+  
+        <script src="_static/jquery.js?v=8dae8fb0"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=b4f2b8b4"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -28,16 +31,20 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> drom
+
+          
+          
+          <a href="index.html">
+            
           </a>
               <div class="version">
                 master
- (61aee33
+ (8f499c8
 )
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -85,8 +92,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Quickstart</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Quickstart</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/quickstart.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -97,9 +104,9 @@
            <div itemprop="articleBody">
              
   <section id="quickstart">
-<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline"></a></h1>
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading"></a></h1>
 <section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline"></a></h2>
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
 <p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> has two purposes:</p>
 <ul class="simple">
 <li><p>It’s a tool to easily create OCaml projects: <code class="code docutils literal notranslate"><span class="pre">drom</span> <span class="pre">new</span>
@@ -118,7 +125,7 @@ build the project and its documentation</p></li>
 
 
 <span class="nc">NAME</span>
-       <span class="n">drom</span> <span class="o">-</span> <span class="nc">Create</span> <span class="ow">and</span> <span class="n">manage</span> <span class="n">an</span> <span class="nc">OCaml</span> <span class="n">project</span>
+       <span class="n">drom</span> <span class="o">-</span> <span class="nc">Create</span> <span class="k">and</span> <span class="n">manage</span> <span class="n">an</span> <span class="nc">OCaml</span> <span class="n">project</span>
 
 <span class="nc">SYNOPSIS</span>
        <span class="n">drom</span> <span class="nn">COMMAND</span> <span class="p">...</span>
@@ -142,7 +149,7 @@ build the project and its documentation</p></li>
        <span class="n">fmt</span> <span class="nc">Format</span> <span class="n">sources</span> <span class="k">with</span> <span class="n">ocamlformat</span>
 
        <span class="n">help</span>
-           <span class="n">display</span> <span class="n">help</span> <span class="n">about</span> <span class="n">drom</span> <span class="ow">and</span> <span class="n">drom</span> <span class="n">commands</span>
+           <span class="n">display</span> <span class="n">help</span> <span class="n">about</span> <span class="n">drom</span> <span class="k">and</span> <span class="n">drom</span> <span class="n">commands</span>
 
        <span class="n">install</span>
            <span class="nc">Build</span> <span class="o">&amp;</span> <span class="n">install</span> <span class="n">the</span> <span class="n">project</span> <span class="k">in</span> <span class="n">the</span> <span class="n">project</span> <span class="n">opam</span> <span class="n">switch</span>
@@ -176,7 +183,7 @@ build the project and its documentation</p></li>
 
 <span class="nc">COMMON</span> <span class="nc">OPTIONS</span>
        <span class="o">--</span><span class="n">help</span><span class="o">[=</span><span class="nc">FMT</span><span class="o">]</span> <span class="o">(</span><span class="n">default</span><span class="o">=</span><span class="n">auto</span><span class="o">)</span>
-           <span class="nc">Show</span> <span class="n">this</span> <span class="n">help</span> <span class="k">in</span> <span class="n">format</span> <span class="nn">FMT</span><span class="p">.</span> <span class="nc">The</span> <span class="k">value</span> <span class="nc">FMT</span> <span class="n">must</span> <span class="n">be</span> <span class="n">one</span> <span class="k">of</span> <span class="o">`</span><span class="n">auto&#39;</span><span class="o">,</span>
+           <span class="nc">Show</span> <span class="n">this</span> <span class="n">help</span> <span class="k">in</span> <span class="n">format</span> <span class="nn">FMT</span><span class="p">.</span> <span class="nc">The</span> <span class="n">value</span> <span class="nc">FMT</span> <span class="n">must</span> <span class="n">be</span> <span class="n">one</span> <span class="k">of</span> <span class="o">`</span><span class="n">auto&#39;</span><span class="o">,</span>
            <span class="o">`</span><span class="n">pager&#39;</span><span class="o">,</span> <span class="o">`</span><span class="n">groff&#39;</span> <span class="ow">or</span> <span class="o">`</span><span class="n">plain&#39;</span><span class="o">.</span> <span class="nc">With</span> <span class="o">`</span><span class="n">auto&#39;</span><span class="o">,</span> <span class="n">the</span> <span class="n">format</span> <span class="n">is</span> <span class="o">`</span><span class="n">pager</span><span class="o">`</span> <span class="ow">or</span>
            <span class="o">`</span><span class="n">plain&#39;</span> <span class="n">whenever</span> <span class="n">the</span> <span class="nc">TERM</span> <span class="n">env</span> <span class="n">var</span> <span class="n">is</span> <span class="o">`</span><span class="n">dumb&#39;</span> <span class="ow">or</span> <span class="n">undefined</span><span class="o">.</span>
 
@@ -186,13 +193,13 @@ build the project and its documentation</p></li>
 </div>
 </section>
 <section id="creating-a-project">
-<h2>Creating a Project<a class="headerlink" href="#creating-a-project" title="Permalink to this headline"></a></h2>
+<h2>Creating a Project<a class="headerlink" href="#creating-a-project" title="Link to this heading"></a></h2>
 <p>Let’s suppose we want to create a new project <code class="code docutils literal notranslate"><span class="pre">hello_world</span></code>. We
 can use <cite>drom</cite> to create almost everything we need for that!</p>
 <p>Let’s create the project:</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="k">new</span> <span class="n">hello_world</span>
 <span class="nc">Creating</span> <span class="n">project</span> <span class="s2">&quot;hello_world&quot;</span> <span class="k">with</span> <span class="n">skeleton</span> <span class="s2">&quot;program&quot;</span><span class="o">,</span> <span class="n">license</span> <span class="s2">&quot;LGPL2&quot;</span>
-  <span class="ow">and</span> <span class="n">sources</span> <span class="k">in</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world</span><span class="o">:</span>
+  <span class="k">and</span> <span class="n">sources</span> <span class="k">in</span> <span class="n">src</span><span class="o">/</span><span class="n">hello_world</span><span class="o">:</span>
 <span class="nc">Creating</span> <span class="n">directory</span> <span class="n">hello_world</span>
 <span class="nc">Calling</span> <span class="n">git</span> <span class="n">init</span>
 <span class="nc">Initialized</span> <span class="n">empty</span> <span class="nc">Git</span> <span class="n">repository</span> <span class="k">in</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">lefessan</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/.</span><span class="n">git</span><span class="o">/</span>
@@ -318,7 +325,7 @@ between generating binaries and generating Javascript using
 build it and run it with no error!</p>
 </section>
 <section id="building-a-project">
-<h2>Building a Project<a class="headerlink" href="#building-a-project" title="Permalink to this headline"></a></h2>
+<h2>Building a Project<a class="headerlink" href="#building-a-project" title="Link to this heading"></a></h2>
 <p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> can be used to build a project. In this case, it will use
 <code class="code docutils literal notranslate"><span class="pre">opam</span></code> to manage the environment (dependencies) and <code class="code docutils literal notranslate"><span class="pre">dune</span></code>
 to build the project. You don’t need to know these tools for basic
@@ -328,48 +335,48 @@ switches, it is a good idea to use it from <code class="code docutils literal no
 from binary caching of packages, to speedup creation of local
 switches.</p>
 <section id="building-locally">
-<h3>Building locally<a class="headerlink" href="#building-locally" title="Permalink to this headline"></a></h3>
+<h3>Building locally<a class="headerlink" href="#building-locally" title="Link to this heading"></a></h3>
 <p>By default, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will try to build the project in its directory:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ cd hello_world
-$ drom build -y
-Calling opam switch create -y . --empty
-Calling opam install -y ocaml.4.10.0
-The following actions will be performed:
-  ∗ install base-bigarray       base
-  ∗ install base-threads        base
-  ∗ install base-unix           base
-  ∗ install ocaml-base-compiler 4.10.0                     [required by ocaml]
-  ∗ install ocaml-config        1                          [required by ocaml]
-  ∗ install ocaml               4.10.0
-===== ∗ 6 =====
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">cd</span> <span class="n">hello_world</span>
+<span class="o">$</span> <span class="n">drom</span> <span class="n">build</span> <span class="o">-</span><span class="n">y</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="o">-</span><span class="n">y</span> <span class="o">.</span> <span class="o">--</span><span class="n">empty</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">ocaml</span><span class="o">.</span><span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">The</span> <span class="n">following</span> <span class="n">actions</span> <span class="n">will</span> <span class="n">be</span> <span class="n">performed</span><span class="o">:</span>
+  <span class="err">∗</span> <span class="n">install</span> <span class="n">base</span><span class="o">-</span><span class="n">bigarray</span>       <span class="n">base</span>
+  <span class="err">∗</span> <span class="n">install</span> <span class="n">base</span><span class="o">-</span><span class="n">threads</span>        <span class="n">base</span>
+  <span class="err">∗</span> <span class="n">install</span> <span class="n">base</span><span class="o">-</span><span class="n">unix</span>           <span class="n">base</span>
+  <span class="err">∗</span> <span class="n">install</span> <span class="n">ocaml</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">compiler</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>                     <span class="o">[</span><span class="n">required</span> <span class="n">by</span> <span class="n">ocaml</span><span class="o">]</span>
+  <span class="err">∗</span> <span class="n">install</span> <span class="n">ocaml</span><span class="o">-</span><span class="n">config</span>        <span class="mi">1</span>                          <span class="o">[</span><span class="n">required</span> <span class="n">by</span> <span class="n">ocaml</span><span class="o">]</span>
+  <span class="err">∗</span> <span class="n">install</span> <span class="n">ocaml</span>               <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="o">=====</span> <span class="err">∗</span> <span class="mi">6</span> <span class="o">=====</span>
 
-&lt;&gt;&lt;&gt; Gathering sources &gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
-[ocaml-base-compiler.4.10.0] found in cache
+<span class="o">&lt;&gt;&lt;&gt;</span> <span class="nc">Gathering</span> <span class="n">sources</span> <span class="o">&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;</span>
+<span class="o">[</span><span class="n">ocaml</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">compiler</span><span class="o">.</span><span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span><span class="o">]</span> <span class="n">found</span> <span class="k">in</span> <span class="n">cache</span>
 
-&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
-∗ installed base-bigarray.base
-∗ installed base-threads.base
-∗ installed base-unix.base
-∗ installed ocaml-base-compiler.4.10.0
-∗ installed ocaml-config.1
-∗ installed ocaml.4.10.0
-Done.
-# Run eval $(opam env) to update the current shell environment
-Calling opam switch set-base ocaml
-Calling opam install -y --deps-only ./_drom/new.opam
-The following actions will be performed:
-∗ install dune 2.7.0
+<span class="o">&lt;&gt;&lt;&gt;</span> <span class="nc">Processing</span> <span class="n">actions</span> <span class="o">&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;</span>
+<span class="err">∗</span> <span class="n">installed</span> <span class="n">base</span><span class="o">-</span><span class="n">bigarray</span><span class="o">.</span><span class="n">base</span>
+<span class="err">∗</span> <span class="n">installed</span> <span class="n">base</span><span class="o">-</span><span class="n">threads</span><span class="o">.</span><span class="n">base</span>
+<span class="err">∗</span> <span class="n">installed</span> <span class="n">base</span><span class="o">-</span><span class="n">unix</span><span class="o">.</span><span class="n">base</span>
+<span class="err">∗</span> <span class="n">installed</span> <span class="n">ocaml</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">compiler</span><span class="o">.</span><span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="err">∗</span> <span class="n">installed</span> <span class="n">ocaml</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="mi">1</span>
+<span class="err">∗</span> <span class="n">installed</span> <span class="n">ocaml</span><span class="o">.</span><span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nn">Done</span><span class="p">.</span>
+<span class="o">#</span> <span class="nc">Run</span> <span class="n">eval</span> <span class="o">$(</span><span class="n">opam</span> <span class="n">env</span><span class="o">)</span> <span class="k">to</span> <span class="n">update</span> <span class="n">the</span> <span class="n">current</span> <span class="n">shell</span> <span class="n">environment</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">switch</span> <span class="n">set</span><span class="o">-</span><span class="n">base</span> <span class="n">ocaml</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="o">--</span><span class="n">deps</span><span class="o">-</span><span class="n">only</span> <span class="o">./_</span><span class="n">drom</span><span class="o">/</span><span class="k">new</span><span class="o">.</span><span class="n">opam</span>
+<span class="nc">The</span> <span class="n">following</span> <span class="n">actions</span> <span class="n">will</span> <span class="n">be</span> <span class="n">performed</span><span class="o">:</span>
+<span class="err">∗</span> <span class="n">install</span> <span class="n">dune</span> <span class="mi">2</span><span class="o">.</span><span class="mi">7</span><span class="o">.</span><span class="mi">0</span>
 
-&lt;&gt;&lt;&gt; Gathering sources &gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
-[dune.2.7.0] found in cache
+<span class="o">&lt;&gt;&lt;&gt;</span> <span class="nc">Gathering</span> <span class="n">sources</span> <span class="o">&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;</span>
+<span class="o">[</span><span class="n">dune</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">7</span><span class="o">.</span><span class="mi">0</span><span class="o">]</span> <span class="n">found</span> <span class="k">in</span> <span class="n">cache</span>
 
-&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
-∗ installed dune.2.7.0
-Done.
-# Run eval $(opam env) to update the current shell environment
-Calling opam exec -- dune build
-Done: 40/46 (jobs: 1)
-Build OK
+<span class="o">&lt;&gt;&lt;&gt;</span> <span class="nc">Processing</span> <span class="n">actions</span> <span class="o">&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;</span>
+<span class="err">∗</span> <span class="n">installed</span> <span class="n">dune</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">7</span><span class="o">.</span><span class="mi">0</span>
+<span class="nn">Done</span><span class="p">.</span>
+<span class="o">#</span> <span class="nc">Run</span> <span class="n">eval</span> <span class="o">$(</span><span class="n">opam</span> <span class="n">env</span><span class="o">)</span> <span class="k">to</span> <span class="n">update</span> <span class="n">the</span> <span class="n">current</span> <span class="n">shell</span> <span class="n">environment</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">build</span>
+<span class="nc">Done</span><span class="o">:</span> <span class="mi">40</span><span class="o">/</span><span class="mi">46</span> <span class="o">(</span><span class="n">jobs</span><span class="o">:</span> <span class="mi">1</span><span class="o">)</span>
+<span class="nc">Build</span> <span class="nc">OK</span>
 </pre></div>
 </div>
 <p>During this build, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> performed the following operations:</p>
@@ -398,7 +405,7 @@ only if the dependencies are changed.</p>
 by our project!</p>
 </section>
 <section id="building-with-a-global-opam-switch">
-<h3>Building with a global <code class="code docutils literal notranslate"><span class="pre">opam</span></code> switch<a class="headerlink" href="#building-with-a-global-opam-switch" title="Permalink to this headline"></a></h3>
+<h3>Building with a global <code class="code docutils literal notranslate"><span class="pre">opam</span></code> switch<a class="headerlink" href="#building-with-a-global-opam-switch" title="Link to this heading"></a></h3>
 <p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> can use global switches also. For example, if you want to
 install the project in that switch:</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">build</span> <span class="o">--</span><span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
@@ -431,42 +438,42 @@ built the project.</p>
 globally, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> will call <code class="code docutils literal notranslate"><span class="pre">opam</span></code> to create it.</p>
 </section>
 <section id="installing-the-project">
-<h3>Installing the Project<a class="headerlink" href="#installing-the-project" title="Permalink to this headline"></a></h3>
+<h3>Installing the Project<a class="headerlink" href="#installing-the-project" title="Link to this heading"></a></h3>
 <p>Now that we have tested that our project correctly builds in a local
 switch and in a global switch, we can ask <code class="code docutils literal notranslate"><span class="pre">drom</span></code> to install it
 in the switch:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom install
-Directory /tmp/hello_world set to use switch 4.07.0.
-Just remove /tmp/hello_world/_opam to unlink.
-In opam switch 4.07.0
-Calling opam install --deps-only ./_drom/new.opam
-Nothing to do.
-Calling opam exec -- dune build
-Calling opam uninstall -y hello_world
-The following actions will be performed:
-  ⊘ remove hello_world 0.1.0
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">install</span>
+<span class="nc">Directory</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span> <span class="n">set</span> <span class="k">to</span> <span class="n">use</span> <span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span>
+<span class="nc">Just</span> <span class="n">remove</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span><span class="o">/_</span><span class="n">opam</span> <span class="k">to</span> <span class="n">unlink</span><span class="o">.</span>
+<span class="nc">In</span> <span class="n">opam</span> <span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">install</span> <span class="o">--</span><span class="n">deps</span><span class="o">-</span><span class="n">only</span> <span class="o">./_</span><span class="n">drom</span><span class="o">/</span><span class="k">new</span><span class="o">.</span><span class="n">opam</span>
+<span class="nc">Nothing</span> <span class="k">to</span> <span class="k">do</span><span class="o">.</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">exec</span> <span class="o">--</span> <span class="n">dune</span> <span class="n">build</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">uninstall</span> <span class="o">-</span><span class="n">y</span> <span class="n">hello_world</span>
+<span class="nc">The</span> <span class="n">following</span> <span class="n">actions</span> <span class="n">will</span> <span class="n">be</span> <span class="n">performed</span><span class="o">:</span>
+  <span class="err">⊘</span> <span class="n">remove</span> <span class="n">hello_world</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">0</span>
 
-&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
-  ⊘ removed   hello_world.0.1.0
-Done.
-Calling opam pin -y --no-action -k path .
-Package hello_world does not exist, create as a NEW package? [Y/n] y
-[hello_world.~dev] synchronised from file:///tmp/hello_world
-hello_world is now pinned to file:///tmp/hello_world (version 0.1.0)
-Calling opam install -y hello_world
+<span class="o">&lt;&gt;&lt;&gt;</span> <span class="nc">Processing</span> <span class="n">actions</span> <span class="o">&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;</span>
+  <span class="err">⊘</span> <span class="n">removed</span>   <span class="n">hello_world</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">0</span>
+<span class="nn">Done</span><span class="p">.</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">pin</span> <span class="o">-</span><span class="n">y</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">action</span> <span class="o">-</span><span class="n">k</span> <span class="n">path</span> <span class="o">.</span>
+<span class="nc">Package</span> <span class="n">hello_world</span> <span class="n">does</span> <span class="n">not</span> <span class="n">exist</span><span class="o">,</span> <span class="n">create</span> <span class="k">as</span> <span class="n">a</span> <span class="nc">NEW</span> <span class="n">package</span><span class="o">?</span> <span class="o">[</span><span class="nc">Y</span><span class="o">/</span><span class="n">n</span><span class="o">]</span> <span class="n">y</span>
+<span class="o">[</span><span class="n">hello_world</span><span class="o">.~</span><span class="n">dev</span><span class="o">]</span> <span class="n">synchronised</span> <span class="n">from</span> <span class="n">file</span><span class="o">:///</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span>
+<span class="n">hello_world</span> <span class="n">is</span> <span class="n">now</span> <span class="n">pinned</span> <span class="k">to</span> <span class="n">file</span><span class="o">:///</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span> <span class="o">(</span><span class="n">version</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">0</span><span class="o">)</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">hello_world</span>
 
-&lt;&gt;&lt;&gt; Synchronising pinned packages &gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
-[hello_world.0.1.0] no changes from file:///tmp/hello_world
+<span class="o">&lt;&gt;&lt;&gt;</span> <span class="nc">Synchronising</span> <span class="n">pinned</span> <span class="n">packages</span> <span class="o">&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;</span>
+<span class="o">[</span><span class="n">hello_world</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">0</span><span class="o">]</span> <span class="n">no</span> <span class="n">changes</span> <span class="n">from</span> <span class="n">file</span><span class="o">:///</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span>
 
-The following actions will be performed:
-  ∗ install hello_world 0.1.0*
+<span class="nc">The</span> <span class="n">following</span> <span class="n">actions</span> <span class="n">will</span> <span class="n">be</span> <span class="n">performed</span><span class="o">:</span>
+  <span class="err">∗</span> <span class="n">install</span> <span class="n">hello_world</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">0</span><span class="o">*</span>
 
-&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
-∗ installed hello_world.0.1.0
-Done.
-Calling opam unpin -n hello_world
-Ok, hello_world is no longer pinned to file:///tmp/hello_world (version 0.1.0)
-Installation OK
+<span class="o">&lt;&gt;&lt;&gt;</span> <span class="nc">Processing</span> <span class="n">actions</span> <span class="o">&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;</span>
+<span class="err">∗</span> <span class="n">installed</span> <span class="n">hello_world</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">0</span>
+<span class="nn">Done</span><span class="p">.</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">unpin</span> <span class="o">-</span><span class="n">n</span> <span class="n">hello_world</span>
+<span class="nc">Ok</span><span class="o">,</span> <span class="n">hello_world</span> <span class="n">is</span> <span class="n">no</span> <span class="n">longer</span> <span class="n">pinned</span> <span class="k">to</span> <span class="n">file</span><span class="o">:///</span><span class="n">tmp</span><span class="o">/</span><span class="n">hello_world</span> <span class="o">(</span><span class="n">version</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">0</span><span class="o">)</span>
+<span class="nc">Installation</span> <span class="nc">OK</span>
 </pre></div>
 </div>
 <p>As we can see in this example, <code class="code docutils literal notranslate"><span class="pre">drom</span></code> performed the following steps:</p>
@@ -480,7 +487,7 @@ Installation OK
 </section>
 </section>
 <section id="building-documentation">
-<h2>Building Documentation<a class="headerlink" href="#building-documentation" title="Permalink to this headline"></a></h2>
+<h2>Building Documentation<a class="headerlink" href="#building-documentation" title="Link to this heading"></a></h2>
 <p><code class="code docutils literal notranslate"><span class="pre">drom</span></code> generates a web-site for your project with 2 parts that
 you need to generate separately: a documentation of the library API
 automatically generated by <code class="code docutils literal notranslate"><span class="pre">odoc</span></code> and a general documentation
@@ -513,22 +520,22 @@ local browser on the documentation.</p>
 of your project. They are usually tools like <code class="code docutils literal notranslate"><span class="pre">merlin</span></code>,
 <code class="code docutils literal notranslate"><span class="pre">odoc</span></code> or <code class="code docutils literal notranslate"><span class="pre">ocamlformat</span></code> that only developers will need.</p>
 <p>Still, you can trigger directly their installation using:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>$ drom dev-deps
-In opam switch 4.10.0
-Calling opam install odoc ocamlformat
-The following actions will be performed:
-  ∗ install odoc        1.5.1
-  ∗ install ocamlformat 0.15.0
-===== ∗ 2 =====
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">drom</span> <span class="n">dev</span><span class="o">-</span><span class="n">deps</span>
+<span class="nc">In</span> <span class="n">opam</span> <span class="n">switch</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+<span class="nc">Calling</span> <span class="n">opam</span> <span class="n">install</span> <span class="n">odoc</span> <span class="n">ocamlformat</span>
+<span class="nc">The</span> <span class="n">following</span> <span class="n">actions</span> <span class="n">will</span> <span class="n">be</span> <span class="n">performed</span><span class="o">:</span>
+  <span class="err">∗</span> <span class="n">install</span> <span class="n">odoc</span>        <span class="mi">1</span><span class="o">.</span><span class="mi">5</span><span class="o">.</span><span class="mi">1</span>
+  <span class="err">∗</span> <span class="n">install</span> <span class="n">ocamlformat</span> <span class="mi">0</span><span class="o">.</span><span class="mi">15</span><span class="o">.</span><span class="mi">0</span>
+<span class="o">=====</span> <span class="err">∗</span> <span class="mi">2</span> <span class="o">=====</span>
 
-&lt;&gt;&lt;&gt; Gathering sources &gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
-[ocamlformat.0.15.0] found in cache
-[odoc.1.5.1] found in cache
+<span class="o">&lt;&gt;&lt;&gt;</span> <span class="nc">Gathering</span> <span class="n">sources</span> <span class="o">&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;</span>
+<span class="o">[</span><span class="n">ocamlformat</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="mi">15</span><span class="o">.</span><span class="mi">0</span><span class="o">]</span> <span class="n">found</span> <span class="k">in</span> <span class="n">cache</span>
+<span class="o">[</span><span class="n">odoc</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">5</span><span class="o">.</span><span class="mi">1</span><span class="o">]</span> <span class="n">found</span> <span class="k">in</span> <span class="n">cache</span>
 
-&lt;&gt;&lt;&gt; Processing actions &lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;
-∗ installed odoc.1.5.1
-∗ installed ocamlformat.0.15.0
-Done.
+<span class="o">&lt;&gt;&lt;&gt;</span> <span class="nc">Processing</span> <span class="n">actions</span> <span class="o">&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;</span>
+<span class="err">∗</span> <span class="n">installed</span> <span class="n">odoc</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">5</span><span class="o">.</span><span class="mi">1</span>
+<span class="err">∗</span> <span class="n">installed</span> <span class="n">ocamlformat</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="mi">15</span><span class="o">.</span><span class="mi">0</span>
+<span class="nn">Done</span><span class="p">.</span>
 </pre></div>
 </div>
 <p>In our case, only <code class="code docutils literal notranslate"><span class="pre">odoc</span></code> and <code class="code docutils literal notranslate"><span class="pre">ocamlformat</span></code> have been
