@@ -44,7 +44,7 @@ let add_value t k v =
        if !Types.override then
          Hashtbl.remove t k
        else
-         Printf.kprintf failwith "add_value failed: key %S already exists"
+         Printf.ksprintf failwith "add_value failed: key %S already exists"
            (Table.Key.to_string k) ;
 
      Hashtbl.add t k (Value v)
@@ -163,6 +163,7 @@ toml:
 group_header:
  | LBRACK LBRACK key_path RBRACK RBRACK { ArrayElement, $3 }
  | LBRACK key_path RBRACK               { Regular, $2 }
+ | LBRACK RBRACK               { Regular, [] }
 
 key:
  | STRING { Table.Key.of_string $1 }

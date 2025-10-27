@@ -1,6 +1,5 @@
 name: Main Workflow
 
-# use fields.git-main-branch to change from master
 on:
   pull_request:
     branches:
@@ -25,57 +24,54 @@ jobs:
 
         include:
           - os: ubuntu-latest
-            ocaml-compiler: 4.14.0
+            ocaml-compiler: 4.08.0
             skip_test: true
 
 
-# we need permissions to deploy docs
-    permissions:
-      contents: write
-
     runs-on: ${{ matrix.os }}
-
-    # use fields.github-workflow-env to add something here
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Retrieve opam cache
-        uses: actions/cache@v4
+        uses: actions/cache@v2
         id: cache-opam
         with:
           path: ~/.opam
-          key: v4-${{ runner.os }}-drom-${{ matrix.ocaml-compiler }}-${{ hashFiles('opam/*.opam') }}
+          key: v2-${{ runner.os }}-drom-${{ matrix.ocaml-compiler }}-${{ hashFiles('opam/*.opam') }}
 #          restore-keys: |
-#            v4-${{ runner.os }}-opam-${{ matrix.ocaml-compiler }}-
+#            v2-${{ runner.os }}-opam-${{ matrix.ocaml-compiler }}-
 
       - name: Use OCaml ${{ matrix.ocaml-compiler }}
-        uses: avsm/setup-ocaml@v3
+        uses: avsm/setup-ocaml@v2
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
           opam-pin: false
+          opam-depext: false
 
       - name: Set git user
         run: |
           git config --global user.name github-actions
           git config --global user.email github-actions-bot@users.noreply.github.com
 
-      # use fields.opam-repo = "git+https://" to add an 'extra' opam repository
+      # define opam-repo = "git+https://" to add an extra opam repo
 
       - run: opam pin add . -y --no-action
 
-      - run: opam install -y ./opam/*.opam --deps-only --with-test
+      - run: opam depext -y drom drom_lib drom_toml
+#        if: steps.cache-opam.outputs.cache-hit != 'true'
 
-      # Use fields.build-scripts to add more scripts to convert here
-      - run: dos2unix scripts/*.sh 
+      - run: opam install -y opam/*.opam --deps-only --with-test
+#        if: steps.cache-opam.outputs.cache-hit != 'true'
+
+#      - run: opam upgrade --fixup
+#        if: steps.cache-opam.outputs.cache-hit == 'true'
+
+      - run: dos2unix scripts/*.sh
         if: matrix.os == 'windows-latest'
 
-      # Use fields.github-workflow-before-build to add something here
-
       - run: make build
-
-      # Use fields.github-workflow-after-build to add something here
 
       - name: run test suite
         run: |
@@ -83,8 +79,6 @@ jobs:
           opam exec -- dune build @runtest
           ./scripts/after.sh test
         if: matrix.skip_test  != 'true'
-
-      # Use fields.github-workflow-after-test to add something here
 
       - name: test source is well formatted
         run: make fmt
@@ -109,6 +103,3 @@ jobs:
           BRANCH: gh-pages
           FOLDER: _drom/docs/
           CLEAN: true
-
-# Use fields.github-workflow-trailer to add a trailer here
-

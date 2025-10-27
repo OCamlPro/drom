@@ -3,9 +3,12 @@
   (name main)
   (public_name drom)
   (package drom)
+  ; use field 'dune-libraries' to add libraries without opam deps
   (libraries drom_lib )
+  (flags ((:standard (:include linking.sexp))))
+  ; use field 'dune-stanzas' to add more stanzas here
   
-  (flags (:standard (:include linking.sexp)))
+  
   )
 
 ; Use `static-clibs` to specify static C libs (without lib prefix)
@@ -28,4 +31,5 @@
 (documentation
   (package drom))
 
+; use field 'dune-trailer' to add more stuff here
 

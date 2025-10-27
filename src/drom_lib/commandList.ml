@@ -19,7 +19,7 @@ let all_kinds = [ "projects"; "packages" ]
 
 let cmd =
   let kinds = ref [] in
-  let args, specs = Share.args ~set:true () in
+  let share_args, specs = Share.args ~set:true () in
   EZCMD.sub cmd_name
     (fun () ->
        let kinds =
@@ -32,14 +32,14 @@ let cmd =
        List.iter
          (function
            | "projects" ->
-               let share = Share.load ~args () in
+               let share = Share.load ~share_args () in
                Printf.printf "Known project skeletons: %s\n%!"
                  (String.concat " "
                     (List.map
                        (fun s -> s.skeleton_name)
                        (Skeleton.project_skeletons share) ) )
            | "packages" ->
-               let share = Share.load ~args () in
+               let share = Share.load ~share_args () in
                Printf.printf "Known packages skeletons: %s\n%!"
                  (String.concat " "
                     (List.map

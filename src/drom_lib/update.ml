@@ -18,22 +18,7 @@ open Types
 
 exception Skip
 
-type args =
-  { mutable arg_upgrade : bool;
-    mutable arg_force : bool;
-    mutable arg_diff : bool;
-    mutable arg_skip : (bool * string) list;
-    mutable arg_promote_skip : bool;
-    mutable arg_edition : string option;
-    mutable arg_min_edition : string option;
-    mutable arg_create : bool option ;
-
-    (* Not settable through standard args, only in `drom project` *)
-    arg_share_version : string option;
-    arg_share_repo : string option;
-  }
-
-let default_args () =
+let default_args ~share_args () =
   { arg_upgrade = false;
     arg_force = false;
     arg_diff = false;
@@ -41,13 +26,14 @@ let default_args () =
     arg_promote_skip = false;
     arg_edition = None;
     arg_min_edition = None;
-    arg_share_version = None;
-    arg_share_repo = None;
     arg_create = None ;
+
+    arg_share = share_args ;
   }
 
-let args () =
-  let args = default_args () in
+let args ?(set_share=false) () =
+  let share_args, share_specs = Share.args ~set:set_share () in
+  let args = default_args ~share_args () in
   let specs =
     [ ( [ "f"; "force" ],
         Arg.Unit (fun () -> args.arg_force <- true),
@@ -91,7 +77,7 @@ let args () =
           "Change project creation status" );
     ]
   in
-  (args, specs)
+  (args, specs @ share_specs)
 
 let compute_config_hash files =
   let files = List.sort compare files in
@@ -106,7 +92,7 @@ let compute_config_hash files =
   in
   Hashes.digest_content ~file:"" ~content:to_hash ()
 
-let update_files share ?args ?(git = false) p =
+let update_files share ?update_args ?(git = false) p =
   (*
   let force, upgrade, skip, diff, promote_skip, edition, min_edition =
     match args with
@@ -117,10 +103,11 @@ let update_files share ?args ?(git = false) p =
   in
 *)
   let args =
-    match args with
-    | None -> default_args ()
+    match update_args with
+    | None -> default_args ~share_args:(Share.default_args ()) ()
     | Some args -> args
   in
+  let share_args = args.arg_share in
   let changed = false in
   let p, changed =
     match args.arg_skip with
@@ -162,15 +149,17 @@ let update_files share ?args ?(git = false) p =
   in
   let p, changed =
     match args, p with
-      { arg_share_version = Some "0.8.0" ; arg_share_repo = None ; _ },
-      { project_share_version = (None | Some "0.8.0"); project_share_repo = None ; _ } ->
+      { arg_share = { arg_share_version = Some "0.8.0";
+                      arg_share_repo = None ; _ } ; _ },
+      { project_share_version = (None | Some "0.8.0");
+        project_share_repo = None ; _ } ->
         p, changed     (* do nothing for compatibility with version = 0.8.0 *)
     | _ ->
         let p, changed =
-          match args.arg_share_version with
+          match args.arg_share.arg_share_version with
           | None -> (p, changed)
           | Some arg_share_version ->
-              if args.arg_share_version <> p.project_share_version then
+              if args.arg_share.arg_share_version <> p.project_share_version then
                 let project_share_repo = match p.project_share_repo with
                   | None -> Some ( Share.share_repo_default () )
                   | Some project_share_repo -> Some project_share_repo
@@ -180,10 +169,10 @@ let update_files share ?args ?(git = false) p =
               else
                 (p, changed)
         in
-        match args.arg_share_repo with
+        match share_args.arg_share_repo with
         | None -> (p, changed)
         | project_share_repo ->
-            if args.arg_share_repo <> p.project_share_repo then
+            if share_args.arg_share_repo <> p.project_share_repo then
               ({ p with project_share_repo }, true)
             else
               (p, changed)
@@ -480,11 +469,11 @@ let display_create_warning p =
         ])
   end
 
-let update_files share ~twice ?(warning=true) ?args ?(git = false) p =
-  let p_final = update_files share ?args ~git p in
+let update_files share ~twice ?(warning=true) ?update_args ?(git = false) p =
+  let p_final = update_files share ?update_args ~git p in
   if twice then begin
     Printf.eprintf "Re-iterating file generation for consistency...\n%!";
-    let _p_final2 = update_files share ?args ~git p in
+    let _p_final2 = update_files share ?update_args ~git p in
     ()
   end;
   if warning then display_create_warning p_final

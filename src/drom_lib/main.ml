@@ -53,7 +53,6 @@ let main () =
     ]
   in
   Printexc.record_backtrace true;
-  let args = Array.to_list Sys.argv in
   let rec iter_initial_args args =
     match args with
     | [] -> []
@@ -75,7 +74,7 @@ let main () =
     | _ -> args
   in
 
-  let args = iter_initial_args (List.tl args) in
+  let args = iter_initial_args (List.tl (Array.to_list Sys.argv)) in
   let argv = Array.of_list (Sys.argv.(0) :: args) in
   (* OpambinMisc.global_log "args: %s"
          (String.concat " " (Array.to_list Sys.argv)); *)

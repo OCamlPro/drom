@@ -21,9 +21,16 @@ kind = "program"
 # name of a file to generate with the current version
 # gen-version = "version.ml"
 
-# supported file generators are "ocamllex", "ocamlyacc" and "menhir" 
-# default is [ "ocamllex", "ocamlyacc" ] 
+# supported file generators are "ocamllex", "ocamlyacc" and "menhir"
+# default is [ "ocamllex", "ocamlyacc" ]
 # generators = [ "ocamllex", "menhir" ]
+
+# menhir options for the package
+#Example:
+#version = "2.0"
+#parser = { modules = ["parser"]; tokens = "Tokens" }
+#tokens = { modules = ["tokens"]}
+# menhir = ...
 
 # whether all modules should be packed/wrapped (default is true)
 # pack-modules = false
@@ -35,7 +42,7 @@ kind = "program"
 # pack = "Mylib"
 
 # preprocessing options
-#  preprocess = "per-module (((action (run ./toto.sh %{input-file})) mod))" 
+#  preprocess = "per-module (((action (run ./toto.sh %{input-file})) mod))"
 # preprocess = "pps ppx_deriving_encoding"
 
 # files to skip while updating at package level
@@ -44,7 +51,7 @@ kind = "program"
 # package library dependencies
 #   [dependencies]
 #   ez_file = ">=0.1 <1.3"
-#   base-unix = { libname = "unix", version = ">=base" } 
+#   base-unix = { libname = "unix", version = ">=base" }
 [dependencies]
 drom_lib = "version"
 
@@ -54,14 +61,14 @@ drom_lib = "version"
 
 # package fields (depends on package skeleton)
 #Examples:
-#  dune-stanzas = "(preprocess (pps ppx_deriving_encoding))" 
-#  dune-libraries = "bigstring" 
-#  dune-trailer = "(install (..))" 
-#  opam-trailer = "pin-depends: [..]" 
-#  no-opam-test = "yes" 
-#  no-opam-doc = "yes" 
-#  gen-opam = "some" | "all" 
-#  dune-stanzas = "(flags (:standard (:include linking.sexp)))" 
-#  static-clibs = "unix" 
+#  dune-stanzas = "(preprocess (pps ppx_deriving_encoding))"
+#  dune-libraries = "bigstring"
+#  dune-trailer = "(install (..))"
+#  opam-trailer = "pin-depends: [..]"
+#  no-opam-test = "yes"
+#  no-opam-doc = "yes"
+#  gen-opam = "some" | "all"
+#  dune-stanzas = "(flags (:standard (:include linking.sexp)))"
+#  static-clibs = "unix"
 [fields]
-dune-stanzas = "(flags (:standard (:include linking.sexp)))"
+dune-flags = "(:standard (:include linking.sexp))"

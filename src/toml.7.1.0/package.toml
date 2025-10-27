@@ -25,6 +25,13 @@ gen-version = "version.ml"
 # default is [ "ocamllex", "ocamlyacc" ] 
 generators = ["menhir", "ocamllex"]
 
+# menhir options for the package
+#Example:
+#version = "2.0"
+#parser = { modules = ["parser"]; tokens = "Tokens" }
+#tokens = { modules = ["tokens"]}
+# menhir = ...
+
 # whether all modules should be packed/wrapped (default is true)
 # pack-modules = false
 

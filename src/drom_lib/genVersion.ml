@@ -54,6 +54,6 @@ let dune _package file =
 (rule
     (targets %s)
     (deps (:script %st) package.toml)
-    (action (with-stdout-to %%{targets} (run %%{ocaml} unix.cma %%{script}))))
+    (action (with-stdout-to %%{targets} (run %%{ocaml} -I +unix unix.cma %%{script}))))
 |}
     file file

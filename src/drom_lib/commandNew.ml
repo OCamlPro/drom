@@ -62,8 +62,8 @@ let rec find_project_package name packages =
     else
       find_project_package name packages
 
-let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
-  let args, share_args = args in
+let create_project ~config ~name ~skeleton ~dir ~inplace ~update_args =
+  let share_args = update_args.arg_share in
   let skeleton_name =
     match skeleton with
     | None -> "program"
@@ -83,7 +83,7 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     skeleton_name license;
   Printf.eprintf "  and sources in %s:\n%!" dir;
 
-  let share = Share.load ~args:share_args () in
+  let share = Share.load ~share_args () in
   let skeleton = Skeleton.lookup_project share skeleton_name in
 
   if Globals.verbose 2 then
@@ -158,37 +158,41 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     match list with
     | [] -> (p, None)
     | content :: super ->
-        let p, _ = iter_skeleton super in
-        let content = Subst.project (Subst.state () share p) content in
-        Toml.with_override (fun () ->
-            let p = Project.of_string
-                ~msg:"drom.toml template" ~default:p content in
-            (p, Some content) )
+       let p, _ = iter_skeleton super in
+       let content = Subst.project (Subst.state () share p) content in
+       Toml.with_override (fun () ->
+           let p = Project.of_string
+                     ~msg:"drom.toml template" ~default:p content in
+           (p, Some content) )
   in
+  Printf.eprintf "Project drom-version: %s\n%!" p.project_drom_version ;
+  Printf.eprintf "len %d\n%!" (List.length skeleton.skeleton_toml);
   let p, p_content = iter_skeleton skeleton.skeleton_toml in
+  Printf.eprintf "Project drom-version: %s\n%!" p.project_drom_version ;
+
   (* second, resolve package skeletons *)
   let rec iter_skeleton package list =
     match list with
     | [] -> package
     | content :: super ->
-        let package = iter_skeleton package super in
-        let flags = Skeleton.default_flags "package.toml" in
-        let content = Skeleton.subst_package_file flags content
-            (Subst.state () share package) in
-        Toml.with_override (fun () ->
-            let package =
-              Package.of_string ~msg:"package.toml template" ~default:p content
-            in
-            package )
+       let package = iter_skeleton package super in
+       let flags = Skeleton.default_flags "package.toml" in
+       let content = Skeleton.subst_package_file flags content
+                       (Subst.state () share package) in
+       Toml.with_override (fun () ->
+           let package =
+             Package.of_string ~msg:"package.toml template" ~default:p content
+           in
+           package )
   in
   let packages =
     List.map
       (fun package ->
-         let skeleton = Misc.package_skeleton package in
-         Printf.eprintf "Using skeleton %S for package %S\n%!" skeleton
-           package.name;
-         let skeleton = Skeleton.lookup_package share skeleton in
-         iter_skeleton package skeleton.skeleton_toml )
+        let skeleton = Misc.package_skeleton package in
+        Printf.eprintf "Using skeleton %S for package %S\n%!" skeleton
+          package.name;
+        let skeleton = Skeleton.lookup_package share skeleton in
+        iter_skeleton package skeleton.skeleton_toml )
       p.packages
   in
 
@@ -203,29 +207,29 @@ let create_project ~config ~name ~skeleton ~dir ~inplace ~args =
     match p_content with
     | None -> project
     | Some content ->
-        Toml.with_override (fun () ->
-            Project.of_string ~msg:"drom.toml template" ~default:project content )
+       Toml.with_override (fun () ->
+           Project.of_string ~msg:"drom.toml template" ~default:project content )
   in
 
   (* Set fields that are not in templates *)
   let p = {
-    p with
-    project_create = true ;
-    project_share_repo = Some ( Share.share_repo_default () );
-    project_share_version = Some share.share_version ;
-  } in
+      p with
+      project_create = true ;
+      project_share_repo = Some ( Share.share_repo_default () );
+      project_share_version = Some share.share_version ;
+    } in
 
-  Update.update_files share ~warning:false ~twice:true ~git:true ~args p;
+  Update.update_files share ~warning:false ~twice:true ~git:true ~update_args p;
   let tree = print_dir (name ^ "/") "." in
   Printf.eprintf "%s%!" tree ;
   Update.display_create_warning p
 
 (* lookup for "drom.toml" and update it *)
-let action ~skeleton ~name ~inplace ~dir ~args =
+let action ~skeleton ~name ~inplace ~dir ~update_args =
+  let share_args = update_args.arg_share in
   match name with
   | None ->
-      let _update_args, args = args in
-      let share = Share.load ~args () in
+      let share = Share.load ~share_args () in
       Printf.eprintf
         {|You must specify the name of the project to create:
 
@@ -241,7 +245,7 @@ Available skeletons are: %s
       let config = Config.get () in
       let project = Project.find () in
       match project with
-      | None -> create_project ~config ~name ~skeleton ~dir ~inplace ~args
+      | None -> create_project ~config ~name ~skeleton ~dir ~inplace ~update_args
       | Some (p, _) ->
           Error.raise
             "Cannot create a project within another project %S. Maybe you want to \
@@ -253,13 +257,11 @@ let cmd =
   let inplace = ref false in
   let skeleton = ref None in
   let dir = ref None in
-  let update_args, update_specs = Update.args () in
-  let share_args, share_specs = Share.args ~set:true () in
+  let update_args, update_specs = Update.args ~set_share:true () in
   update_args.arg_upgrade <- true;
-  let args = ( update_args, share_args ) in
   EZCMD.sub cmd_name
     ~args:
-      ( update_specs @ share_specs
+      ( update_specs
       @ [ ( [ "dir" ],
             Arg.String (fun s -> dir := Some s),
             EZCMD.info ~docv:"DIRECTORY"
@@ -292,7 +294,7 @@ let cmd =
          ~skeleton:!skeleton
          ~dir:!dir
          ~inplace:!inplace
-        ~args )
+        ~update_args )
     ~man:
       [ `S "DESCRIPTION";
         `Blocks

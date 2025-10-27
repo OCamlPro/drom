@@ -8,22 +8,17 @@
 (*                                                                        *)
 (**************************************************************************)
 
-
-type args = {
-  mutable arg_reclone : bool ;
-  mutable arg_no_fetch : bool ;
-  mutable arg_version : string option ;
-  mutable arg_repo : string option ;
-}
+val default_args : unit -> Types.share_args
 
 (* Use `~set:true` if you want to be able to set `--share-version` and
    `--share-repo`, otherwise only `--reclone-share` and
    `--no-fetch-share` are provided. *)
 
-val args : ?set:bool -> unit -> args * Ezcmd.V2.EZCMD.TYPES.arg_list
+val args : ?set:bool ->
+           unit -> Types.share_args * Ezcmd.V2.EZCMD.TYPES.arg_list
 
 val load :
-  ?args:args ->
+  ?share_args:Types.share_args ->
   ?p:Types.project -> unit ->
   Types.share
 

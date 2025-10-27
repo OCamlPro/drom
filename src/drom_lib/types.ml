@@ -64,6 +64,100 @@ type menhir =
     tokens: menhir_tokens option;
   }
 
+let default_install_destination = ""
+let default_install_recursive = false
+
+type install_spec = {
+  install_source : string;
+  [@key "source"]
+
+  install_destination : string;
+  [@default default_install_destination]
+  [@key "destination"]
+
+  install_recursive : bool;
+  [@default default_install_recursive]
+  [@key "recursive"]
+}[@@deriving
+  show,
+  protocol ~driver:(module Protocol.Toml),
+  protocol ~driver:(module Protocol.Jinja2)]
+
+
+(** Lib site specification. *)
+type sites_spec = {
+  sites_spec_exec : bool;                 [@default false][@key "exec"]
+  sites_spec_root : bool;                 [@default false][@key "root"]
+  sites_spec_dir : string;                [@default ""][@key "dir"]
+  sites_spec_install : install_spec list; [@default []][@key "install"]
+}
+[@@deriving
+  show,
+  protocol ~driver:(module Protocol.Toml),
+  protocol ~driver:(module Protocol.Jinja2)]
+
+(** Various default values for sites. *)
+
+let default_sites_name = "sites"
+let default_sites_lib = []
+let default_sites_bin = []
+let default_sites_sbin = []
+let default_sites_toplevel = []
+let default_sites_share = []
+let default_sites_etc = []
+let default_sites_stublibs = []
+let default_sites_doc = []
+let default_sites_man = []
+
+(** Sites' specification. *)
+type sites = {
+
+  sites_name : string;
+  [@default default_sites_name]
+  [@key "name"]
+
+  sites_lib : sites_spec list;
+  [@default default_sites_lib]
+  [@key "lib"]
+
+  sites_bin : sites_spec list;
+  [@default default_sites_bin]
+  [@key "bin"]
+
+  sites_sbin : sites_spec list;
+  [@default default_sites_sbin]
+  [@key "sbin"]
+
+  sites_toplevel : sites_spec list;
+  [@default default_sites_toplevel]
+  [@key "toplevel"]
+
+  sites_share : sites_spec list;
+  [@default default_sites_share]
+  [@key "share"]
+
+  sites_etc : sites_spec list;
+  [@default default_sites_etc]
+  [@key "etc"]
+
+  sites_stublibs : sites_spec list;
+  [@default default_sites_stublibs]
+  [@key "stublibs"]
+
+  sites_doc : sites_spec list;
+  [@default default_sites_doc]
+  [@key "doc"]
+
+  sites_man : sites_spec list;
+  [@default default_sites_man]
+  [@key "man"]
+}
+[@@deriving
+  show,
+  protocol ~driver:(module Protocol.Toml),
+  protocol ~driver:(module Protocol.Jinja2)]
+
+
 type package =
   { name : string;
     mutable dir : string;
@@ -85,7 +179,8 @@ type package =
     mutable p_file : string option;
     mutable p_skip : string list option;
     mutable p_optional : bool option;
-    mutable p_preprocess : string option
+    mutable p_preprocess : string option;
+    mutable p_sites : sites;
   }
 
 and project =
@@ -97,6 +192,7 @@ and project =
     mutable menhir_version : string option; (* from sub-packages *)
     (* common fields *)
     mutable skeleton : string option;
+    (* Initialized by DROM_VERSION from the drom-share skeleton *)
     project_drom_version : string ;
     project_share_repo : string option ;
     project_share_version : string option ;
@@ -177,7 +273,9 @@ type flags =
 
 type skeleton =
   { skeleton_inherits : string option;
-    skeleton_toml : string list; (* content of drom.toml or package.toml file *)
+    (* content of drom.toml or package.toml file, inherited skeletons
+       coming first *)
+    skeleton_toml : string list;
     skeleton_files : (string * string * int) list;
     skeleton_flags : flags StringMap.t;
     skeleton_drom : bool;
@@ -194,14 +292,43 @@ type license =
 
 (* The content of the share-repo. Options are loaded on demand *)
 type share = {
-  share_dir : string ;
-  share_version : string ;
-  drom_version : string ;
-  mutable share_licenses : license StringMap.t option ;
-  mutable share_projects : skeleton StringMap.t option ;
-  mutable share_packages : skeleton StringMap.t option ;
+    (* Directory containing a checkout of drom-share at the given
+       version. TODO: add a lock ! *)
+    share_dir : string ;
+    (* The current version of drom-share *)
+    share_version : string ;
+    (* The maximal version between DROM_VERSION file (in drom-share)
+       and the current drom-version (in drom.toml of the project) *)
+    share_drom_version : string ;
+
+    mutable share_licenses : license StringMap.t option ;
+    mutable share_projects : skeleton StringMap.t option ;
+    mutable share_packages : skeleton StringMap.t option ;
 }
 
 type deps_status =
   | Deps_build
   | Deps_devel
+
+
+
+
+type share_args = {
+  mutable arg_share_reclone : bool ;
+  mutable arg_share_no_fetch : bool ;
+  mutable arg_share_version : string option ;
+  mutable arg_share_repo : string option ;
+}
+
+type update_args =
+  { mutable arg_upgrade : bool;
+    mutable arg_force : bool;
+    mutable arg_diff : bool;
+    mutable arg_skip : (bool * string) list;
+    mutable arg_promote_skip : bool;
+    mutable arg_edition : string option;
+    mutable arg_min_edition : string option;
+    mutable arg_create : bool option ;
+
+    arg_share : share_args ;
+  }

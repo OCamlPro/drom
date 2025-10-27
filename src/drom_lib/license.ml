@@ -132,7 +132,7 @@ let header share ?(sep = ml_sep) p =
           else
             Printf.sprintf "%d-%d" p.year current_year
         in
-        [ Printf.kprintf line "Copyright (c) %s %s" years copyright; line "" ]
+        [ Printf.ksprintf line "Copyright (c) %s %s" years copyright; line "" ]
       )
     @ [ line "All rights reserved." ]
     @ List.map line lines

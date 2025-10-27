@@ -67,16 +67,16 @@ type action =
   | PrintPackageSkeletons
   | PrintProjectSkeletons
 
-let action ~args act =
+let action ~share_args act =
   match act with
   | PrintPackageSkeletons ->
-      let share = Share.load ~args () in
+      let share = Share.load ~share_args () in
       Printf.printf "%s\n%!"
         ( Skeleton.package_skeletons share
           |> List.map string_of_skeleton
           |> String.concat "\n" )
   | PrintProjectSkeletons ->
-      let share = Share.load ~args () in
+      let share = Share.load ~share_args () in
       Printf.printf "%s\n%!"
         ( Skeleton.project_skeletons share
           |> List.map string_of_skeleton
@@ -93,7 +93,7 @@ let cmd =
         old_name;
       exit 2
   in
-  let args, specs = Share.args ~set:true () in
+  let share_args, specs = Share.args ~set:true () in
   EZCMD.sub cmd_name
     ~args:
     ( specs @
@@ -112,7 +112,7 @@ let cmd =
       | None ->
         Printf.eprintf "You must specify an action to perform\n%!";
         exit 2
-      | Some (_, todo) -> action ~args todo )
+      | Some (_, todo) -> action ~share_args todo )
     ~man:
       [ `S "DESCRIPTION";
         `Blocks [ `P "This command is useful to read/write drom configuration" ];

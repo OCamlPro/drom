@@ -14,6 +14,12 @@ open EzCompat
 open Ez_file.V1
 open EzFile.OP
 
+let drom_version_at_least drom_version n =
+  match drom_version with
+  | None -> failwith "Project has no drom version"
+  | Some version ->
+     VersionCompare.compare version n >= 0
+
 let profile_encoding =
   EzToml.encoding
     ~to_toml:(fun prof ->
@@ -79,14 +85,15 @@ let find_author config =
 let to_files share p =
   let version =
     EzToml.empty
-    |> EzToml.put_string [ "project"; "drom-version" ] p.project_drom_version
+    |> EzToml.put_string [ "project"; "drom-version" ]
+         p.project_drom_version 
     |> EzToml.put_string_option [ "project"; "share-repo" ]
       p.project_share_repo
     |> EzToml.put_string_option [ "project"; "share-version" ]
       p.project_share_version
   in
   let version =
-    if VersionCompare.compare share.drom_version "0.9.2~dev2" > 0 then begin
+    if VersionCompare.compare share.share_drom_version "0.9.2~dev2" > 0 then begin
       version |> EzToml.put_bool [ "project"; "create-project" ]
       p.project_create
     end else
@@ -236,7 +243,9 @@ let to_files share p =
 let project_of_toml ?file ?default table =
   let project_drom_version =
     match EzToml.get_string_option table [ "project"; "drom-version" ] with
-    | None -> Globals.min_drom_version
+    | None ->
+      (* Using current version by default. *)
+      Version.version
     | Some version ->
         match VersionCompare.compare version Version.version with
         | 1 ->
@@ -569,7 +578,8 @@ let project_of_toml ?file ?default table =
      If no dune version is specified, drom uses the
      {!Globals.current_dune_version}. *)
 
-  let after_0_9_2 = VersionCompare.compare project_drom_version "0.9.2" >= 0 in
+  let after_0_9_2 =
+    VersionCompare.gte project_drom_version "0.9.2" in
 
   let dune_version =
     (* No dune dependencies in packages tools or dependencies. *)
@@ -673,7 +683,23 @@ let project_of_toml ?file ?default table =
     }
   in
   package.project <- project;
-  List.iter (fun p -> p.project <- project) packages;
+  List.iter (fun p ->
+    p.project <- project;
+    if (
+      VersionCompare.(project_drom_version >= "0.9.2") &&
+      p.p_sites <> Sites.default &&
+      not (List.mem_assoc "dune-site" p.p_dependencies)
+    ) then
+      (* Sites dynamic loading (available after 0.9.2) needs [dune-site]. *)
+      p.p_dependencies <- ("dune-site", {
+        depname = None;
+        depversions = [ Ge "3.14.0" ];
+        deptest = false;
+        depdoc = false;
+        depopt = false;
+        dep_pin = None;
+      }) :: p.p_dependencies
+  ) packages;
   project
 
 let of_string ~msg ?default content =

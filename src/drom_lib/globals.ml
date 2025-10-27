@@ -17,11 +17,11 @@ let about =
   Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>" command
     Version.version
 
-let min_ocaml_edition = "4.07.0"
+let min_ocaml_edition = "4.13.0"
 
-let current_ocaml_edition = "4.13.0"
+let current_ocaml_edition = "4.14.0"
 
-let current_dune_version = "2.7.0"
+let current_dune_version = "2.8.0"
 
 let default_synopsis ~name = Printf.sprintf "The %s project" name
 
@@ -52,7 +52,7 @@ let home_dir =
     Format.eprintf
       "Error: can't compute HOME path, make sure it is well defined !@.";
     exit 2
-  | Some home_dir -> home_dir
+  | Some home_dir -> Fpath.to_string home_dir
 
 let config_dir =
   match Project_dirs.config_dir with
@@ -61,9 +61,9 @@ let config_dir =
       "Error: can't compute configuration path, make sure your HOME and other \
        environment variables are well defined !@.";
     exit 2
-  | Some config_dir -> config_dir
+  | Some config_dir -> Fpath.to_string config_dir
 
-let min_drom_version = "0.1"
+let min_drom_version = "0.9.3"
 
 let verbosity = ref 1
 
@@ -87,12 +87,20 @@ let find_ancestor_file file f =
   in
   iter dir ""
 
-let opam_root =
-  lazy
-    ( try Sys.getenv "OPAMROOT" with
-    | Not_found -> home_dir // ".opam" )
+(** [opam_root ()] returns the opam root directory.
 
-let opam_root () = Lazy.force opam_root
+    @raise Error.Error if any error happens. *)
+let opam_root : unit -> string =
+  let compute = lazy begin
+    (* Don't use OPAMROOT or hardcoded directories. `opam` gives its own
+       way to give it. *)
+    let cmd = Bos.Cmd.(v "opam" % "var" % "root") in
+    match Bos.OS.Cmd.(run_out cmd |> to_string) with
+    | Ok dir -> dir
+    | Error _ -> Error.raise "%s: unknown error" __FUNCTION__
+  end in
+  fun () -> Lazy.force compute
+
 
 let verbose_subst =
   try
@@ -180,5 +188,6 @@ and dummy_package =
     p_menhir = None;
     p_skip = None;
     p_optional = None;
-    p_preprocess = None
+    p_preprocess = None;
+    p_sites = Sites.default;
   }

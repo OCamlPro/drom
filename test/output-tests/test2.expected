@@ -1,1 +1,45 @@
-Bonjour
+Sites (project):
+
+  (sites
+    (libexec bar)(share www)
+  )
+
+Sites (package):
+
+(generate_sites_module
+  (module sites)
+  (sites foo))
+
+
+(install
+  (files
+    (glob_files
+      bar/*
+    )
+  )
+  (section
+    (site (foo bar))
+  )
+  (package foo)
+)
+
+(install
+  (source_trees
+    (javascript as js)
+  )
+  (section
+    (site (foo www))
+  )
+  (package foo)
+)
+
+(install
+  (files
+    index.html
+  )
+  (section
+    share_root
+  )
+  (package foo)
+)
+
