@@ -1,8 +1,8 @@
 [project]
 create-project = false
 drom-version = "0.9.3"
-#share-repo = "https://github.com/OCamlPro/drom-share"
-share-repo = "/home/lefessan/GIT/ocp/github/drom-share"
+share-repo = "https://github.com/OCamlPro/drom-share"
+#share-repo = "/home/lefessan/GIT/ocp/github/drom-share"
 share-version = "0.9.3"
 
 [project]
