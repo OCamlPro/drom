@@ -29,7 +29,7 @@ let action ~skeleton ~edit ~args =
         if edit then
           let editor = Globals.editor in
           match
-            Printf.kprintf Sys.command "%s '%s'" editor (dir // "drom.toml")
+            Printf.ksprintf Sys.command "%s '%s'" editor (dir // "drom.toml")
           with
           | 0 -> ()
           | _ -> Error.raise "Editing command returned a non-zero status" )

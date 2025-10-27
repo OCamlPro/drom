@@ -52,7 +52,7 @@ let home_dir =
     Format.eprintf
       "Error: can't compute HOME path, make sure it is well defined !@.";
     exit 2
-  | Some home_dir -> home_dir
+  | Some home_dir -> Fpath.to_string home_dir
 
 let config_dir =
   match Project_dirs.config_dir with
@@ -61,7 +61,7 @@ let config_dir =
       "Error: can't compute configuration path, make sure your HOME and other \
        environment variables are well defined !@.";
     exit 2
-  | Some config_dir -> config_dir
+  | Some config_dir -> Fpath.to_string config_dir
 
 let min_drom_version = "0.1"
 

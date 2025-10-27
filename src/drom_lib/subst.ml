@@ -246,26 +246,18 @@ let project_brace ({ p; _ }  as state ) v =
     |> String.concat " "
   (* for ocamlformat *)
   | "global-ocamlformat" -> (
-    match Globals.Base_dirs.config_dir with
-    | None -> ""
-    | Some config_dir ->
-      let open EzFile.OP in
-      begin
-        match EzFile.read_file (config_dir // "ocamlformat") with
-        | exception _e -> ""
-        | content -> raise (ReplaceContent content)
-      end )
+    let open EzFile.OP in
+    begin
+      match EzFile.read_file (Globals.config_dir // "ocamlformat") with
+      | exception _e -> ""
+      | content -> raise (ReplaceContent content)
+    end )
   (* for ocpindent *)
   | "global-ocpindent" -> (
-    match Globals.Base_dirs.config_dir with
-    | None -> ""
-    | Some config_dir ->
-      let open EzFile.OP in
-      begin
-        match EzFile.read_file (config_dir // "ocp" // "ocp-indent.conf") with
-        | exception _e -> ""
-        | content -> raise (ReplaceContent content)
-      end )
+      match EzFile.read_file (Globals.config_dir // "ocp" // "ocp-indent.conf") with
+      | exception _e -> ""
+      | content -> raise (ReplaceContent content)
+      )
   (* for dune *)
   | "dune-version" -> p.dune_version
   | "dune-lang" ->

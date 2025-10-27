@@ -10,4 +10,4 @@
 
 exception Error of string
 
-let raise fmt = Printf.kprintf (fun s -> raise (Error s)) fmt
+let raise fmt = Printf.ksprintf (fun s -> raise (Error s)) fmt
