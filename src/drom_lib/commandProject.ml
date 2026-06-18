@@ -45,16 +45,6 @@ let action ~skeleton ~edit ~update_args =
       in
       (* Used to check that the project exists. *)
       let _sk : skeleton = Skeleton.lookup_project share skeleton in
-      let update_args =
-        { update_args with
-          arg_upgrade =
-            ( if p.skeleton <> Some skeleton then begin
-                  p.skeleton <- Some skeleton;
-                  true
-                end else
-                update_args.arg_upgrade )
-        }
-      in
       Update.update_files share ~twice:false ~update_args ~git:true p
 
 let cmd =
@@ -67,17 +57,13 @@ let cmd =
       ( update_specs
         @ [ ( [ "library" ],
             Arg.Unit
-              (fun () ->
-                skeleton := Some "library";
-                update_args.arg_upgrade <- true ),
+              (fun () -> skeleton := Some "library"),
             EZCMD.info
               "Project contains only a library. Equivalent to $(b,--skeleton \
                library)" );
           ( [ "program" ],
             Arg.Unit
-              (fun () ->
-                skeleton := Some "program";
-                update_args.arg_upgrade <- true ),
+              (fun () -> skeleton := Some "program"),
             EZCMD.info
               "Project contains a program. Equivalent to $(b,--skeleton \
                program). The generated project will be composed of a \
@@ -85,24 +71,16 @@ let cmd =
                $(b,Main.main) of the library." );
           ( [ "virtual" ],
             Arg.Unit
-              (fun () ->
-                skeleton := Some "virtual";
-                update_args.arg_upgrade <- true ),
+              (fun () -> skeleton := Some "virtual"),
             EZCMD.info
               "Package is virtual, i.e. no code. Equivalent to $(b,--skeleton \
                virtual)." );
           ( [ "skeleton" ],
             Arg.String
-              (fun s ->
-                skeleton := Some s;
-                update_args.arg_upgrade <- true ),
+              (fun s -> skeleton := Some s),
             EZCMD.info ~docv:"SKELETON"
               "Create project using a predefined skeleton or one specified in \
                ~/.config/drom/skeletons/" );
-          ( [ "upgrade" ],
-            Arg.Unit (fun () -> update_args.arg_upgrade <- true),
-            EZCMD.info "Force upgrade of the drom.toml file from the skeleton"
-          );
           ([ "edit" ], Arg.Set edit, EZCMD.info "Edit project description");
         ] )
     ~doc:"Update an existing project"
@@ -113,7 +91,7 @@ let cmd =
               "This command is used to regenerate the files of a project after \
                updating its description.";
             `P
-              "With argument $(b,--upgrade), it can also be used to reformat \
+              "When generating the files of a project, drom also reformats \
                the toml files, from their skeletons."
           ]
       ]

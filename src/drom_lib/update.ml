@@ -19,8 +19,7 @@ open Types
 exception Skip
 
 let default_args ~share_args () =
-  { arg_upgrade = false;
-    arg_force = false;
+  { arg_force = false;
     arg_diff = false;
     arg_skip = [];
     arg_promote_skip = false;
@@ -42,15 +41,11 @@ let args ?(set_share=false) () =
       );
       ( [ "skip" ],
         Arg.String
-          (fun s ->
-            args.arg_skip <- (true, s) :: args.arg_skip;
-            args.arg_upgrade <- true ),
+          (fun s -> args.arg_skip <- (true, s) :: args.arg_skip),
         EZCMD.info ~docv:"FILE" "Add $(docv) to skip list" );
       ( [ "unskip" ],
         Arg.String
-          (fun s ->
-            args.arg_skip <- (false, s) :: args.arg_skip;
-            args.arg_upgrade <- true ),
+          (fun s -> args.arg_skip <- (false, s) :: args.arg_skip),
         EZCMD.info ~docv:"FILE" "Remove $(docv) from skip list" );
       ( [ "diff" ],
         Arg.Unit (fun () -> args.arg_diff <- true),
@@ -110,10 +105,9 @@ let update_files share ?update_args ?(git = false) p =
     | Some args -> args
   in
   let share_args = args.arg_share in
-  let changed = false in
-  let p, changed =
+  let p =
     match args.arg_skip with
-    | [] -> (p, changed)
+    | [] -> p
     | skip ->
        let skip =
          List.fold_left
@@ -124,33 +118,32 @@ let update_files share ?update_args ?(git = false) p =
                EzList.remove elem skips )
            p.skip skip
        in
-       let p = { p with skip } in
-       (p, true)
+       { p with skip }
   in
 
-  let p, changed =
+  let p =
     match args.arg_edition with
-    | None -> (p, changed)
-    | Some edition -> ({ p with edition }, true)
+    | None -> p
+    | Some edition -> { p with edition }
   in
 
 
-  let p, changed =
+  let p =
     match args.arg_min_edition with
-    | None -> (p, changed)
-    | Some min_edition -> ({ p with min_edition }, true)
+    | None -> p
+    | Some min_edition -> { p with min_edition }
   in
-  let p, changed =
+  let p =
     match args, p with
       { arg_share = { arg_share_version = Some "0.8.0";
                       arg_share_repo = None ; _ } ; _ },
       { project_share_version = (None | Some "0.8.0");
         project_share_repo = None ; _ } ->
-       p, changed     (* do nothing for compatibility with version = 0.8.0 *)
+       p (* do nothing for compatibility with version = 0.8.0 *)
     | _ ->
-       let p, changed =
+       let p =
          match args.arg_share.arg_share_version with
-         | None -> (p, changed)
+         | None -> p
          | Some arg_share_version ->
             if args.arg_share.arg_share_version <> p.project_share_version then
               let project_share_repo = match p.project_share_repo with
@@ -158,17 +151,17 @@ let update_files share ?update_args ?(git = false) p =
                 | Some project_share_repo -> Some project_share_repo
               in
               let project_share_version = Some arg_share_version in
-              ({ p with project_share_version ; project_share_repo }, true)
+              { p with project_share_version ; project_share_repo }
             else
-              (p, changed)
+              p
        in
        match share_args.arg_share_repo with
-       | None -> (p, changed)
+       | None -> p
        | project_share_repo ->
           if share_args.arg_share_repo <> p.project_share_repo then
-            ({ p with project_share_repo }, true)
+            { p with project_share_repo }
           else
-            (p, changed)
+            p
   in
   let can_skip = ref [] in
 
@@ -308,26 +301,20 @@ let update_files share ?update_args ?(git = false) p =
 
   let config = Config.get () in
 
-  let p, changed =
-    if args.arg_upgrade then
-      let p, changed =
-        match (p.github_organization, config.config_github_organization) with
-        | None, Some s -> ({ p with github_organization = Some s }, true)
-        | _ -> (p, changed)
-      in
-      let p, changed =
-        match (p.authors, config.config_author) with
-        | [], Some s -> ({ p with authors = [ s ] }, true)
-        | _ -> (p, changed)
-      in
-      let p, changed =
-        match (p.copyright, config.config_copyright) with
-        | None, Some s -> ({ p with copyright = Some s }, true)
-        | _ -> (p, changed)
-      in
-      (p, changed)
-    else
-      (p, changed)
+  let p =
+    match (p.github_organization, config.config_github_organization) with
+    | None, Some s -> { p with github_organization = Some s }
+    | _ -> p
+  in
+  let p =
+    match (p.authors, config.config_author) with
+    | [], Some s -> { p with authors = [ s ] }
+    | _ -> p
+  in
+  let p =
+    match (p.copyright, config.config_copyright) with
+    | None, Some s -> { p with copyright = Some s }
+    | _ -> p
   in
   List.iter (fun package -> package.project <- p) p.packages;
 
@@ -437,19 +424,13 @@ let update_files share ?update_args ?(git = false) p =
                drom_ignore;
       end ;
 
-      let upgrade = args.arg_upgrade || changed in
-      let skip = not (upgrade || not (Sys.file_exists "drom.toml")) in
       let files = Project.to_files share p in
       let files =
         List.map
           (fun (file, content) ->
             let content =
-              if upgrade then begin
-                  write_file ~skip ~force:upgrade hashes file content;
-                  content
-                end else
-                try EzFile.read_file file with
-                | Sys_error _ -> ""
+              write_file ~skip:false ~force:true hashes file content;
+              content
             in
             (file, content) )
           files

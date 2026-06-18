@@ -320,8 +320,7 @@ type share_args = {
 }
 
 type update_args =
-  { mutable arg_upgrade : bool;
-    mutable arg_force : bool;
+  { mutable arg_force : bool;
     mutable arg_diff : bool;
     mutable arg_skip : (bool * string) list;
     mutable arg_promote_skip : bool;

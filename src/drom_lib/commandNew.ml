@@ -255,7 +255,6 @@ let cmd =
   let skeleton = ref None in
   let dir = ref None in
   let update_args, update_specs = Update.args ~set_share:true () in
-  update_args.arg_upgrade <- true;
   EZCMD.sub cmd_name
     ~args:
       ( update_specs
