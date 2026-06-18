@@ -31,7 +31,6 @@ let print_dep (name, d) =
 let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
     ~depopt ~update_args =
   let p, _inferred_dir = Project.get () in
-  let upgrade = ref update_args.arg_upgrade in
   let update package_kind dep_kind deps setdeps =
     match dep with
     | None ->
@@ -63,7 +62,6 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
             dep_pin = None ; (* TODO *)
           }
         in
-        upgrade := true;
         Printf.eprintf "Adding %s %s dependency %S\n%!" package_kind dep_kind
           dep;
         setdeps ((dep, d) :: deps)
@@ -74,7 +72,6 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
         if remove then begin
           let deps = List.filter (fun (name, _) -> name <> dep) deps in
           setdeps deps;
-          upgrade := true;
           Printf.eprintf "Removed %s %s dependency %S\n%!" package_kind dep_kind
             dep
         end else
@@ -86,7 +83,6 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
                     match version with
                     | None -> d
                     | Some version ->
-                      upgrade := true;
                       { d with
                         depversions = Package.versions_of_string version
                       }
@@ -95,7 +91,6 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
                     match depname with
                     | None -> d
                     | Some depname ->
-                      upgrade := true;
                       { d with
                         depname =
                           ( if depname = dep then
@@ -108,28 +103,21 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
                     match deptest with
                     | None -> d
                     | Some deptest ->
-                      upgrade := true;
                       { d with deptest }
                   in
                   let d =
                     match depdoc with
                     | None -> d
                     | Some depdoc ->
-                      upgrade := true;
                       { d with depdoc }
                   in
                   let d =
                     match depopt with
                     | None -> d
                     | Some depopt ->
-                      upgrade := true;
                       { d with depopt }
                   in
 
-                  if not !upgrade then begin
-                    print_dep (dep, d);
-                    exit 0
-                  end;
                   Printf.eprintf "Updating %s %s dependency %S\n%!" package_kind
                     dep_kind dep;
                   (name, d)
@@ -167,15 +155,9 @@ let action ~dep ~package ~tool ~add ~remove ~version ~depname ~deptest ~depdoc
         p.packages
   end;
 
-  if !upgrade then (
-    let share = Share.load ~share_args:update_args.arg_share ~p () in
-    let update_args = { update_args with
-                 arg_upgrade = !upgrade ;
-               }
-    in
-    Update.update_files share ~twice:false ~git:true p ~update_args;
-    ()
-  )
+  let share = Share.load ~share_args:update_args.arg_share ~p () in
+  Update.update_files share ~twice:false ~git:true p ~update_args;
+  ()
 
 let generate_opam_for_cross ~cross ~update_args () =
   let share_args = update_args.arg_share in

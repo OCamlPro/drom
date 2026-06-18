@@ -72,12 +72,11 @@ let rename_package hashes package new_name =
 
   { package with dir = new_dir; name = new_name }
 
-let upgrade_package package licenses ~upgrade ~kind ~files =
+let upgrade_package package licenses ~kind ~files =
   ( match kind with
   | None -> ()
   | Some kind ->
-    package.kind <- kind;
-    upgrade := true );
+    package.kind <- kind );
 
   begin
     match files with
@@ -165,43 +164,39 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~update_args ~
       p
   in
   let share = Share.load ~share_args ~p () in
-  let upgrade =
-    Hashes.with_ctxt ~git:true (fun hashes ->
+  Hashes.with_ctxt ~git:true (fun hashes ->
+      if remove then begin
+        if create <> None then
+          Error.raise "--remove and --create are incompatible";
 
-        if remove then begin
-          if create <> None then
-            Error.raise "--remove and --create are incompatible";
-
-          if p.package.name = name then Error.raise "Cannot remove main package";
-          if List.for_all (fun package -> package.name <> name) p.packages then
-            Error.raise "No such package to remove";
-          p.packages <-
-            List.filter
-              (fun package ->
-                if package.name = name then begin
-                  remove_package hashes package;
-                  false
-                end else
-                  true )
-              p.packages;
-          true
-        end else
-          let upgrade =
-            match create with
-            | Some skeleton ->
+        if p.package.name = name then Error.raise "Cannot remove main package";
+        if List.for_all (fun package -> package.name <> name) p.packages then
+          Error.raise "No such package to remove";
+        p.packages <-
+          List.filter
+            (fun package ->
+               if package.name = name then begin
+                 remove_package hashes package;
+                 false
+               end else
+                 true )
+            p.packages
+      end else
+        begin match create with
+          | Some skeleton ->
               if List.exists (fun package -> package.name = name) p.packages
               then
                 Error.raise "A package with this name already exists";
               let dir =
                 match dir with
                 | None ->
-                  let dir =
-                    if inferred_dir = "" then
-                      "src"
-                    else
-                      inferred_dir
-                  in
-                  dir // name
+                    let dir =
+                      if inferred_dir = "" then
+                        "src"
+                      else
+                        inferred_dir
+                    in
+                    dir // name
                 | Some dir -> dir
               in
               let kind =
@@ -217,16 +212,15 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~update_args ~
                 match list with
                 | [] -> package
                 | content :: super ->
-                  let package = iter_skeleton super in
-                  let content = Subst.package
-                      (Subst.state () share package) content in
-                  Package.of_string ~msg:"package.toml template" content
+                    let package = iter_skeleton super in
+                    let content = Subst.package
+                        (Subst.state () share package) content in
+                    Package.of_string ~msg:"package.toml template" content
               in
               let skeleton = Skeleton.lookup_package share skeleton in
               let package = iter_skeleton skeleton.skeleton_toml in
-              p.packages <- p.packages @ [ package ];
-              true
-            | None -> (
+              p.packages <- p.packages @ [ package ]
+          | None -> (
               if List.for_all (fun package -> package.name <> name) p.packages
               then
                 Error.raise "No such package to modify";
@@ -234,35 +228,31 @@ let action ~edit ~package_name ~kind ~dir ?create ~remove ?rename ~update_args ~
                 Error.raise "Option --dir is not available for update";
               match rename with
               | Some new_name ->
-                if p.package.name = name then
-                  Error.raise "Cannot rename main package";
-                if
-                  List.exists
-                    (fun package -> package.name = new_name)
-                    p.packages
-                then
-                  Error.raise
-                    "Cannot rename to an already existing package name";
-                p.packages <-
-                  List.map
-                    (fun package ->
-                      if package.name = name then
-                        rename_package hashes package new_name
-                      else
-                        package )
-                    p.packages;
-                true
-              | None -> edit )
-          in
-          let upgrade = ref upgrade in
-          List.iter
-            (fun package ->
-              if package.name = name then
-                upgrade_package package share ~upgrade ~kind ~files )
-            p.packages;
-          !upgrade )
-  in
-  let update_args = { update_args with arg_upgrade = upgrade } in
+                  if p.package.name = name then
+                    Error.raise "Cannot rename main package";
+                  if
+                    List.exists
+                      (fun package -> package.name = new_name)
+                      p.packages
+                  then
+                    Error.raise
+                      "Cannot rename to an already existing package name";
+                  p.packages <-
+                    List.map
+                      (fun package ->
+                         if package.name = name then
+                           rename_package hashes package new_name
+                         else
+                           package )
+                      p.packages
+              | None -> ())
+        end;
+      List.iter
+        (fun package ->
+           if package.name = name then
+             upgrade_package package share ~kind ~files )
+        p.packages
+    );
   let twice = create <> None in
   Update.update_files share ~twice ~git:true p ~update_args;
   ()

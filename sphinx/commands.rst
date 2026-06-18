@@ -290,6 +290,8 @@ Where options are:
 
 * :code:`--create BOOL`   Change project creation status
 
+* :code:`--cross TARGET`   Build opam packages for cross-compilation (TARGET=windows|osx)
+
 * :code:`--diff`   Print a diff of user-modified files that are being skipped
 
 * :code:`--doc BOOL`   Whether dependency is only for doc
@@ -703,7 +705,7 @@ Update an existing project
 
 This command is used to regenerate the files of a project after updating its description.
 
-With argument **--upgrade**, it can also be used to reformat the toml files, from their skeletons.
+When generating the files of a project, drom also reformats the toml files, from their skeletons.
 
 **USAGE**
 ::
@@ -744,8 +746,6 @@ Where options are:
 * :code:`--skip FILE`   Add FILE to skip list
 
 * :code:`--unskip FILE`   Remove FILE from skip list
-
-* :code:`--upgrade`   Force upgrade of the drom.toml file from the skeleton
 
 * :code:`--virtual`   Package is virtual, i.e. no code. Equivalent to **--skeleton virtual**.
 
