@@ -18,6 +18,15 @@ let email () =
   | Some email -> email
   | None -> raise Not_found
 
+(* Whether the current directory is in a git work tree, be it that of its
+   own repository or of an enclosing one: a project can live in a
+   subdirectory of a larger repository, without a .git of its own. *)
+let in_work_tree () =
+  Sys.command
+    (Filename.quote_command "git" ~stdout:Filename.null ~stderr:Filename.null
+       [ "rev-parse"; "--show-toplevel" ])
+  = 0
+
 let call ?cd cmd args =
   match cd with
   | Some cd ->

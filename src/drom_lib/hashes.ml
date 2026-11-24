@@ -195,7 +195,7 @@ let save ?(git = true) t =
       t.hashes;
     EzFile.write_file ".drom" (Buffer.contents b);
 
-    if git && Sys.file_exists ".git" then begin
+    if git && Git.in_work_tree () then begin
       let to_remove = ref [] in
       StringSet.iter
         (fun file ->
