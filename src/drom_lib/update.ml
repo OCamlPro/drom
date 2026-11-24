@@ -340,7 +340,7 @@ let update_files share ?update_args ?(git = false) p =
         | None -> ()
       end;
 
-      if git && not (Sys.file_exists ".git") then begin
+      if git && not (Git.in_work_tree ()) then begin
           Git.call "init" [ "-q" ];
           match config.config_github_organization with
           | None -> ()

@@ -1,4 +1,10 @@
 
+## Unreleased
+* Projects in a subdirectory of a larger git repository, with no `.git`
+  of their own, no longer get a nested repository: `drom` runs `git init`
+  only outside any git work tree, and stages the files it generates in
+  the enclosing repository.
+
 ## v0.9.2
 * Two-phase project creation: projects starts in a creation phase
   (option `create` set to true in `drom.toml`) after `project new`,
